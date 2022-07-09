@@ -1,0 +1,29 @@
+.menu {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.button {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background-color: var(--menu-button-background-default);
+  border-radius: 50%;
+  color: var(--menu-button-content-default);
+
+  &:hover,
+  &:focus {
+    background-color: var(--menu-button-background-hover);
+    color: var(--menu-button-content-hover);
+  }
+
+  svg {
+    width: 20px;
+  }
+}

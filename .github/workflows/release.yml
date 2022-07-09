@@ -1,0 +1,45 @@
+name: Release
+
+on: workflow_dispatch
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+
+    outputs:
+      commit-hash: ${{ steps.commit-hash.outputs.hash }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Create Release
+        run: |
+          git config --global user.email "bot@pomelloapp.com"
+          git config --global user.name "pomello[bot]"
+          npx standard-version
+          git push --follow-tags origin main
+
+      - name: Get Latest Commit Hash
+        id: commit-hash
+        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+
+  create-artifacts:
+    needs: draft
+
+    uses: ./.github/workflows/create-artifacts.yml
+    with:
+      COMMIT_HASH: ${{ needs.draft.outputs.commit-hash }}
+    secrets:
+      APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID}}
+      APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER}}
+      APPLE_API_KEY: ${{ secrets.APPLE_API_KEY}}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+      OSX_CODE_SIGN_CERT_PASSWORD: ${{ secrets.OSX_CODE_SIGN_CERT_PASSWORD}}
+      OSX_CODE_SIGN_CERT: ${{ secrets.OSX_CODE_SIGN_CERT}}
+      S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET}}
+      SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN}}
+      VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL}}

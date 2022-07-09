@@ -1,0 +1,9 @@
+.heading {
+  overflow: hidden;
+  color: var(--app-heading-default);
+  font-family: Nunito, sans-serif;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}

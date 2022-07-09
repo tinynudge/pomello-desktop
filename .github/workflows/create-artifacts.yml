@@ -1,0 +1,107 @@
+name: Create artifacts
+
+on:
+  workflow_call:
+    inputs:
+      COMMIT_HASH:
+        required: true
+        type: string
+    secrets:
+      APPLE_API_KEY_ID:
+        required: true
+      APPLE_API_KEY_ISSUER:
+        required: true
+      APPLE_API_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      GH_PACKAGES_TOKEN:
+        required: true
+      OSX_CODE_SIGN_CERT_PASSWORD:
+        required: true
+      OSX_CODE_SIGN_CERT:
+        required: true
+      S3_RELEASE_BUCKET:
+        required: true
+      SNAPCRAFT_TOKEN:
+        required: true
+      VITE_AUTO_UPDATE_URL:
+        required: true
+
+jobs:
+  create-artifacts:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.COMMIT_HASH }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Import Apple API key for app notarization on macOS
+      - name: Prepare for app notarization (macOS)
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          mkdir -p ~/private_keys/
+          echo '${{ secrets.APPLE_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
+
+      # Only install Snapcraft on Ubuntu
+      - name: Install Snapcraft
+        uses: samuelmeuli/action-snapcraft@v1
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          snapcraft_token: ${{ secrets.SNAPCRAFT_TOKEN }}
+
+      - name: Compile
+        uses: samuelmeuli/action-electron-builder@v1
+        env:
+          APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
+          S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET }}
+          VITE_APP_ID: com.tinynudge.pomello
+          VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL }}
+        with:
+          build_script_name: build
+          args: --config .electron-builder.config.js
+          github_token: ${{ secrets.github_token }}
+          release: true
+          max_attempts: 3
+
+          mac_certs: ${{ secrets.OSX_CODE_SIGN_CERT }}
+          mac_certs_password: ${{ secrets.OSX_CODE_SIGN_CERT_PASSWORD }}
