@@ -1,0 +1,7 @@
+.row {
+  overflow: hidden;
+  padding: 12px;
+  padding-left: calc(12px + (var(--row-depth) * 16px));
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
