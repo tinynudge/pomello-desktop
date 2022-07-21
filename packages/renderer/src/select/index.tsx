@@ -1,6 +1,7 @@
 import Select from '@/select/Select';
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import getThemeCss from '@/__bootstrap__/getThemeCss';
 import getTranslations from '@/__bootstrap__/getTranslations';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -12,7 +13,16 @@ const renderSelect = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [settings, translations] = await Promise.all([window.app.getSettings(), getTranslations()]);
+  const [settings, themeCss, translations] = await Promise.all([
+    window.app.getSettings(),
+    getThemeCss(),
+    getTranslations(),
+  ]);
+
+  document.body.style.cssText = themeCss;
+  window.app.onThemeCssChange(newThemeCss => {
+    document.body.style.cssText = newThemeCss;
+  });
 
   createRoot(container).render(
     <StrictMode>

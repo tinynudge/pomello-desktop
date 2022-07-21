@@ -1,23 +1,17 @@
-import { FC, ReactNode } from 'react';
+import cc from 'classcat';
+import { FC, HTMLAttributes, ReactNode } from 'react';
+import styles from './DropdownRow.module.scss';
 
-interface DropdownRowProps {
+interface DropdownRowProps extends HTMLAttributes<HTMLLIElement> {
   children: ReactNode;
-  depth: number;
   onClick?(): void;
 }
 
-const DropdownRow: FC<DropdownRowProps> = ({ children, depth, onClick }) => {
+const DropdownRow: FC<DropdownRowProps> = ({ children, className, onClick, ...remainingProps }) => {
   return (
-    <div
-      style={{
-        border: '1px solid black',
-        paddingLeft: 20 * depth,
-        marginBottom: -1,
-      }}
-      onClick={onClick}
-    >
+    <li className={cc([styles.row, className])} onClick={onClick} {...remainingProps}>
       {children}
-    </div>
+    </li>
   );
 };
 

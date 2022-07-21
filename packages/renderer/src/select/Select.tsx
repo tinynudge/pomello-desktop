@@ -1,7 +1,8 @@
 import useService from '@/shared/hooks/useService';
 import { SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
 import { FC, useEffect, useState } from 'react';
-import DropdownList from './components/DropdownList/DropdownList';
+import DropdownList from './components/DropdownList';
+import './Select.module.scss';
 
 interface SelectProps {
   services: ServiceRegistry;
@@ -9,14 +10,15 @@ interface SelectProps {
 }
 
 const Select: FC<SelectProps> = ({ services }) => {
-  const [serviceId, setServicecId] = useState<string>();
-  const [items, setItems] = useState<SelectItem[]>([]);
-
+  const [serviceId, setServiceId] = useState<string>();
   const service = useService(services, serviceId);
+
+  const [items, setItems] = useState<SelectItem[]>([]);
+  const [selectedOption, setSelectedOption] = useState<SelectOptionType>();
 
   useEffect(() => {
     const removeSelectShowListener = window.app.onSelectShow(({ serviceId, items }) => {
-      setServicecId(serviceId);
+      setServiceId(serviceId);
       setItems(items);
     });
 
@@ -25,13 +27,25 @@ const Select: FC<SelectProps> = ({ services }) => {
     };
   }, []);
 
+  const handleOptionHover = (option: SelectOptionType) => {
+    setSelectedOption(option);
+  };
+
   const handleOptionSelect = (option: SelectOptionType) => {
     window.app.selectOption(option);
   };
 
   return (
     <>
-      <DropdownList depth={0} items={items} onOptionSelect={handleOptionSelect} service={service} />
+      <DropdownList
+        depth={0}
+        items={items}
+        onOptionHover={handleOptionHover}
+        onOptionSelect={handleOptionSelect}
+        role="listbox"
+        selectedOption={selectedOption}
+        service={service}
+      />
     </>
   );
 };
