@@ -1,3 +1,4 @@
+import useTranslation from '@/shared/hooks/useTranslation';
 import cc from 'classcat';
 import { FC, ReactNode, useRef, useState } from 'react';
 import Menu from '../Menu';
@@ -9,6 +10,8 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
+
   const menuRef = useRef<HTMLElement>(null);
   const [menuOffset, setMenuOffset] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,9 +33,8 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           transform: isMenuOpen && menuOffset ? `translate(${menuOffset}px)` : undefined,
         }}
       >
-        {/* TODO: Translate aria-label */}
         <button
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-label={isMenuOpen ? t('closeMenuLabel') : t('openMenuLabel')}
           className={styles.menuButton}
           onClick={handleMenuClick}
         >

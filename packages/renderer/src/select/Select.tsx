@@ -31,7 +31,6 @@ const Select: FC<SelectProps> = ({ services }) => {
 
   return (
     <>
-      Select
       <DropdownList depth={0} items={items} onOptionSelect={handleOptionSelect} service={service} />
     </>
   );

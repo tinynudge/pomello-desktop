@@ -1,9 +1,11 @@
+import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockService from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import { Service, ServiceRegistry, Settings } from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import translations from '../../../../translations/en-US.json';
 import Select from '../Select';
 
 export * from '@testing-library/react';
@@ -25,7 +27,11 @@ const mountSelect = (options: MountSelectOptions = {}) => {
     mock: () => service,
   };
 
-  const result = render(<Select services={services} settings={settings} />);
+  const result = render(
+    <TranslationsProvider translations={translations}>
+      <Select services={services} settings={settings} />
+    </TranslationsProvider>
+  );
 
   return {
     appApi,

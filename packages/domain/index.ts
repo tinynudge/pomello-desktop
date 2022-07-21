@@ -20,4 +20,5 @@ export type { StoreContents } from './StoreContents';
 export type { StoreManager } from './StoreManager';
 export type { TaskTimerEndActionType } from './TaskTimerEndActionType';
 export type { ThemeConfig } from './ThemeConfig';
+export type { Translations } from './Translations';
 export type { WindowManager } from './WindowManager';
