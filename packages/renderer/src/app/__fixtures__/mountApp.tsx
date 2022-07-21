@@ -1,3 +1,4 @@
+import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockService from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
@@ -6,6 +7,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
+import translations from '../../../../translations/en-US.json';
 import App from '../App';
 import { PomelloContextProvider } from '../context/PomelloContext';
 import createStore from '../createStore';
@@ -51,7 +53,9 @@ const mountApp = (options: MountAppOptions = {}) => {
     <Provider store={store}>
       <PomelloContextProvider service={pomelloService}>
         <QueryClientProvider client={queryClient}>
-          <App services={services} />
+          <TranslationsProvider translations={translations}>
+            <App services={services} />
+          </TranslationsProvider>
         </QueryClientProvider>
       </PomelloContextProvider>
     </Provider>

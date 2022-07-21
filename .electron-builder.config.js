@@ -12,6 +12,7 @@ const config = {
     buildResources: 'build',
   },
   files: ['packages/**/dist/**', 'build/icons/**'],
+  extraResources: ['packages/**/translations/**'],
   linux: {
     executableName: 'pomello',
     category: 'Utility',

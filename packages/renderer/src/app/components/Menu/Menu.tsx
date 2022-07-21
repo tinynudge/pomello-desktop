@@ -1,3 +1,4 @@
+import useTranslation from '@/shared/hooks/useTranslation';
 import { forwardRef } from 'react';
 import { ReactComponent as AddIcon } from './assets/add.svg';
 import { ReactComponent as CogIcon } from './assets/cog.svg';
@@ -9,11 +10,12 @@ interface MenuProps {
 }
 
 const Menu = forwardRef<HTMLElement, MenuProps>(({ isOpen }, ref) => {
-  /* TODO: Translate aria-label */
+  const { t } = useTranslation();
+
   return (
-    <nav aria-label="Menu" className={styles.menu} ref={ref}>
+    <nav aria-label={t('menuLabel')} className={styles.menu} ref={ref}>
       <button
-        aria-label="Home"
+        aria-label={t('homeButtonLabel')}
         aria-hidden={!isOpen}
         className={styles.button}
         tabIndex={isOpen ? 0 : -1}
@@ -21,7 +23,7 @@ const Menu = forwardRef<HTMLElement, MenuProps>(({ isOpen }, ref) => {
         <HomeIcon aria-hidden />
       </button>
       <button
-        aria-label="Dashboard"
+        aria-label={t('dashboardButtonLabel')}
         aria-hidden={!isOpen}
         className={styles.button}
         tabIndex={isOpen ? 0 : -1}
@@ -29,7 +31,7 @@ const Menu = forwardRef<HTMLElement, MenuProps>(({ isOpen }, ref) => {
         <CogIcon aria-hidden />
       </button>
       <button
-        aria-label="Create task"
+        aria-label={t('createTaskButtonLabel')}
         aria-hidden={!isOpen}
         className={styles.button}
         tabIndex={isOpen ? 0 : -1}

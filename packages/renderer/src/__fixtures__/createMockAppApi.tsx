@@ -37,6 +37,7 @@ const createMockAppApi = (
   const api: AppApi = {
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve(''))),
+    getTranslations: vi.fn(async () => ({})),
     onThemeCssChange: vi.fn(),
     onSelectChange: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectChange', callback))
