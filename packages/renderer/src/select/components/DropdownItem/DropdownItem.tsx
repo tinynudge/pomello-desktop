@@ -9,7 +9,7 @@ interface DropdownItemProps {
   depth: number;
   item: SelectItem;
   onOptionHover(option: SelectOptionType): void;
-  onOptionSelect(option: SelectOptionType): void;
+  onOptionSelect(): void;
   selectedOption?: SelectOptionType;
   service?: Service;
 }
@@ -47,10 +47,6 @@ const DropdownItem: FC<DropdownItemProps> = ({
     );
   }
 
-  const handleOptionClick = () => {
-    onOptionSelect(item);
-  };
-
   const handleOptionMouseOver = () => {
     onOptionHover(item);
   };
@@ -60,7 +56,7 @@ const DropdownItem: FC<DropdownItemProps> = ({
       className={cc({
         [styles.selected]: selectedOption === item,
       })}
-      onClick={handleOptionClick}
+      onClick={onOptionSelect}
       onMouseOver={handleOptionMouseOver}
       role="option"
     >

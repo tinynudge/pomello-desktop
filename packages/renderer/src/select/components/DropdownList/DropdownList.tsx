@@ -8,7 +8,7 @@ interface DropdownListProps extends HTMLAttributes<HTMLUListElement> {
   depth: number;
   items: SelectItem[];
   onOptionHover(option: SelectOptionType): void;
-  onOptionSelect(option: SelectOptionType): void;
+  onOptionSelect(): void;
   selectedOption?: SelectOptionType;
   service?: Service;
 }
