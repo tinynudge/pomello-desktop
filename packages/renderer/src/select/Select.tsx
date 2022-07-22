@@ -31,8 +31,10 @@ const Select: FC<SelectProps> = ({ services }) => {
     setSelectedOption(option);
   };
 
-  const handleOptionSelect = (option: SelectOptionType) => {
-    window.app.selectOption(option);
+  const handleOptionSelect = () => {
+    if (selectedOption) {
+      window.app.selectOption(selectedOption);
+    }
   };
 
   return (
