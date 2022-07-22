@@ -27,7 +27,11 @@ const SelectServiceView: FC<SelectServiceViewProps> = ({ services }) => {
   return (
     <>
       <Heading>{t('selectServiceHeading')}</Heading>
-      <SelectField onChange={handleServiceChange} items={items} />
+      <SelectField
+        onChange={handleServiceChange}
+        placeholder={t('selectServiceLabel')}
+        items={items}
+      />
     </>
   );
 };

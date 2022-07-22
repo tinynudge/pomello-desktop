@@ -2,6 +2,7 @@
   overflow: hidden;
   padding: 12px;
   padding-left: calc(12px + (var(--row-depth) * 16px));
+  list-style: none;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
