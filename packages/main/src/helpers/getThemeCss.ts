@@ -63,10 +63,16 @@ const defaultTheme: ThemeConfig = {
     background: [colors.lightAlt, colors.darkAlt],
   },
   select: {
-    background: [colors.white, colors.darkAlt],
-    content: [opacity(colors.black, 87), colors.white],
-    group: [opacity(colors.black, 4), opacity(colors.black, 20)],
-    selected: [opacity(colors.blue, 20), opacity(colors.white, 10)],
+    background: {
+      default: [colors.white, colors.darkAlt],
+      group: [opacity(colors.black, 4), opacity(colors.black, 20)],
+      selected: [opacity(colors.blue, 12), opacity(colors.white, 10)],
+    },
+    content: {
+      default: [opacity(colors.black, 87), colors.white],
+      helper: [opacity(colors.black, 38), opacity(colors.white, 38)],
+    },
+    divider: [colors.lightAlt, colors.dark],
   },
 };
 

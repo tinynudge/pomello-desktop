@@ -5,5 +5,8 @@
   "homeButtonLabel": "Home",
   "menuLabel": "Menu",
   "openMenuLabel": "Open menu",
-  "selectServiceHeading": "Select a service"
+  "selectNoResults": "No matches found",
+  "selectPlaceholder": "Pick an option",
+  "selectServiceHeading": "Select a service",
+  "selectServiceLabel": "Pick a service"
 }

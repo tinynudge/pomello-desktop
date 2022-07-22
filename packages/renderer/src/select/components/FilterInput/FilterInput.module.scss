@@ -1,0 +1,13 @@
+.input {
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--select-divider);
+  background-color: transparent;
+  color: var(--select-content-default);
+  outline: 0;
+
+  &::placeholder {
+    color: var(--select-content-helper);
+  }
+}

@@ -2,7 +2,11 @@
 
 body {
   -webkit-app-region: drag; // TODO: remove after implementing dynamic select window bounds
-  background-color: var(--select-background);
-  color: var(--select-content);
+  background-color: var(--select-background-default);
+  color: var(--select-content-default);
   user-select: none;
+}
+
+.noResults {
+  color: var(--select-content-helper);
 }
