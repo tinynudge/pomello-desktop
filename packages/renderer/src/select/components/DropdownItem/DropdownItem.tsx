@@ -6,20 +6,20 @@ import DropdownRow from '../DropdownRow';
 import styles from './DropdownItem.module.scss';
 
 interface DropdownItemProps {
+  activeOptionId?: string;
   depth: number;
   item: SelectItem;
   onOptionHover(option: SelectOptionType): void;
   onOptionSelect(): void;
-  selectedOption?: SelectOptionType;
   service?: Service;
 }
 
 const DropdownItem: FC<DropdownItemProps> = ({
+  activeOptionId,
   depth,
   item,
   onOptionHover,
   onOptionSelect,
-  selectedOption,
   service,
 }) => {
   const isGroupType = item.type === 'group' || item.type === 'customGroup';
@@ -27,12 +27,12 @@ const DropdownItem: FC<DropdownItemProps> = ({
   if (isGroupType) {
     return (
       <DropdownList
+        activeOptionId={activeOptionId}
         aria-labelledby={item.id}
         depth={depth + 1}
         items={item.items}
         onOptionHover={onOptionHover}
         onOptionSelect={onOptionSelect}
-        selectedOption={selectedOption}
         role="group"
         service={service}
       >
@@ -54,8 +54,9 @@ const DropdownItem: FC<DropdownItemProps> = ({
   return (
     <DropdownRow
       className={cc({
-        [styles.selected]: selectedOption === item,
+        [styles.selected]: activeOptionId === item.id,
       })}
+      id={item.id}
       onClick={onOptionSelect}
       onMouseOver={handleOptionMouseOver}
       role="option"

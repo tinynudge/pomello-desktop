@@ -1,9 +1,11 @@
 .input {
+  position: sticky;
+  top: 0;
   width: 100%;
   padding: 12px;
   border: 0;
   border-bottom: 1px solid var(--select-divider);
-  background-color: transparent;
+  background-color: var(--select-background-default);
   color: var(--select-content-default);
   outline: 0;
 
