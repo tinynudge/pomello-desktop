@@ -1,7 +1,7 @@
-import { AppEvent, SelectOptionType } from '@domain';
+import { AppEvent } from '@domain';
 import { ipcRenderer } from 'electron';
 
-const selectOption = (option: SelectOptionType): Promise<void> =>
-  ipcRenderer.invoke(AppEvent.SelectOption, option);
+const selectOption = (optionId: string): Promise<void> =>
+  ipcRenderer.invoke(AppEvent.SelectOption, optionId);
 
 export default selectOption;

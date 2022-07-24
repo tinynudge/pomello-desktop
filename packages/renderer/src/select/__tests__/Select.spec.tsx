@@ -3,24 +3,24 @@ import mountSelect, { screen } from '../__fixtures__/mountSelect';
 
 describe('Select', () => {
   it('should show a custom placeholder', () => {
-    const { emitAppApiEvent } = mountSelect();
-
-    emitAppApiEvent('onSelectShow', {
-      placeholder: 'My super select',
-      items: [{ id: 'one', label: 'One' }],
+    mountSelect({
+      showSelect: {
+        items: [{ id: 'one', label: 'One' }],
+        placeholder: 'My super select',
+      },
     });
 
     expect(screen.getByRole('combobox')).toHaveAttribute('placeholder', 'My super select');
   });
 
   it('should render a list of options', () => {
-    const { emitAppApiEvent } = mountSelect();
-
-    emitAppApiEvent('onSelectShow', {
-      items: [
-        { id: 'one', label: 'One' },
-        { id: 'two', label: 'Two' },
-      ],
+    mountSelect({
+      showSelect: {
+        items: [
+          { id: 'one', label: 'One' },
+          { id: 'two', label: 'Two' },
+        ],
+      },
     });
 
     const options = screen.getAllByRole('option');
@@ -30,18 +30,18 @@ describe('Select', () => {
   });
 
   it('should render option groups', () => {
-    const { emitAppApiEvent } = mountSelect();
-
-    emitAppApiEvent('onSelectShow', {
-      items: [
-        { id: 'one', label: 'One' },
-        {
-          id: 'two',
-          label: 'Two Group',
-          type: 'group',
-          items: [{ id: 'two-one', label: 'Two - One' }],
-        },
-      ],
+    mountSelect({
+      showSelect: {
+        items: [
+          { id: 'one', label: 'One' },
+          {
+            id: 'two',
+            label: 'Two Group',
+            type: 'group',
+            items: [{ id: 'two-one', label: 'Two - One' }],
+          },
+        ],
+      },
     });
 
     const options = screen.getAllByRole('option');
@@ -56,13 +56,12 @@ describe('Select', () => {
       <>Custom - {option.label}</>
     );
 
-    const { emitAppApiEvent } = mountSelect({
+    mountSelect({
       service: { CustomSelectOption },
-    });
-
-    emitAppApiEvent('onSelectShow', {
-      serviceId: 'mock',
-      items: [{ id: 'one', label: 'One', type: 'customOption' }],
+      showSelect: {
+        serviceId: 'mock',
+        items: [{ id: 'one', label: 'One', type: 'customOption' }],
+      },
     });
 
     expect(screen.getByRole('option')).toHaveTextContent('Custom - One');
@@ -73,50 +72,49 @@ describe('Select', () => {
       <>Custom Group - {group.label}</>
     );
 
-    const { emitAppApiEvent } = mountSelect({
+    mountSelect({
       service: { CustomSelectGroup },
-    });
-
-    emitAppApiEvent('onSelectShow', {
-      serviceId: 'mock',
-      items: [
-        {
-          id: 'one',
-          label: 'One',
-          type: 'customGroup',
-          items: [{ id: 'one-one', label: 'One - One' }],
-        },
-      ],
+      showSelect: {
+        serviceId: 'mock',
+        items: [
+          {
+            id: 'one',
+            label: 'One',
+            type: 'customGroup',
+            items: [{ id: 'one-one', label: 'One - One' }],
+          },
+        ],
+      },
     });
 
     expect(screen.getByRole('group')).toHaveTextContent('Custom Group - One');
   });
 
   it('should select the option when clicked', async () => {
-    const { appApi, emitAppApiEvent, userEvent } = mountSelect();
+    const { appApi, userEvent } = mountSelect({
+      showSelect: {
+        items: [
+          { id: 'one', label: 'One' },
+          { id: 'two', label: 'Two' },
+        ],
+      },
+    });
 
-    const items = [
-      { id: 'one', label: 'One' },
-      { id: 'two', label: 'Two' },
-    ];
+    await userEvent.click(screen.getByRole('option', { name: 'Two' }));
 
-    emitAppApiEvent('onSelectShow', { items });
-
-    await userEvent.click(screen.getByRole('option', { name: items[1].label }));
-
-    expect(appApi.selectOption).toHaveBeenCalledWith(items[1]);
+    expect(appApi.selectOption).toHaveBeenCalledWith('two');
   });
 
   it('should fuzzy filter options', async () => {
-    const { emitAppApiEvent, userEvent } = mountSelect();
-
-    emitAppApiEvent('onSelectShow', {
-      items: [
-        { id: 'charmander', label: 'Charmander' },
-        { id: 'charizard', label: 'Charizard' },
-        { id: 'bulbasaur', label: 'Bulbasaur' },
-        { id: 'ivysaur', label: 'Ivysaur' },
-      ],
+    const { userEvent } = mountSelect({
+      showSelect: {
+        items: [
+          { id: 'charmander', label: 'Charmander' },
+          { id: 'charizard', label: 'Charizard' },
+          { id: 'bulbasaur', label: 'Bulbasaur' },
+          { id: 'ivysaur', label: 'Ivysaur' },
+        ],
+      },
     });
 
     await userEvent.type(screen.getByRole('combobox'), 'ir');
@@ -129,32 +127,32 @@ describe('Select', () => {
   });
 
   it('should fuzzy filter groups', async () => {
-    const { emitAppApiEvent, userEvent } = mountSelect();
-
-    emitAppApiEvent('onSelectShow', {
-      items: [
-        { id: 'walk-dog', label: 'Walk the dog' },
-        {
-          id: 'grocery-shopping',
-          label: 'Buy groceries',
-          type: 'group',
-          items: [
-            { id: 'grocery-shopping-milk', label: 'Milk' },
-            { id: 'grocery-shopping-eggs', label: 'Eggs' },
-            { id: 'grocery-shopping-flour', label: 'Flour' },
-          ],
-        },
-        { id: 'feed-cat', label: 'Feed the cat' },
-        {
-          id: 'sell-bicycle',
-          label: 'Sell bicycle',
-          type: 'group',
-          items: [
-            { id: 'sell-bicycle-take-photos', label: 'Take photos' },
-            { id: 'sell-bicycle-post-ad', label: 'Post ad' },
-          ],
-        },
-      ],
+    const { userEvent } = mountSelect({
+      showSelect: {
+        items: [
+          { id: 'walk-dog', label: 'Walk the dog' },
+          {
+            id: 'grocery-shopping',
+            label: 'Buy groceries',
+            type: 'group',
+            items: [
+              { id: 'grocery-shopping-milk', label: 'Milk' },
+              { id: 'grocery-shopping-eggs', label: 'Eggs' },
+              { id: 'grocery-shopping-flour', label: 'Flour' },
+            ],
+          },
+          { id: 'feed-cat', label: 'Feed the cat' },
+          {
+            id: 'sell-bicycle',
+            label: 'Sell bicycle',
+            type: 'group',
+            items: [
+              { id: 'sell-bicycle-take-photos', label: 'Take photos' },
+              { id: 'sell-bicycle-post-ad', label: 'Post ad' },
+            ],
+          },
+        ],
+      },
     });
 
     await userEvent.type(screen.getByRole('combobox'), 'l');
@@ -173,13 +171,13 @@ describe('Select', () => {
   });
 
   it('should show a no matches found message', async () => {
-    const { emitAppApiEvent, userEvent } = mountSelect();
-
-    emitAppApiEvent('onSelectShow', {
-      items: [
-        { id: 'bulbasaur', label: 'Bulbasaur' },
-        { id: 'ivysaur', label: 'Ivysaur' },
-      ],
+    const { userEvent } = mountSelect({
+      showSelect: {
+        items: [
+          { id: 'bulbasaur', label: 'Bulbasaur' },
+          { id: 'ivysaur', label: 'Ivysaur' },
+        ],
+      },
     });
 
     await userEvent.type(screen.getByRole('combobox'), 'cat');

@@ -1,10 +1,13 @@
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import DropdownList from './components/DropdownList';
 import DropdownRow from './components/DropdownRow';
 import FilterInput from './components/FilterInput';
+import findFirstOption from './helpers/findFirstOption';
+import findLastOption from './helpers/findLastOption';
+import findNearestOption from './helpers/findNearestOption';
 import useFilterItems from './helpers/useFilterItems';
 import styles from './Select.module.scss';
 
@@ -16,10 +19,12 @@ interface SelectProps {
 const Select: FC<SelectProps> = ({ services }) => {
   const { t } = useTranslation();
 
+  const listRef = useRef<HTMLUListElement>(null);
+
   const [serviceId, setServiceId] = useState<string>();
   const service = useService(services, serviceId);
 
-  const [selectedOption, setSelectedOption] = useState<SelectOptionType>();
+  const [activeOptionId, setActiveOptionId] = useState<string>();
 
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<SelectItem[]>([]);
@@ -42,12 +47,44 @@ const Select: FC<SelectProps> = ({ services }) => {
   }, []);
 
   const handleOptionHover = (option: SelectOptionType) => {
-    setSelectedOption(option);
+    setActiveOptionId(option.id);
   };
 
   const handleOptionSelect = () => {
-    if (selectedOption) {
-      window.app.selectOption(selectedOption);
+    if (activeOptionId) {
+      window.app.selectOption(activeOptionId);
+    }
+  };
+
+  const handleFirstOptionSelect = () => {
+    const option = findFirstOption(listRef.current);
+
+    if (option) {
+      setActiveOptionId(option.id);
+    }
+  };
+
+  const handleLastOptionSelect = () => {
+    const option = findLastOption(listRef.current);
+
+    if (option) {
+      setActiveOptionId(option.id);
+    }
+  };
+
+  const handleNextOptionSelect = () => {
+    highlightAdjacentOption('next');
+  };
+
+  const handlePreviousOptionSelect = () => {
+    highlightAdjacentOption('previous');
+  };
+
+  const highlightAdjacentOption = (direction: 'next' | 'previous') => {
+    const option = findNearestOption({ activeOptionId, container: listRef.current, direction });
+
+    if (option) {
+      setActiveOptionId(option.id);
     }
   };
 
@@ -56,19 +93,25 @@ const Select: FC<SelectProps> = ({ services }) => {
   return (
     <>
       <FilterInput
+        activeOptionId={activeOptionId}
         listboxId={listboxId}
         onChange={setQuery}
+        onFirstOptionSelect={handleFirstOptionSelect}
+        onLastOptionSelect={handleLastOptionSelect}
+        onNextOptionSelect={handleNextOptionSelect}
+        onPreviousOptionSelect={handlePreviousOptionSelect}
         placeholder={placeholder ?? t('selectPlaceholder')}
         query={query}
       />
       <DropdownList
+        activeOptionId={activeOptionId}
         depth={0}
         id={listboxId}
         items={filteredItems}
         onOptionHover={handleOptionHover}
         onOptionSelect={handleOptionSelect}
+        ref={listRef}
         role="listbox"
-        selectedOption={selectedOption}
         service={service}
       >
         {query && filteredItems.length === 0 && (
