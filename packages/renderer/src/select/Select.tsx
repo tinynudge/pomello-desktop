@@ -40,7 +40,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   });
 
   useEffect(() => {
-    return window.app.onSelectShow(({ serviceId, placeholder, items }) => {
+    return window.app.onSetSelectItems(({ serviceId, placeholder, items }) => {
       setServiceId(serviceId);
       setPlaceholder(placeholder);
       setItems(items);

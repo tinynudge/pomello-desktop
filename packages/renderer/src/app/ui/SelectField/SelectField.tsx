@@ -1,8 +1,9 @@
 import { selectServiceId } from '@/app/appSlice';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem } from '@domain';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import styles from './SelectField.module.scss';
 
 interface SelectFieldProps {
   items: SelectItem[];
@@ -15,6 +16,8 @@ const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlacehold
 
   const serviceId = useSelector(selectServiceId);
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const placeholder = customPlaceholder ?? t('selectPlaceholder');
 
   useEffect(() => {
@@ -26,10 +29,31 @@ const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlacehold
   }, [onChange]);
 
   useEffect(() => {
-    window.app.showSelect({ serviceId, placeholder, items });
+    window.app.setSelectItems({ serviceId, placeholder, items });
   }, [placeholder, items, serviceId]);
 
-  return <div>{placeholder}</div>;
+  const handleButtonClick = () => {
+    if (!buttonRef.current) {
+      return;
+    }
+
+    const bounds = buttonRef.current.getBoundingClientRect();
+
+    window.app.showSelect({
+      buttonBounds: {
+        height: bounds.height,
+        width: bounds.width,
+        x: bounds.x,
+        y: bounds.y,
+      },
+    });
+  };
+
+  return (
+    <button className={styles.button} onClick={handleButtonClick} ref={buttonRef}>
+      {placeholder}
+    </button>
+  );
 };
 
 export default SelectField;

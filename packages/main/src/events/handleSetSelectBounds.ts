@@ -1,18 +1,26 @@
+import sanitizeBounds from '@/helpers/sanitizeBounds';
 import runtime from '@/runtime';
-import { IpcMainInvokeEvent, Rectangle } from 'electron';
+import { SetSelectBoundsOptions } from '@domain';
+import { IpcMainInvokeEvent } from 'electron';
 
-const handleSetSelectBounds = (_event: IpcMainInvokeEvent, bounds: Partial<Rectangle>): void => {
+const handleSetSelectBounds = (
+  _event: IpcMainInvokeEvent,
+  { bounds, orientation }: SetSelectBoundsOptions
+): void => {
   const selectWindow = runtime.windowManager.findOrFailWindow('select');
+  const newBounds = bounds;
 
-  const sanitizedBounds = Object.entries(bounds).reduce<Partial<Rectangle>>(
-    (newBounds, [key, value]) => ({
-      ...newBounds,
-      [key]: Math.round(value),
-    }),
-    {}
-  );
+  if (orientation === 'bottom' && newBounds.height) {
+    const { height: currentHeight, y: currentY } = selectWindow.getBounds();
 
-  selectWindow.setBounds(sanitizedBounds);
+    if (!newBounds.y) {
+      newBounds.y = currentY;
+    }
+
+    newBounds.y += currentHeight - newBounds.height;
+  }
+
+  selectWindow.setBounds(sanitizeBounds(newBounds));
 };
 
 export default handleSetSelectBounds;

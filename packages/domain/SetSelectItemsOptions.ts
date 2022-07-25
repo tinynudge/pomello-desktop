@@ -1,6 +1,6 @@
 import { SelectItem } from './SelectItem';
 
-export interface ShowSelectOptions {
+export interface SetSelectItemsOptions {
   items: SelectItem[];
   placeholder?: string;
   serviceId?: string;

@@ -6,6 +6,7 @@ export enum AppEvent {
   SelectChange = 'select-change',
   SelectOption = 'select-option',
   SetSelectBounds = 'set-select-bounds',
+  SetSelectItems = 'set-select-items',
   ShowSelect = 'show-select',
   ThemeCssChange = 'theme-css-change',
 }

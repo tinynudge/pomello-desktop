@@ -1,0 +1,29 @@
+$button-padding: 2px;
+
+.button {
+  position: relative;
+  padding: 0 $button-padding;
+  border: 0;
+  margin-left: -$button-padding;
+  background-color: transparent;
+  color: inherit;
+
+  &::after {
+    position: absolute;
+    bottom: 0;
+    display: block;
+    width: calc(100% - ($button-padding * 2));
+    border-bottom: 1px dotted var(--app-content-default);
+    content: '';
+    opacity: 0;
+    transition: opacity 140ms ease-in-out;
+  }
+
+  &:hover {
+    cursor: pointer;
+
+    &::after {
+      opacity: 0.8;
+    }
+  }
+}
