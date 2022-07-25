@@ -7,6 +7,7 @@ import onSelectShow from './onSelectShow';
 import onThemeCssChange from './onThemeCssChange';
 import registerStore from './registerStore';
 import selectOption from './selectOption';
+import setSelectBounds from './setSelectBounds';
 import showSelect from './showSelect';
 
 const api = {
@@ -18,6 +19,7 @@ const api = {
   onThemeCssChange,
   registerStore,
   selectOption,
+  setSelectBounds,
   showSelect,
 };
 

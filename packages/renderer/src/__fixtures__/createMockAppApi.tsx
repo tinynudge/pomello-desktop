@@ -45,6 +45,7 @@ const createMockAppApi = (
     onSelectShow: vi.fn(appApi.onSelectShow ?? (callback => addListener('onSelectShow', callback))),
     registerStore: vi.fn(),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),
+    setSelectBounds: vi.fn(),
     showSelect: vi.fn(appApi.showSelect ?? (() => Promise.resolve())),
   };
 

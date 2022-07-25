@@ -8,7 +8,8 @@ import FilterInput from './components/FilterInput';
 import findFirstOption from './helpers/findFirstOption';
 import findLastOption from './helpers/findLastOption';
 import findNearestOption from './helpers/findNearestOption';
-import useFilterItems from './helpers/useFilterItems';
+import useFilterItems from './hooks/useFilterItems';
+import useUpdateWindowDimensions from './hooks/useUpdateWindowDimensions';
 import styles from './Select.module.scss';
 
 interface SelectProps {
@@ -16,7 +17,7 @@ interface SelectProps {
   settings: Settings;
 }
 
-const Select: FC<SelectProps> = ({ services }) => {
+const Select: FC<SelectProps> = ({ services, settings }) => {
   const { t } = useTranslation();
 
   const listRef = useRef<HTMLUListElement>(null);
@@ -32,18 +33,18 @@ const Select: FC<SelectProps> = ({ services }) => {
 
   const [placeholder, setPlaceholder] = useState<string>();
 
-  useEffect(() => {
-    const removeSelectShowListener = window.app.onSelectShow(
-      ({ serviceId, placeholder, items }) => {
-        setServiceId(serviceId);
-        setPlaceholder(placeholder);
-        setItems(items);
-      }
-    );
+  useUpdateWindowDimensions({
+    container: listRef.current,
+    items: filteredItems,
+    maxRows: settings.selectMaxRows,
+  });
 
-    return () => {
-      removeSelectShowListener();
-    };
+  useEffect(() => {
+    return window.app.onSelectShow(({ serviceId, placeholder, items }) => {
+      setServiceId(serviceId);
+      setPlaceholder(placeholder);
+      setItems(items);
+    });
   }, []);
 
   const handleOptionHover = (option: SelectOptionType) => {
