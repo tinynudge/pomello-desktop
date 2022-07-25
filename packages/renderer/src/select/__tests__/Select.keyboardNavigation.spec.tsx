@@ -3,7 +3,7 @@ import mountSelect, { screen } from '../__fixtures__/mountSelect';
 describe('Select - Keyboard Navigation', () => {
   it('should select the next option on arrow down keys', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           { id: 'two', label: 'Two' },
@@ -51,7 +51,7 @@ describe('Select - Keyboard Navigation', () => {
 
   it('should select the previous option on arrow up keys', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           { id: 'two', label: 'Two' },
@@ -99,7 +99,7 @@ describe('Select - Keyboard Navigation', () => {
 
   it('should select the next option on tab keys', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           { id: 'two', label: 'Two' },
@@ -119,7 +119,7 @@ describe('Select - Keyboard Navigation', () => {
 
   it('should select the first open on the home key', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           { id: 'two', label: 'Two' },
@@ -136,7 +136,7 @@ describe('Select - Keyboard Navigation', () => {
 
   it('should select the last open on the end key', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           { id: 'two', label: 'Two' },

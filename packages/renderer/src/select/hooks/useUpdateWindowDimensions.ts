@@ -14,10 +14,17 @@ const useUpdateWindowDimensions = ({
   maxRows,
 }: UseUpdateWindowDimensionsOptions): void => {
   const didSetWidth = useRef(false);
+  const windowOrientation = useRef<'bottom' | 'top'>();
 
   useEffect(() => {
-    return window.app.onSelectShow(() => {
+    return window.app.onSetSelectItems(() => {
       didSetWidth.current = false;
+    });
+  }, []);
+
+  useEffect(() => {
+    return window.app.onShowSelect(({ orientation }) => {
+      windowOrientation.current = orientation;
     });
   }, []);
 
@@ -49,7 +56,10 @@ const useUpdateWindowDimensions = ({
       bounds.height = option.getBoundingClientRect().bottom;
     }
 
-    window.app.setSelectBounds(bounds);
+    window.app.setSelectBounds({
+      bounds,
+      orientation: windowOrientation.current,
+    });
   }, [container, maxRows, items]);
 };
 

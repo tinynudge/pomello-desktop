@@ -32,7 +32,6 @@ body {
   justify-content: center;
   padding: 0;
   border: 0;
-  margin-right: 8px;
   background-color: var(--menu-toggle-background-default);
   color: var(--menu-toggle-content-default);
 
@@ -46,4 +45,5 @@ body {
 .content {
   overflow: hidden;
   flex: 1;
+  padding: 8px;
 }

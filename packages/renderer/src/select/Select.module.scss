@@ -1,7 +1,6 @@
 @import '@/shared/styles/global';
 
 body {
-  -webkit-app-region: drag; // TODO: remove after implementing dynamic select window bounds
   background-color: var(--select-background-default);
   color: var(--select-content-default);
   user-select: none;

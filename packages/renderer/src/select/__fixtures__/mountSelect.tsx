@@ -2,7 +2,7 @@ import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockService from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
-import { Service, ServiceRegistry, Settings, ShowSelectOptions } from '@domain';
+import { Service, ServiceRegistry, SetSelectItemsOptions, Settings } from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import translations from '../../../../translations/en-US.json';
@@ -13,8 +13,8 @@ export * from '@testing-library/react';
 interface MountSelectOptions {
   appApi?: Partial<AppApi>;
   service?: Partial<Omit<Service, 'id'>>;
+  setSelectItems?: SetSelectItemsOptions;
   settings?: Partial<Settings>;
-  showSelect?: ShowSelectOptions;
 }
 
 const mountSelect = (options: MountSelectOptions = {}) => {
@@ -34,8 +34,8 @@ const mountSelect = (options: MountSelectOptions = {}) => {
     </TranslationsProvider>
   );
 
-  if (options.showSelect) {
-    emitAppApiEvent('onSelectShow', options.showSelect);
+  if (options.setSelectItems) {
+    emitAppApiEvent('onSetSelectItems', options.setSelectItems);
   }
 
   return {

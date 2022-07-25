@@ -8,14 +8,15 @@ const createAppWindows = async (): Promise<void> => {
   const { alwaysOnTop, osxAllowMoveAnywhere } = getSettings().all();
 
   const selectWindow = await runtime.windowManager.findOrCreateWindow({
-    alwaysOnTop: true,
+    alwaysOnTop,
     frame: false,
-    height: 140,
     id: 'select',
+    modal: true,
+    movable: false,
     path: 'select.html',
     preloadPath: join(__dirname, '../../preload/dist/index.cjs'),
+    resizable: false,
     showDevTools: true,
-    width,
   });
 
   const appWindow = await runtime.windowManager.findOrCreateWindow({
@@ -35,6 +36,7 @@ const createAppWindows = async (): Promise<void> => {
     y,
   });
 
+  selectWindow.setParentWindow(appWindow);
   selectWindow.excludedFromShownWindowsMenu = true;
 
   if (appWindow.isMinimized()) {

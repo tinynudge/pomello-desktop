@@ -4,7 +4,7 @@ import mountSelect, { screen } from '../__fixtures__/mountSelect';
 describe('Select', () => {
   it('should show a custom placeholder', () => {
     mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [{ id: 'one', label: 'One' }],
         placeholder: 'My super select',
       },
@@ -15,7 +15,7 @@ describe('Select', () => {
 
   it('should render a list of options', () => {
     mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           { id: 'two', label: 'Two' },
@@ -31,7 +31,7 @@ describe('Select', () => {
 
   it('should render option groups', () => {
     mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           {
@@ -58,7 +58,7 @@ describe('Select', () => {
 
     mountSelect({
       service: { CustomSelectOption },
-      showSelect: {
+      setSelectItems: {
         serviceId: 'mock',
         items: [{ id: 'one', label: 'One', type: 'customOption' }],
       },
@@ -74,7 +74,7 @@ describe('Select', () => {
 
     mountSelect({
       service: { CustomSelectGroup },
-      showSelect: {
+      setSelectItems: {
         serviceId: 'mock',
         items: [
           {
@@ -92,7 +92,7 @@ describe('Select', () => {
 
   it('should select the option when clicked', async () => {
     const { appApi, userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
           { id: 'two', label: 'Two' },
@@ -107,7 +107,7 @@ describe('Select', () => {
 
   it('should fuzzy filter options', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'charmander', label: 'Charmander' },
           { id: 'charizard', label: 'Charizard' },
@@ -128,7 +128,7 @@ describe('Select', () => {
 
   it('should fuzzy filter groups', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'walk-dog', label: 'Walk the dog' },
           {
@@ -172,7 +172,7 @@ describe('Select', () => {
 
   it('should show a no matches found message', async () => {
     const { userEvent } = mountSelect({
-      showSelect: {
+      setSelectItems: {
         items: [
           { id: 'bulbasaur', label: 'Bulbasaur' },
           { id: 'ivysaur', label: 'Ivysaur' },
@@ -184,5 +184,24 @@ describe('Select', () => {
 
     expect(screen.queryAllByRole('option')).toHaveLength(0);
     expect(screen.getByRole('alert')).toHaveTextContent('No matches found');
+  });
+
+  it('should pass the window orientation when updating the bounds', async () => {
+    const { appApi, emitAppApiEvent, userEvent } = mountSelect({
+      setSelectItems: {
+        items: [
+          { id: 'bulbasaur', label: 'Bulbasaur' },
+          { id: 'ivysaur', label: 'Ivysaur' },
+        ],
+      },
+    });
+
+    emitAppApiEvent('onShowSelect', { orientation: 'bottom' });
+
+    await userEvent.type(screen.getByRole('combobox'), 'sur');
+
+    expect(appApi.setSelectBounds).toHaveBeenCalledWith(
+      expect.objectContaining({ orientation: 'bottom' })
+    );
   });
 });

@@ -1,7 +1,7 @@
-import { AppEvent } from '@domain';
-import { ipcRenderer, Rectangle } from 'electron';
+import { AppEvent, SetSelectBoundsOptions } from '@domain';
+import { ipcRenderer } from 'electron';
 
-const setSelectBounds = (options: Partial<Rectangle>): Promise<void> =>
+const setSelectBounds = (options: SetSelectBoundsOptions): Promise<void> =>
   ipcRenderer.invoke(AppEvent.SetSelectBounds, options);
 
 export default setSelectBounds;
