@@ -9,7 +9,7 @@ interface DropdownRowProps extends HTMLAttributes<HTMLLIElement> {
 
 const DropdownRow: FC<DropdownRowProps> = ({ children, className, onClick, ...remainingProps }) => {
   return (
-    <li className={cc([styles.row, className])} onClick={onClick} {...remainingProps}>
+    <li className={cc([styles.row, className])} data-row onClick={onClick} {...remainingProps}>
       {children}
     </li>
   );
