@@ -1,6 +1,7 @@
 import { join } from 'path';
 import getPomelloConfig from './getPomelloConfig';
 import getSettings from './getSettings';
+import hideSelectWindow from './helpers/hideSelectWindow';
 import runtime from './runtime';
 
 const createAppWindows = async (): Promise<void> => {
@@ -17,6 +18,7 @@ const createAppWindows = async (): Promise<void> => {
     preloadPath: join(__dirname, '../../preload/dist/index.cjs'),
     resizable: false,
     showDevTools: true,
+    showOnReady: false,
   });
 
   const appWindow = await runtime.windowManager.findOrCreateWindow({
@@ -38,6 +40,11 @@ const createAppWindows = async (): Promise<void> => {
 
   selectWindow.setParentWindow(appWindow);
   selectWindow.excludedFromShownWindowsMenu = true;
+  selectWindow.on('blur', hideSelectWindow);
+
+  // This seems to avoid the visual flash between when the select window changes
+  // from hidden to visible and the subsequent browser paint.
+  selectWindow.webContents.incrementCapturerCount();
 
   if (appWindow.isMinimized()) {
     appWindow.restore();
