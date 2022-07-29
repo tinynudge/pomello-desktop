@@ -21,11 +21,21 @@ const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlacehold
   const placeholder = customPlaceholder ?? t('selectPlaceholder');
 
   useEffect(() => {
-    const removeSelectOptionListener = window.app.onSelectChange(onChange);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'Space' && event.target === document.body) {
+        showSelectWindow();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      removeSelectOptionListener();
+      document.removeEventListener('keydown', handleKeyDown);
     };
+  }, []);
+
+  useEffect(() => {
+    return window.app.onSelectChange(onChange);
   }, [onChange]);
 
   useEffect(() => {
@@ -33,20 +43,22 @@ const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlacehold
   }, [placeholder, items, serviceId]);
 
   const handleButtonClick = () => {
-    if (!buttonRef.current) {
-      return;
+    showSelectWindow();
+  };
+
+  const showSelectWindow = () => {
+    if (buttonRef.current) {
+      const bounds = buttonRef.current.getBoundingClientRect();
+
+      window.app.showSelect({
+        buttonBounds: {
+          height: bounds.height,
+          width: bounds.width,
+          x: bounds.x,
+          y: bounds.y,
+        },
+      });
     }
-
-    const bounds = buttonRef.current.getBoundingClientRect();
-
-    window.app.showSelect({
-      buttonBounds: {
-        height: bounds.height,
-        width: bounds.width,
-        x: bounds.x,
-        y: bounds.y,
-      },
-    });
   };
 
   return (

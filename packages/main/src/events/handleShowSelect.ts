@@ -71,6 +71,8 @@ const handleShowSelect = async (
   selectWindow.webContents.send(AppEvent.ShowSelect, {
     orientation: exceedsBottomEdge ? 'bottom' : 'top',
   });
+
+  selectWindow.show();
 };
 
 export default handleShowSelect;

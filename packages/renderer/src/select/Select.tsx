@@ -20,6 +20,7 @@ interface SelectProps {
 const Select: FC<SelectProps> = ({ services, settings }) => {
   const { t } = useTranslation();
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState<string>();
@@ -40,12 +41,29 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   });
 
   useEffect(() => {
+    return window.app.onShowSelect(() => {
+      inputRef.current?.focus();
+    });
+  }, []);
+
+  useEffect(() => {
+    return window.app.onSelectHide(() => {
+      setQuery('');
+      setActiveOptionId(undefined);
+    });
+  });
+
+  useEffect(() => {
     return window.app.onSetSelectItems(({ serviceId, placeholder, items }) => {
       setServiceId(serviceId);
       setPlaceholder(placeholder);
       setItems(items);
     });
   }, []);
+
+  const handleInputEscape = () => {
+    window.app.hideSelect();
+  };
 
   const handleOptionHover = (option: SelectOptionType) => {
     setActiveOptionId(option.id);
@@ -97,11 +115,13 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
         activeOptionId={activeOptionId}
         listboxId={listboxId}
         onChange={setQuery}
+        onEscape={handleInputEscape}
         onFirstOptionSelect={handleFirstOptionSelect}
         onLastOptionSelect={handleLastOptionSelect}
         onNextOptionSelect={handleNextOptionSelect}
         onPreviousOptionSelect={handlePreviousOptionSelect}
         placeholder={placeholder ?? t('selectPlaceholder')}
+        ref={inputRef}
         query={query}
       />
       <DropdownList

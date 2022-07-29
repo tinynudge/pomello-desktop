@@ -1,10 +1,11 @@
-import { ChangeEvent, FC, KeyboardEvent } from 'react';
+import { ChangeEvent, forwardRef, KeyboardEvent } from 'react';
 import styles from './FilterInput.module.scss';
 
 interface FilterInputProps {
   activeOptionId?: string;
   listboxId: string;
   onChange(query: string): void;
+  onEscape(): void;
   onFirstOptionSelect(): void;
   onLastOptionSelect(): void;
   onNextOptionSelect(): void;
@@ -13,48 +14,63 @@ interface FilterInputProps {
   query: string;
 }
 
-const FilterInput: FC<FilterInputProps> = ({
-  activeOptionId,
-  listboxId,
-  onChange,
-  onFirstOptionSelect,
-  onLastOptionSelect,
-  onNextOptionSelect,
-  onPreviousOptionSelect,
-  placeholder,
-  query,
-}) => {
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.currentTarget.value);
-  };
+const FilterInput = forwardRef<HTMLInputElement, FilterInputProps>(
+  (
+    {
+      activeOptionId,
+      listboxId,
+      onChange,
+      onEscape,
+      onFirstOptionSelect,
+      onLastOptionSelect,
+      onNextOptionSelect,
+      onPreviousOptionSelect,
+      placeholder,
+      query,
+    },
+    ref
+  ) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+      onChange(event.currentTarget.value);
+    };
 
-  const handleInputKeyDown = ({ key, shiftKey }: KeyboardEvent<HTMLInputElement>) => {
-    if (key === 'ArrowDown' || (!shiftKey && key === 'Tab')) {
-      onNextOptionSelect();
-    } else if (key === 'ArrowUp' || (shiftKey && key === 'Tab')) {
-      onPreviousOptionSelect();
-    } else if (key === 'Home') {
-      onFirstOptionSelect();
-    } else if (key === 'End') {
-      onLastOptionSelect();
-    }
-  };
+    const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+      const { key, shiftKey } = event;
 
-  return (
-    <input
-      aria-activedescendant={activeOptionId}
-      aria-autocomplete="list"
-      aria-controls={listboxId}
-      aria-expanded
-      className={styles.input}
-      onChange={handleInputChange}
-      onKeyDown={handleInputKeyDown}
-      placeholder={placeholder}
-      role="combobox"
-      type="text"
-      value={query}
-    />
-  );
-};
+      if (key === 'Tab') {
+        event.preventDefault();
+      }
+
+      if (key === 'ArrowDown' || (!shiftKey && key === 'Tab')) {
+        onNextOptionSelect();
+      } else if (key === 'ArrowUp' || (shiftKey && key === 'Tab')) {
+        onPreviousOptionSelect();
+      } else if (key === 'Home') {
+        onFirstOptionSelect();
+      } else if (key === 'End') {
+        onLastOptionSelect();
+      } else if (key === 'Escape') {
+        onEscape();
+      }
+    };
+
+    return (
+      <input
+        aria-activedescendant={activeOptionId}
+        aria-autocomplete="list"
+        aria-controls={listboxId}
+        aria-expanded
+        className={styles.input}
+        onChange={handleInputChange}
+        onKeyDown={handleInputKeyDown}
+        placeholder={placeholder}
+        ref={ref}
+        role="combobox"
+        type="text"
+        value={query}
+      />
+    );
+  }
+);
 
 export default FilterInput;

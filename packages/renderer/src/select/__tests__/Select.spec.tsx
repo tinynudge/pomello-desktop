@@ -204,4 +204,41 @@ describe('Select', () => {
       expect.objectContaining({ orientation: 'bottom' })
     );
   });
+
+  it('should hide the select when the escape key is pressed', async () => {
+    const { appApi, userEvent } = mountSelect({
+      setSelectItems: {
+        items: [],
+      },
+    });
+
+    await userEvent.type(screen.getByRole('combobox'), '{Escape}');
+
+    expect(appApi.hideSelect).toHaveBeenCalled();
+  });
+
+  it('should reset the state when the select is hidden', async () => {
+    const { emitAppApiEvent, userEvent } = mountSelect({
+      setSelectItems: {
+        items: [
+          { id: 'charmander', label: 'Charmander' },
+          { id: 'charizard', label: 'Charizard' },
+          { id: 'bulbasaur', label: 'Bulbasaur' },
+          { id: 'ivysaur', label: 'Ivysaur' },
+        ],
+      },
+    });
+
+    await userEvent.type(screen.getByRole('combobox'), 'ir');
+    await userEvent.hover(screen.getByRole('option', { name: 'Ivysaur' }));
+
+    expect(screen.getAllByRole('option')).toHaveLength(2);
+    expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'ivysaur');
+
+    emitAppApiEvent('onSelectHide');
+
+    expect(screen.getByRole('combobox')).toHaveValue('');
+    expect(screen.getAllByRole('option')).toHaveLength(4);
+    expect(screen.getByRole('combobox')).not.toHaveAttribute('aria-activedescendant');
+  });
 });
