@@ -1,13 +1,14 @@
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import DropdownList from './components/DropdownList';
 import DropdownRow from './components/DropdownRow';
 import FilterInput from './components/FilterInput';
 import findFirstOption from './helpers/findFirstOption';
 import findLastOption from './helpers/findLastOption';
 import findNearestOption from './helpers/findNearestOption';
+import useEnsureVisibleActiveOption from './hooks/useEnsureVisibleActiveOption';
 import useFilterItems from './hooks/useFilterItems';
 import useUpdateWindowDimensions from './hooks/useUpdateWindowDimensions';
 import styles from './Select.module.scss';
@@ -20,7 +21,6 @@ interface SelectProps {
 const Select: FC<SelectProps> = ({ services, settings }) => {
   const { t } = useTranslation();
 
-  const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState<string>();
@@ -33,6 +33,19 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   const filteredItems = useFilterItems(query, items);
 
   const [placeholder, setPlaceholder] = useState<string>();
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputHeight = useRef(0);
+  const inputCallbackRef = useCallback((inputElement: HTMLInputElement | null) => {
+    if (inputElement) {
+      const { height } = inputElement.getBoundingClientRect();
+
+      inputRef.current = inputElement;
+      inputHeight.current = height;
+    }
+  }, []);
+
+  useEnsureVisibleActiveOption({ activeOptionId, inputHeight, listRef, setActiveOptionId });
 
   useUpdateWindowDimensions({
     container: listRef.current,
@@ -51,7 +64,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
       setQuery('');
       setActiveOptionId(undefined);
     });
-  });
+  }, []);
 
   useEffect(() => {
     return window.app.onSetSelectItems(({ serviceId, placeholder, items }) => {
@@ -60,6 +73,10 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
       setItems(items);
     });
   }, []);
+
+  const handleInputEnter = () => {
+    selectActiveOption();
+  };
 
   const handleInputEscape = () => {
     window.app.hideSelect();
@@ -70,9 +87,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   };
 
   const handleOptionSelect = () => {
-    if (activeOptionId) {
-      window.app.selectOption(activeOptionId);
-    }
+    selectActiveOption();
   };
 
   const handleFirstOptionSelect = () => {
@@ -107,6 +122,12 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
     }
   };
 
+  const selectActiveOption = () => {
+    if (activeOptionId) {
+      window.app.selectOption(activeOptionId);
+    }
+  };
+
   const listboxId = 'select-listbox';
 
   return (
@@ -115,13 +136,14 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
         activeOptionId={activeOptionId}
         listboxId={listboxId}
         onChange={setQuery}
+        onEnter={handleInputEnter}
         onEscape={handleInputEscape}
         onFirstOptionSelect={handleFirstOptionSelect}
         onLastOptionSelect={handleLastOptionSelect}
         onNextOptionSelect={handleNextOptionSelect}
         onPreviousOptionSelect={handlePreviousOptionSelect}
         placeholder={placeholder ?? t('selectPlaceholder')}
-        ref={inputRef}
+        ref={inputCallbackRef}
         query={query}
       />
       <DropdownList

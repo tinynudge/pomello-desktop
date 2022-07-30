@@ -5,6 +5,7 @@ interface FilterInputProps {
   activeOptionId?: string;
   listboxId: string;
   onChange(query: string): void;
+  onEnter(): void;
   onEscape(): void;
   onFirstOptionSelect(): void;
   onLastOptionSelect(): void;
@@ -20,6 +21,7 @@ const FilterInput = forwardRef<HTMLInputElement, FilterInputProps>(
       activeOptionId,
       listboxId,
       onChange,
+      onEnter,
       onEscape,
       onFirstOptionSelect,
       onLastOptionSelect,
@@ -51,6 +53,8 @@ const FilterInput = forwardRef<HTMLInputElement, FilterInputProps>(
         onLastOptionSelect();
       } else if (key === 'Escape') {
         onEscape();
+      } else if (key === 'Enter') {
+        onEnter();
       }
     };
 
