@@ -1,5 +1,6 @@
 import { CustomSelectGroupComponent, CustomSelectOptionComponent } from '@domain';
-import mountSelect, { screen } from '../__fixtures__/mountSelect';
+import { vi } from 'vitest';
+import mountSelect, { fireEvent, screen } from '../__fixtures__/mountSelect';
 
 describe('Select', () => {
   it('should show a custom placeholder', () => {
@@ -239,6 +240,64 @@ describe('Select', () => {
 
     expect(screen.getByRole('combobox')).toHaveValue('');
     expect(screen.getAllByRole('option')).toHaveLength(4);
-    expect(screen.getByRole('combobox')).not.toHaveAttribute('aria-activedescendant');
+    expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'charmander');
+  });
+
+  it('should select the first available option if the previous active option was filtered out', async () => {
+    const { userEvent } = mountSelect({
+      setSelectItems: {
+        items: [
+          { id: 'charmander', label: 'Charmander' },
+          { id: 'charizard', label: 'Charizard' },
+          { id: 'bulbasaur', label: 'Bulbasaur' },
+          { id: 'ivysaur', label: 'Ivysaur' },
+        ],
+      },
+    });
+
+    await userEvent.type(screen.getByRole('combobox'), 'ivy');
+    // A resize gets triggered when the window's bounds are updated to match the filtered items
+    fireEvent(window, new Event('resize'));
+
+    expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'ivysaur');
+
+    await userEvent.type(screen.getByRole('combobox'), 'ch', {
+      initialSelectionStart: 0,
+      initialSelectionEnd: 3,
+    });
+    fireEvent(window, new Event('resize'));
+
+    expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'charmander');
+  });
+
+  it('should scroll the window to the top or bottom of the active option', async () => {
+    const { userEvent } = mountSelect({
+      setSelectItems: {
+        items: [{ id: 'ivysaur', label: 'Ivysaur' }],
+      },
+    });
+
+    const previousInnerHeight = window.innerHeight;
+    const previousScrollBy = window.scrollBy;
+    const previousGetBoundingClientRect = Element.prototype.getBoundingClientRect;
+
+    window.scrollBy = vi.fn() as any;
+    Element.prototype.getBoundingClientRect = () => ({ top: -50, bottom: 0 } as DOMRect);
+
+    await userEvent.hover(screen.getByRole('option', { name: 'Ivysaur' }));
+    fireEvent(window, new Event('resize'));
+
+    expect(window.scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: -50 }));
+
+    window.innerHeight = 120;
+    Element.prototype.getBoundingClientRect = () => ({ top: 0, bottom: 150 } as DOMRect);
+
+    fireEvent(window, new Event('resize'));
+
+    expect(window.scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: 30 }));
+
+    window.innerHeight = previousInnerHeight;
+    window.scrollBy = previousScrollBy;
+    Element.prototype.getBoundingClientRect = previousGetBoundingClientRect;
   });
 });
