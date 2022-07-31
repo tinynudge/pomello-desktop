@@ -71,6 +71,11 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
       setServiceId(serviceId);
       setPlaceholder(placeholder);
       setItems(items);
+
+      if (placeholder) {
+        // Update the title so screen readers have more context.
+        document.title = placeholder;
+      }
     });
   }, []);
 
