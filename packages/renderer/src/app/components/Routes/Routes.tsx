@@ -3,6 +3,7 @@ import usePomelloActions from '@/app/hooks/usePomelloActions';
 import SelectTaskView from '@/app/views/SelectTaskView';
 import TaskTimerEndView from '@/app/views/TaskTimerEndView';
 import TaskView from '@/app/views/TaskView';
+import useTranslation from '@/shared/hooks/useTranslation';
 import { Service } from '@domain';
 import { FC, Suspense } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,6 +13,8 @@ interface RouteProps {
 }
 
 const Routes: FC<RouteProps> = ({ service }) => {
+  const { t } = useTranslation();
+
   const actions = usePomelloActions();
 
   const { status } = useSelector(selectPomelloState);
@@ -22,7 +25,7 @@ const Routes: FC<RouteProps> = ({ service }) => {
 
   if (status === 'SELECT_TASK') {
     return (
-      <Suspense fallback="Please wait...">
+      <Suspense fallback={t('waitMessage')}>
         <SelectTaskView service={service} />
       </Suspense>
     );
