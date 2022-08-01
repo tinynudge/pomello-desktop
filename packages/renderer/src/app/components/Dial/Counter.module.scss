@@ -1,0 +1,32 @@
+.count {
+  font-size: 19px;
+
+  &.isSubMinute {
+    font-size: 16px;
+  }
+}
+
+.dot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: 2px;
+  margin-left: -2px;
+  background-color: var(--dial-content-default);
+  border-radius: 50%;
+  transform-origin: 2px 18px;
+
+  [data-mode='TASK'] & {
+    background-color: var(--dial-content-task);
+  }
+
+  [data-mode='SHORT_BREAK'] & {
+    background-color: var(--dial-content-short-break);
+  }
+
+  [data-mode='LONG_BREAK'] & {
+    background-color: var(--dial-content-long-break);
+  }
+}
