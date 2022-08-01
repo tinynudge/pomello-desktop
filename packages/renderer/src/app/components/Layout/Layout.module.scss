@@ -17,6 +17,21 @@ body {
   transition: transform 500ms $ease-out-circ;
   user-select: none;
 
+  &[data-mode='TASK'] {
+    background-color: var(--app-background-task);
+    color: var(--app-content-task);
+  }
+
+  &[data-mode='SHORT_BREAK'] {
+    background-color: var(--app-background-short-break);
+    color: var(--app-content-short-break);
+  }
+
+  &[data-mode='LONG_BREAK'] {
+    background-color: var(--app-background-long-break);
+    color: var(--app-content-long-break);
+  }
+
   &.menuOpen {
     box-shadow: $z1-side-shadow;
   }

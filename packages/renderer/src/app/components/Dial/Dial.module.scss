@@ -1,0 +1,131 @@
+@use 'sass:math';
+@import '@/shared/styles/global';
+
+$dial-size: 40px;
+$action-size: 36px;
+
+@mixin dial-button {
+  background-color: var(--dial-background-default);
+  color: var(--dial-content-default);
+
+  [data-mode='TASK'] & {
+    background-color: var(--dial-background-task);
+    color: var(--dial-content-task);
+  }
+
+  [data-mode='SHORT_BREAK'] & {
+    background-color: var(--dial-background-short-break);
+    color: var(--dial-content-short-break);
+  }
+
+  [data-mode='LONG_BREAK'] & {
+    background-color: var(--dial-background-long-break);
+    color: var(--dial-content-long-break);
+  }
+}
+
+@keyframes blink {
+  57%,
+  100% {
+    opacity: 1;
+  }
+
+  65%,
+  92% {
+    opacity: 0;
+  }
+}
+
+.container {
+  position: relative;
+}
+
+.dial {
+  @include dial-button;
+
+  position: relative;
+  z-index: 100;
+  overflow: hidden;
+  width: $dial-size;
+  height: $dial-size;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: $z1-shadow;
+  cursor: pointer;
+
+  .isExpanded & {
+    box-shadow: $z2-shadow;
+  }
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 11px;
+  text-transform: uppercase;
+  transition: transform 440ms $ease-out-circ;
+
+  .isActive & {
+    transform: translateY(-100%);
+  }
+
+  .isExpanded &,
+  .isActive:focus-visible &,
+  .isHoverable:hover & {
+    transform: translateY(-200%);
+  }
+
+  &.isPaused {
+    animation: blink 1.2s linear infinite;
+  }
+}
+
+.action {
+  @include dial-button;
+
+  position: absolute;
+  z-index: 90;
+  top: math.div($dial-size - $action-size, 2);
+  right: math.div($dial-size - $action-size, 2);
+  width: $action-size;
+  height: $action-size;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 300ms $ease-out-circ;
+
+  .isExpanded & {
+    box-shadow: $z2-shadow;
+
+    @for $i from 1 through 5 {
+      &:nth-child(#{$i}) {
+        transform: translateX(-1 * (($i * ($action-size + 8px)) - $action-size));
+        transition-delay: $i * 16ms;
+      }
+    }
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--dial-overlay);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 60ms ease-out;
+
+  &.isVisible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

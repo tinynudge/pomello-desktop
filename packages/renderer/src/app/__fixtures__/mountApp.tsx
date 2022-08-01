@@ -11,9 +11,13 @@ import translations from '../../../../translations/en-US.json';
 import App from '../App';
 import { PomelloContextProvider } from '../context/PomelloContext';
 import createStore from '../createStore';
+import bindContext from './bindContext';
 import createMockPomelloService from './createMockPomelloService';
+import simulate from './simulate';
 
 export * from '@testing-library/react';
+
+export type MountAppResults = ReturnType<typeof mountApp>;
 
 interface MountAppOptions {
   appApi?: Partial<AppApi>;
@@ -49,7 +53,7 @@ const mountApp = (options: MountAppOptions = {}) => {
     mock: () => service,
   };
 
-  const result = render(
+  render(
     <Provider store={store}>
       <PomelloContextProvider service={pomelloService}>
         <QueryClientProvider client={queryClient}>
@@ -64,10 +68,18 @@ const mountApp = (options: MountAppOptions = {}) => {
   return {
     appApi,
     emitAppApiEvent,
-    result,
     service,
     userEvent: userEvent.setup(),
   };
 };
 
-export default mountApp;
+const mountAppWithSimulator = (options?: MountAppOptions) => {
+  const results = mountApp(options);
+
+  return {
+    ...results,
+    simulate: bindContext(simulate, results),
+  };
+};
+
+export default mountAppWithSimulator;

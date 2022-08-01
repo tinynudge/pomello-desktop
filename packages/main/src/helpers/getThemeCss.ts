@@ -8,9 +8,12 @@ const colors = {
   darkAlt: 'rgb(56 56 56)',
   lightAlt: 'rgb(240 240 240)',
   longBreak: 'rgb(75 174 79)',
+  longBreakDark: 'rgb(67 157 71)',
   primary: 'rgb(0 194 193)',
   shortBreak: 'rgb(32 149 242)',
+  shortBreakDark: 'rgb(27 125 203)',
   task: 'rgb(243 66 53)',
+  taskDark: 'rgb(204 55 45)',
   white: 'rgb(255 255 255)',
 };
 
@@ -61,6 +64,21 @@ const defaultTheme: ThemeConfig = {
       },
     },
     background: [colors.lightAlt, colors.darkAlt],
+  },
+  dial: {
+    background: {
+      default: [colors.white, colors.darkAlt],
+      task: [colors.white, colors.taskDark],
+      'short-break': [colors.white, colors.shortBreakDark],
+      'long-break': [colors.white, colors.longBreakDark],
+    },
+    content: {
+      default: [colors.primary, colors.white],
+      task: [colors.task, colors.dark],
+      'short-break': [colors.shortBreak, colors.dark],
+      'long-break': [colors.longBreak, colors.dark],
+    },
+    overlay: opacity(colors.black, 24),
   },
   select: {
     background: {
