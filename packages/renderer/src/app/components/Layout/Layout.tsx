@@ -1,6 +1,7 @@
 import useTranslation from '@/shared/hooks/useTranslation';
 import cc from 'classcat';
 import { FC, ReactNode, useRef, useState } from 'react';
+import Dial from '../Dial';
 import Menu from '../Menu';
 import { ReactComponent as MenuIcon } from './assets/menu.svg';
 import styles from './Layout.module.scss';
@@ -41,6 +42,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           <MenuIcon aria-hidden width={4} />
         </button>
         <div className={styles.content}>{children}</div>
+        <Dial />
       </main>
     </>
   );
