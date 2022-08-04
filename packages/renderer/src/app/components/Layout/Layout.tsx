@@ -4,9 +4,9 @@ import cc from 'classcat';
 import { FC, ReactNode, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Dial from '../Dial';
-import Menu from '../Menu';
 import { ReactComponent as MenuIcon } from './assets/menu.svg';
 import styles from './Layout.module.scss';
+import Menu from './Menu';
 
 interface LayoutProps {
   children: ReactNode;
