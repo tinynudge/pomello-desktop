@@ -26,7 +26,7 @@ const Routes: FC<RouteProps> = ({ service }) => {
   if (status === 'SELECT_TASK') {
     return (
       <Suspense fallback={t('waitMessage')}>
-        <SelectTaskView service={service} />
+        <SelectTaskView fetchTasks={service.fetchTasks} serviceId={service.id} />
       </Suspense>
     );
   }
