@@ -1,5 +1,7 @@
+import useDialActions from '@/app/hooks/useDialActions';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
+import { DialActionClickHandler } from '@domain';
 import { Timer } from '@tinynudge/pomello-service';
 import cc from 'classcat';
 import { FC, MouseEvent, useState } from 'react';
@@ -14,7 +16,8 @@ interface DialProps {
 const Dial: FC<DialProps> = ({ timer }) => {
   const { t } = useTranslation();
 
-  const { pauseTimer, startTimer } = usePomelloActions();
+  const { dialActions } = useDialActions();
+  const { startTimer } = usePomelloActions();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHoverable, setIsHoverable] = useState(false);
@@ -54,10 +57,12 @@ const Dial: FC<DialProps> = ({ timer }) => {
     };
   }
 
-  const handleActionClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.currentTarget.blur();
-    setIsExpanded(false);
-    pauseTimer();
+  const handleActionClick = (callback: DialActionClickHandler) => {
+    return (event: MouseEvent<HTMLButtonElement>) => {
+      event.currentTarget.blur();
+      setIsExpanded(false);
+      callback();
+    };
   };
 
   const handleOverlayClick = () => {
@@ -106,15 +111,20 @@ const Dial: FC<DialProps> = ({ timer }) => {
             <MoreIcon width={18} />
           </div>
         </button>
-        <button
-          aria-hidden={!isExpanded}
-          aria-label="Pause timer"
-          className={styles.action}
-          onClick={handleActionClick}
-          tabIndex={isExpanded ? 0 : -1}
-        >
-          1
-        </button>
+        <div className={styles.actions}>
+          {dialActions.map(action => (
+            <button
+              aria-hidden={!isExpanded}
+              aria-label={action.label}
+              className={styles.action}
+              key={action.id}
+              onClick={handleActionClick(action.onClick)}
+              tabIndex={isExpanded ? 0 : -1}
+            >
+              {action.Content}
+            </button>
+          ))}
+        </div>
       </div>
       <div
         className={cc({

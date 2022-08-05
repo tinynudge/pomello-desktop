@@ -1,5 +1,5 @@
 import App from '@/app/App';
-import { PomelloContextProvider } from '@/app/context/PomelloContext';
+import { PomelloProvider } from '@/app/context/PomelloContext';
 import createStore from '@/app/createStore';
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
@@ -44,13 +44,13 @@ const renderApp = async () => {
   createRoot(container).render(
     <StrictMode>
       <Provider store={store}>
-        <PomelloContextProvider service={pomelloService}>
+        <PomelloProvider service={pomelloService}>
           <QueryClientProvider client={queryClient}>
             <TranslationsProvider translations={translations}>
               <App services={services} />
             </TranslationsProvider>
           </QueryClientProvider>
-        </PomelloContextProvider>
+        </PomelloProvider>
       </Provider>
     </StrictMode>
   );

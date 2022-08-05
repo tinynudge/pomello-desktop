@@ -86,13 +86,19 @@ $action-size: 36px;
   }
 }
 
+.actions {
+  position: absolute;
+  top: math.div($dial-size - $action-size, 2);
+  right: math.div($dial-size - $action-size, 2);
+}
+
 .action {
   @include dial-button;
 
   position: absolute;
   z-index: 90;
-  top: math.div($dial-size - $action-size, 2);
-  right: math.div($dial-size - $action-size, 2);
+  top: 0;
+  right: 0;
   width: $action-size;
   height: $action-size;
   padding: 0;
@@ -106,7 +112,7 @@ $action-size: 36px;
 
     @for $i from 1 through 5 {
       &:nth-child(#{$i}) {
-        transform: translateX(-1 * (($i * ($action-size + 8px)) - $action-size));
+        transform: translateX(-1 * ($dial-size + ($i * ($action-size + 6px)) - $action-size));
         transition-delay: $i * 16ms;
       }
     }

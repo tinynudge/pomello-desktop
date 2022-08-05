@@ -1,11 +1,14 @@
 {
+  "addNoteLabel": "Add note",
   "closeMenuLabel": "Close menu",
+  "completeTaskLabel": "Complete task",
   "createTaskButtonLabel": "Create task",
   "dashboardButtonLabel": "Dashboard",
   "hideActionsLabel": "Hide actions",
   "homeButtonLabel": "Home",
   "menuLabel": "Menu",
   "openMenuLabel": "Open menu",
+  "pauseTimerLabel": "Pause timer",
   "resumeTimer": "Start",
   "resumeTimerLabel": "Resume timer",
   "selectNoResults": "No matches found",
@@ -16,5 +19,7 @@
   "showActionsLabel": "Show actions",
   "startTimer": "Do it",
   "startTimerLabel": "Start timer",
+  "switchTaskLabel": "Switch task",
+  "voidTaskLabel": "Void task",
   "waitMessage": "Please wait..."
 }

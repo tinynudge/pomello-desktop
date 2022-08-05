@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import translations from '../../../../translations/en-US.json';
 import App from '../App';
-import { PomelloContextProvider } from '../context/PomelloContext';
+import { PomelloProvider } from '../context/PomelloContext';
 import createStore from '../createStore';
 import bindContext from './bindContext';
 import createMockPomelloService from './createMockPomelloService';
@@ -55,13 +55,13 @@ const mountApp = (options: MountAppOptions = {}) => {
 
   render(
     <Provider store={store}>
-      <PomelloContextProvider service={pomelloService}>
+      <PomelloProvider service={pomelloService}>
         <QueryClientProvider client={queryClient}>
           <TranslationsProvider translations={translations}>
             <App services={services} />
           </TranslationsProvider>
         </QueryClientProvider>
-      </PomelloContextProvider>
+      </PomelloProvider>
     </Provider>
   );
 

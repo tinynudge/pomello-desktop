@@ -5,7 +5,7 @@ const usePomelloActions = () => {
   const context = useContext(PomelloContext);
 
   if (!context) {
-    throw new Error(`usePomelloActions must be used inside <PomelloContextProvider>`);
+    throw new Error(`usePomelloActions must be used inside <PomelloProvider>`);
   }
 
   const { getState, on, off, ...actions } = context;
