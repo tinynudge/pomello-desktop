@@ -1,4 +1,5 @@
 import { selectPomelloState } from '@/app/appSlice';
+import { DialActionsProvider } from '@/app/context/DialActionsContext';
 import useTranslation from '@/shared/hooks/useTranslation';
 import cc from 'classcat';
 import { FC, ReactNode, useRef, useState } from 'react';
@@ -32,7 +33,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const hasActiveTimer = timer && (timer.isActive || timer.isPaused);
 
   return (
-    <>
+    <DialActionsProvider>
       <Menu isOpen={isMenuOpen} ref={menuRef} />
       <main
         className={cc({
@@ -54,7 +55,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         <div className={styles.content}>{children}</div>
         {timer && <Dial timer={timer} />}
       </main>
-    </>
+    </DialActionsProvider>
   );
 };
 

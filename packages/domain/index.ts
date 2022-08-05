@@ -2,6 +2,8 @@ export { AppEvent } from './AppEvent';
 export type { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 export type { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
 export type { CustomTaskTimerEndOption } from './CustomTaskTimerEndOption';
+export type { DialAction } from './DialAction';
+export type { DialActionClickHandler } from './DialActionClickHandler';
 export type { FindOrCreateWindowOptions } from './FindOrCreateWindowOptions';
 export type { InitializingView } from './InitializingView';
 export type { PomelloConfig } from './PomelloConfig';

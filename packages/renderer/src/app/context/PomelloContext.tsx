@@ -3,14 +3,14 @@ import { PomelloService, PomelloState } from '@tinynudge/pomello-service';
 import { createContext, FC, ReactNode, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-interface PomelloContextProviderProps {
+interface PomelloProviderProps {
   children: ReactNode;
   service: PomelloService;
 }
 
 export const PomelloContext = createContext<PomelloService | undefined>(undefined);
 
-export const PomelloContextProvider: FC<PomelloContextProviderProps> = ({ children, service }) => {
+export const PomelloProvider: FC<PomelloProviderProps> = ({ children, service }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
