@@ -1,6 +1,7 @@
 {
   "addNoteLabel": "Add note",
   "closeMenuLabel": "Close menu",
+  "closeMenuTitle": "Close menu ({{hotkey}})",
   "completeTaskLabel": "Complete task",
   "createTaskButtonLabel": "Create task",
   "dashboardButtonLabel": "Dashboard",
@@ -8,6 +9,7 @@
   "homeButtonLabel": "Home",
   "menuLabel": "Menu",
   "openMenuLabel": "Open menu",
+  "openMenuTitle": "Open menu ({{hotkey}})",
   "pauseTimerLabel": "Pause timer",
   "resumeTimer": "Start",
   "resumeTimerLabel": "Resume timer",

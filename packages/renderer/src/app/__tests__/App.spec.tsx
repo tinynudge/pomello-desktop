@@ -16,6 +16,19 @@ describe('App', () => {
     Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
   });
 
+  it('should toggle the menu via hotkey', async () => {
+    const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = () => ({ width: 100 } as DOMRect);
+
+    const { simulate } = mountApp();
+
+    simulate.hotkey('toggleMenu');
+
+    expect(screen.getByRole('button', { name: 'Close menu' })).toBeInTheDocument();
+
+    Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
+  });
+
   it('should prompt the user to select a service if not set', () => {
     mountApp({ serviceId: null });
 

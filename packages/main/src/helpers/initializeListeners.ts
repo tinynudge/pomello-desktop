@@ -1,9 +1,10 @@
+import handleGetHotkeys from '@/events/handleGetHotkeys';
 import handleGetSettings from '@/events/handleGetSettings';
 import handleGetThemeCss from '@/events/handleGetThemeCss';
 import handleGetTranslations from '@/events/handleGetTranslations';
-import handleSelectHide from '@/events/handleSelectHide';
 import handleOptionSelect from '@/events/handleOptionSelect';
 import handleRegisterStore from '@/events/handleRegisterStore';
+import handleSelectHide from '@/events/handleSelectHide';
 import handleSetSelectBounds from '@/events/handleSetSelectBounds';
 import handleSetSelectItems from '@/events/handleSetSelectItems';
 import handleShowSelect from '@/events/handleShowSelect';
@@ -12,6 +13,7 @@ import { AppEvent } from '@domain';
 import { ipcMain, nativeTheme } from 'electron';
 
 const initializeListeners = (): void => {
+  ipcMain.handle(AppEvent.GetHotkeys, handleGetHotkeys);
   ipcMain.handle(AppEvent.GetSettings, handleGetSettings);
   ipcMain.handle(AppEvent.GetThemeCss, handleGetThemeCss);
   ipcMain.handle(AppEvent.GetTranslations, handleGetTranslations);

@@ -12,6 +12,21 @@ describe('App - Dial', () => {
     await simulate.startTimer();
 
     expect(screen.getByText('14')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Show actions' })).toBeInTheDocument();
+  });
+
+  it('should start the timer via hotkey', async () => {
+    const { simulate } = mountApp({
+      settings: {
+        taskTime: 25 * 60,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.hotkey('startTimer');
+
+    expect(screen.getByText('25')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Show actions' })).toBeInTheDocument();
   });
 
   it('should show the seconds remaining on the dial when less than a minute remains', async () => {

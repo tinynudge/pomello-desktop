@@ -1,6 +1,7 @@
 import { Settings } from '@domain';
 import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
+import mockHotkeys from './mockHotkeys';
 
 type CallbackFunction = (...args: any[]) => any;
 
@@ -35,6 +36,7 @@ const createMockAppApi = (
   };
 
   const api: AppApi = {
+    getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve(''))),
     getTranslations: vi.fn(async () => ({})),

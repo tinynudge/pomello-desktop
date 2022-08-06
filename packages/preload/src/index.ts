@@ -1,10 +1,11 @@
 import { contextBridge } from 'electron';
+import getHotkeys from './getHotkeys';
 import getSettings from './getSettings';
 import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
 import hideSelect from './hideSelect';
-import onSelectHide from './onSelectHide';
 import onSelectChange from './onSelectChange';
+import onSelectHide from './onSelectHide';
 import onSetSelectItems from './onSetSelectItems';
 import onShowSelect from './onShowSelect';
 import onThemeCssChange from './onThemeCssChange';
@@ -15,6 +16,7 @@ import setSelectItems from './setSelectItems';
 import showSelect from './showSelect';
 
 const api = {
+  getHotkeys,
   getSettings,
   getThemeCss,
   getTranslations,
