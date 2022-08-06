@@ -4,6 +4,7 @@ import createStore from '@/app/createStore';
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createPomelloService from '@/__bootstrap__/createPomelloService';
+import getHotkeys from '@/__bootstrap__/getHotkeys';
 import getThemeCss from '@/__bootstrap__/getThemeCss';
 import getTranslations from '@/__bootstrap__/getTranslations';
 import { StrictMode } from 'react';
@@ -26,8 +27,9 @@ const renderApp = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [pomelloService, themeCss, translations] = await Promise.all([
+  const [pomelloService, hotkeys, themeCss, translations] = await Promise.all([
     createPomelloService(),
+    getHotkeys(),
     getThemeCss(),
     getTranslations(),
   ]);
@@ -47,7 +49,7 @@ const renderApp = async () => {
         <PomelloProvider service={pomelloService}>
           <QueryClientProvider client={queryClient}>
             <TranslationsProvider translations={translations}>
-              <App services={services} />
+              <App hotkeys={hotkeys} services={services} />
             </TranslationsProvider>
           </QueryClientProvider>
         </PomelloProvider>

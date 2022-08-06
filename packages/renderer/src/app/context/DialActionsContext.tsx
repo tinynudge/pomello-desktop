@@ -5,13 +5,13 @@ interface DialActionsProviderProps {
   children: ReactNode;
 }
 
-interface DialActions {
+interface DialActionsContextValue {
   dialActions: DialAction[];
   setDialActions(actions: DialAction[]): void;
   unsetDialActions(): void;
 }
 
-export const DialActionsContext = createContext<DialActions | undefined>(undefined);
+export const DialActionsContext = createContext<DialActionsContextValue | undefined>(undefined);
 
 export const DialActionsProvider: FC<DialActionsProviderProps> = ({ children }) => {
   const [dialActions, setDialActions] = useState<DialAction[]>([]);

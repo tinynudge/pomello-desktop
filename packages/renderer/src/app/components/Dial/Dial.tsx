@@ -1,10 +1,11 @@
 import useDialActions from '@/app/hooks/useDialActions';
+import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { DialActionClickHandler } from '@domain';
 import { Timer } from '@tinynudge/pomello-service';
 import cc from 'classcat';
-import { FC, MouseEvent, useState } from 'react';
+import { FC, MouseEvent, useCallback, useEffect, useState } from 'react';
 import { ReactComponent as MoreIcon } from './assets/more.svg';
 import Counter from './Counter';
 import styles from './Dial.module.scss';
@@ -15,12 +16,26 @@ interface DialProps {
 
 const Dial: FC<DialProps> = ({ timer }) => {
   const { t } = useTranslation();
+  const { registerHotkeys } = useHotkeys();
 
   const { dialActions } = useDialActions();
-  const { startTimer } = usePomelloActions();
+  const { startTimer: startPomelloTimer } = usePomelloActions();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHoverable, setIsHoverable] = useState(false);
+
+  const startTimer = useCallback(() => {
+    if (!timer.isActive) {
+      startPomelloTimer();
+      setHoverTimeout();
+    }
+  }, [startPomelloTimer, timer.isActive]);
+
+  useEffect(() => {
+    return registerHotkeys({
+      startTimer,
+    });
+  }, [registerHotkeys, startTimer]);
 
   let dialLabel: string;
 
@@ -45,7 +60,6 @@ const Dial: FC<DialProps> = ({ timer }) => {
     handleDialClick = event => {
       event.currentTarget.blur();
       startTimer();
-      setHoverTimeout();
     };
   } else {
     dialLabel = t('startTimerLabel');
@@ -53,7 +67,6 @@ const Dial: FC<DialProps> = ({ timer }) => {
     handleDialClick = event => {
       event.currentTarget.blur();
       startTimer();
-      setHoverTimeout();
     };
   }
 

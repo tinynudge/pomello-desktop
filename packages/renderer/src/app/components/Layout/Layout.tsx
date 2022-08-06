@@ -1,8 +1,8 @@
 import { selectPomelloState } from '@/app/appSlice';
-import { DialActionsProvider } from '@/app/context/DialActionsContext';
+import useHotkeys from '@/app/hooks/useHotkeys';
 import useTranslation from '@/shared/hooks/useTranslation';
 import cc from 'classcat';
-import { FC, ReactNode, useRef, useState } from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Dial from '../Dial';
 import { ReactComponent as MenuIcon } from './assets/menu.svg';
@@ -15,6 +15,7 @@ interface LayoutProps {
 
 const Layout: FC<LayoutProps> = ({ children }) => {
   const { t } = useTranslation();
+  const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
   const { timer } = useSelector(selectPomelloState);
 
@@ -22,7 +23,15 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const [menuOffset, setMenuOffset] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  useEffect(() => {
+    return registerHotkeys({ toggleMenu });
+  }, [registerHotkeys]);
+
   const handleMenuClick = () => {
+    toggleMenu();
+  };
+
+  const toggleMenu = () => {
     if (menuRef.current) {
       setMenuOffset(menuRef.current.getBoundingClientRect().width);
     }
@@ -32,8 +41,10 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
   const hasActiveTimer = timer && (timer.isActive || timer.isPaused);
 
+  const menuTranslationKey = isMenuOpen ? 'closeMenu' : 'openMenu';
+
   return (
-    <DialActionsProvider>
+    <>
       <Menu isOpen={isMenuOpen} ref={menuRef} />
       <main
         className={cc({
@@ -46,16 +57,17 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         }}
       >
         <button
-          aria-label={isMenuOpen ? t('closeMenuLabel') : t('openMenuLabel')}
+          aria-label={t(`${menuTranslationKey}Label`)}
           className={styles.menuButton}
           onClick={handleMenuClick}
+          title={t(`${menuTranslationKey}Title`, { hotkey: getHotkeyLabel('toggleMenu') })}
         >
           <MenuIcon aria-hidden width={4} />
         </button>
         <div className={styles.content}>{children}</div>
         {timer && <Dial timer={timer} />}
       </main>
-    </DialActionsProvider>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 export enum AppEvent {
+  GetHotkeys = 'get-hotkeys',
   GetSettings = 'get-settings',
   GetThemeCss = 'get-theme-css',
   GetTranslations = 'get-translations',
