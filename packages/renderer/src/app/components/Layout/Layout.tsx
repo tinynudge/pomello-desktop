@@ -39,8 +39,6 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     setIsMenuOpen(prevIsMenuOpen => !prevIsMenuOpen);
   };
 
-  const hasActiveTimer = timer && (timer.isActive || timer.isPaused);
-
   const menuTranslationKey = isMenuOpen ? 'closeMenu' : 'openMenu';
 
   return (
@@ -51,7 +49,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           [styles.container]: true,
           [styles.menuOpen]: isMenuOpen,
         })}
-        data-mode={hasActiveTimer ? timer.type : undefined}
+        data-mode={timer?.isActive ? timer.type : undefined}
         style={{
           transform: isMenuOpen && menuOffset ? `translate(${menuOffset}px)` : undefined,
         }}

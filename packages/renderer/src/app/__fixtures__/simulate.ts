@@ -1,6 +1,6 @@
 import { Hotkeys } from '@domain';
 import { act } from 'react-dom/test-utils';
-import { fireEvent, MountAppResults, screen, waitForElementToBeRemoved } from './mountApp';
+import { fireEvent, MountAppResults, screen, waitFor } from './mountApp';
 
 const hideDialActions = async ({ userEvent }: MountAppResults) => {
   await userEvent.click(screen.getByRole('button', { name: 'Hide actions' }));
@@ -43,7 +43,9 @@ const selectTask = async ({ emitAppApiEvent }: MountAppResults, taskId: string =
     emitAppApiEvent('onSelectChange', taskId);
   });
 
-  await waitForElementToBeRemoved(() => screen.queryByRole('button', { name: 'Pick a task' }));
+  await waitFor(() => {
+    expect(screen.queryByRole('button', { name: 'Pick a task' })).not.toBeInTheDocument();
+  });
 };
 
 const showDialActions = async ({ userEvent }: MountAppResults) => {

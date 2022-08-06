@@ -25,11 +25,11 @@ const Dial: FC<DialProps> = ({ timer }) => {
   const [isHoverable, setIsHoverable] = useState(false);
 
   const startTimer = useCallback(() => {
-    if (!timer.isActive) {
+    if (!timer.isActive || timer.isPaused) {
       startPomelloTimer();
       setHoverTimeout();
     }
-  }, [startPomelloTimer, timer.isActive]);
+  }, [startPomelloTimer, timer.isActive, timer.isPaused]);
 
   useEffect(() => {
     return registerHotkeys({
@@ -48,18 +48,18 @@ const Dial: FC<DialProps> = ({ timer }) => {
       event.currentTarget.blur();
       setIsExpanded(false);
     };
-  } else if (timer.isActive) {
-    dialLabel = t('showActionsLabel');
-
-    handleDialClick = () => {
-      setIsExpanded(true);
-    };
   } else if (timer.isPaused) {
     dialLabel = t('resumeTimerLabel');
 
     handleDialClick = event => {
       event.currentTarget.blur();
       startTimer();
+    };
+  } else if (timer.isActive) {
+    dialLabel = t('showActionsLabel');
+
+    handleDialClick = () => {
+      setIsExpanded(true);
     };
   } else {
     dialLabel = t('startTimerLabel');
@@ -102,12 +102,12 @@ const Dial: FC<DialProps> = ({ timer }) => {
           aria-label={dialLabel}
           className={cc({
             [styles.dial]: true,
-            [styles.isActive]: timer.isActive || timer.isPaused,
+            [styles.isActive]: timer.isActive,
             [styles.isHoverable]: isHoverable,
           })}
           onClick={handleDialClick}
         >
-          <div aria-hidden={timer.isActive || timer.isPaused} className={styles.panel}>
+          <div aria-hidden={timer.isActive} className={styles.panel}>
             {t('startTimer')}
           </div>
           <div
