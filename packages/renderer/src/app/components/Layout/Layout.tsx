@@ -3,6 +3,7 @@ import useHotkeys from '@/app/hooks/useHotkeys';
 import useTranslation from '@/shared/hooks/useTranslation';
 import cc from 'classcat';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector } from 'react-redux';
 import Dial from '../Dial';
 import { ReactComponent as MenuIcon } from './assets/menu.svg';
@@ -62,8 +63,10 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         >
           <MenuIcon aria-hidden width={4} />
         </button>
-        <div className={styles.content}>{children}</div>
-        {timer && <Dial timer={timer} />}
+        <ErrorBoundary fallback={<>TODO: Error handler</>}>
+          <div className={styles.content}>{children}</div>
+          {timer && <Dial timer={timer} />}
+        </ErrorBoundary>
       </main>
     </>
   );
