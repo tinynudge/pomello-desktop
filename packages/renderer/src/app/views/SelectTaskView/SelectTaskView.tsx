@@ -1,9 +1,14 @@
+import { selectPomelloState } from '@/app/appSlice';
+import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
+import useDialActions from '@/app/hooks/useDialActions';
+import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import SelectField from '@/app/ui/SelectField';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem } from '@domain';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 
 interface SelectTaskViewProps {
   fetchTasks(): Promise<SelectItem[]>;
@@ -15,7 +20,19 @@ const SelectTaskView: FC<SelectTaskViewProps> = ({ fetchTasks, serviceId }) => {
 
   const { selectTask } = usePomelloActions();
 
-  const { data: tasks } = useQuery(`${serviceId}-tasks`, fetchTasks);
+  const { data: tasks } = useQuery(getTasksCacheKey(serviceId), fetchTasks, {
+    cacheTime: Infinity,
+  });
+
+  const { timer } = useSelector(selectPomelloState);
+  const { registerDialActions } = useDialActions();
+  const pauseDialAction = usePauseDialAction();
+
+  useEffect(() => {
+    if (timer?.isActive) {
+      return registerDialActions([pauseDialAction]);
+    }
+  }, [pauseDialAction, registerDialActions, timer?.isActive]);
 
   const handleTaskSelect = (id: string) => {
     selectTask(id);

@@ -6,6 +6,8 @@ import MockInitializingView from './MockInitializingView';
 export const mockServiceId = 'mock';
 
 const createMockService = (): Service => {
+  const getTaskHeading = (): string => 'Task';
+
   const getTaskTimerEndOptions = (): CustomTaskTimerEndOption[] => [
     { id: 'custom-one', label: 'Custom 1', action: 'switchTask' },
   ];
@@ -27,6 +29,7 @@ const createMockService = (): Service => {
     CustomSelectGroup: MockCustomSelectGroup,
     CustomSelectOption: MockCustomSelectOption,
     fetchTasks,
+    getTaskHeading,
     getTaskTimerEndOptions,
     InitializingView: MockInitializingView,
     onTaskTimerEndPromptHandled(taskId, action) {

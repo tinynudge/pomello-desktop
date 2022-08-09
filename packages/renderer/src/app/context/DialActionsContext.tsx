@@ -7,26 +7,30 @@ interface DialActionsProviderProps {
 
 interface DialActionsContextValue {
   dialActions: DialAction[];
-  setDialActions(actions: DialAction[]): void;
-  unsetDialActions(): void;
+  registerDialActions(actions: DialAction[]): UnregisterDialActions;
 }
+
+type UnregisterDialActions = () => void;
 
 export const DialActionsContext = createContext<DialActionsContextValue | undefined>(undefined);
 
 export const DialActionsProvider: FC<DialActionsProviderProps> = ({ children }) => {
   const [dialActions, setDialActions] = useState<DialAction[]>([]);
 
-  const unsetDialActions = useCallback(() => {
-    setDialActions([]);
+  const registerDialActions = useCallback((dialActions: DialAction[]) => {
+    setDialActions(dialActions);
+
+    return () => {
+      setDialActions([]);
+    };
   }, []);
 
   const context = useMemo(
     () => ({
       dialActions,
-      setDialActions,
-      unsetDialActions,
+      registerDialActions,
     }),
-    [dialActions, unsetDialActions]
+    [dialActions, registerDialActions]
   );
 
   return <DialActionsContext.Provider value={context}>{children}</DialActionsContext.Provider>;
