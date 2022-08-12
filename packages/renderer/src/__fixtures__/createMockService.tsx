@@ -15,8 +15,10 @@ const createMockService = (service: Partial<Omit<Service, 'id'>> = {}): Service 
   ];
 
   return {
+    displayName: 'Mock service',
     id: 'mock',
     InitializingView: MockInitializingView,
+    handleNoteAdd: vi.fn(),
     ...service,
     fetchTasks: vi.fn(service.fetchTasks ?? fetchTasks),
   };

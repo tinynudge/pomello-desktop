@@ -1,0 +1,24 @@
+@import '@/shared/styles/global';
+
+.input {
+  @extend %clickable;
+
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--input-divider-default);
+  background: none;
+  color: var(--input-content-default);
+  outline: none;
+
+  &:focus-visible {
+    border-bottom-color: var(--input-divider-focused);
+  }
+
+  &::selection {
+    background-color: var(--input-selection);
+  }
+
+  &::placeholder {
+    color: var(--input-content-placeholder);
+  }
+}

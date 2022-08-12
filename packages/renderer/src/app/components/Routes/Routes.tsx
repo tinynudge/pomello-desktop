@@ -32,13 +32,7 @@ const Routes: FC<RouteProps> = ({ service }) => {
   }
 
   if (status === 'TASK') {
-    return (
-      <TaskView
-        getTaskHeading={service.getTaskHeading}
-        getTaskLabel={service.getTaskLabel}
-        serviceId={service.id}
-      />
-    );
+    return <TaskView service={service} />;
   }
 
   if (status === 'TASK_TIMER_END_PROMPT') {

@@ -1,3 +1,4 @@
+export type { AddNoteHandler } from './AddNoteHandler';
 export { AppEvent } from './AppEvent';
 export type { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 export type { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
@@ -8,6 +9,7 @@ export type { FindOrCreateWindowOptions } from './FindOrCreateWindowOptions';
 export type { Hotkeys } from './Hotkeys';
 export type { InitializingView } from './InitializingView';
 export type { LabeledHotkeys } from './LabeledHotkeys';
+export type { NoteType } from './NoteType';
 export type { PomelloConfig } from './PomelloConfig';
 export type { RegisterStoreOptions } from './RegisterStoreOptions';
 export type { RemoveListenerFunction } from './RemoveListenerFunction';
