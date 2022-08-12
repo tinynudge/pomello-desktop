@@ -20,6 +20,7 @@ const createStore = ({ pomelloState, serviceId }: CreateStoreOptions) => {
     },
     preloadedState: {
       app: {
+        overlayView: null,
         pomelloState,
         serviceId,
       },

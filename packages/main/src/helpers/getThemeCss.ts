@@ -92,6 +92,17 @@ const defaultTheme: ThemeConfig = {
     },
     divider: [colors.lightAlt, colors.dark],
   },
+  input: {
+    content: {
+      default: colors.white,
+      placeholder: [opacity(colors.white, 60), opacity(colors.white, 38)],
+    },
+    divider: {
+      default: opacity(colors.white, 38),
+      focused: colors.white,
+    },
+    selection: [opacity(colors.black, 10), opacity(colors.white, 20)],
+  },
 };
 
 const getThemeCss = (): string => {

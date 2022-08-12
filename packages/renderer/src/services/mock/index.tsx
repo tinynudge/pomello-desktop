@@ -28,9 +28,13 @@ const createMockService = (): Service => {
     id: mockServiceId,
     CustomSelectGroup: MockCustomSelectGroup,
     CustomSelectOption: MockCustomSelectOption,
+    displayName: 'Mock service',
     fetchTasks,
     getTaskHeading,
     getTaskTimerEndOptions,
+    handleNoteAdd: (type, note) => {
+      new Notification(type, { body: note });
+    },
     InitializingView: MockInitializingView,
     onTaskTimerEndPromptHandled(taskId, action) {
       console.log(taskId, action);

@@ -2,13 +2,18 @@ import useDialActions from '@/app/hooks/useDialActions';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
+import { NoteType } from '@domain';
 import { useEffect } from 'react';
 import { ReactComponent as CheckIcon } from './assets/check.svg';
 import { ReactComponent as CloseIcon } from './assets/close.svg';
 import { ReactComponent as PencilIcon } from './assets/pencil.svg';
 import { ReactComponent as SwitchIcon } from './assets/switch.svg';
 
-const useTaskDialActions = (): void => {
+interface UseTaskDialActionsOptions {
+  showAddNoteView(type: NoteType): () => void;
+}
+
+const useTaskDialActions = ({ showAddNoteView }: UseTaskDialActionsOptions): void => {
   const { t } = useTranslation();
 
   const { completeTask, switchTask, voidTask } = usePomelloActions();
@@ -23,7 +28,7 @@ const useTaskDialActions = (): void => {
         Content: <PencilIcon width={12} />,
         id: 'addNote',
         label: t('addNoteLabel'),
-        onClick: () => null,
+        onClick: showAddNoteView('generalNote'),
       },
       {
         Content: <SwitchIcon width={16} />,
@@ -44,7 +49,15 @@ const useTaskDialActions = (): void => {
         onClick: completeTask,
       },
     ]);
-  }, [completeTask, pauseDialAction, registerDialActions, switchTask, t, voidTask]);
+  }, [
+    completeTask,
+    pauseDialAction,
+    registerDialActions,
+    showAddNoteView,
+    switchTask,
+    t,
+    voidTask,
+  ]);
 };
 
 export default useTaskDialActions;

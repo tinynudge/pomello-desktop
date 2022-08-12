@@ -25,7 +25,7 @@ describe('App - Dial', () => {
     await simulate.selectTask();
     await simulate.hotkey('startTimer');
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText('25')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Show actions' })).toBeInTheDocument();
     });
