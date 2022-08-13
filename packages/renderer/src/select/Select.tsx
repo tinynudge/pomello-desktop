@@ -1,4 +1,4 @@
-import useService from '@/shared/hooks/useService';
+import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -24,7 +24,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState<string>();
-  const service = useService(services, serviceId);
+  const service = useInitializeService(services, serviceId);
 
   const [activeOptionId, setActiveOptionId] = useState<string>();
 

@@ -1,10 +1,12 @@
 import { setOverlayView } from '@/app/appSlice';
+import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { NoteType, Service } from '@domain';
+import { NoteType } from '@domain';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-export function useShowAddNoteView(service: Service) {
+export function useShowAddNoteView() {
+  const { displayName, handleNoteAdd } = useService();
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
@@ -12,9 +14,9 @@ export function useShowAddNoteView(service: Service) {
   return useCallback(
     (type: NoteType) => {
       return () => {
-        if (!service.handleNoteAdd) {
+        if (!handleNoteAdd) {
           new Notification(t('notesDisabledHeading'), {
-            body: t('notesDisabledContent', { service: service.displayName }),
+            body: t('notesDisabledContent', { service: displayName }),
           });
 
           return;
@@ -23,6 +25,6 @@ export function useShowAddNoteView(service: Service) {
         dispatch(setOverlayView(type));
       };
     },
-    [dispatch, service.displayName, service.handleNoteAdd, t]
+    [dispatch, displayName, handleNoteAdd, t]
   );
 }

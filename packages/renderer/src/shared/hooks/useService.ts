@@ -1,28 +1,13 @@
-import { Service, ServiceRegistry } from '@domain';
-import { useEffect, useMemo } from 'react';
+import { Service } from '@domain';
+import { useContext } from 'react';
+import { ServiceContext } from '../context/ServiceContext';
 
-const useService = (services: ServiceRegistry, serviceId?: string): Service | undefined => {
-  const service = useMemo(() => {
-    if (!serviceId) {
-      return;
-    }
+const useService = (): Service => {
+  const service = useContext(ServiceContext);
 
-    const serviceFactory = services[serviceId];
-
-    if (!serviceFactory) {
-      throw new Error(`Unable to find service "${serviceId}"`);
-    }
-
-    return serviceFactory();
-  }, [serviceId, services]);
-
-  useEffect(() => {
-    service?.onMount?.();
-
-    return () => {
-      service?.onUnmount?.();
-    };
-  }, [service]);
+  if (!service) {
+    throw new Error('useService must be used inside a <ServiceProvider>');
+  }
 
   return service;
 };

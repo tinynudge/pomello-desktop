@@ -3,16 +3,13 @@ import usePomelloActions from '@/app/hooks/usePomelloActions';
 import SelectTaskView from '@/app/views/SelectTaskView';
 import TaskTimerEndView from '@/app/views/TaskTimerEndView';
 import TaskView from '@/app/views/TaskView';
+import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { Service } from '@domain';
 import { FC, Suspense } from 'react';
 import { useSelector } from 'react-redux';
 
-interface RouteProps {
-  service: Service;
-}
-
-const Routes: FC<RouteProps> = ({ service }) => {
+const Routes: FC = () => {
+  const service = useService();
   const { t } = useTranslation();
 
   const actions = usePomelloActions();
@@ -26,22 +23,17 @@ const Routes: FC<RouteProps> = ({ service }) => {
   if (status === 'SELECT_TASK') {
     return (
       <Suspense fallback={t('waitMessage')}>
-        <SelectTaskView fetchTasks={service.fetchTasks} serviceId={service.id} />
+        <SelectTaskView />
       </Suspense>
     );
   }
 
   if (status === 'TASK') {
-    return <TaskView service={service} />;
+    return <TaskView />;
   }
 
   if (status === 'TASK_TIMER_END_PROMPT') {
-    return (
-      <TaskTimerEndView
-        getCustomOptions={service.getTaskTimerEndOptions}
-        onActionSelect={service.onTaskTimerEndPromptHandled}
-      />
-    );
+    return <TaskTimerEndView />;
   }
 
   if (status === 'TASK_COMPLETE_PROMPT') {

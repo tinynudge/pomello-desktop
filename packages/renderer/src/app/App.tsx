@@ -1,4 +1,5 @@
-import useService from '@/shared/hooks/useService';
+import { ServiceProvider } from '@/shared/context/ServiceContext';
+import useInitializeService from '@/shared/hooks/useInitializeService';
 import { LabeledHotkeys, ServiceRegistry } from '@domain';
 import cc from 'classcat';
 import { FC } from 'react';
@@ -19,7 +20,7 @@ interface AppProps {
 
 const App: FC<AppProps> = ({ hotkeys, services }) => {
   const serviceId = useSelector(selectServiceId);
-  const service = useService(services, serviceId);
+  const service = useInitializeService(services, serviceId);
 
   const overlayView = useSelector(selectOverlayView);
 
@@ -28,12 +29,12 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
       <DialActionsProvider>
         <Layout>
           {service ? (
-            <>
-              {overlayView && <AddNoteView noteType={overlayView} service={service} />}
+            <ServiceProvider service={service}>
+              {overlayView && <AddNoteView noteType={overlayView} />}
               <div className={cc({ [styles.contentHidden]: Boolean(overlayView) })}>
-                <Routes service={service} />
+                <Routes />
               </div>
-            </>
+            </ServiceProvider>
           ) : (
             <SelectServiceView services={services} />
           )}
