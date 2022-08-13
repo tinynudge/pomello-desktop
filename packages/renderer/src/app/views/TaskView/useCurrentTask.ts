@@ -1,13 +1,16 @@
 import { selectPomelloState } from '@/app/appSlice';
 import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
+import useService from '@/shared/hooks/useService';
 import { SelectOptionType } from '@domain';
 import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
-const useCurrentTask = (serviceId: string): SelectOptionType => {
+const useCurrentTask = (): SelectOptionType => {
+  const { id } = useService();
+
   const queryClient = useQueryClient();
-  const tasks = queryClient.getQueryData<SelectOptionType[]>(getTasksCacheKey(serviceId));
+  const tasks = queryClient.getQueryData<SelectOptionType[]>(getTasksCacheKey(id));
 
   const { currentTaskId } = useSelector(selectPomelloState);
 

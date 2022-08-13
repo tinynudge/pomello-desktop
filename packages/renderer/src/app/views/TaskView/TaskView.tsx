@@ -1,28 +1,26 @@
 import Heading from '@/app/ui/Heading';
-import { Service } from '@domain';
+import useService from '@/shared/hooks/useService';
 import { FC } from 'react';
 import useCurrentTask from './useCurrentTask';
 import { useShowAddNoteView } from './useShowAddNoteView';
 import useTaskDialActions from './useTaskDialActions';
 import useTaskHotkeys from './useTaskHotkeys';
 
-interface TaskViewProps {
-  service: Service;
-}
+const TaskView: FC = () => {
+  const { getTaskHeading, getTaskLabel } = useService();
 
-const TaskView: FC<TaskViewProps> = ({ service }) => {
-  const showAddNoteView = useShowAddNoteView(service);
+  const showAddNoteView = useShowAddNoteView();
 
   useTaskHotkeys({ showAddNoteView });
 
   useTaskDialActions({ showAddNoteView });
 
-  const currentTask = useCurrentTask(service.id);
+  const currentTask = useCurrentTask();
 
   return (
     <>
-      {service.getTaskHeading && <Heading>{service.getTaskHeading()}</Heading>}
-      <p>{service.getTaskLabel?.(currentTask) ?? currentTask.label}</p>
+      {getTaskHeading && <Heading>{getTaskHeading()}</Heading>}
+      <p>{getTaskLabel?.(currentTask) ?? currentTask.label}</p>
     </>
   );
 };

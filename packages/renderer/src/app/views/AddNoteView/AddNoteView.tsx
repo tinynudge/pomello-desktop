@@ -1,14 +1,14 @@
 import { setOverlayView, unsetOverlayView } from '@/app/appSlice';
 import Heading from '@/app/ui/Heading';
 import InputField from '@/app/ui/InputField';
+import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { NoteType, Service } from '@domain';
+import { NoteType } from '@domain';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 interface AddNoteViewProps {
   noteType: NoteType;
-  service: Service;
 }
 
 const noteTypeCodes: Record<string, NoteType> = {
@@ -17,8 +17,9 @@ const noteTypeCodes: Record<string, NoteType> = {
   '-': 'externalDistraction',
 };
 
-const AddNoteView: FC<AddNoteViewProps> = ({ noteType, service }) => {
+const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
   const dispatch = useDispatch();
+  const service = useService();
   const { t } = useTranslation();
 
   const [note, setNote] = useState('');

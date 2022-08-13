@@ -1,22 +1,19 @@
 import { selectPomelloState } from '@/app/appSlice';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
-import { CustomTaskTimerEndOption, TaskTimerEndActionType } from '@domain';
+import useService from '@/shared/hooks/useService';
+import { TaskTimerEndActionType } from '@domain';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 
-interface TaskTimerEndViewProps {
-  getCustomOptions?(): CustomTaskTimerEndOption[];
-  onActionSelect?(taskId: string, action: TaskTimerEndActionType): void;
-}
-
-const TaskTimerEndView: FC<TaskTimerEndViewProps> = ({ getCustomOptions, onActionSelect }) => {
+const TaskTimerEndView: FC = () => {
+  const { getTaskTimerEndOptions, onTaskTimerEndPromptHandled } = useService();
   const { taskTimerEndPromptHandled } = usePomelloActions();
 
   const { currentTaskId } = useSelector(selectPomelloState);
 
   const handleActionSelect = (option: TaskTimerEndActionType) => () => {
     if (currentTaskId) {
-      onActionSelect?.(currentTaskId, option);
+      onTaskTimerEndPromptHandled?.(currentTaskId, option);
     }
 
     taskTimerEndPromptHandled(typeof option === 'string' ? option : option.action);
@@ -28,7 +25,7 @@ const TaskTimerEndView: FC<TaskTimerEndViewProps> = ({ getCustomOptions, onActio
       <p>
         <button onClick={handleActionSelect('continueTask')}>Continue task</button>
         <button onClick={handleActionSelect('switchTask')}>Switch task</button>
-        {getCustomOptions?.().map(option => (
+        {getTaskTimerEndOptions?.().map(option => (
           <button key={option.id} onClick={handleActionSelect(option)}>
             {option.label}
           </button>
