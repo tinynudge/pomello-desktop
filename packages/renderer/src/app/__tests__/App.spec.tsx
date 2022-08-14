@@ -22,7 +22,7 @@ describe('App', () => {
 
     const { simulate } = mountApp();
 
-    simulate.hotkey('toggleMenu');
+    await simulate.hotkey('toggleMenu');
 
     expect(screen.getByRole('button', { name: 'Close menu' })).toBeInTheDocument();
 
@@ -35,15 +35,15 @@ describe('App', () => {
     expect(screen.getByText(/select a service/i)).toBeInTheDocument();
   });
 
-  it('should initialize the service when selected', () => {
+  it('should initialize the service when selected', async () => {
     const InitializingView = () => <>Loading service</>;
 
-    const { emitAppApiEvent } = mountApp({
+    const { simulate } = mountApp({
       service: { InitializingView },
       serviceId: null,
     });
 
-    emitAppApiEvent('onSelectChange', 'mock');
+    await simulate.selectOption('mock');
 
     expect(screen.getByText(/loading service/i)).toBeInTheDocument();
   });

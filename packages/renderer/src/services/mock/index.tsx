@@ -1,4 +1,4 @@
-import { CustomTaskTimerEndOption, SelectItem, Service } from '@domain';
+import { SelectItem, SelectOptionType, Service } from '@domain';
 import MockCustomSelectGroup from './MockCustomSelectGroup';
 import MockCustomSelectOption from './MockCustomSelectOption';
 import MockInitializingView from './MockInitializingView';
@@ -8,8 +8,8 @@ export const mockServiceId = 'mock';
 const createMockService = (): Service => {
   const getTaskHeading = (): string => 'Task';
 
-  const getTaskTimerEndOptions = (): CustomTaskTimerEndOption[] => [
-    { id: 'custom-one', label: 'Custom 1', action: 'switchTask' },
+  const getTaskTimerEndOptions = (): SelectOptionType[] => [
+    { id: 'custom-one', label: 'Custom 1' },
   ];
 
   const fetchTasks = () => {

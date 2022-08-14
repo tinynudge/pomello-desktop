@@ -10,7 +10,7 @@ import { ReactComponent as PencilIcon } from './assets/pencil.svg';
 import { ReactComponent as SwitchIcon } from './assets/switch.svg';
 
 interface UseTaskDialActionsOptions {
-  showAddNoteView(type: NoteType): () => void;
+  showAddNoteView(type: NoteType): void;
 }
 
 const useTaskDialActions = ({ showAddNoteView }: UseTaskDialActionsOptions): void => {
@@ -28,7 +28,7 @@ const useTaskDialActions = ({ showAddNoteView }: UseTaskDialActionsOptions): voi
         Content: <PencilIcon width={12} />,
         id: 'addNote',
         label: t('addNoteLabel'),
-        onClick: showAddNoteView('generalNote'),
+        onClick: () => showAddNoteView('generalNote'),
       },
       {
         Content: <SwitchIcon width={16} />,

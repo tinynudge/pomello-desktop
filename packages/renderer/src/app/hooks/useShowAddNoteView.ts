@@ -5,7 +5,7 @@ import { NoteType } from '@domain';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-export function useShowAddNoteView() {
+const useShowAddNoteView = () => {
   const { displayName, handleNoteAdd } = useService();
   const { t } = useTranslation();
 
@@ -13,18 +13,18 @@ export function useShowAddNoteView() {
 
   return useCallback(
     (type: NoteType) => {
-      return () => {
-        if (!handleNoteAdd) {
-          new Notification(t('notesDisabledHeading'), {
-            body: t('notesDisabledContent', { service: displayName }),
-          });
+      if (!handleNoteAdd) {
+        new Notification(t('notesDisabledHeading'), {
+          body: t('notesDisabledContent', { service: displayName }),
+        });
 
-          return;
-        }
+        return;
+      }
 
-        dispatch(setOverlayView(type));
-      };
+      dispatch(setOverlayView(type));
     },
     [dispatch, displayName, handleNoteAdd, t]
   );
-}
+};
+
+export default useShowAddNoteView;

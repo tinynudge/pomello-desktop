@@ -4,7 +4,7 @@ import { NoteType } from '@domain';
 import { useEffect } from 'react';
 
 interface UseTaskHotkeysOptions {
-  showAddNoteView(type: NoteType): () => void;
+  showAddNoteView(type: NoteType): void;
 }
 
 const useTaskHotkeys = ({ showAddNoteView }: UseTaskHotkeysOptions): void => {
@@ -14,10 +14,10 @@ const useTaskHotkeys = ({ showAddNoteView }: UseTaskHotkeysOptions): void => {
 
   useEffect(() => {
     return registerHotkeys({
-      addNote: showAddNoteView('generalNote'),
+      addNote: () => showAddNoteView('generalNote'),
       completeTaskEarly: completeTask,
-      externalDistraction: showAddNoteView('externalDistraction'),
-      internalDistraction: showAddNoteView('internalDistraction'),
+      externalDistraction: () => showAddNoteView('externalDistraction'),
+      internalDistraction: () => showAddNoteView('internalDistraction'),
       switchTask,
       voidTask,
     });

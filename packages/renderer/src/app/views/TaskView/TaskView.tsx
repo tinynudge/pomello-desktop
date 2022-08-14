@@ -1,13 +1,13 @@
+import useCurrentTask from '@/app/hooks/useCurrentTask';
+import useShowAddNoteView from '@/app/hooks/useShowAddNoteView';
 import Heading from '@/app/ui/Heading';
 import useService from '@/shared/hooks/useService';
 import { FC } from 'react';
-import useCurrentTask from './useCurrentTask';
-import { useShowAddNoteView } from './useShowAddNoteView';
 import useTaskDialActions from './useTaskDialActions';
 import useTaskHotkeys from './useTaskHotkeys';
 
 const TaskView: FC = () => {
-  const { getTaskHeading, getTaskLabel } = useService();
+  const { getTaskHeading } = useService();
 
   const showAddNoteView = useShowAddNoteView();
 
@@ -15,12 +15,12 @@ const TaskView: FC = () => {
 
   useTaskDialActions({ showAddNoteView });
 
-  const currentTask = useCurrentTask();
+  const { currentTaskLabel } = useCurrentTask();
 
   return (
     <>
       {getTaskHeading && <Heading>{getTaskHeading()}</Heading>}
-      <p>{getTaskLabel?.(currentTask) ?? currentTask.label}</p>
+      <p>{currentTaskLabel}</p>
     </>
   );
 };
