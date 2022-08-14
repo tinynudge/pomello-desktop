@@ -77,9 +77,7 @@ describe('App - Task', () => {
 
     await simulate.hotkey('startTimer');
 
-    waitFor(() => {
-      expect(screen.queryByRole('button', { name: 'Resume timer' })).not.toBeInTheDocument();
-    });
+    expect(screen.queryByRole('button', { name: 'Resume timer' })).not.toBeInTheDocument();
   });
 
   it('should switch tasks', async () => {
@@ -100,9 +98,7 @@ describe('App - Task', () => {
     await simulate.startTimer();
     await simulate.hotkey('switchTask');
 
-    waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
-    });
+    expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
   });
 
   it('should complete tasks', async () => {
@@ -123,9 +119,7 @@ describe('App - Task', () => {
     await simulate.startTimer();
     await simulate.hotkey('completeTaskEarly');
 
-    waitFor(() => {
-      expect(screen.getByText('task complete prompt')).toBeInTheDocument();
-    });
+    expect(screen.getByText('task complete prompt')).toBeInTheDocument();
   });
 
   it('should void tasks', async () => {
@@ -146,9 +140,7 @@ describe('App - Task', () => {
     await simulate.startTimer();
     await simulate.hotkey('voidTask');
 
-    waitFor(() => {
-      expect(screen.getByText('task void prompt!')).toBeInTheDocument();
-    });
+    expect(screen.getByText('task void prompt!')).toBeInTheDocument();
   });
 
   it('should show an error message when unable to find the current task', async () => {

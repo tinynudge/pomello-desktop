@@ -6,8 +6,13 @@ import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 
-const useCurrentTask = (): SelectOptionType => {
-  const { id } = useService();
+interface CurrentTask {
+  currentTask: SelectOptionType;
+  currentTaskLabel: string;
+}
+
+const useCurrentTask = (): CurrentTask => {
+  const { getTaskLabel, id } = useService();
 
   const queryClient = useQueryClient();
   const tasks = queryClient.getQueryData<SelectOptionType[]>(getTasksCacheKey(id));
@@ -24,7 +29,12 @@ const useCurrentTask = (): SelectOptionType => {
     throw new Error(`Unable to find task with id "${currentTask}"`);
   }
 
-  return currentTask;
+  const currentTaskLabel = useMemo(
+    () => getTaskLabel?.(currentTask) ?? currentTask.label,
+    [currentTask, getTaskLabel]
+  );
+
+  return { currentTask, currentTaskLabel };
 };
 
 export default useCurrentTask;

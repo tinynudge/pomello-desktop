@@ -1,4 +1,4 @@
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App - Dial', () => {
   it('should start the timer when the dial is clicked', async () => {
@@ -25,10 +25,8 @@ describe('App - Dial', () => {
     await simulate.selectTask();
     await simulate.hotkey('startTimer');
 
-    await waitFor(() => {
-      expect(screen.getByText('25')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Show actions' })).toBeInTheDocument();
-    });
+    expect(screen.getByText('25')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Show actions' })).toBeInTheDocument();
   });
 
   it('should show the seconds remaining on the dial when less than a minute remains', async () => {

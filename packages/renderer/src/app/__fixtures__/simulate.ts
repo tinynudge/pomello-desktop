@@ -1,6 +1,11 @@
 import { Hotkeys } from '@domain';
 import { act } from 'react-dom/test-utils';
-import { fireEvent, MountAppResults, screen, waitFor } from './mountApp';
+import { fireEvent, MountAppResults, screen } from './mountApp';
+
+const sleep = (timeout: number) =>
+  new Promise<void>(resolve => {
+    setTimeout(resolve, timeout);
+  });
 
 const hideDialActions = async ({ userEvent }: MountAppResults) => {
   await userEvent.click(screen.getByRole('button', { name: 'Hide actions' }));
@@ -27,24 +32,28 @@ const hotkey = async (_results: MountAppResults, command: keyof Hotkeys) => {
     voidTask: 81, // Q
   };
 
-  await act(() => {
+  await act(async () => {
     fireEvent.keyDown(document, {
       metaKey: true,
       shiftKey: true,
       which: keyCodes[command],
     });
+
+    await sleep(1);
   });
 };
 
-const selectTask = async ({ emitAppApiEvent }: MountAppResults, taskId: string = 'one') => {
+const selectTask = async (results: MountAppResults, taskId: string = 'one') => {
   await screen.findByRole('button', { name: 'Pick a task' });
 
-  await act(() => {
-    emitAppApiEvent('onSelectChange', taskId);
-  });
+  await selectOption(results, taskId);
+};
 
-  await waitFor(() => {
-    expect(screen.queryByRole('button', { name: 'Pick a task' })).not.toBeInTheDocument();
+const selectOption = async ({ emitAppApiEvent }: MountAppResults, optionId: string) => {
+  await act(async () => {
+    emitAppApiEvent('onSelectChange', optionId);
+
+    await sleep(1);
   });
 };
 
@@ -62,6 +71,7 @@ const simulate = {
   hideDialActions,
   hotkey,
   selectTask,
+  selectOption,
   showDialActions,
   startTimer,
 };

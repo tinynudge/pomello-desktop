@@ -1,37 +1,62 @@
-import { selectPomelloState } from '@/app/appSlice';
+import useCurrentTask from '@/app/hooks/useCurrentTask';
+import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import useShowAddNoteView from '@/app/hooks/useShowAddNoteView';
+import Heading from '@/app/ui/Heading';
+import SelectField from '@/app/ui/SelectField';
 import useService from '@/shared/hooks/useService';
-import { TaskTimerEndActionType } from '@domain';
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import useTranslation from '@/shared/hooks/useTranslation';
+import { FC, useEffect } from 'react';
 
 const TaskTimerEndView: FC = () => {
+  const { t } = useTranslation();
   const { getTaskTimerEndOptions, onTaskTimerEndPromptHandled } = useService();
   const { taskTimerEndPromptHandled } = usePomelloActions();
 
-  const { currentTaskId } = useSelector(selectPomelloState);
+  const { currentTask, currentTaskLabel } = useCurrentTask();
 
-  const handleActionSelect = (option: TaskTimerEndActionType) => () => {
-    if (currentTaskId) {
-      onTaskTimerEndPromptHandled?.(currentTaskId, option);
+  const showAddNoteView = useShowAddNoteView();
+
+  const { registerHotkeys } = useHotkeys();
+  useEffect(() => {
+    return registerHotkeys({
+      addNote: () => showAddNoteView('generalNote'),
+      continueTask: () => taskTimerEndPromptHandled('continueTask'),
+      voidTask: () => taskTimerEndPromptHandled('voidTask'),
+    });
+  }, [registerHotkeys, showAddNoteView, taskTimerEndPromptHandled]);
+
+  const handleActionSelect = (id: string) => {
+    if (id === 'continueTask' || id === 'switchTask' || id === 'voidTask') {
+      taskTimerEndPromptHandled(id);
+    } else if (id === 'addNote') {
+      showAddNoteView('generalNote');
+    } else {
+      const response = onTaskTimerEndPromptHandled?.(currentTask, id);
+
+      if (response) {
+        taskTimerEndPromptHandled(response);
+      }
     }
-
-    taskTimerEndPromptHandled(typeof option === 'string' ? option : option.action);
   };
 
+  const items = [
+    { id: 'continueTask', label: t('taskTimerEndContinue') },
+    { id: 'switchTask', label: t('taskTimerEndSwitch') },
+    { id: 'voidTask', label: t('taskTimerEndVoid') },
+    { id: 'addNote', label: t('taskTimerEndAddNote') },
+    ...(getTaskTimerEndOptions ? getTaskTimerEndOptions() : []),
+  ];
+
   return (
-    <div>
-      Task timer end prompt: {currentTaskId}
-      <p>
-        <button onClick={handleActionSelect('continueTask')}>Continue task</button>
-        <button onClick={handleActionSelect('switchTask')}>Switch task</button>
-        {getTaskTimerEndOptions?.().map(option => (
-          <button key={option.id} onClick={handleActionSelect(option)}>
-            {option.label}
-          </button>
-        ))}
-      </p>
-    </div>
+    <>
+      <Heading>{currentTaskLabel}</Heading>
+      <SelectField
+        items={items}
+        onChange={handleActionSelect}
+        placeholder={t('taskTimerEndPlaceholder')}
+      />
+    </>
   );
 };
 
