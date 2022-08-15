@@ -16,7 +16,16 @@ const getSettings = (): Store<Settings> =>
       taskTime: 1500,
       shortBreakTime: 300,
       longBreakTime: 900,
-      pomodoroSet: 4,
+      pomodoroSet: [
+        'task',
+        'shortBreak',
+        'task',
+        'shortBreak',
+        'task',
+        'shortBreak',
+        'task',
+        'longBreak',
+      ],
       resetPomodoroSet: true,
       autoStartTasks: false,
       autoStartBreaks: false,
@@ -92,7 +101,15 @@ const getSettings = (): Store<Settings> =>
           type: 'integer',
         },
         pomodoroSet: {
-          type: 'integer',
+          oneOf: [
+            { type: 'integer' },
+            {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          ],
         },
         resetPomodoroSet: {
           type: 'boolean',

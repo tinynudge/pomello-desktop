@@ -27,9 +27,16 @@ const Dial: FC<DialProps> = ({ timer }) => {
   const startTimer = useCallback(() => {
     if (!timer.isActive || timer.isPaused) {
       startPomelloTimer();
-      setHoverTimeout();
     }
   }, [startPomelloTimer, timer.isActive, timer.isPaused]);
+
+  useEffect(() => {
+    if (timer.isActive && !timer.isPaused) {
+      setHoverTimeout();
+    } else if (!timer.isActive) {
+      setIsHoverable(false);
+    }
+  }, [timer.isActive, timer.isPaused]);
 
   useEffect(() => {
     return registerHotkeys({

@@ -46,6 +46,8 @@ const hotkey = async (_results: MountAppResults, command: keyof Hotkeys) => {
 const selectTask = async (results: MountAppResults, taskId: string = 'one') => {
   await screen.findByRole('button', { name: 'Pick a task' });
 
+  await sleep(1);
+
   await selectOption(results, taskId);
 };
 

@@ -90,9 +90,12 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
+      service: {
+        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      },
     });
 
-    await simulate.selectTask();
+    await simulate.selectTask('foo');
     await simulate.startTimer();
 
     act(() => {
@@ -101,7 +104,8 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectOption('continueTask');
 
-    expect(screen.getByText('short break')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
+    expect(screen.getByText('Take a short break')).toBeInTheDocument();
   });
 
   it('should handle the continue task hotkey', async () => {
@@ -109,9 +113,12 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
+      service: {
+        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      },
     });
 
-    await simulate.selectTask();
+    await simulate.selectTask('foo');
     await simulate.startTimer();
 
     act(() => {
@@ -120,7 +127,8 @@ describe('App - Task Timer End', () => {
 
     await simulate.hotkey('continueTask');
 
-    expect(screen.getByText('short break')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
+    expect(screen.getByText('Take a short break')).toBeInTheDocument();
   });
 
   it('should handle the switch task option', async () => {
@@ -139,7 +147,8 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectOption('switchTask');
 
-    expect(screen.getByText('short break')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Next: New task' })).toBeInTheDocument();
+    expect(screen.getByText('Take a short break')).toBeInTheDocument();
   });
 
   it('should handle the add note option', async () => {
@@ -257,12 +266,13 @@ describe('App - Task Timer End', () => {
         taskTime: 3,
       },
       service: {
+        fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
         getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
         onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
       },
     });
 
-    await simulate.selectTask();
+    await simulate.selectTask('hello');
     await simulate.startTimer();
 
     act(() => {
@@ -272,7 +282,8 @@ describe('App - Task Timer End', () => {
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
-    expect(screen.getByText('short break')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Next: World' })).toBeInTheDocument();
+    expect(screen.getByText('Take a short break')).toBeInTheDocument();
   });
 
   it('should handle a custom switch task option', async () => {
@@ -300,7 +311,8 @@ describe('App - Task Timer End', () => {
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
-    expect(screen.getByText('short break')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Next: New task' })).toBeInTheDocument();
+    expect(screen.getByText('Take a short break')).toBeInTheDocument();
   });
 
   it('should handle a custom void task option', async () => {

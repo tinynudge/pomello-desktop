@@ -1,3 +1,4 @@
+import { SetItem } from '@tinynudge/pomello-service';
 import { Sound } from './Sound';
 
 export interface Settings {
@@ -12,7 +13,7 @@ export interface Settings {
   taskTime: number;
   shortBreakTime: number;
   longBreakTime: number;
-  pomodoroSet: number;
+  pomodoroSet: number | SetItem[];
   resetPomodoroSet: boolean;
   autoStartTasks: boolean;
   autoStartBreaks: boolean;

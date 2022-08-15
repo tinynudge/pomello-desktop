@@ -1,5 +1,6 @@
 import { selectPomelloState } from '@/app/appSlice';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import BreakView from '@/app/views/BreakView';
 import SelectTaskView from '@/app/views/SelectTaskView';
 import TaskTimerEndView from '@/app/views/TaskTimerEndView';
 import TaskView from '@/app/views/TaskView';
@@ -46,12 +47,8 @@ const Routes: FC = () => {
     return <div>task void prompt!</div>;
   }
 
-  if (status === 'SHORT_BREAK') {
-    return <div>short break</div>;
-  }
-
-  if (status === 'LONG_BREAK') {
-    return <div>long break</div>;
+  if (status === 'SHORT_BREAK' || status === 'LONG_BREAK') {
+    return <BreakView type={status} />;
   }
 
   return null;

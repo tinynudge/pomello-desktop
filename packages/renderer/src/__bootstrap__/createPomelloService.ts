@@ -1,5 +1,6 @@
 import baseCreatePomelloService, {
   PomelloService,
+  SetItem,
   Ticker,
   TickerStart,
   TickerStop,
@@ -53,8 +54,20 @@ const createTicker = (): Ticker => {
 };
 
 const createPomelloService = async (): Promise<PomelloService> => {
-  const { betweenTasksGracePeriod, longBreakTime, overtimeDelay, shortBreakTime, taskTime } =
-    await window.app.getSettings();
+  const {
+    betweenTasksGracePeriod,
+    longBreakTime,
+    overtimeDelay,
+    pomodoroSet,
+    shortBreakTime,
+    taskTime,
+  } = await window.app.getSettings();
+
+  const set = Array.isArray(pomodoroSet)
+    ? pomodoroSet
+    : [...Array(pomodoroSet - 1)]
+        .flatMap<SetItem>(() => ['task', 'shortBreak'])
+        .concat(['task', 'longBreak']);
 
   return baseCreatePomelloService({
     createTicker,
@@ -62,7 +75,7 @@ const createPomelloService = async (): Promise<PomelloService> => {
       betweenTasksGracePeriod,
       longBreakTime,
       overtimeDelay,
-      set: ['task', 'shortBreak', 'task', 'longBreak'],
+      set,
       shortBreakTime,
       taskTime,
     },
