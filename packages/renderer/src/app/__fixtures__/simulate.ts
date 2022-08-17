@@ -7,6 +7,12 @@ const sleep = (timeout: number) =>
     setTimeout(resolve, timeout);
   });
 
+const enterNote = async ({ userEvent }: MountAppResults, note: string) => {
+  await screen.findByRole('textbox');
+
+  await userEvent.type(screen.getByRole('textbox'), note);
+};
+
 const hideDialActions = async ({ userEvent }: MountAppResults) => {
   await userEvent.click(screen.getByRole('button', { name: 'Hide actions' }));
 };
@@ -70,6 +76,7 @@ const startTimer = async ({ userEvent }: MountAppResults) => {
 };
 
 const simulate = {
+  enterNote,
   hideDialActions,
   hotkey,
   selectTask,

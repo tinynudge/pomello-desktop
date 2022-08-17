@@ -4,6 +4,7 @@ import BreakView from '@/app/views/BreakView';
 import SelectTaskView from '@/app/views/SelectTaskView';
 import TaskTimerEndView from '@/app/views/TaskTimerEndView';
 import TaskView from '@/app/views/TaskView';
+import TaskVoidView from '@/app/views/TaskVoidView';
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC, Suspense } from 'react';
@@ -43,8 +44,7 @@ const Routes: FC = () => {
   }
 
   if (status === 'TASK_VOID_PROMPT') {
-    // if we have getTaskVoidOptions then render that
-    return <div>task void prompt!</div>;
+    return <TaskVoidView />;
   }
 
   if (status === 'SHORT_BREAK' || status === 'LONG_BREAK') {

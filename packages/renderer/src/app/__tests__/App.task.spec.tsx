@@ -130,7 +130,8 @@ describe('App - Task', () => {
     await simulate.showDialActions();
     await userEvent.click(screen.getByRole('button', { name: 'Void task' }));
 
-    expect(screen.getByText('task void prompt!')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
   });
 
   it('should void tasks via hotkeys', async () => {
@@ -140,7 +141,8 @@ describe('App - Task', () => {
     await simulate.startTimer();
     await simulate.hotkey('voidTask');
 
-    expect(screen.getByText('task void prompt!')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
   });
 
   it('should show an error message when unable to find the current task', async () => {
