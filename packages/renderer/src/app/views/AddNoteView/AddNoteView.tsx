@@ -4,7 +4,7 @@ import InputField from '@/app/ui/InputField';
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { NoteType } from '@domain';
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 interface AddNoteViewProps {
@@ -30,22 +30,26 @@ const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
     inputRef.current?.focus();
   }, [noteType]);
 
-  const handleInputBlur = () => {
-    const updatedNoteType = noteTypeCodes[note];
-
-    if (updatedNoteType) {
-      setNote('');
-
-      dispatch(setOverlayView(updatedNoteType));
-    }
-  };
-
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNote(event.currentTarget.value);
   };
 
   const handleInputEscape = () => {
     dispatch(unsetOverlayView());
+  };
+
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Tab') {
+      const updatedNoteType = noteTypeCodes[note];
+
+      if (updatedNoteType) {
+        setNote('');
+
+        dispatch(setOverlayView(updatedNoteType));
+
+        event.preventDefault();
+      }
+    }
   };
 
   const handleInputSubmit = () => {
@@ -70,9 +74,9 @@ const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
     <>
       <Heading>{t(`${noteType}Heading`)}</Heading>
       <InputField
-        onBlur={handleInputBlur}
         onChange={handleInputChange}
         onEscape={handleInputEscape}
+        onKeyDown={handleInputKeyDown}
         onSubmit={handleInputSubmit}
         placeholder={t('addNotePlaceholder')}
         ref={inputRef}

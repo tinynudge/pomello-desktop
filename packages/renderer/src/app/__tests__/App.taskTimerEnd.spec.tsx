@@ -205,7 +205,8 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectOption('voidTask');
 
-    expect(screen.getByText('task void prompt!')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
   });
 
   it('should handle the void task hotkey', async () => {
@@ -224,7 +225,8 @@ describe('App - Task Timer End', () => {
 
     await simulate.hotkey('voidTask');
 
-    expect(screen.getByText('task void prompt!')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
   });
 
   it('should handle a custom option without an action', async () => {
@@ -340,6 +342,7 @@ describe('App - Task Timer End', () => {
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
-    expect(screen.getByText('task void prompt!')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
   });
 });
