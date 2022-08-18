@@ -102,24 +102,32 @@ describe('App - Task', () => {
   });
 
   it('should complete tasks', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = mountApp({
+      service: {
+        getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+      },
+    });
 
     await simulate.selectTask();
     await simulate.startTimer();
     await simulate.showDialActions();
     await userEvent.click(screen.getByRole('button', { name: 'Complete task' }));
 
-    expect(screen.getByText('task complete prompt')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "Nice! What's next?" })).toBeInTheDocument();
   });
 
   it('should complete tasks via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = mountApp({
+      service: {
+        getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+      },
+    });
 
     await simulate.selectTask();
     await simulate.startTimer();
     await simulate.hotkey('completeTaskEarly');
 
-    expect(screen.getByText('task complete prompt')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "Nice! What's next?" })).toBeInTheDocument();
   });
 
   it('should void tasks', async () => {

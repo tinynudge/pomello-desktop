@@ -11,6 +11,7 @@ export interface Service {
   CustomSelectOption?: CustomSelectOptionComponent;
   displayName: string;
   fetchTasks(): Promise<SelectItem[]>;
+  getCompleteTaskOptions?(taskId: string): SelectItem[] | void;
   getTaskHeading?(): string;
   getTaskLabel?(task: SelectOptionType): string;
   getTaskTimerEndOptions?(): SelectItem[];
@@ -18,6 +19,7 @@ export interface Service {
   id: string;
   InitializingView: InitializingView;
   onMount?(): void;
+  onTaskCompletePromptHandled?(taskId: string, action: string): void;
   onTaskTimerEndPromptHandled?(
     task: SelectOptionType,
     action: string

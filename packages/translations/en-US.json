@@ -33,6 +33,7 @@
   "startTimer": "Do it",
   "startTimerLabel": "Start timer",
   "switchTaskLabel": "Switch task",
+  "taskCompletePlaceholder": "Nice! What's next?",
   "taskTimerEndAddNote": "Add a note first",
   "taskTimerEndContinue": "Continue after break",
   "taskTimerEndPlaceholder": "Time's up! How'd you do?",

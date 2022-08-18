@@ -2,6 +2,7 @@ import { selectPomelloState } from '@/app/appSlice';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import BreakView from '@/app/views/BreakView';
 import SelectTaskView from '@/app/views/SelectTaskView';
+import TaskCompleteView from '@/app/views/TaskCompleteView';
 import TaskTimerEndView from '@/app/views/TaskTimerEndView';
 import TaskView from '@/app/views/TaskView';
 import TaskVoidView from '@/app/views/TaskVoidView';
@@ -39,8 +40,7 @@ const Routes: FC = () => {
   }
 
   if (status === 'TASK_COMPLETE_PROMPT') {
-    // if we have getTaskCompleteOptions then render that
-    return <div>task complete prompt</div>;
+    return <TaskCompleteView />;
   }
 
   if (status === 'TASK_VOID_PROMPT') {
