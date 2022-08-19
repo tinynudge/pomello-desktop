@@ -21,7 +21,7 @@ const SelectServiceView: FC<SelectServiceViewProps> = ({ services }) => {
 
   const items: SelectItem[] = Object.keys(services).map(serviceId => ({
     id: serviceId,
-    label: serviceId,
+    label: services[serviceId].displayName,
   }));
 
   return (

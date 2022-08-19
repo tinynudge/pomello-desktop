@@ -1,6 +1,6 @@
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
-import createMockService from '@/__fixtures__/createMockService';
+import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
 import { Hotkeys, Service, ServiceRegistry, Settings } from '@domain';
@@ -32,7 +32,7 @@ const mountApp = (options: MountAppOptions = {}) => {
   const serviceId = options.serviceId !== null ? options.serviceId ?? 'mock' : undefined;
 
   const settings = createMockSettings(options.settings);
-  const service = createMockService(options.service);
+  const mockServiceFactory = createMockServiceFactory(options.service);
 
   const pomelloService = createMockPomelloService(settings);
   const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
@@ -52,7 +52,7 @@ const mountApp = (options: MountAppOptions = {}) => {
   });
 
   const services: ServiceRegistry = {
-    mock: () => service,
+    mock: mockServiceFactory,
   };
 
   render(
@@ -70,7 +70,6 @@ const mountApp = (options: MountAppOptions = {}) => {
   return {
     appApi,
     emitAppApiEvent,
-    service,
     userEvent: userEvent.setup(),
   };
 };

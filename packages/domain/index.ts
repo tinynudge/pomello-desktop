@@ -17,6 +17,7 @@ export type { SelectGroupType } from './SelectGroupType';
 export type { SelectItem } from './SelectItem';
 export type { SelectOptionType } from './SelectOptionType';
 export type { Service } from './Service';
+export type { ServiceFactory } from './ServiceFactory';
 export type { ServiceRegistry } from './ServiceRegistry';
 export type { SetSelectBoundsOptions } from './SetSelectBoundsOptions';
 export type { SetSelectItemsOptions } from './SetSelectItemsOptions';

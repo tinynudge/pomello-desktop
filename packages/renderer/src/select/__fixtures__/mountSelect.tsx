@@ -1,6 +1,6 @@
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
-import createMockService from '@/__fixtures__/createMockService';
+import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import { Service, ServiceRegistry, SetSelectItemsOptions, Settings } from '@domain';
 import { render } from '@testing-library/react';
@@ -19,13 +19,13 @@ interface MountSelectOptions {
 
 const mountSelect = (options: MountSelectOptions = {}) => {
   const settings = createMockSettings(options.settings);
-  const service = createMockService(options.service);
+  const mockServiceFactory = createMockServiceFactory(options.service);
 
   const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
   window.app = appApi;
 
   const services: ServiceRegistry = {
-    mock: () => service,
+    mock: mockServiceFactory,
   };
 
   const result = render(
@@ -42,7 +42,6 @@ const mountSelect = (options: MountSelectOptions = {}) => {
     appApi,
     emitAppApiEvent,
     result,
-    service,
     userEvent: userEvent.setup(),
   };
 };

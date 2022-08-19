@@ -1,11 +1,11 @@
-import { SelectItem, SelectOptionType, Service } from '@domain';
+import { SelectItem, SelectOptionType, ServiceFactory } from '@domain';
 import MockCustomSelectGroup from './MockCustomSelectGroup';
 import MockCustomSelectOption from './MockCustomSelectOption';
 import MockInitializingView from './MockInitializingView';
 
 export const mockServiceId = 'mock';
 
-const createMockService = (): Service => {
+const createMockService: ServiceFactory = () => {
   const getTaskHeading = (): string => 'Task';
 
   const getCompleteTaskOptions = (): SelectOptionType[] => [
@@ -32,7 +32,7 @@ const createMockService = (): Service => {
     id: mockServiceId,
     CustomSelectGroup: MockCustomSelectGroup,
     CustomSelectOption: MockCustomSelectOption,
-    displayName: 'Mock service',
+    displayName: createMockService.displayName,
     fetchTasks,
     getCompleteTaskOptions,
     getTaskHeading,
@@ -49,5 +49,7 @@ const createMockService = (): Service => {
     },
   };
 };
+
+createMockService.displayName = 'Mock service';
 
 export default createMockService;
