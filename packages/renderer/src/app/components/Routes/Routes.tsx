@@ -1,5 +1,6 @@
 import { selectPomelloState } from '@/app/appSlice';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import LoadingText from '@/app/ui/LoadingText';
 import BreakView from '@/app/views/BreakView';
 import SelectTaskView from '@/app/views/SelectTaskView';
 import TaskCompleteView from '@/app/views/TaskCompleteView';
@@ -7,13 +8,11 @@ import TaskTimerEndView from '@/app/views/TaskTimerEndView';
 import TaskView from '@/app/views/TaskView';
 import TaskVoidView from '@/app/views/TaskVoidView';
 import useService from '@/shared/hooks/useService';
-import useTranslation from '@/shared/hooks/useTranslation';
 import { FC, Suspense } from 'react';
 import { useSelector } from 'react-redux';
 
 const Routes: FC = () => {
   const service = useService();
-  const { t } = useTranslation();
 
   const actions = usePomelloActions();
 
@@ -25,7 +24,7 @@ const Routes: FC = () => {
 
   if (status === 'SELECT_TASK') {
     return (
-      <Suspense fallback={t('waitMessage')}>
+      <Suspense fallback={<LoadingText />}>
         <SelectTaskView />
       </Suspense>
     );

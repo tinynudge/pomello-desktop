@@ -1,22 +1,42 @@
 import { Service, ServiceRegistry } from '@domain';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
+
+interface UseInitializeService {
+  isInitializing: boolean;
+  service?: Service;
+}
 
 const useInitializeService = (
   services: ServiceRegistry,
   serviceId?: string
-): Service | undefined => {
-  const service = useMemo(() => {
-    if (!serviceId) {
-      return;
-    }
+): UseInitializeService => {
+  const [isInitializing, setInitializing] = useState(false);
+  const [service, setService] = useState<Service | undefined>(undefined);
 
-    const serviceFactory = services[serviceId];
+  useEffect(() => {
+    const initializeService = async () => {
+      if (!serviceId) {
+        return;
+      }
 
-    if (!serviceFactory) {
-      throw new Error(`Unable to find service "${serviceId}"`);
-    }
+      const serviceFactory = services[serviceId];
 
-    return serviceFactory();
+      setInitializing(true);
+
+      if (!serviceFactory) {
+        throw new Error(`Unable to find service "${serviceId}"`);
+      }
+
+      if (serviceFactory.config) {
+        await window.app.registerServiceConfig(serviceFactory.id, serviceFactory.config);
+      }
+
+      setService(serviceFactory());
+
+      setInitializing(false);
+    };
+
+    initializeService();
   }, [serviceId, services]);
 
   useEffect(() => {
@@ -27,7 +47,7 @@ const useInitializeService = (
     };
   }, [service]);
 
-  return service;
+  return { isInitializing, service };
 };
 
 export default useInitializeService;

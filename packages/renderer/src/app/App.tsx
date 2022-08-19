@@ -10,6 +10,7 @@ import Layout from './components/Layout';
 import Routes from './components/Routes';
 import { DialActionsProvider } from './context/DialActionsContext';
 import { HotkeysProvider } from './context/HotkeysContext';
+import LoadingText from './ui/LoadingText';
 import AddNoteView from './views/AddNoteView';
 import SelectServiceView from './views/SelectServiceView';
 
@@ -20,7 +21,7 @@ interface AppProps {
 
 const App: FC<AppProps> = ({ hotkeys, services }) => {
   const serviceId = useSelector(selectServiceId);
-  const service = useInitializeService(services, serviceId);
+  const { isInitializing, service } = useInitializeService(services, serviceId);
 
   const overlayView = useSelector(selectOverlayView);
 
@@ -35,6 +36,8 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
                 <Routes />
               </div>
             </ServiceProvider>
+          ) : isInitializing ? (
+            <LoadingText />
           ) : (
             <SelectServiceView services={services} />
           )}

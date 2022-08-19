@@ -3,8 +3,6 @@ import MockCustomSelectGroup from './MockCustomSelectGroup';
 import MockCustomSelectOption from './MockCustomSelectOption';
 import MockInitializingView from './MockInitializingView';
 
-export const mockServiceId = 'mock';
-
 const createMockService: ServiceFactory = () => {
   const getTaskHeading = (): string => 'Task';
 
@@ -29,7 +27,7 @@ const createMockService: ServiceFactory = () => {
   };
 
   return {
-    id: mockServiceId,
+    id: createMockService.id,
     CustomSelectGroup: MockCustomSelectGroup,
     CustomSelectOption: MockCustomSelectOption,
     displayName: createMockService.displayName,
@@ -51,5 +49,6 @@ const createMockService: ServiceFactory = () => {
 };
 
 createMockService.displayName = 'Mock service';
+createMockService.id = 'mock';
 
 export default createMockService;

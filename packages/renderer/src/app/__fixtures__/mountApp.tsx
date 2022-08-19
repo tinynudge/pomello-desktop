@@ -3,7 +3,7 @@ import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
-import { Hotkeys, Service, ServiceRegistry, Settings } from '@domain';
+import { Hotkeys, Service, ServiceConfig, ServiceRegistry, Settings } from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -24,15 +24,20 @@ interface MountAppOptions {
   appApi?: Partial<AppApi>;
   hotkeys?: Partial<Hotkeys>;
   service?: Partial<Omit<Service, 'id'>>;
+  serviceConfig?: ServiceConfig;
   serviceId?: string | null;
   settings?: Partial<Settings>;
 }
 
 const mountApp = (options: MountAppOptions = {}) => {
-  const serviceId = options.serviceId !== null ? options.serviceId ?? 'mock' : undefined;
+  const serviceId = options.serviceId ?? 'mock';
 
   const settings = createMockSettings(options.settings);
-  const mockServiceFactory = createMockServiceFactory(options.service);
+  const mockServiceFactory = createMockServiceFactory(
+    serviceId,
+    options.service,
+    options.serviceConfig
+  );
 
   const pomelloService = createMockPomelloService(settings);
   const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
@@ -40,7 +45,7 @@ const mountApp = (options: MountAppOptions = {}) => {
 
   const store = createStore({
     pomelloState: pomelloService.getState(),
-    serviceId,
+    serviceId: options.serviceId !== null ? serviceId : undefined,
   });
 
   const queryClient = new QueryClient({
@@ -52,7 +57,7 @@ const mountApp = (options: MountAppOptions = {}) => {
   });
 
   const services: ServiceRegistry = {
-    mock: mockServiceFactory,
+    [serviceId]: mockServiceFactory,
   };
 
   render(

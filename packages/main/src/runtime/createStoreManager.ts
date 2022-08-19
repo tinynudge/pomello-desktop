@@ -15,7 +15,7 @@ const createStore = <TContents = StoreContents>({
   const validate = validator.compile(schema);
 
   if (!validate(store.store)) {
-    // TOCO: Add better error handling
+    // TODO: Add better error handling
     throw new Error(`Invalid schema: ${JSON.stringify(validate.errors)}`);
   }
 
