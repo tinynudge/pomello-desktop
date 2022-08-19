@@ -1,3 +1,6 @@
 import { Service } from './Service';
 
-export type ServiceFactory = () => Service;
+export interface ServiceFactory {
+  (): Service;
+  displayName: string;
+}
