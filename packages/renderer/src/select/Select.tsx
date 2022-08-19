@@ -24,7 +24,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState<string>();
-  const service = useInitializeService(services, serviceId);
+  const { service } = useInitializeService(services, serviceId);
 
   const [activeOptionId, setActiveOptionId] = useState<string>();
 

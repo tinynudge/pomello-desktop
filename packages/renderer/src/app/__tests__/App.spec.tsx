@@ -1,3 +1,4 @@
+import { ServiceConfig } from '@domain';
 import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App', () => {
@@ -46,5 +47,38 @@ describe('App', () => {
     await simulate.selectOption('mock');
 
     expect(screen.getByText(/loading service/i)).toBeInTheDocument();
+  });
+
+  it('should register the service config if it exists', async () => {
+    const { appApi, simulate } = mountApp({
+      serviceId: 'foo',
+      serviceConfig: {
+        defaults: {
+          foo: 'bar',
+        },
+        schema: {
+          type: 'object',
+          properties: {
+            foo: { type: 'string' },
+          },
+          required: ['foo'],
+        },
+      } as unknown as ServiceConfig,
+    });
+
+    await simulate.selectOption('foo');
+
+    expect(appApi.registerServiceConfig).toHaveBeenCalledWith('foo', {
+      defaults: {
+        foo: 'bar',
+      },
+      schema: {
+        type: 'object',
+        properties: {
+          foo: { type: 'string' },
+        },
+        required: ['foo'],
+      },
+    });
   });
 });

@@ -19,13 +19,13 @@ interface MountSelectOptions {
 
 const mountSelect = (options: MountSelectOptions = {}) => {
   const settings = createMockSettings(options.settings);
-  const mockServiceFactory = createMockServiceFactory(options.service);
+  const mockServiceFactory = createMockServiceFactory('mock', options.service);
 
   const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
   window.app = appApi;
 
   const services: ServiceRegistry = {
-    mock: mockServiceFactory,
+    [mockServiceFactory.id]: mockServiceFactory,
   };
 
   const result = render(

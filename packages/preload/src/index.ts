@@ -10,6 +10,7 @@ import onSetSelectItems from './onSetSelectItems';
 import onShowSelect from './onShowSelect';
 import onThemeCssChange from './onThemeCssChange';
 import openUrl from './openUrl';
+import registerServiceConfig from './registerServiceConfig';
 import registerStore from './registerStore';
 import selectOption from './selectOption';
 import setSelectBounds from './setSelectBounds';
@@ -28,6 +29,7 @@ const api = {
   onShowSelect,
   onThemeCssChange,
   openUrl,
+  registerServiceConfig,
   registerStore,
   selectOption,
   setSelectBounds,

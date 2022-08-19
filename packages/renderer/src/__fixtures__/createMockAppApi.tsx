@@ -53,6 +53,7 @@ const createMockAppApi = (
     ),
     onShowSelect: vi.fn(appApi.onShowSelect ?? (callback => addListener('onShowSelect', callback))),
     openUrl: vi.fn(),
+    registerServiceConfig: vi.fn(),
     registerStore: vi.fn(),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),
     setSelectBounds: vi.fn(),

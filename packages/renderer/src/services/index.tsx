@@ -1,8 +1,8 @@
 import { ServiceRegistry } from '@domain';
-import createMockService, { mockServiceId } from './mock';
+import createMockService from './mock';
 
 const services: ServiceRegistry = {
-  [mockServiceId]: createMockService,
+  [createMockService.id]: createMockService,
 };
 
 export default services;
