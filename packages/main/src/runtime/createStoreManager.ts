@@ -1,16 +1,25 @@
-import { RegisterStoreOptions, Store, StoreContents, StoreManager } from '@domain';
+import { AppEvent, RegisterStoreOptions, Store, StoreContents, StoreManager } from '@domain';
 import Ajv from 'ajv';
 import ElectronStore from 'electron-store';
+import { join } from 'path';
+import runtime from '.';
 
 const validator = new Ajv({
   allowUnionTypes: true,
 });
 
 const createStore = <TContents = StoreContents>({
+  defaults,
+  directory = '',
+  emitChangeEvents = false,
+  name,
   schema,
-  ...options
 }: RegisterStoreOptions<TContents>): Store<TContents> => {
-  const store = new ElectronStore<TContents>(options);
+  const store = new ElectronStore<TContents>({
+    defaults,
+    name: join(directory, name),
+    watch: emitChangeEvents,
+  });
 
   const validate = validator.compile(schema);
 
@@ -19,10 +28,22 @@ const createStore = <TContents = StoreContents>({
     throw new Error(`Invalid schema: ${JSON.stringify(validate.errors)}`);
   }
 
+  if (emitChangeEvents) {
+    // onDidAnyChange returns an unsubscribe callback. Since we don't have any
+    // methods to remove stores from the manager, we don't need to unsubscribe
+    // this listener. If that does change, then this will need to be revisited
+    // to avoid potential memory leaks.
+    store.onDidAnyChange(() => {
+      runtime.windowManager.getAllWindows().forEach(browserWindow => {
+        browserWindow.webContents.send(`${AppEvent.ServiceConfigChange}:${name}`, store.store);
+      });
+    });
+  }
+
   return {
     all: () => store.store,
     get: store.get,
-    set: store.set,
+    set: store.set.bind(store),
   };
 };
 

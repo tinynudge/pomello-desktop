@@ -1,7 +1,9 @@
-import { JSONSchemaType } from 'ajv';
+import { ServiceConfigChangeCallback } from './ServiceConfigChangeCallback';
 import { StoreContents } from './StoreContents';
 
 export interface ServiceConfig<TConfig = StoreContents> {
-  defaults: Readonly<TConfig>;
-  schema: JSONSchemaType<TConfig>;
+  get(): TConfig;
+  onChange(callback: ServiceConfigChangeCallback<TConfig>): void;
+  set<TKey extends keyof TConfig>(key: TKey, value: TConfig[TKey]): void;
+  unregister(): void;
 }

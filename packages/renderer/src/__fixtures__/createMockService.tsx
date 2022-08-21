@@ -1,4 +1,4 @@
-import { InitializingView, Service, ServiceConfig, ServiceFactory } from '@domain';
+import { InitializingView, Service, ServiceConfigStore, ServiceFactory } from '@domain';
 import { useEffect } from 'react';
 import { vi } from 'vitest';
 
@@ -11,7 +11,7 @@ const MockInitializingView: InitializingView = ({ onReady }) => {
 const createMockServiceFactory = (
   serviceId = 'mock',
   service: Partial<Omit<Service, 'id'>> = {},
-  config?: ServiceConfig
+  config?: ServiceConfigStore
 ): ServiceFactory => {
   const createMockService: ServiceFactory = () => {
     const fetchTasks = async () => [
@@ -33,7 +33,7 @@ const createMockServiceFactory = (
   createMockService.id = serviceId;
 
   if (config) {
-    createMockService.config = config as unknown as ServiceConfig<void>;
+    createMockService.config = config as unknown as ServiceConfigStore<void>;
   }
 
   return createMockService;

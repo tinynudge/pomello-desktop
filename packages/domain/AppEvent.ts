@@ -5,11 +5,12 @@ export enum AppEvent {
   GetTranslations = 'get-translations',
   HideSelect = 'hide-select',
   RegisterServiceConfig = 'register-service-config',
-  RegisterStore = 'register-store',
   SelectChange = 'select-change',
   SelectOption = 'select-option',
+  ServiceConfigChange = 'service-config-change',
   SetSelectBounds = 'set-select-bounds',
   SetSelectItems = 'set-select-items',
+  SetServiceConfigItem = 'set-service-config-item',
   ShowSelect = 'show-select',
   ThemeCssChange = 'theme-css-change',
 }
