@@ -1,4 +1,4 @@
-import { Service, ServiceRegistry } from '@domain';
+import { Service, ServiceConfig, ServiceRegistry } from '@domain';
 import { useEffect, useState } from 'react';
 
 interface UseInitializeService {
@@ -14,6 +14,8 @@ const useInitializeService = (
   const [service, setService] = useState<Service | undefined>(undefined);
 
   useEffect(() => {
+    let config: ServiceConfig<void> | null = null;
+
     const initializeService = async () => {
       if (!serviceId) {
         return;
@@ -28,15 +30,25 @@ const useInitializeService = (
       }
 
       if (serviceFactory.config) {
-        await window.app.registerServiceConfig(serviceFactory.id, serviceFactory.config);
+        config = await window.app.registerServiceConfig(serviceFactory.id, serviceFactory.config);
       }
 
-      setService(serviceFactory());
+      setService(
+        serviceFactory({
+          // Individual service factories will have the correct type, but since
+          // the ServiceFactory config defaults to void, we need to cast as null
+          config: config as null,
+        })
+      );
 
       setInitializing(false);
     };
 
     initializeService();
+
+    return () => {
+      config?.unregister();
+    };
   }, [serviceId, services]);
 
   useEffect(() => {

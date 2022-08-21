@@ -1,4 +1,4 @@
-import { ServiceConfig } from '@domain';
+import { ServiceConfigStore } from '@domain';
 import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App', () => {
@@ -63,7 +63,7 @@ describe('App', () => {
           },
           required: ['foo'],
         },
-      } as unknown as ServiceConfig,
+      } as unknown as ServiceConfigStore,
     });
 
     await simulate.selectOption('foo');

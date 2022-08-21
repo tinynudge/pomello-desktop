@@ -3,7 +3,7 @@ import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
-import { Hotkeys, Service, ServiceConfig, ServiceRegistry, Settings } from '@domain';
+import { Hotkeys, Service, ServiceConfigStore, ServiceRegistry, Settings } from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -24,7 +24,7 @@ interface MountAppOptions {
   appApi?: Partial<AppApi>;
   hotkeys?: Partial<Hotkeys>;
   service?: Partial<Omit<Service, 'id'>>;
-  serviceConfig?: ServiceConfig;
+  serviceConfig?: ServiceConfigStore;
   serviceId?: string | null;
   settings?: Partial<Settings>;
 }

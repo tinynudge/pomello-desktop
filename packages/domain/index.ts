@@ -18,6 +18,8 @@ export type { SelectItem } from './SelectItem';
 export type { SelectOptionType } from './SelectOptionType';
 export type { Service } from './Service';
 export type { ServiceConfig } from './ServiceConfig';
+export type { ServiceConfigChangeCallback } from './ServiceConfigChangeCallback';
+export type { ServiceConfigStore } from './ServiceConfigStore';
 export type { ServiceFactory } from './ServiceFactory';
 export type { ServiceRegistry } from './ServiceRegistry';
 export type { SetSelectBoundsOptions } from './SetSelectBoundsOptions';

@@ -1,15 +1,17 @@
 import runtime from '@/runtime';
-import { ServiceConfig, StoreContents } from '@domain';
+import { ServiceConfigStore, StoreContents } from '@domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleRegisterServiceConfig = async (
   _event: IpcMainInvokeEvent,
   serviceId: string,
-  config: ServiceConfig
+  config: ServiceConfigStore
 ): Promise<StoreContents> => {
   const store = runtime.storeManager.registerStore({
     defaults: config.defaults,
-    name: `services/${serviceId}`,
+    directory: 'services',
+    emitChangeEvents: true,
+    name: serviceId,
     schema: config.schema,
   });
 
