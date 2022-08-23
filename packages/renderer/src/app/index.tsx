@@ -48,7 +48,7 @@ const renderApp = async () => {
       <Provider store={store}>
         <PomelloProvider service={pomelloService}>
           <QueryClientProvider client={queryClient}>
-            <TranslationsProvider translations={translations}>
+            <TranslationsProvider commonTranslations={translations}>
               <App hotkeys={hotkeys} services={services} />
             </TranslationsProvider>
           </QueryClientProvider>

@@ -26,7 +26,7 @@ const renderSelect = async () => {
 
   createRoot(container).render(
     <StrictMode>
-      <TranslationsProvider translations={translations}>
+      <TranslationsProvider commonTranslations={translations}>
         <Select services={services} settings={settings} />
       </TranslationsProvider>
     </StrictMode>

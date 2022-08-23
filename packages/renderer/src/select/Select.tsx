@@ -24,7 +24,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState<string>();
-  const { service } = useInitializeService(services, serviceId);
+  const { isInitializing, service } = useInitializeService(services, serviceId);
 
   const [activeOptionId, setActiveOptionId] = useState<string>();
 
@@ -155,7 +155,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
         activeOptionId={activeOptionId}
         depth={0}
         id={listboxId}
-        items={filteredItems}
+        items={isInitializing ? [] : filteredItems}
         onOptionHover={handleOptionHover}
         onOptionSelect={handleOptionSelect}
         ref={listRef}

@@ -1,4 +1,6 @@
+import useTranslation from '@/shared/hooks/useTranslation';
 import { ServiceConfigStore } from '@domain';
+import { vi } from 'vitest';
 import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App', () => {
@@ -80,5 +82,27 @@ describe('App', () => {
         required: ['foo'],
       },
     });
+  });
+
+  it('should load service translations', async () => {
+    const getTranslations = vi.fn().mockResolvedValue({
+      helloWorld: 'Hello world!',
+    });
+
+    const InitializingView = () => {
+      const { t } = useTranslation();
+
+      return <>{t('service:helloWorld')}</>;
+    };
+
+    const { simulate } = mountApp({
+      appApi: { getTranslations },
+      service: { InitializingView },
+      serviceId: null,
+    });
+
+    await simulate.selectOption('mock');
+
+    expect(screen.getByText('Hello world!')).toBeInTheDocument();
   });
 });

@@ -33,7 +33,7 @@ const mountComponent = (ui: ReactElement, options: MountComponentOptions = {}) =
     wrapper: ({ children }) => {
       return (
         <Provider store={store}>
-          <TranslationsProvider translations={translations}>{children}</TranslationsProvider>
+          <TranslationsProvider commonTranslations={translations}>{children}</TranslationsProvider>
         </Provider>
       );
     },

@@ -1,5 +1,6 @@
 import { Service, ServiceConfig, ServiceRegistry } from '@domain';
 import { useEffect, useState } from 'react';
+import useTranslation from './useTranslation';
 
 interface UseInitializeService {
   isInitializing: boolean;
@@ -10,6 +11,7 @@ const useInitializeService = (
   services: ServiceRegistry,
   serviceId?: string
 ): UseInitializeService => {
+  const { addNamespace, removeNamespace } = useTranslation();
   const [isInitializing, setInitializing] = useState(false);
   const [service, setService] = useState<Service | undefined>(undefined);
 
@@ -33,6 +35,9 @@ const useInitializeService = (
         config = await window.app.registerServiceConfig(serviceFactory.id, serviceFactory.config);
       }
 
+      const translations = await window.app.getTranslations(serviceFactory.id);
+      addNamespace('service', translations);
+
       setService(
         serviceFactory({
           // Individual service factories will have the correct type, but since
@@ -48,8 +53,10 @@ const useInitializeService = (
 
     return () => {
       config?.unregister();
+
+      removeNamespace('service');
     };
-  }, [serviceId, services]);
+  }, [addNamespace, removeNamespace, serviceId, services]);
 
   useEffect(() => {
     service?.onMount?.();

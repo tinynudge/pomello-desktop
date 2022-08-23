@@ -64,7 +64,7 @@ const mountApp = (options: MountAppOptions = {}) => {
     <Provider store={store}>
       <PomelloProvider service={pomelloService}>
         <QueryClientProvider client={queryClient}>
-          <TranslationsProvider translations={translations}>
+          <TranslationsProvider commonTranslations={translations}>
             <App hotkeys={mockHotkeys} services={services} />
           </TranslationsProvider>
         </QueryClientProvider>

@@ -1,5 +1,5 @@
-import { Translations } from '@domain';
+import { TranslationsDictionary } from '@domain';
 
-const getTranslations = (): Promise<Translations> => window.app.getTranslations();
+const getTranslations = (): Promise<TranslationsDictionary> => window.app.getTranslations();
 
 export default getTranslations;

@@ -1,22 +1,33 @@
+import { TranslationsDictionary } from '@domain';
 import { useCallback, useContext } from 'react';
 import { TranslationsContext } from '../context/TranslationsContext';
 
 interface UseTranslation {
+  addNamespace(namespace: string, translations: TranslationsDictionary): void;
+  removeNamespace(namespace: string): void;
   t: Translate;
 }
 
 type Translate = (input: string, mappings?: Record<string, string>) => string;
 
 const useTranslation = (): UseTranslation => {
-  const dictionary = useContext(TranslationsContext);
+  const context = useContext(TranslationsContext);
 
-  if (!dictionary) {
+  if (!context) {
     throw new Error('useTranslation must be used inside a <TranslationsProvider>');
   }
 
+  const { addNamespace, removeNamespace, translations } = context;
+
   const t: Translate = useCallback(
-    (key, mappings) => {
-      const translation = dictionary[key];
+    (namespacedKey, mappings) => {
+      let [namespace, key] = namespacedKey.split(':');
+      if (!key) {
+        key = namespace;
+        namespace = 'common';
+      }
+
+      const translation = translations[namespace]?.[key];
 
       if (!translation) {
         return key;
@@ -26,10 +37,10 @@ const useTranslation = (): UseTranslation => {
         ? translation.replace(/\{\{(\w+)\}\}/gm, (_match, mapping) => mappings[mapping] ?? mapping)
         : translation;
     },
-    [dictionary]
+    [translations]
   );
 
-  return { t };
+  return { addNamespace, removeNamespace, t };
 };
 
 export default useTranslation;

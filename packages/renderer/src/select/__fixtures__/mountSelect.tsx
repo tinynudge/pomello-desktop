@@ -29,7 +29,7 @@ const mountSelect = (options: MountSelectOptions = {}) => {
   };
 
   const result = render(
-    <TranslationsProvider translations={translations}>
+    <TranslationsProvider commonTranslations={translations}>
       <Select services={services} settings={settings} />
     </TranslationsProvider>
   );
