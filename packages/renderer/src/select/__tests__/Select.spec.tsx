@@ -1,6 +1,6 @@
 import { CustomSelectGroupComponent, CustomSelectOptionComponent } from '@domain';
 import { vi } from 'vitest';
-import mountSelect, { fireEvent, screen } from '../__fixtures__/mountSelect';
+import mountSelect, { fireEvent, screen, waitFor } from '../__fixtures__/mountSelect';
 
 describe('Select', () => {
   it('should show a custom placeholder', () => {
@@ -52,7 +52,7 @@ describe('Select', () => {
     expect(screen.getByRole('group')).toHaveTextContent('Two Group');
   });
 
-  it('should render custom options', () => {
+  it('should render custom options', async () => {
     const CustomSelectOption: CustomSelectOptionComponent = ({ option }) => (
       <>Custom - {option.label}</>
     );
@@ -65,10 +65,12 @@ describe('Select', () => {
       },
     });
 
-    expect(screen.getByRole('option')).toHaveTextContent('Custom - One');
+    await waitFor(() => {
+      expect(screen.getByRole('option')).toHaveTextContent('Custom - One');
+    });
   });
 
-  it('should render custom option groups', () => {
+  it('should render custom option groups', async () => {
     const CustomSelectGroup: CustomSelectGroupComponent = ({ group }) => (
       <>Custom Group - {group.label}</>
     );
@@ -88,7 +90,9 @@ describe('Select', () => {
       },
     });
 
-    expect(screen.getByRole('group')).toHaveTextContent('Custom Group - One');
+    await waitFor(() => {
+      expect(screen.getByRole('group')).toHaveTextContent('Custom Group - One');
+    });
   });
 
   it('should select the option when clicked', async () => {
