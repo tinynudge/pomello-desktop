@@ -14,17 +14,24 @@ import useUpdateWindowDimensions from './hooks/useUpdateWindowDimensions';
 import styles from './Select.module.scss';
 
 interface SelectProps {
+  initialServiceId?: string;
   services: ServiceRegistry;
   settings: Settings;
 }
 
-const Select: FC<SelectProps> = ({ services, settings }) => {
+const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
   const { t } = useTranslation();
 
   const listRef = useRef<HTMLUListElement>(null);
 
-  const [serviceId, setServiceId] = useState<string>();
+  const [serviceId, setServiceId] = useState(initialServiceId);
   const { isInitializing, service } = useInitializeService(services, serviceId);
+
+  useEffect(() => {
+    return window.app.onServicesChange(services => {
+      setServiceId(services.activeServiceId);
+    });
+  }, []);
 
   const [activeOptionId, setActiveOptionId] = useState<string>();
 
@@ -67,8 +74,7 @@ const Select: FC<SelectProps> = ({ services, settings }) => {
   }, []);
 
   useEffect(() => {
-    return window.app.onSetSelectItems(({ serviceId, placeholder, items }) => {
-      setServiceId(serviceId);
+    return window.app.onSetSelectItems(({ placeholder, items }) => {
       setPlaceholder(placeholder);
       setItems(items);
 

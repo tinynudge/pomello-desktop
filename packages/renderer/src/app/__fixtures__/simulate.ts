@@ -49,12 +49,16 @@ const hotkey = async (_results: MountAppResults, command: keyof Hotkeys) => {
   });
 };
 
-const selectTask = async (results: MountAppResults, taskId: string = 'one') => {
-  await screen.findByRole('button', { name: 'Pick a task' });
+const selectService = async (results: MountAppResults, serviceId: string) => {
+  await selectOption(results, serviceId);
 
-  await sleep(1);
+  await act(async () => {
+    results.emitAppApiEvent('onServicesChange', {
+      activeServiceId: serviceId,
+    });
 
-  await selectOption(results, taskId);
+    await sleep(1);
+  });
 };
 
 const selectOption = async ({ emitAppApiEvent }: MountAppResults, optionId: string) => {
@@ -63,6 +67,14 @@ const selectOption = async ({ emitAppApiEvent }: MountAppResults, optionId: stri
 
     await sleep(1);
   });
+};
+
+const selectTask = async (results: MountAppResults, taskId: string = 'one') => {
+  await screen.findByRole('button', { name: 'Pick a task' });
+
+  await sleep(1);
+
+  await selectOption(results, taskId);
 };
 
 const showDialActions = async ({ userEvent }: MountAppResults) => {
@@ -79,8 +91,9 @@ const simulate = {
   enterNote,
   hideDialActions,
   hotkey,
-  selectTask,
   selectOption,
+  selectService,
+  selectTask,
   showDialActions,
   startTimer,
 };

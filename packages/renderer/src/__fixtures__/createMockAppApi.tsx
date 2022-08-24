@@ -36,6 +36,7 @@ const createMockAppApi = (
   };
 
   const api: AppApi = {
+    getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve(''))),
@@ -48,6 +49,9 @@ const createMockAppApi = (
     onSelectHide: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectHide', callback))
     ),
+    onServicesChange: vi.fn(
+      appApi.onServicesChange ?? (callback => addListener('onServicesChange', callback))
+    ),
     onSetSelectItems: vi.fn(
       appApi.onSetSelectItems ?? (callback => addListener('onSetSelectItems', callback))
     ),
@@ -55,6 +59,7 @@ const createMockAppApi = (
     openUrl: vi.fn(),
     registerServiceConfig: vi.fn(),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),
+    setActiveServiceId: vi.fn(),
     setSelectBounds: vi.fn(),
     setSelectItems: vi.fn(appApi.setSelectItems ?? (() => Promise.resolve())),
     showSelect: vi.fn(),

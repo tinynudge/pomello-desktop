@@ -35,14 +35,14 @@ const createStore = <TContents = StoreContents>({
     // to avoid potential memory leaks.
     store.onDidAnyChange(() => {
       runtime.windowManager.getAllWindows().forEach(browserWindow => {
-        browserWindow.webContents.send(`${AppEvent.ServiceConfigChange}:${name}`, store.store);
+        browserWindow.webContents.send(`${AppEvent.StoreChange}:${name}`, store.store);
       });
     });
   }
 
   return {
     all: () => store.store,
-    get: store.get,
+    get: store.get.bind(store),
     set: store.set.bind(store),
   };
 };

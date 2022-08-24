@@ -1,8 +1,6 @@
-import { selectServiceId } from '@/app/appSlice';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem } from '@domain';
 import { FC, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import styles from './SelectField.module.scss';
 
 interface SelectFieldProps {
@@ -13,8 +11,6 @@ interface SelectFieldProps {
 
 const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlaceholder, onChange }) => {
   const { t } = useTranslation();
-
-  const serviceId = useSelector(selectServiceId);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -39,8 +35,8 @@ const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlacehold
   }, [onChange]);
 
   useEffect(() => {
-    window.app.setSelectItems({ serviceId, placeholder, items });
-  }, [placeholder, items, serviceId]);
+    window.app.setSelectItems({ placeholder, items });
+  }, [placeholder, items]);
 
   const handleButtonClick = () => {
     showSelectWindow();
