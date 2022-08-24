@@ -18,15 +18,15 @@ const registerServiceConfig = async <TConfig = StoreContents>(
   const onChange = (callback: ServiceConfigChangeCallback<TConfig>) => {
     const handler = (_event: IpcRendererEvent, config: TConfig) => callback(config);
 
-    ipcRenderer.on(`${AppEvent.ServiceConfigChange}:${serviceId}`, handler);
+    ipcRenderer.on(`${AppEvent.StoreChange}:${serviceId}`, handler);
 
     return () => {
-      ipcRenderer.off(`${AppEvent.ServiceConfigChange}:${serviceId}`, handler);
+      ipcRenderer.off(`${AppEvent.StoreChange}:${serviceId}`, handler);
     };
   };
 
   const set = <TKey extends keyof TConfig>(key: TKey, value: TConfig[TKey]) => {
-    return ipcRenderer.invoke(AppEvent.SetServiceConfigItem, serviceId, key, value);
+    return ipcRenderer.invoke(AppEvent.SetStoreItem, serviceId, key, value);
   };
 
   const unregister = () => {

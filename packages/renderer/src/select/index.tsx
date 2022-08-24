@@ -13,10 +13,11 @@ const renderSelect = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [settings, themeCss, translations] = await Promise.all([
+  const [settings, themeCss, translations, serviceId] = await Promise.all([
     window.app.getSettings(),
     getThemeCss(),
     getTranslations(),
+    window.app.getActiveServiceId(),
   ]);
 
   document.body.style.cssText = themeCss;
@@ -27,7 +28,7 @@ const renderSelect = async () => {
   createRoot(container).render(
     <StrictMode>
       <TranslationsProvider commonTranslations={translations}>
-        <Select services={services} settings={settings} />
+        <Select initialServiceId={serviceId} services={services} settings={settings} />
       </TranslationsProvider>
     </StrictMode>
   );

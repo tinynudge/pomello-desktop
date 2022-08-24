@@ -22,6 +22,7 @@ export type { ServiceConfigChangeCallback } from './ServiceConfigChangeCallback'
 export type { ServiceConfigStore } from './ServiceConfigStore';
 export type { ServiceFactory } from './ServiceFactory';
 export type { ServiceRegistry } from './ServiceRegistry';
+export type { Services } from './Services';
 export type { SetSelectBoundsOptions } from './SetSelectBoundsOptions';
 export type { SetSelectItemsOptions } from './SetSelectItemsOptions';
 export type { Settings } from './Settings';

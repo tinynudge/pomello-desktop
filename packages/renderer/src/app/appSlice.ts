@@ -24,7 +24,7 @@ export const appSlice = createSlice({
     pomelloStateUpdate: (state, { payload }: PayloadAction<PomelloState>) => {
       state.pomelloState = payload;
     },
-    serviceChange: (state, { payload }: PayloadAction<string>) => {
+    serviceChange: (state, { payload }: PayloadAction<string | undefined>) => {
       state.serviceId = payload;
     },
     setOverlayView: (state, { payload }: PayloadAction<OverlayView>) => {

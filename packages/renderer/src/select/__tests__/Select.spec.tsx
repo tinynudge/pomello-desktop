@@ -59,8 +59,8 @@ describe('Select', () => {
 
     mountSelect({
       service: { CustomSelectOption },
+      serviceId: 'mock',
       setSelectItems: {
-        serviceId: 'mock',
         items: [{ id: 'one', label: 'One', type: 'customOption' }],
       },
     });
@@ -77,8 +77,8 @@ describe('Select', () => {
 
     mountSelect({
       service: { CustomSelectGroup },
+      serviceId: 'mock',
       setSelectItems: {
-        serviceId: 'mock',
         items: [
           {
             id: 'one',

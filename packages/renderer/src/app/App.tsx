@@ -2,10 +2,10 @@ import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import { LabeledHotkeys, ServiceRegistry } from '@domain';
 import cc from 'classcat';
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { FC, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './App.module.scss';
-import { selectOverlayView, selectServiceId } from './appSlice';
+import { selectOverlayView, selectServiceId, serviceChange } from './appSlice';
 import Layout from './components/Layout';
 import Routes from './components/Routes';
 import { DialActionsProvider } from './context/DialActionsContext';
@@ -20,7 +20,16 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ hotkeys, services }) => {
+  const dispatch = useDispatch();
+
   const serviceId = useSelector(selectServiceId);
+
+  useEffect(() => {
+    return window.app.onServicesChange(services => {
+      dispatch(serviceChange(services.activeServiceId));
+    });
+  });
+
   const { isInitializing, service } = useInitializeService(services, serviceId);
 
   const overlayView = useSelector(selectOverlayView);

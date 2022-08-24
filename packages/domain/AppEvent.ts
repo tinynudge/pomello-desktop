@@ -1,4 +1,5 @@
 export enum AppEvent {
+  GetActiveServiceId = 'get-active-service-id',
   GetHotkeys = 'get-hotkeys',
   GetSettings = 'get-settings',
   GetThemeCss = 'get-theme-css',
@@ -7,10 +8,10 @@ export enum AppEvent {
   RegisterServiceConfig = 'register-service-config',
   SelectChange = 'select-change',
   SelectOption = 'select-option',
-  ServiceConfigChange = 'service-config-change',
   SetSelectBounds = 'set-select-bounds',
   SetSelectItems = 'set-select-items',
-  SetServiceConfigItem = 'set-service-config-item',
+  SetStoreItem = 'set-store-item',
   ShowSelect = 'show-select',
+  StoreChange = 'store-change',
   ThemeCssChange = 'theme-css-change',
 }

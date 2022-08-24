@@ -13,6 +13,7 @@ export * from '@testing-library/react';
 interface MountSelectOptions {
   appApi?: Partial<AppApi>;
   service?: Partial<Omit<Service, 'id'>>;
+  serviceId?: string;
   setSelectItems?: SetSelectItemsOptions;
   settings?: Partial<Settings>;
 }
@@ -30,7 +31,7 @@ const mountSelect = (options: MountSelectOptions = {}) => {
 
   const result = render(
     <TranslationsProvider commonTranslations={translations}>
-      <Select services={services} settings={settings} />
+      <Select initialServiceId={options.serviceId} services={services} settings={settings} />
     </TranslationsProvider>
   );
 

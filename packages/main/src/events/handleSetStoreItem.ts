@@ -1,15 +1,15 @@
 import runtime from '@/runtime';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleSetServiceConfigItem = (
+const handleSetStoreItem = (
   _event: IpcMainInvokeEvent,
-  serviceId: string,
+  storeName: string,
   key: string,
   value: unknown
 ): void => {
-  const store = runtime.storeManager.getOrFailStore(serviceId);
+  const store = runtime.storeManager.getOrFailStore(storeName);
 
   store.set(key, value);
 };
 
-export default handleSetServiceConfigItem;
+export default handleSetStoreItem;

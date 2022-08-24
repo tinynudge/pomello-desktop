@@ -46,7 +46,7 @@ describe('App', () => {
       serviceId: null,
     });
 
-    await simulate.selectOption('mock');
+    await simulate.selectService('mock');
 
     expect(screen.getByText(/loading service/i)).toBeInTheDocument();
   });
@@ -101,7 +101,7 @@ describe('App', () => {
       serviceId: null,
     });
 
-    await simulate.selectOption('mock');
+    await simulate.selectService('mock');
 
     expect(screen.getByText('Hello world!')).toBeInTheDocument();
   });
