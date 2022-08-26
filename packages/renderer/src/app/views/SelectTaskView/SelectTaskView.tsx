@@ -11,7 +11,7 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const SelectTaskView: FC = () => {
-  const { fetchTasks, id } = useService();
+  const { fetchTasks, id, SelectTaskView } = useService();
   const { t } = useTranslation();
 
   const { selectTask } = usePomelloActions();
@@ -34,12 +34,14 @@ const SelectTaskView: FC = () => {
     selectTask(id);
   };
 
-  return (
+  return !SelectTaskView ? (
     <SelectField
       items={tasks!}
       onChange={handleTaskSelect}
       placeholder={t('selectTaskPlaceholder')}
     />
+  ) : (
+    <SelectTaskView selectTask={selectTask} />
   );
 };
 

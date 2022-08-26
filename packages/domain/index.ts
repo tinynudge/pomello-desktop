@@ -16,6 +16,7 @@ export type { Runtime } from './Runtime';
 export type { SelectGroupType } from './SelectGroupType';
 export type { SelectItem } from './SelectItem';
 export type { SelectOptionType } from './SelectOptionType';
+export type { SelectTaskView } from './SelectTaskView';
 export type { Service } from './Service';
 export type { ServiceConfig } from './ServiceConfig';
 export type { ServiceConfigChangeCallback } from './ServiceConfigChangeCallback';

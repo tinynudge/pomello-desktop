@@ -19,7 +19,12 @@ const Routes: FC = () => {
   const { status } = useSelector(selectPomelloState);
 
   if (status === 'INITIALIZING') {
-    return <service.InitializingView onReady={actions.setReady} />;
+    if (service.InitializingView) {
+      return <service.InitializingView onReady={actions.setReady} />;
+    } else {
+      actions.setReady();
+      return null;
+    }
   }
 
   if (status === 'SELECT_TASK') {
