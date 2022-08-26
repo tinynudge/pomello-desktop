@@ -12,7 +12,7 @@ export * from '@testing-library/react';
 
 interface MountSelectOptions {
   appApi?: Partial<AppApi>;
-  service?: Partial<Omit<Service, 'id'>>;
+  service?: Partial<Service>;
   serviceId?: string;
   setSelectItems?: SetSelectItemsOptions;
   settings?: Partial<Settings>;
@@ -20,7 +20,7 @@ interface MountSelectOptions {
 
 const mountSelect = (options: MountSelectOptions = {}) => {
   const settings = createMockSettings(options.settings);
-  const mockServiceFactory = createMockServiceFactory('mock', options.service);
+  const mockServiceFactory = createMockServiceFactory({ service: options.service });
 
   const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
   window.app = appApi;

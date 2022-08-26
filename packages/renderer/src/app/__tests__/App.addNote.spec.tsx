@@ -9,8 +9,10 @@ describe('App - Add Note', () => {
     const errorMessage = ['Unable to add note', { body: 'Mock service does not support notes' }];
 
     const { simulate, userEvent } = mountApp({
-      service: {
-        handleNoteAdd: undefined,
+      mockService: {
+        service: {
+          handleNoteAdd: undefined,
+        },
       },
     });
 
@@ -88,8 +90,10 @@ describe('App - Add Note', () => {
     const handleNoteAdd = vi.fn();
 
     const { simulate, userEvent } = mountApp({
-      service: {
-        handleNoteAdd,
+      mockService: {
+        service: {
+          handleNoteAdd,
+        },
       },
     });
 
@@ -105,8 +109,10 @@ describe('App - Add Note', () => {
     const handleNoteAdd = vi.fn();
 
     const { simulate, userEvent } = mountApp({
-      service: {
-        handleNoteAdd,
+      mockService: {
+        service: {
+          handleNoteAdd,
+        },
       },
     });
 
@@ -122,8 +128,10 @@ describe('App - Add Note', () => {
     const handleNoteAdd = vi.fn();
 
     const { simulate, userEvent } = mountApp({
-      service: {
-        handleNoteAdd,
+      mockService: {
+        service: {
+          handleNoteAdd,
+        },
       },
     });
 
@@ -139,8 +147,10 @@ describe('App - Add Note', () => {
     const handleNoteAdd = vi.fn();
 
     const { simulate, userEvent } = mountApp({
-      service: {
-        handleNoteAdd,
+      mockService: {
+        service: {
+          handleNoteAdd,
+        },
       },
     });
 

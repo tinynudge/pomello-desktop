@@ -22,9 +22,12 @@ export type MountAppResults = ReturnType<typeof mountApp>;
 
 interface MountAppOptions {
   appApi?: Partial<AppApi>;
+  createServiceRegistry?(defaultRegistry: ServiceRegistry): ServiceRegistry;
   hotkeys?: Partial<Hotkeys>;
-  service?: Partial<Omit<Service, 'id'>>;
-  serviceConfig?: ServiceConfigStore;
+  mockService?: {
+    config?: ServiceConfigStore;
+    service?: Partial<Service>;
+  };
   serviceId?: string | null;
   settings?: Partial<Settings>;
 }
@@ -33,11 +36,7 @@ const mountApp = (options: MountAppOptions = {}) => {
   const serviceId = options.serviceId ?? 'mock';
 
   const settings = createMockSettings(options.settings);
-  const mockServiceFactory = createMockServiceFactory(
-    serviceId,
-    options.service,
-    options.serviceConfig
-  );
+  const mockServiceFactory = createMockServiceFactory(options.mockService);
 
   const pomelloService = createMockPomelloService(settings);
   const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
@@ -56,9 +55,11 @@ const mountApp = (options: MountAppOptions = {}) => {
     },
   });
 
-  const services: ServiceRegistry = {
-    [serviceId]: mockServiceFactory,
+  const defaultServices: ServiceRegistry = {
+    [mockServiceFactory.id]: mockServiceFactory,
   };
+
+  const services = options.createServiceRegistry?.(defaultServices) ?? defaultServices;
 
   render(
     <Provider store={store}>

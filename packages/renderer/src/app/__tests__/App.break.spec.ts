@@ -18,8 +18,10 @@ describe('App - Break', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+        },
       },
     });
 
@@ -62,8 +64,10 @@ describe('App - Break', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+        },
       },
     });
 
@@ -106,8 +110,10 @@ describe('App - Break', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+        },
       },
     });
 

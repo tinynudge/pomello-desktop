@@ -42,7 +42,11 @@ describe('App', () => {
     const InitializingView = () => <>Loading service</>;
 
     const { simulate } = mountApp({
-      service: { InitializingView },
+      mockService: {
+        service: {
+          InitializingView,
+        },
+      },
       serviceId: null,
     });
 
@@ -53,22 +57,27 @@ describe('App', () => {
 
   it('should register the service config if it exists', async () => {
     const { appApi, simulate } = mountApp({
-      serviceId: 'foo',
-      serviceConfig: {
-        defaults: {
-          foo: 'bar',
-        },
-        schema: {
-          type: 'object',
-          properties: {
-            foo: { type: 'string' },
+      mockService: {
+        config: {
+          defaults: {
+            foo: 'bar',
           },
-          required: ['foo'],
+          schema: {
+            type: 'object',
+            properties: {
+              foo: { type: 'string' },
+            },
+            required: ['foo'],
+          },
+        } as unknown as ServiceConfigStore,
+        service: {
+          id: 'foo',
         },
-      } as unknown as ServiceConfigStore,
+      },
+      serviceId: null,
     });
 
-    await simulate.selectOption('foo');
+    await simulate.selectService('foo');
 
     expect(appApi.registerServiceConfig).toHaveBeenCalledWith('foo', {
       defaults: {
@@ -97,7 +106,11 @@ describe('App', () => {
 
     const { simulate } = mountApp({
       appApi: { getTranslations },
-      service: { InitializingView },
+      mockService: {
+        service: {
+          InitializingView,
+        },
+      },
       serviceId: null,
     });
 
