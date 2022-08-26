@@ -1,17 +1,10 @@
-import { InitializingView, Service, ServiceConfigStore, ServiceFactory } from '@domain';
-import { useEffect } from 'react';
+import { Service, ServiceConfigStore, ServiceFactory } from '@domain';
 import { vi } from 'vitest';
 
 interface MockService {
   config?: ServiceConfigStore;
   service?: Partial<Service>;
 }
-
-const MockInitializingView: InitializingView = ({ onReady }) => {
-  useEffect(onReady, [onReady]);
-
-  return null;
-};
 
 const createMockServiceFactory = ({ config, service = {} }: MockService = {}): ServiceFactory => {
   const createMockService: ServiceFactory = () => {
@@ -24,7 +17,6 @@ const createMockServiceFactory = ({ config, service = {} }: MockService = {}): S
       displayName: createMockService.displayName,
       handleNoteAdd: vi.fn(),
       id: createMockService.id,
-      InitializingView: MockInitializingView,
       ...service,
       fetchTasks: vi.fn(service.fetchTasks ?? fetchTasks),
     };

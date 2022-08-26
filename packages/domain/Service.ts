@@ -5,6 +5,7 @@ import { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
 import { InitializingView } from './InitializingView';
 import { SelectItem } from './SelectItem';
 import { SelectOptionType } from './SelectOptionType';
+import { SelectTaskView } from './SelectTaskView';
 
 export interface Service {
   CustomSelectGroup?: CustomSelectGroupComponent;
@@ -17,7 +18,7 @@ export interface Service {
   getTaskTimerEndOptions?(): SelectItem[];
   handleNoteAdd?: AddNoteHandler;
   id: string;
-  InitializingView: InitializingView;
+  InitializingView?: InitializingView;
   onMount?(): void;
   onTaskCompletePromptHandled?(taskId: string, action: string): void;
   onTaskTimerEndPromptHandled?(
@@ -25,4 +26,5 @@ export interface Service {
     action: string
   ): TaskTimerEndPromptHandledAction | void;
   onUnmount?(): void;
+  SelectTaskView?: SelectTaskView;
 }

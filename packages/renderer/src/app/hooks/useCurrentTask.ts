@@ -1,10 +1,10 @@
 import { selectPomelloState } from '@/app/appSlice';
-import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
 import useService from '@/shared/hooks/useService';
 import { SelectOptionType } from '@domain';
 import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
+import getTasksCacheKey from '../helpers/getTasksCacheKey';
 
 interface CurrentTask {
   currentTask: SelectOptionType;
