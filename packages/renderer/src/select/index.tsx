@@ -1,8 +1,6 @@
 import Select from '@/select/Select';
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
-import getThemeCss from '@/__bootstrap__/getThemeCss';
-import getTranslations from '@/__bootstrap__/getTranslations';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -15,8 +13,8 @@ const renderSelect = async () => {
 
   const [settings, themeCss, translations, serviceId] = await Promise.all([
     window.app.getSettings(),
-    getThemeCss(),
-    getTranslations(),
+    window.app.getThemeCss(),
+    window.app.getTranslations(),
     window.app.getActiveServiceId(),
   ]);
 
