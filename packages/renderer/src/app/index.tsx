@@ -4,9 +4,6 @@ import createStore from '@/app/createStore';
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createPomelloService from '@/__bootstrap__/createPomelloService';
-import getHotkeys from '@/__bootstrap__/getHotkeys';
-import getThemeCss from '@/__bootstrap__/getThemeCss';
-import getTranslations from '@/__bootstrap__/getTranslations';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -29,9 +26,9 @@ const renderApp = async () => {
 
   const [pomelloService, hotkeys, themeCss, translations, serviceId] = await Promise.all([
     createPomelloService(),
-    getHotkeys(),
-    getThemeCss(),
-    getTranslations(),
+    window.app.getHotkeys(),
+    window.app.getThemeCss(),
+    window.app.getTranslations(),
     window.app.getActiveServiceId(),
   ]);
 
