@@ -19,8 +19,10 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+        },
       },
     });
 
@@ -66,8 +68,10 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foobar' }],
+      mockService: {
+        service: {
+          getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foobar' }],
+        },
       },
     });
 
@@ -90,8 +94,10 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+        },
       },
     });
 
@@ -113,8 +119,10 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'foo', label: 'Foo' }]),
+        },
       },
     });
 
@@ -236,10 +244,12 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
-        fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
-        onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+      mockService: {
+        service: {
+          getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
+          fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
+          onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+        },
       },
     });
 
@@ -267,10 +277,12 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
-        getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
-        onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
+          getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
+          onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+        },
       },
     });
 
@@ -297,9 +309,11 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
-        onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+      mockService: {
+        service: {
+          getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
+          onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+        },
       },
     });
 
@@ -326,9 +340,11 @@ describe('App - Task Timer End', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
-        onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+      mockService: {
+        service: {
+          getTaskTimerEndOptions: () => [{ id: 'foo', label: 'Foo' }],
+          onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+        },
       },
     });
 

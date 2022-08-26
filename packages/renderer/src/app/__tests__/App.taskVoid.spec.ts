@@ -18,8 +18,10 @@ describe('App - Task void', () => {
       settings: {
         taskTime: 3,
       },
-      service: {
-        handleNoteAdd: undefined,
+      mockService: {
+        service: {
+          handleNoteAdd: undefined,
+        },
       },
     });
 
@@ -112,8 +114,10 @@ describe('App - Task void', () => {
     const handleNoteAdd = vi.fn();
 
     const { simulate } = mountApp({
-      service: {
-        handleNoteAdd,
+      mockService: {
+        service: {
+          handleNoteAdd,
+        },
       },
       settings: {
         taskTime: 3,

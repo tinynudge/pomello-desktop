@@ -2,17 +2,18 @@ import { InitializingView, Service, ServiceConfigStore, ServiceFactory } from '@
 import { useEffect } from 'react';
 import { vi } from 'vitest';
 
+interface MockService {
+  config?: ServiceConfigStore;
+  service?: Partial<Service>;
+}
+
 const MockInitializingView: InitializingView = ({ onReady }) => {
   useEffect(onReady, [onReady]);
 
-  return <div>Initializing</div>;
+  return null;
 };
 
-const createMockServiceFactory = (
-  serviceId = 'mock',
-  service: Partial<Omit<Service, 'id'>> = {},
-  config?: ServiceConfigStore
-): ServiceFactory => {
+const createMockServiceFactory = ({ config, service = {} }: MockService = {}): ServiceFactory => {
   const createMockService: ServiceFactory = () => {
     const fetchTasks = async () => [
       { id: 'one', label: 'Task one' },
@@ -21,16 +22,16 @@ const createMockServiceFactory = (
 
     return {
       displayName: createMockService.displayName,
+      handleNoteAdd: vi.fn(),
       id: createMockService.id,
       InitializingView: MockInitializingView,
-      handleNoteAdd: vi.fn(),
       ...service,
       fetchTasks: vi.fn(service.fetchTasks ?? fetchTasks),
     };
   };
 
-  createMockService.displayName = 'Mock service';
-  createMockService.id = serviceId;
+  createMockService.displayName = service.displayName ?? 'Mock service';
+  createMockService.id = service.id ?? 'mock';
 
   if (config) {
     createMockService.config = config as unknown as ServiceConfigStore<void>;

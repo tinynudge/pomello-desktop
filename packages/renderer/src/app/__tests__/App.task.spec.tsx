@@ -12,8 +12,10 @@ describe('App - Task', () => {
 
   it('should show a heading if provided', async () => {
     const { simulate } = mountApp({
-      service: {
-        getTaskHeading: () => 'Foobar',
+      mockService: {
+        service: {
+          getTaskHeading: () => 'Foobar',
+        },
       },
     });
 
@@ -24,9 +26,11 @@ describe('App - Task', () => {
 
   it('should show a custom task label if provided', async () => {
     const { simulate } = mountApp({
-      service: {
-        fetchTasks: () => Promise.resolve([{ id: 'custom', label: 'Task' }]),
-        getTaskLabel: ({ label }) => `Custom ${label}`,
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'custom', label: 'Task' }]),
+          getTaskLabel: ({ label }) => `Custom ${label}`,
+        },
       },
     });
 
@@ -103,8 +107,10 @@ describe('App - Task', () => {
 
   it('should complete tasks', async () => {
     const { simulate, userEvent } = mountApp({
-      service: {
-        getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+      mockService: {
+        service: {
+          getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+        },
       },
     });
 
@@ -118,8 +124,10 @@ describe('App - Task', () => {
 
   it('should complete tasks via hotkeys', async () => {
     const { simulate } = mountApp({
-      service: {
-        getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+      mockService: {
+        service: {
+          getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+        },
       },
     });
 
@@ -158,8 +166,10 @@ describe('App - Task', () => {
     mockedConsole.mockImplementation(() => null);
 
     const { simulate } = mountApp({
-      service: {
-        fetchTasks: () => Promise.resolve([]),
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([]),
+        },
       },
     });
 
