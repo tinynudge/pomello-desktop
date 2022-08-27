@@ -11,22 +11,24 @@ const registerServiceConfig = async <TConfig = StoreContents>(
   serviceId: string,
   configStore: ServiceConfigStore<TConfig>
 ): Promise<ServiceConfig<TConfig>> => {
-  let config = await ipcRenderer.invoke(AppEvent.RegisterServiceConfig, serviceId, configStore);
+  const storePath = `services/${serviceId}`;
+
+  let config = await ipcRenderer.invoke(AppEvent.RegisterServiceConfig, storePath, configStore);
 
   const get = () => config;
 
   const onChange = (callback: ServiceConfigChangeCallback<TConfig>) => {
     const handler = (_event: IpcRendererEvent, config: TConfig) => callback(config);
 
-    ipcRenderer.on(`${AppEvent.StoreChange}:${serviceId}`, handler);
+    ipcRenderer.on(`${AppEvent.StoreChange}:${storePath}`, handler);
 
     return () => {
-      ipcRenderer.off(`${AppEvent.StoreChange}:${serviceId}`, handler);
+      ipcRenderer.off(`${AppEvent.StoreChange}:${storePath}`, handler);
     };
   };
 
   const set = <TKey extends keyof TConfig>(key: TKey, value: TConfig[TKey]) => {
-    return ipcRenderer.invoke(AppEvent.SetStoreItem, serviceId, key, value);
+    return ipcRenderer.invoke(AppEvent.SetStoreItem, storePath, key, value);
   };
 
   const unregister = () => {

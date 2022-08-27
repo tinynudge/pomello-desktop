@@ -3,7 +3,7 @@ import runtime from './runtime';
 
 const getPomelloConfig = (): Store<PomelloConfig> =>
   runtime.storeManager.registerStore<PomelloConfig>({
-    name: 'pomello',
+    path: 'pomello',
     defaults: {
       dashboardHeight: 560,
       dashboardWidth: 800,

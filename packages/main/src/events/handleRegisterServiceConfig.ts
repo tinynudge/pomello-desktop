@@ -4,14 +4,13 @@ import { IpcMainInvokeEvent } from 'electron';
 
 const handleRegisterServiceConfig = async (
   _event: IpcMainInvokeEvent,
-  serviceId: string,
+  path: string,
   config: ServiceConfigStore
 ): Promise<StoreContents> => {
   const store = runtime.storeManager.registerStore({
     defaults: config.defaults,
-    directory: 'services',
     emitChangeEvents: true,
-    name: serviceId,
+    path,
     schema: config.schema,
   });
 

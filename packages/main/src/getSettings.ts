@@ -3,7 +3,7 @@ import { Settings, Store } from '@domain';
 
 const getSettings = (): Store<Settings> =>
   runtime.storeManager.registerStore<Settings>({
-    name: 'settings',
+    path: 'settings',
     defaults: {
       alwaysOnTop: true,
       snapEdges: true,
