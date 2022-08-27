@@ -7,6 +7,13 @@ type CallbackFunction = (...args: any[]) => any;
 
 type EventEmitter = (event: string, ...args: unknown[]) => void;
 
+const createMockServiceConfig = () => ({
+  get: vi.fn(),
+  onChange: vi.fn(),
+  set: vi.fn(),
+  unregister: vi.fn(),
+});
+
 const createMockAppApi = (
   appApi: Partial<AppApi> = {},
   settings: Settings
@@ -38,6 +45,9 @@ const createMockAppApi = (
   const api: AppApi = {
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
+    getPomelloServiceConfig: vi.fn(
+      appApi.getPomelloServiceConfig ?? (() => Promise.resolve(createMockServiceConfig()))
+    ),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve(''))),
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
@@ -62,6 +72,7 @@ const createMockAppApi = (
     setActiveServiceId: vi.fn(),
     setSelectBounds: vi.fn(),
     setSelectItems: vi.fn(appApi.setSelectItems ?? (() => Promise.resolve())),
+    showAuthWindow: vi.fn(),
     showSelect: vi.fn(),
   };
 

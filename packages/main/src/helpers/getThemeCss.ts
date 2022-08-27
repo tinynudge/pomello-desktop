@@ -42,6 +42,22 @@ const defaultTheme: ThemeConfig = {
       'long-break': colors.white,
     },
   },
+  auth: {
+    background: [colors.lightAlt, colors.dark],
+    content: {
+      default: [colors.dark, colors.white],
+      error: [colors.task, colors.taskDark],
+      link: [colors.shortBreak, colors.shortBreakDark],
+    },
+    input: {
+      background: [colors.white, colors.darkAlt],
+      content: [colors.dark, colors.white],
+    },
+    button: {
+      background: [colors.shortBreak, colors.shortBreakDark],
+      color: colors.white,
+    },
+  },
   menu: {
     toggle: {
       background: {
