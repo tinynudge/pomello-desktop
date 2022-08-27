@@ -3,7 +3,7 @@ import { Services } from '@domain';
 
 const handleGetActiveServiceId = (): string | undefined => {
   const services = runtime.storeManager.registerStore<Services>({
-    name: 'services',
+    path: 'services',
     emitChangeEvents: true,
     defaults: {},
     schema: {

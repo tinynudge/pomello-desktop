@@ -1,7 +1,6 @@
 import { AppEvent, RegisterStoreOptions, Store, StoreContents, StoreManager } from '@domain';
 import Ajv from 'ajv';
 import ElectronStore from 'electron-store';
-import { join } from 'path';
 import runtime from '.';
 
 const validator = new Ajv({
@@ -10,14 +9,13 @@ const validator = new Ajv({
 
 const createStore = <TContents = StoreContents>({
   defaults,
-  directory = '',
   emitChangeEvents = false,
-  name,
+  path,
   schema,
 }: RegisterStoreOptions<TContents>): Store<TContents> => {
   const store = new ElectronStore<TContents>({
     defaults,
-    name: join(directory, name),
+    name: path,
     watch: emitChangeEvents,
   });
 
@@ -35,7 +33,7 @@ const createStore = <TContents = StoreContents>({
     // to avoid potential memory leaks.
     store.onDidAnyChange(() => {
       runtime.windowManager.getAllWindows().forEach(browserWindow => {
-        browserWindow.webContents.send(`${AppEvent.StoreChange}:${name}`, store.store);
+        browserWindow.webContents.send(`${AppEvent.StoreChange}:${path}`, store.store);
       });
     });
   }
@@ -63,7 +61,7 @@ const createStoreManager = (): StoreManager => {
   const registerStore = <TContents = StoreContents>(
     options: RegisterStoreOptions<TContents>
   ): Store<TContents> => {
-    const cachedStore = stores.get(options.name);
+    const cachedStore = stores.get(options.path);
 
     if (cachedStore) {
       return cachedStore as unknown as Store<TContents>;
@@ -71,7 +69,7 @@ const createStoreManager = (): StoreManager => {
 
     const store = createStore<TContents>(options);
 
-    stores.set(options.name, store as unknown as Store);
+    stores.set(options.path, store as unknown as Store);
 
     return store as unknown as Store<TContents>;
   };

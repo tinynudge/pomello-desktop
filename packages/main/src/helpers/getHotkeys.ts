@@ -86,7 +86,7 @@ const platformDefaults = Object.entries(hotkeyDefaults).reduce(
 
 const getHotkeys = (): Store<Hotkeys> => {
   return runtime.storeManager.registerStore<Hotkeys>({
-    name: 'bindings',
+    path: 'bindings',
     defaults: platformDefaults,
     schema: {
       type: 'object',
