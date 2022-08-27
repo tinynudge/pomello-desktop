@@ -4,6 +4,16 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 const createWindowManager = (): WindowManager => {
   const windows: Map<string, BrowserWindow> = new Map();
 
+  const destroyWindow = (id: string): void => {
+    const window = windows.get(id);
+
+    if (window) {
+      window.destroy();
+
+      windows.delete(id);
+    }
+  };
+
   const findOrCreateWindow = async ({
     id,
     path,
@@ -68,6 +78,7 @@ const createWindowManager = (): WindowManager => {
   };
 
   return {
+    destroyWindow,
     findOrCreateWindow,
     findOrFailWindow,
     getAllWindows,

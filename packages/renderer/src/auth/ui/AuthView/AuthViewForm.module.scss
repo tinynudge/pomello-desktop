@@ -1,0 +1,40 @@
+.tokenInput {
+  position: relative;
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  margin-bottom: 36px;
+
+  textarea {
+    height: 100px;
+    padding: 8px;
+    border: 0;
+    border: 1px solid transparent;
+    margin-top: 16px;
+    background-color: var(--auth-input-background);
+    border-radius: 4px;
+    color: var(--auth-input-content);
+    font-family: monospace;
+    font-size: 14px;
+
+    &.hasError {
+      border-color: var(--auth-content-error);
+    }
+  }
+
+  .errorMessage {
+    position: absolute;
+    top: 100%;
+    padding: 4px 0;
+    color: var(--auth-content-error);
+    font-size: 14px;
+  }
+}
+
+.button {
+  padding: 12px 32px;
+  border: 0;
+  background-color: var(--auth-button-background);
+  border-radius: 4px;
+  color: var(--auth-button-color);
+}

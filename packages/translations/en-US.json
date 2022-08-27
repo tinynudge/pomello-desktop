@@ -1,6 +1,10 @@
 {
   "addNoteLabel": "Add note",
   "addNotePlaceholder": "Enter /? for help",
+  "authCloseMessage": "This window will automatically close in {{count}} seconds.",
+  "authInstructions": "Click or visit the following URL in your browser:",
+  "authPomelloHeading": "Connect your Pomello account",
+  "authSuccessMessage": "Success! You may now close your browser window.",
   "closeMenuLabel": "Close menu",
   "closeMenuTitle": "Close menu ({{hotkey}})",
   "completeTaskLabel": "Complete task",
@@ -10,6 +14,7 @@
   "generalNoteHeading": "Add note",
   "hideActionsLabel": "Hide actions",
   "homeButtonLabel": "Home",
+  "insertTokenPlaceholder": "Paste token here",
   "internalDistractionHeading": "Internal distraction",
   "longBreakMessage": "Take a long break",
   "menuLabel": "Menu",
@@ -32,6 +37,7 @@
   "skipBreakLabel": "Skip break",
   "startTimer": "Do it",
   "startTimerLabel": "Start timer",
+  "submitToken": "Submit",
   "switchTaskLabel": "Switch task",
   "taskCompletePlaceholder": "Nice! What's next?",
   "taskTimerEndAddNote": "Add a note first",
@@ -39,6 +45,7 @@
   "taskTimerEndPlaceholder": "Time's up! How'd you do?",
   "taskTimerEndSwitch": "Switch tasks after break",
   "taskTimerEndVoid": "Void this pomodoro",
+  "validAuthTokenRequired": "A valid token is required",
   "voidTaskLabel": "Void task",
   "waitMessage": "Please wait..."
 }

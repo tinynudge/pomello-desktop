@@ -1,6 +1,7 @@
 import { contextBridge } from 'electron';
 import getActiveServiceId from './getActiveServiceId';
 import getHotkeys from './getHotkeys';
+import getPomelloServiceConfig from './getPomelloServiceConfig';
 import getSettings from './getSettings';
 import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
@@ -17,11 +18,13 @@ import selectOption from './selectOption';
 import setActiveServiceId from './setActiveServiceId';
 import setSelectBounds from './setSelectBounds';
 import setSelectItems from './setSelectItems';
+import showAuthWindow from './showAuthWindow';
 import showSelect from './showSelect';
 
 const api = {
   getActiveServiceId,
   getHotkeys,
+  getPomelloServiceConfig,
   getSettings,
   getThemeCss,
   getTranslations,
@@ -38,6 +41,7 @@ const api = {
   setActiveServiceId,
   setSelectBounds,
   setSelectItems,
+  showAuthWindow,
   showSelect,
 };
 

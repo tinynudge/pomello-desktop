@@ -32,6 +32,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         app: join(PACKAGE_ROOT, 'app.html'),
+        auth: join(PACKAGE_ROOT, 'auth.html'),
         select: join(PACKAGE_ROOT, 'select.html'),
       },
       external: [...builtinModules.flatMap(p => [p, `node:${p}`])],

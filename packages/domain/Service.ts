@@ -1,4 +1,5 @@
 import { TaskTimerEndPromptHandledAction } from '@tinynudge/pomello-service';
+import { FC } from 'react';
 import { AddNoteHandler } from './AddNoteHandler';
 import { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 import { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
@@ -8,6 +9,7 @@ import { SelectOptionType } from './SelectOptionType';
 import { SelectTaskView } from './SelectTaskView';
 
 export interface Service {
+  AuthView?: FC;
   CustomSelectGroup?: CustomSelectGroupComponent;
   CustomSelectOption?: CustomSelectOptionComponent;
   displayName: string;

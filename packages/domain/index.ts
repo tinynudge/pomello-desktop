@@ -10,6 +10,7 @@ export type { InitializingView } from './InitializingView';
 export type { LabeledHotkeys } from './LabeledHotkeys';
 export type { NoteType } from './NoteType';
 export type { PomelloConfig } from './PomelloConfig';
+export type { PomelloServiceConfig } from './PomelloServiceConfig';
 export type { RegisterStoreOptions } from './RegisterStoreOptions';
 export type { RemoveListenerFunction } from './RemoveListenerFunction';
 export type { Runtime } from './Runtime';

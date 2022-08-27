@@ -2,6 +2,7 @@ import { BrowserWindowConstructorOptions } from 'electron';
 
 type BrowserWindowTypes =
   | 'alwaysOnTop'
+  | 'autoHideMenuBar'
   | 'frame'
   | 'height'
   | 'minHeight'
