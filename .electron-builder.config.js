@@ -23,7 +23,7 @@ const config = {
     hardenedRuntime: true,
     entitlements: './build/entitlements.mac.plist',
   },
-  // afterSign: 'electron-builder-notarize',
+  afterSign: 'electron-builder-notarize',
   generateUpdatesFilesForAllChannels: true,
   publish: {
     provider: 's3',
