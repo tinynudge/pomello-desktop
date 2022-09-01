@@ -24,17 +24,20 @@ const renderApp = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [pomelloService, hotkeys, themeCss, translations, serviceId] = await Promise.all([
-    createPomelloService(),
+  const [settings, hotkeys, themeCss, translations, serviceId] = await Promise.all([
+    window.app.getSettings(),
     window.app.getHotkeys(),
     window.app.getThemeCss(),
     window.app.getTranslations(),
     window.app.getActiveServiceId(),
   ]);
 
+  const pomelloService = createPomelloService(settings);
+
   const store = createStore({
     pomelloState: pomelloService.getState(),
     serviceId,
+    settings,
   });
 
   document.body.style.cssText = themeCss;

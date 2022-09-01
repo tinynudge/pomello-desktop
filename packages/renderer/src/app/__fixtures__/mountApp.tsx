@@ -45,6 +45,7 @@ const mountApp = (options: MountAppOptions = {}) => {
   const store = createStore({
     pomelloState: pomelloService.getState(),
     serviceId: options.serviceId !== null ? serviceId : undefined,
+    settings,
   });
 
   const queryClient = new QueryClient({
