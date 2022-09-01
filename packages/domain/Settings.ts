@@ -1,5 +1,5 @@
 import { SetItem } from '@tinynudge/pomello-service';
-import { Sound } from './Sound';
+import { CustomSound } from './CustomSound';
 
 export interface Settings {
   alwaysOnTop: boolean;
@@ -24,19 +24,19 @@ export interface Settings {
   productivityChartType: string;
   productivityChartDays: string[];
   betweenTasksGracePeriod: number;
-  longBreakTimerEndSound: string;
+  longBreakTimerEndSound: string | null;
   longBreakTimerEndVol: number | string;
-  longBreakTimerStartSound: string;
+  longBreakTimerStartSound: string | null;
   longBreakTimerStartVol: number | string;
-  longBreakTimerTickSound: string;
+  longBreakTimerTickSound: string | null;
   longBreakTimerTickVol: number | string;
   osxAllowMoveAnywhere: boolean;
   selectMaxRows: number;
-  shortBreakTimerEndSound: string;
+  shortBreakTimerEndSound: string | null;
   shortBreakTimerEndVol: number | string;
-  shortBreakTimerStartSound: string;
+  shortBreakTimerStartSound: string | null;
   shortBreakTimerStartVol: number | string;
-  shortBreakTimerTickSound: string;
+  shortBreakTimerTickSound: string | null;
   shortBreakTimerTickVol: number | string;
   showAddNoteButton: boolean;
   showMenuButton: boolean;
@@ -44,12 +44,12 @@ export interface Settings {
   showSwitchTaskButton: boolean;
   showTaskFinishedButton: boolean;
   showVoidTaskButton: boolean;
-  taskTimerEndSound: string;
+  taskTimerEndSound: string | null;
   taskTimerEndVol: number | string;
-  taskTimerStartSound: string;
+  taskTimerStartSound: string | null;
   taskTimerStartVol: number | string;
-  taskTimerTickSound: string;
+  taskTimerTickSound: string | null;
   taskTimerTickVol: number | string;
-  sounds: Record<string, Sound>;
+  sounds: Record<string, CustomSound | undefined>;
   timestamp?: number;
 }

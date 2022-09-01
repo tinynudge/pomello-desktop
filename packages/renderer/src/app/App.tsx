@@ -10,6 +10,7 @@ import Layout from './components/Layout';
 import Routes from './components/Routes';
 import { DialActionsProvider } from './context/DialActionsContext';
 import { HotkeysProvider } from './context/HotkeysContext';
+import useTimerSounds from './hooks/useTimerSounds';
 import LoadingText from './ui/LoadingText';
 import AddNoteView from './views/AddNoteView';
 import SelectServiceView from './views/SelectServiceView';
@@ -20,6 +21,8 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ hotkeys, services }) => {
+  useTimerSounds();
+
   const dispatch = useDispatch();
 
   const serviceId = useSelector(selectServiceId);

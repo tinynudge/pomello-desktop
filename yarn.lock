@@ -1769,10 +1769,10 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.2.1.tgz#8c5ff2d004544bb2220e1d864f7267fe7eb6c556"
   integrity sha512-HOr1QiODrq+0j9lKU5i10y9TbhxMBMRMGimNx10asdmau9cb8Xb1Vyg0GvTwyIL2ziQyh2kAloOtAQFBQVuecA==
 
-"@tinynudge/pomello-service@^0.1.7":
-  version "0.1.7"
-  resolved "https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.7/bd9ee3163abf59b4f2662d046c8d61330e84747e#bd9ee3163abf59b4f2662d046c8d61330e84747e"
-  integrity sha512-VivQTBBaXp+ReqHAp8to7tNjHYTjGGmnrYbjw+alW1TKU54aQ4Tqe4u+9dcfZnuLvKjRY1FHLZOeCHty85fctg==
+"@tinynudge/pomello-service@^0.1.9":
+  version "0.1.9"
+  resolved "https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.9/79eac6fe5ddeacd407ea4f9018b5416ad0ef2b5f#79eac6fe5ddeacd407ea4f9018b5416ad0ef2b5f"
+  integrity sha512-ONeMigQONJPUvxtp9SKnGG+Fx5YGsDcbRVix4T+z2u37EScaMyC4DKuqJdvq9xFKDTLhVh6vvKSnkaPpF4B/AQ==
 
 "@tootallnate/once@2":
   version "2.0.0"
@@ -1830,6 +1830,11 @@
   dependencies:
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
+
+"@types/howler@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@types/howler/-/howler-2.2.7.tgz#5acfbed57f9e1d99b8dabe1b824729e1c1ea1fae"
+  integrity sha512-PEZldwZqJJw1PWRTpupyC7ajVTZA8aHd8nB/Y0n6zRZi5u8ktYDntsHj13ltEiBRqWwF06pASxBEvCTxniG8eA==
 
 "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.4"
@@ -4790,6 +4795,11 @@ hosted-git-info@^4.0.0, hosted-git-info@^4.0.1, hosted-git-info@^4.1.0:
   integrity sha512-kyCuEOWjJqZuDbRHzL8V93NzQhwIB71oFWSyzVo+KPZI+pnQPPxucdkrOZvkLRnrf5URsQM+IJ09Dw29cRALIA==
   dependencies:
     lru-cache "^6.0.0"
+
+howler@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/howler/-/howler-2.2.3.tgz#a2eff9b08b586798e7a2ee17a602a90df28715da"
+  integrity sha512-QM0FFkw0LRX1PR8pNzJVAY25JhIWvbKMBFM4gqk+QdV+kPXOhleWGCB6AiAF/goGjIHK2e/nIElplvjQwhr0jg==
 
 html-encoding-sniffer@^3.0.0:
   version "3.0.0"

@@ -1,3 +1,4 @@
+import handleAudioFileProtocol from '@/events/handleAudioFileProtocol';
 import handleGetActiveServiceId from '@/events/handleGetActiveServiceId';
 import handleGetHotkeys from '@/events/handleGetHotkeys';
 import handleGetSettings from '@/events/handleGetSettings';
@@ -12,8 +13,8 @@ import handleSetStoreItem from '@/events/handleSetStoreItem';
 import handleShowAuthWindow from '@/events/handleShowAuthWindow';
 import handleShowSelect from '@/events/handleShowSelect';
 import handleThemeUpdate from '@/events/handleThemeUpdate';
-import { AppEvent } from '@domain';
-import { ipcMain, nativeTheme } from 'electron';
+import { AppEvent, AppProtocol } from '@domain';
+import { ipcMain, nativeTheme, protocol } from 'electron';
 
 const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.GetActiveServiceId, handleGetActiveServiceId);
@@ -31,6 +32,8 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.ShowSelect, handleShowSelect);
 
   nativeTheme.on('updated', handleThemeUpdate);
+
+  protocol.registerFileProtocol(AppProtocol.Audio.replace('://', ''), handleAudioFileProtocol);
 };
 
 export default initializeListeners;

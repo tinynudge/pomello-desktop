@@ -1,3 +1,4 @@
+import { Settings } from '@domain';
 import baseCreatePomelloService, {
   PomelloService,
   SetItem,
@@ -53,7 +54,7 @@ const createTicker = (): Ticker => {
   return { start, stop, wait };
 };
 
-const createPomelloService = async (): Promise<PomelloService> => {
+const createPomelloService = (settings: Settings): PomelloService => {
   const {
     betweenTasksGracePeriod,
     longBreakTime,
@@ -61,7 +62,7 @@ const createPomelloService = async (): Promise<PomelloService> => {
     pomodoroSet,
     shortBreakTime,
     taskTime,
-  } = await window.app.getSettings();
+  } = settings;
 
   const set = Array.isArray(pomodoroSet)
     ? pomodoroSet

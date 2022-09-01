@@ -1,4 +1,6 @@
 export interface Sound {
-  name: string;
-  path: string;
+  isPlaying(): void;
+  play(): Promise<void>;
+  pause(): void;
+  stop(): void;
 }

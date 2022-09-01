@@ -1,4 +1,4 @@
-import { NoteType } from '@domain';
+import { NoteType, Settings } from '@domain';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { PomelloState } from '@tinynudge/pomello-service';
@@ -10,11 +10,13 @@ interface AppState {
   overlayView: OverlayView | null;
   pomelloState: PomelloState;
   serviceId?: string;
+  settings: Settings;
 }
 
 const initialState: AppState = {
   overlayView: null,
   pomelloState: null as unknown as PomelloState,
+  settings: null as unknown as Settings,
 };
 
 export const appSlice = createSlice({
@@ -44,5 +46,7 @@ export const selectOverlayView = (state: RootState) => state.app.overlayView;
 export const selectPomelloState = (state: RootState) => state.app.pomelloState;
 
 export const selectServiceId = (state: RootState) => state.app.serviceId;
+
+export const selectSettings = (state: RootState) => state.app.settings;
 
 export default appSlice.reducer;
