@@ -15,10 +15,16 @@ interface BreakViewProps {
 
 const BreakView: FC<BreakViewProps> = ({ type }) => {
   const { t } = useTranslation();
+  const { skipTimer } = usePomelloActions();
+  const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
   const { currentTaskId } = useSelector(selectPomelloState);
 
-  const { skipTimer } = usePomelloActions();
+  useEffect(() => {
+    return registerHotkeys({
+      skipBreak: skipTimer,
+    });
+  }, [registerHotkeys, skipTimer]);
 
   const { registerDialActions } = useDialActions();
   useEffect(() => {
@@ -28,16 +34,10 @@ const BreakView: FC<BreakViewProps> = ({ type }) => {
         id: 'skipBreak',
         label: t('skipBreakLabel'),
         onClick: skipTimer,
+        title: t('skipBreakTitle', { hotkey: getHotkeyLabel('skipBreak') }),
       },
     ]);
-  }, [registerDialActions, skipTimer, t]);
-
-  const { registerHotkeys } = useHotkeys();
-  useEffect(() => {
-    return registerHotkeys({
-      skipBreak: skipTimer,
-    });
-  }, [registerHotkeys, skipTimer]);
+  }, [getHotkeyLabel, registerDialActions, skipTimer, t]);
 
   const breakMessageKey = type === 'SHORT_BREAK' ? 'shortBreakMessage' : 'longBreakMessage';
 

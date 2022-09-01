@@ -1,6 +1,6 @@
 import { TaskTimerEndPromptHandledAction } from '@tinynudge/pomello-service';
 import { vi } from 'vitest';
-import mountApp, { act, screen } from '../__fixtures__/mountApp';
+import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App - Task Timer End', () => {
   beforeEach(() => {
@@ -28,10 +28,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
+    await simulate.advanceTimer();
 
     expect(screen.getByRole('heading', { name: 'Foo' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "Time's up! How'd you do?" })).toBeInTheDocument();
@@ -46,10 +43,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
+    await simulate.advanceTimer();
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -77,10 +71,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
+    await simulate.advanceTimer();
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -103,11 +94,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('continueTask');
 
     expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
@@ -128,11 +115,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.hotkey('continueTask');
 
     expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
@@ -148,11 +131,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('switchTask');
 
     expect(screen.getByRole('heading', { name: 'Next: New task' })).toBeInTheDocument();
@@ -168,11 +147,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('addNote');
 
     expect(screen.getByRole('heading', { name: 'Add note' })).toBeInTheDocument();
@@ -187,11 +162,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.hotkey('addNote');
 
     expect(screen.getByRole('heading', { name: 'Add note' })).toBeInTheDocument();
@@ -206,11 +177,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('voidTask');
 
     expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
@@ -226,11 +193,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.hotkey('voidTask');
 
     expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
@@ -255,11 +218,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('hello');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith(
@@ -288,11 +247,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('hello');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
@@ -319,11 +274,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
@@ -350,11 +301,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();

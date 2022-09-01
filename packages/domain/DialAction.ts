@@ -6,4 +6,5 @@ export interface DialAction {
   id: string;
   label: string;
   onClick: DialActionClickHandler;
+  title: string;
 }

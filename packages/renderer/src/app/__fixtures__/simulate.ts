@@ -1,11 +1,38 @@
 import { Hotkeys } from '@domain';
 import { act } from 'react-dom/test-utils';
+import { vi } from 'vitest';
 import { fireEvent, MountAppResults, screen } from './mountApp';
 
 const sleep = (timeout: number) =>
   new Promise<void>(resolve => {
     setTimeout(resolve, timeout);
   });
+
+const advanceTimer = async (_results: MountAppResults, time?: number) => {
+  if (time) {
+    act(() => {
+      vi.advanceTimersByTime(time);
+    });
+  } else {
+    const hasDial = () => Boolean(screen.queryByTestId('dial'));
+
+    let count = 0;
+
+    while (hasDial()) {
+      if (count === 60) {
+        throw new Error(
+          'Dial still exists after 60 iterations. Please specify a "time" value for delays over 60 seconds.'
+        );
+      }
+
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      count += 1;
+    }
+  }
+};
 
 const enterNote = async ({ userEvent }: MountAppResults, note: string) => {
   await screen.findByRole('textbox');
@@ -88,6 +115,7 @@ const startTimer = async ({ userEvent }: MountAppResults) => {
 };
 
 const simulate = {
+  advanceTimer,
   enterNote,
   hideDialActions,
   hotkey,

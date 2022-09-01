@@ -1,6 +1,7 @@
 {
   "addNoteLabel": "Add note",
   "addNotePlaceholder": "Enter /? for help",
+  "addNoteTitle": "Add note ({{hotkey}})",
   "authCloseMessage": "This window will automatically close in {{count}} seconds.",
   "authInstructions": "Click or visit the following URL in your browser:",
   "authPomelloHeading": "Connect your Pomello account",
@@ -8,6 +9,7 @@
   "closeMenuLabel": "Close menu",
   "closeMenuTitle": "Close menu ({{hotkey}})",
   "completeTaskLabel": "Complete task",
+  "completeTaskTitle": "Complete task ({{hotkey}})",
   "createTaskButtonLabel": "Create task",
   "dashboardButtonLabel": "Dashboard",
   "externalDistractionHeading": "External distraction",
@@ -25,6 +27,7 @@
   "openMenuLabel": "Open menu",
   "openMenuTitle": "Open menu ({{hotkey}})",
   "pauseTimerLabel": "Pause timer",
+  "pauseTimerTitle": "Pause timer ({{hotkey}})",
   "resumeTimer": "Start",
   "resumeTimerLabel": "Resume timer",
   "selectNoResults": "No matches found",
@@ -35,10 +38,12 @@
   "shortBreakMessage": "Take a short break",
   "showActionsLabel": "Show actions",
   "skipBreakLabel": "Skip break",
+  "skipBreakTitle": "Skip break ({{hotkey}})",
   "startTimer": "Do it",
   "startTimerLabel": "Start timer",
   "submitToken": "Submit",
   "switchTaskLabel": "Switch task",
+  "switchTaskTitle": "Switch task ({{hotkey}})",
   "taskCompletePlaceholder": "Nice! What's next?",
   "taskTimerEndAddNote": "Add a note first",
   "taskTimerEndContinue": "Continue after break",
@@ -47,5 +52,6 @@
   "taskTimerEndVoid": "Void this pomodoro",
   "validAuthTokenRequired": "A valid token is required",
   "voidTaskLabel": "Void task",
+  "voidTaskTitle": "Void task ({{hotkey}})",
   "waitMessage": "Please wait..."
 }

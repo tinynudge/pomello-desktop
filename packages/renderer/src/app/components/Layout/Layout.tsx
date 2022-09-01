@@ -65,7 +65,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         </button>
         <ErrorBoundary fallback={<>TODO: Error handler</>}>
           <div className={styles.content}>{children}</div>
-          {timer && <Dial timer={timer} />}
+          {timer && <Dial key={timer.type} timer={timer} />}
         </ErrorBoundary>
       </main>
     </>

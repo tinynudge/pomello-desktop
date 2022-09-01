@@ -1,4 +1,5 @@
 import useDialActions from '@/app/hooks/useDialActions';
+import useHotkeys from '@/app/hooks/useHotkeys';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
@@ -18,6 +19,8 @@ const useTaskDialActions = ({ showAddNoteView }: UseTaskDialActionsOptions): voi
 
   const { completeTask, switchTask, voidTask } = usePomelloActions();
 
+  const { getHotkeyLabel } = useHotkeys();
+
   const { registerDialActions } = useDialActions();
   const pauseDialAction = usePauseDialAction();
 
@@ -29,28 +32,33 @@ const useTaskDialActions = ({ showAddNoteView }: UseTaskDialActionsOptions): voi
         id: 'addNote',
         label: t('addNoteLabel'),
         onClick: () => showAddNoteView('generalNote'),
+        title: t('addNoteTitle', { hotkey: getHotkeyLabel('addNote') }),
       },
       {
         Content: <SwitchIcon width={16} />,
         id: 'switchTask',
         label: t('switchTaskLabel'),
         onClick: switchTask,
+        title: t('switchTaskTitle', { hotkey: getHotkeyLabel('switchTask') }),
       },
       {
         Content: <CloseIcon width={10} />,
         id: 'voidTask',
         label: t('voidTaskLabel'),
         onClick: voidTask,
+        title: t('voidTaskTitle', { hotkey: getHotkeyLabel('voidTask') }),
       },
       {
         Content: <CheckIcon width={13} />,
         id: 'completeTask',
         label: t('completeTaskLabel'),
         onClick: completeTask,
+        title: t('completeTaskTitle', { hotkey: getHotkeyLabel('completeTaskEarly') }),
       },
     ]);
   }, [
     completeTask,
+    getHotkeyLabel,
     pauseDialAction,
     registerDialActions,
     showAddNoteView,
