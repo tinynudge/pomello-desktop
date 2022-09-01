@@ -10,7 +10,7 @@ const usePauseDialAction = (): DialAction => {
 
   const { pauseTimer } = usePomelloActions();
 
-  const { registerHotkeys } = useHotkeys();
+  const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
   useEffect(() => {
     return registerHotkeys({ pauseTimer });
@@ -22,8 +22,9 @@ const usePauseDialAction = (): DialAction => {
       id: 'pauseTimer',
       label: t('pauseTimerLabel'),
       onClick: pauseTimer,
+      title: t('pauseTimerTitle', { hotkey: getHotkeyLabel('pauseTimer') }),
     }),
-    [pauseTimer, t]
+    [getHotkeyLabel, pauseTimer, t]
   );
 };
 

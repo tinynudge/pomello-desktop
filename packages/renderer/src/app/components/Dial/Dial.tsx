@@ -104,6 +104,7 @@ const Dial: FC<DialProps> = ({ timer }) => {
           [styles.container]: true,
           [styles.isExpanded]: isExpanded,
         })}
+        data-testid="dial"
       >
         <button
           aria-label={dialLabel}
@@ -140,6 +141,7 @@ const Dial: FC<DialProps> = ({ timer }) => {
               key={action.id}
               onClick={handleActionClick(action.onClick)}
               tabIndex={isExpanded ? 0 : -1}
+              title={action.title}
             >
               {action.Content}
             </button>

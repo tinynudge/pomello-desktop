@@ -46,11 +46,29 @@ describe('App - Task', () => {
     await simulate.startTimer();
     await simulate.showDialActions();
 
-    expect(screen.getByRole('button', { name: 'Pause timer' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Add note' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Switch task' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Void task' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Complete task' })).toBeInTheDocument();
+    const pauseButton = screen.getByRole('button', { name: 'Pause timer' });
+    const addNoteButton = screen.getByRole('button', { name: 'Add note' });
+    const switchTaskButton = screen.getByRole('button', { name: 'Switch task' });
+    const voidTaskButton = screen.getByRole('button', { name: 'Void task' });
+    const completeTaskButton = screen.getByRole('button', { name: 'Complete task' });
+
+    expect(pauseButton).toBeInTheDocument();
+    expect(pauseButton).toHaveAttribute('title', 'Pause timer (Pause timer label)');
+
+    expect(addNoteButton).toBeInTheDocument();
+    expect(addNoteButton).toHaveAttribute('title', 'Add note (Add note label)');
+
+    expect(switchTaskButton).toBeInTheDocument();
+    expect(switchTaskButton).toHaveAttribute('title', 'Switch task (Switch task label)');
+
+    expect(voidTaskButton).toBeInTheDocument();
+    expect(voidTaskButton).toHaveAttribute('title', 'Void task (Void task label)');
+
+    expect(completeTaskButton).toBeInTheDocument();
+    expect(completeTaskButton).toHaveAttribute(
+      'title',
+      'Complete task (Complete task early label)'
+    );
   });
 
   it('should pause the timer', async () => {

@@ -27,11 +27,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('continueTask');
 
     expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
@@ -48,11 +44,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('switchTask');
 
     expect(screen.getByRole('heading', { name: 'Next: New task' })).toBeInTheDocument();
@@ -73,11 +65,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('continueTask');
     await simulate.showDialActions();
 
@@ -93,11 +81,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('switchTask');
     await simulate.showDialActions();
     await userEvent.click(screen.getByRole('button', { name: 'Skip break' }));
@@ -129,5 +113,24 @@ describe('App - Break', () => {
 
     expect(screen.getByText('Foo')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Start timer' })).toBeInTheDocument();
+  });
+
+  it('should show the correct title for the dial actions', async () => {
+    const { simulate } = mountApp({
+      settings: {
+        taskTime: 3,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer();
+    await simulate.selectOption('continueTask');
+    await simulate.showDialActions();
+
+    expect(screen.getByRole('button', { name: 'Skip break' })).toHaveAttribute(
+      'title',
+      'Skip break (Skip break label)'
+    );
   });
 });

@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import mountApp, { act, screen, waitFor } from '../__fixtures__/mountApp';
+import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
 describe('App - Task void', () => {
   beforeEach(() => {
@@ -27,11 +27,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('voidTask');
 
     await waitFor(() => {
@@ -75,11 +71,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('voidTask');
 
     await waitFor(() => {
@@ -97,11 +89,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.hotkey('voidTask');
 
     await waitFor(() => {
@@ -126,11 +114,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('voidTask');
     await simulate.enterNote('foo{Enter}');
 
@@ -149,11 +133,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('voidTask');
     await simulate.enterNote('{Escape}');
 
