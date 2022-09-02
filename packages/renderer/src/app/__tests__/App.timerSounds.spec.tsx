@@ -10,7 +10,9 @@ describe('App - Timer sounds', () => {
 
     const assetPath = '/src/app/hooks/useTimerSounds/assets';
 
-    mountApp();
+    const { simulate } = mountApp();
+
+    await simulate.waitForSelectTaskView();
 
     expect(MockHowl).toHaveBeenCalledTimes(3);
     expect(MockHowl).toHaveBeenCalledWith({ src: `${assetPath}/ding.mp3` });
@@ -20,8 +22,9 @@ describe('App - Timer sounds', () => {
 
   it('should load custom sounds', async () => {
     vi.mock('howler');
+    const MockHowl = vi.mocked(Howl);
 
-    mountApp({
+    const { simulate } = mountApp({
       settings: {
         taskTimerStartSound: 'custom',
         sounds: {
@@ -33,7 +36,7 @@ describe('App - Timer sounds', () => {
       },
     });
 
-    const MockHowl = vi.mocked(Howl);
+    await simulate.waitForSelectTaskView();
 
     expect(MockHowl).toHaveBeenCalledWith({ src: `${AppProtocol.Audio}my/custom/path.mp3` });
   });
