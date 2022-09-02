@@ -43,6 +43,8 @@ const createMockAppApi = (
   };
 
   const api: AppApi = {
+    decryptValue: vi.fn(),
+    encryptValue: vi.fn(),
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getPomelloServiceConfig: vi.fn(

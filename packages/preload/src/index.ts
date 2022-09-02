@@ -1,4 +1,6 @@
 import { contextBridge } from 'electron';
+import decryptValue from './decryptValue';
+import encryptValue from './encryptValue';
 import getActiveServiceId from './getActiveServiceId';
 import getHotkeys from './getHotkeys';
 import getPomelloServiceConfig from './getPomelloServiceConfig';
@@ -22,6 +24,8 @@ import showAuthWindow from './showAuthWindow';
 import showSelect from './showSelect';
 
 const api = {
+  decryptValue,
+  encryptValue,
   getActiveServiceId,
   getHotkeys,
   getPomelloServiceConfig,
