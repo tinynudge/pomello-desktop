@@ -1,3 +1,4 @@
+import DialLayout from '@/app/components/DialLayout';
 import useCurrentTask from '@/app/hooks/useCurrentTask';
 import useShowAddNoteView from '@/app/hooks/useShowAddNoteView';
 import Heading from '@/app/ui/Heading';
@@ -18,10 +19,10 @@ const TaskView: FC = () => {
   const { currentTaskLabel } = useCurrentTask();
 
   return (
-    <>
+    <DialLayout>
       {getTaskHeading && <Heading>{getTaskHeading()}</Heading>}
       <p>{currentTaskLabel}</p>
-    </>
+    </DialLayout>
   );
 };
 
