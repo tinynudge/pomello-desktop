@@ -1,5 +1,7 @@
 @import '@/shared/styles/global';
 
+$menu-button-width: 16px;
+
 body {
   overflow: hidden;
   -webkit-app-region: drag;
@@ -9,9 +11,7 @@ body {
 .container {
   position: relative;
   display: flex;
-  min-height: 100vh;
-  align-items: center;
-  padding-right: 8px;
+  height: 100vh;
   background: var(--app-background-default);
   color: var(--app-content-default);
   transition: transform 500ms $ease-out-circ;
@@ -41,24 +41,24 @@ body {
   @extend %clickable;
 
   display: flex;
-  width: 16px;
+  width: $menu-button-width;
   height: 100vh;
   align-items: center;
   justify-content: center;
   padding: 0;
   border: 0;
-  background-color: var(--menu-toggle-background-default);
+  background-color: var(--app-button-background-default);
   color: var(--menu-toggle-content-default);
 
   &:hover,
   &:focus {
-    background-color: var(--menu-toggle-background-hover);
+    background-color: var(--app-button-background-hover);
     color: var(--menu-toggle-content-hover);
   }
 }
 
 .content {
-  overflow: hidden;
-  flex: 1;
-  padding: 8px;
+  display: flex;
+  width: calc(100% - $menu-button-width);
+  padding-left: 8px;
 }

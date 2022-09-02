@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  height: 100%;
+  flex: 1;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.content {
+  overflow: hidden;
+  flex: 1;
+  padding: 8px 8px 8px 0;
+}

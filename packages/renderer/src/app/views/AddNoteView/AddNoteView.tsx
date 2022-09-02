@@ -1,4 +1,5 @@
 import { setOverlayView, unsetOverlayView } from '@/app/appSlice';
+import DialLayout from '@/app/components/DialLayout';
 import Heading from '@/app/ui/Heading';
 import InputField from '@/app/ui/InputField';
 import useService from '@/shared/hooks/useService';
@@ -71,7 +72,7 @@ const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
   };
 
   return (
-    <>
+    <DialLayout>
       <Heading>{t(`${noteType}Heading`)}</Heading>
       <InputField
         onChange={handleInputChange}
@@ -82,7 +83,7 @@ const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
         ref={inputRef}
         value={note}
       />
-    </>
+    </DialLayout>
   );
 };
 

@@ -44,7 +44,12 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
           {service ? (
             <ServiceProvider service={service}>
               {overlayView && <AddNoteView noteType={overlayView} />}
-              <div className={cc({ [styles.contentHidden]: Boolean(overlayView) })}>
+              <div
+                className={cc({
+                  [styles.appContent]: true,
+                  [styles.isHidden]: Boolean(overlayView),
+                })}
+              >
                 <Routes />
               </div>
             </ServiceProvider>
