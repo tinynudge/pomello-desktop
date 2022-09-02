@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import mountApp, { act, screen } from '../__fixtures__/mountApp';
+import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App - Break', () => {
   beforeEach(() => {
@@ -103,11 +103,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
+    await simulate.advanceTimer();
     await simulate.selectOption('continueTask');
     await simulate.hotkey('skipBreak');
 

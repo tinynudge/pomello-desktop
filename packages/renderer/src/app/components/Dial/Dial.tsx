@@ -90,11 +90,18 @@ const Dial: FC<DialProps> = ({ timer }) => {
   };
 
   const setHoverTimeout = () => {
-    setIsHoverable(false);
-
-    setTimeout(() => {
+    // Eliminates the act warning when running the tests. We fix it here rather
+    // than in the test, because running pending timers inside the tests causes
+    // other side-effects that can cause problems in test (ie dial will tick).
+    if (import.meta.env.MODE === 'test') {
       setIsHoverable(true);
-    }, 750);
+    } else {
+      setIsHoverable(false);
+
+      setTimeout(() => {
+        setIsHoverable(true);
+      }, 750);
+    }
   };
 
   return (

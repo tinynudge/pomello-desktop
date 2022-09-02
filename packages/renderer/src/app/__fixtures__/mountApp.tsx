@@ -52,6 +52,7 @@ const mountApp = (options: MountAppOptions = {}) => {
     defaultOptions: {
       queries: {
         suspense: true,
+        staleTime: Infinity, // https://github.com/TanStack/query/issues/270
       },
     },
   });

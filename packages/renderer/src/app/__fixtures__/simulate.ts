@@ -31,6 +31,8 @@ const advanceTimer = async (_results: MountAppResults, time?: number) => {
 
       count += 1;
     }
+
+    await act(() => sleep(1));
   }
 };
 
@@ -97,7 +99,7 @@ const selectOption = async ({ emitAppApiEvent }: MountAppResults, optionId: stri
 };
 
 const selectTask = async (results: MountAppResults, taskId: string = 'one') => {
-  await screen.findByRole('button', { name: 'Pick a task' });
+  await waitForSelectTaskView();
 
   await sleep(1);
 
@@ -114,6 +116,10 @@ const startTimer = async ({ userEvent }: MountAppResults) => {
   await userEvent.click(startTimerButton);
 };
 
+const waitForSelectTaskView = async () => {
+  await screen.findByRole('button', { name: 'Pick a task' });
+};
+
 const simulate = {
   advanceTimer,
   enterNote,
@@ -124,6 +130,7 @@ const simulate = {
   selectTask,
   showDialActions,
   startTimer,
+  waitForSelectTaskView,
 };
 
 export default simulate;
