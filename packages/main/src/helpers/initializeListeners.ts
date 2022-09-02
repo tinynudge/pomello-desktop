@@ -1,4 +1,6 @@
 import handleAudioFileProtocol from '@/events/handleAudioFileProtocol';
+import handleDecryptValue from '@/events/handleDecryptValue';
+import handleEncryptValue from '@/events/handleEncryptValue';
 import handleGetActiveServiceId from '@/events/handleGetActiveServiceId';
 import handleGetHotkeys from '@/events/handleGetHotkeys';
 import handleGetSettings from '@/events/handleGetSettings';
@@ -30,6 +32,9 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.ShowAuthWindow, handleShowAuthWindow);
   ipcMain.handle(AppEvent.SetStoreItem, handleSetStoreItem);
   ipcMain.handle(AppEvent.ShowSelect, handleShowSelect);
+
+  ipcMain.on(AppEvent.DecryptValue, handleDecryptValue);
+  ipcMain.on(AppEvent.EncryptValue, handleEncryptValue);
 
   nativeTheme.on('updated', handleThemeUpdate);
 

@@ -1,4 +1,6 @@
 export enum AppEvent {
+  DecryptValue = 'decrypt-value',
+  EncryptValue = 'encrypt-value',
   GetActiveServiceId = 'get-active-service-id',
   GetHotkeys = 'get-hotkeys',
   GetSettings = 'get-settings',
