@@ -75,6 +75,7 @@ describe('Auth', () => {
 
     expect(mockWindowClose).toHaveBeenCalled();
 
+    vi.runOnlyPendingTimers();
     vi.useRealTimers();
     window.close = originalWindowClose;
   });

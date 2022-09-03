@@ -3,7 +3,14 @@ import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
-import { Hotkeys, Service, ServiceConfigStore, ServiceRegistry, Settings } from '@domain';
+import {
+  Hotkeys,
+  Service,
+  ServiceConfigStore,
+  ServiceFactory,
+  ServiceRegistry,
+  Settings,
+} from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -22,7 +29,9 @@ export type MountAppResults = ReturnType<typeof mountApp>;
 
 interface MountAppOptions {
   appApi?: Partial<AppApi>;
-  createServiceRegistry?(defaultRegistry: ServiceRegistry): ServiceRegistry;
+  createServiceRegistry?(
+    defaultRegistry: ServiceRegistry
+  ): Record<string, ServiceFactory<void> | ServiceFactory<any>>;
   hotkeys?: Partial<Hotkeys>;
   mockService?: {
     config?: ServiceConfigStore;
@@ -68,7 +77,7 @@ const mountApp = (options: MountAppOptions = {}) => {
       <PomelloProvider service={pomelloService}>
         <QueryClientProvider client={queryClient}>
           <TranslationsProvider commonTranslations={translations}>
-            <App hotkeys={mockHotkeys} services={services} />
+            <App hotkeys={mockHotkeys} services={services as ServiceRegistry} />
           </TranslationsProvider>
         </QueryClientProvider>
       </PomelloProvider>

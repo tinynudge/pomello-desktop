@@ -1,3 +1,4 @@
+import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import { ServiceRegistry } from '@domain';
 import { FC, useState } from 'react';
@@ -27,7 +28,9 @@ const Auth: FC<AuthProps> = ({ serviceId, services }) => {
           {!serviceId ? (
             <PomelloAuthView />
           ) : activeService?.service?.AuthView ? (
-            <activeService.service.AuthView />
+            <ServiceProvider service={activeService}>
+              <activeService.service.AuthView />
+            </ServiceProvider>
           ) : null}
         </AuthViewProvider>
       ) : (
