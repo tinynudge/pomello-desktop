@@ -25,7 +25,7 @@ const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState(initialServiceId);
-  const { isInitializing, service } = useInitializeService(services, serviceId);
+  const { activeService, isReady } = useInitializeService(services, serviceId);
 
   useEffect(() => {
     return window.app.onServicesChange(services => {
@@ -161,12 +161,12 @@ const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
         activeOptionId={activeOptionId}
         depth={0}
         id={listboxId}
-        items={isInitializing ? [] : filteredItems}
+        items={serviceId && !isReady ? [] : filteredItems}
         onOptionHover={handleOptionHover}
         onOptionSelect={handleOptionSelect}
         ref={listRef}
         role="listbox"
-        service={service}
+        service={activeService?.service}
       >
         {query && filteredItems.length === 0 && (
           <DropdownRow className={styles.noResults} role="alert">

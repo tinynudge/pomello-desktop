@@ -3,13 +3,13 @@ import { useContext } from 'react';
 import { ServiceContext } from '../context/ServiceContext';
 
 const useService = (): Service => {
-  const service = useContext(ServiceContext);
+  const activeService = useContext(ServiceContext);
 
-  if (!service) {
+  if (!activeService) {
     throw new Error('useService must be used inside a <ServiceProvider>');
   }
 
-  return service;
+  return activeService.service;
 };
 
 export default useService;

@@ -1,3 +1,4 @@
+export type { ActiveService } from './ActiveService';
 export type { AddNoteHandler } from './AddNoteHandler';
 export { AppEvent } from './AppEvent';
 export { AppProtocol } from './AppProtocol';

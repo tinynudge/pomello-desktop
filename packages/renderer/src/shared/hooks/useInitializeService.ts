@@ -1,19 +1,27 @@
-import { Service, ServiceConfig, ServiceRegistry } from '@domain';
+import { ActiveService, ServiceConfig, ServiceRegistry } from '@domain';
 import { useEffect, useState } from 'react';
 import useTranslation from './useTranslation';
 
-interface UseInitializeService {
-  isInitializing: boolean;
-  service?: Service;
-}
+type UseInitializeService = ServiceInitializing | ServiceReady;
+
+type ServiceInitializing = {
+  activeService: undefined;
+  isReady: false;
+};
+
+type ServiceReady = {
+  activeService: ActiveService;
+  isReady: true;
+};
 
 const useInitializeService = (
   services: ServiceRegistry,
   serviceId?: string
 ): UseInitializeService => {
   const { addNamespace, removeNamespace } = useTranslation();
-  const [isInitializing, setInitializing] = useState(false);
-  const [service, setService] = useState<Service | undefined>(undefined);
+  const [isReady, setReady] = useState(true);
+
+  const [activeService, setActiveService] = useState<ActiveService | undefined>(undefined);
 
   useEffect(() => {
     let config: ServiceConfig<void> | null = null;
@@ -25,7 +33,7 @@ const useInitializeService = (
 
       const serviceFactory = services[serviceId];
 
-      setInitializing(true);
+      setReady(false);
 
       if (!serviceFactory) {
         throw new Error(`Unable to find service "${serviceId}"`);
@@ -38,15 +46,14 @@ const useInitializeService = (
       const translations = await window.app.getTranslations(serviceFactory.id);
       addNamespace('service', translations);
 
-      setService(
-        serviceFactory({
-          // Individual service factories will have the correct type, but since
-          // the ServiceFactory config defaults to void, we need to cast as null
-          config: config as null,
-        })
-      );
+      setActiveService({
+        // Individual service factories will have the correct type, but since
+        // the ServiceFactory config defaults to void, we need to cast as null
+        service: serviceFactory({ config: config as null }),
+        config,
+      });
 
-      setInitializing(false);
+      setReady(true);
     };
 
     initializeService();
@@ -59,14 +66,24 @@ const useInitializeService = (
   }, [addNamespace, removeNamespace, serviceId, services]);
 
   useEffect(() => {
-    service?.onMount?.();
+    activeService?.service.onMount?.();
 
     return () => {
-      service?.onUnmount?.();
+      activeService?.service.onUnmount?.();
     };
-  }, [service]);
+  }, [activeService]);
 
-  return { isInitializing, service };
+  if (!isReady || !activeService) {
+    return {
+      activeService: undefined,
+      isReady: false,
+    };
+  }
+
+  return {
+    activeService,
+    isReady: true,
+  };
 };
 
 export default useInitializeService;

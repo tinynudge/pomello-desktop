@@ -14,7 +14,7 @@ interface AuthProps {
 const Auth: FC<AuthProps> = ({ serviceId, services }) => {
   const [didSaveToken, setDidSaveToken] = useState(false);
 
-  const { service } = useInitializeService(services, serviceId);
+  const { activeService } = useInitializeService(services, serviceId);
 
   const handleTokenSave = () => {
     setDidSaveToken(true);
@@ -24,7 +24,11 @@ const Auth: FC<AuthProps> = ({ serviceId, services }) => {
     <div className={styles.container}>
       {!didSaveToken ? (
         <AuthViewProvider onTokenSave={handleTokenSave}>
-          {!serviceId ? <PomelloAuthView /> : service?.AuthView ? <service.AuthView /> : null}
+          {!serviceId ? (
+            <PomelloAuthView />
+          ) : activeService?.service?.AuthView ? (
+            <activeService.service.AuthView />
+          ) : null}
         </AuthViewProvider>
       ) : (
         <SuccessMessage />
