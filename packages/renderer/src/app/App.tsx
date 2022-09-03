@@ -33,7 +33,7 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
     });
   });
 
-  const { isInitializing, service } = useInitializeService(services, serviceId);
+  const { activeService, isReady } = useInitializeService(services, serviceId);
 
   const overlayView = useSelector(selectOverlayView);
 
@@ -41,8 +41,8 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
     <HotkeysProvider hotkeys={hotkeys}>
       <DialActionsProvider>
         <Layout>
-          {service ? (
-            <ServiceProvider service={service}>
+          {activeService ? (
+            <ServiceProvider service={activeService}>
               {overlayView && <AddNoteView noteType={overlayView} />}
               <div
                 className={cc({
@@ -53,7 +53,7 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
                 <Routes />
               </div>
             </ServiceProvider>
-          ) : isInitializing ? (
+          ) : !isReady && serviceId ? (
             <LoadingText />
           ) : (
             <SelectServiceView services={services} />

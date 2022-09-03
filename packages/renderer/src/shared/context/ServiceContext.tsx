@@ -1,12 +1,12 @@
-import { Service } from '@domain';
+import { ActiveService } from '@domain';
 import { createContext, FC, ReactNode } from 'react';
 
 interface ServiceProviderProps {
   children: ReactNode;
-  service: Service;
+  service: ActiveService;
 }
 
-export const ServiceContext = createContext<Service | undefined>(undefined);
+export const ServiceContext = createContext<ActiveService | undefined>(undefined);
 
 export const ServiceProvider: FC<ServiceProviderProps> = ({ children, service }) => {
   return <ServiceContext.Provider value={service}>{children}</ServiceContext.Provider>;
