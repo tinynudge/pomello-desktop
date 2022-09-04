@@ -53,7 +53,7 @@ const useUpdateWindowDimensions = ({
     if (rows.length) {
       const option = rows.length > maxRows ? rows[maxRows - 1] : rows[rows.length - 1];
 
-      bounds.height = option.getBoundingClientRect().bottom;
+      bounds.height = window.scrollY + option.getBoundingClientRect().bottom;
     }
 
     window.app.setSelectBounds({

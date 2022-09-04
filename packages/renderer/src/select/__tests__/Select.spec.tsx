@@ -289,14 +289,14 @@ describe('Select', () => {
     Element.prototype.getBoundingClientRect = () => ({ top: -50, bottom: 0 } as DOMRect);
 
     await userEvent.hover(screen.getByRole('option', { name: 'Ivysaur' }));
-    fireEvent(window, new Event('resize'));
+    await userEvent.type(screen.getByRole('combobox'), 'i');
 
     expect(window.scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: -50 }));
 
     window.innerHeight = 120;
     Element.prototype.getBoundingClientRect = () => ({ top: 0, bottom: 150 } as DOMRect);
 
-    fireEvent(window, new Event('resize'));
+    await userEvent.type(screen.getByRole('combobox'), '{Backspace}');
 
     expect(window.scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: 30 }));
 

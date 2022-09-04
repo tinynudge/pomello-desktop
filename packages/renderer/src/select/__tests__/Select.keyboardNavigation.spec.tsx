@@ -40,7 +40,7 @@ describe('Select - Keyboard Navigation', () => {
       },
     });
 
-    const optionIds = ['one', 'two', 'group-two-one', 'group-two-two', 'three', 'group-three-one'];
+    const optionIds = ['two', 'group-two-one', 'group-two-two', 'three', 'group-three-one'];
 
     for (const optionId of optionIds) {
       await userEvent.type(screen.getByRole('combobox'), '{ArrowDown}');
@@ -88,7 +88,9 @@ describe('Select - Keyboard Navigation', () => {
       },
     });
 
-    const optionIds = ['group-three-one', 'three', 'group-two-two', 'group-two-one', 'two', 'one'];
+    await userEvent.hover(screen.getByRole('option', { name: 'Group Three - One' }));
+
+    const optionIds = ['three', 'group-two-two', 'group-two-one', 'two', 'one'];
 
     for (const optionId of optionIds) {
       await userEvent.type(screen.getByRole('combobox'), '{ArrowUp}');

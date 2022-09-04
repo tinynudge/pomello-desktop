@@ -52,7 +52,13 @@ const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
     }
   }, []);
 
-  useEnsureVisibleActiveOption({ activeOptionId, inputHeight, listRef, setActiveOptionId });
+  useEnsureVisibleActiveOption({
+    activeOptionId,
+    inputHeight,
+    items: filteredItems,
+    listRef,
+    setActiveOptionId,
+  });
 
   useUpdateWindowDimensions({
     container: listRef.current,

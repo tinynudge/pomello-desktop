@@ -1,9 +1,11 @@
+import { SelectItem } from '@domain';
 import { MutableRefObject, RefObject, useCallback, useEffect } from 'react';
 import findFirstOption from '../helpers/findFirstOption';
 
 interface UseEnsureVisibleActiveOptionOptions {
   activeOptionId?: string;
   inputHeight: MutableRefObject<number>;
+  items: SelectItem[];
   listRef: RefObject<HTMLUListElement>;
   setActiveOptionId(activeOptionId?: string): void;
 }
@@ -21,6 +23,7 @@ const scrollBy = (top: number) => {
 const useEnsureVisibleActiveOption = ({
   activeOptionId,
   inputHeight,
+  items,
   listRef,
   setActiveOptionId,
 }: UseEnsureVisibleActiveOptionOptions): void => {
@@ -56,22 +59,8 @@ const useEnsureVisibleActiveOption = ({
   );
 
   useEffect(() => {
-    const handleWindowResize = () => {
-      ensureVisibleOption(activeOptionId);
-    };
-
-    // If the bounds have been updated in useUpdateWindowDimensions, then the
-    // window resize event gets called.
-    window.addEventListener('resize', handleWindowResize);
-
-    return () => {
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, [activeOptionId, ensureVisibleOption]);
-
-  useEffect(() => {
     ensureVisibleOption(activeOptionId);
-  }, [activeOptionId, ensureVisibleOption]);
+  }, [activeOptionId, ensureVisibleOption, items]);
 };
 
 export default useEnsureVisibleActiveOption;
