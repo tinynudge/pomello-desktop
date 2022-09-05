@@ -17,4 +17,5 @@ export enum AppEvent {
   ShowSelect = 'show-select',
   StoreChange = 'store-change',
   ThemeCssChange = 'theme-css-change',
+  UnsetStoreItem = 'unset-store-item',
 }

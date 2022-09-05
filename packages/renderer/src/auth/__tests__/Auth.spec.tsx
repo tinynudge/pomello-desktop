@@ -31,6 +31,7 @@ describe('Auth', () => {
       onChange: vi.fn(),
       set: vi.fn(),
       unregister: vi.fn(),
+      unset: vi.fn(),
     };
 
     const { userEvent } = mountAuth({

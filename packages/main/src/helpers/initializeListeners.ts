@@ -15,6 +15,7 @@ import handleSetStoreItem from '@/events/handleSetStoreItem';
 import handleShowAuthWindow from '@/events/handleShowAuthWindow';
 import handleShowSelect from '@/events/handleShowSelect';
 import handleThemeUpdate from '@/events/handleThemeUpdate';
+import handleUnsetStoreItem from '@/events/handleUnsetStoreItem';
 import { AppEvent, AppProtocol } from '@domain';
 import { ipcMain, nativeTheme, protocol } from 'electron';
 
@@ -29,9 +30,10 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.SelectOption, handleOptionSelect);
   ipcMain.handle(AppEvent.SetSelectBounds, handleSetSelectBounds);
   ipcMain.handle(AppEvent.SetSelectItems, handleSetSelectItems);
-  ipcMain.handle(AppEvent.ShowAuthWindow, handleShowAuthWindow);
   ipcMain.handle(AppEvent.SetStoreItem, handleSetStoreItem);
+  ipcMain.handle(AppEvent.ShowAuthWindow, handleShowAuthWindow);
   ipcMain.handle(AppEvent.ShowSelect, handleShowSelect);
+  ipcMain.handle(AppEvent.UnsetStoreItem, handleUnsetStoreItem);
 
   ipcMain.on(AppEvent.DecryptValue, handleDecryptValue);
   ipcMain.on(AppEvent.EncryptValue, handleEncryptValue);

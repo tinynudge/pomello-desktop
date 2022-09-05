@@ -27,11 +27,19 @@ const createMockServiceConfig = <TConfig = StoreContents>(
   const set = <TKey extends keyof TConfig>(key: TKey, value: TConfig[TKey]) => {
     config[key] = value;
 
-    listeners.forEach(callback => callback(config));
+    emitChangeEvent();
   };
 
   const unregister = () => {
     listeners.clear();
+  };
+
+  const unset = (key: keyof TConfig) => {
+    delete config[key];
+  };
+
+  const emitChangeEvent = () => {
+    listeners.forEach(callback => callback(config));
   };
 
   return Promise.resolve({
@@ -39,6 +47,7 @@ const createMockServiceConfig = <TConfig = StoreContents>(
     onChange,
     set,
     unregister,
+    unset,
   });
 };
 
