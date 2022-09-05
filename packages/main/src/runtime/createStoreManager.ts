@@ -42,6 +42,7 @@ const createStore = <TContents = StoreContents>({
     all: () => store.store,
     get: store.get.bind(store),
     set: store.set.bind(store),
+    unset: store.delete.bind(store),
   };
 };
 

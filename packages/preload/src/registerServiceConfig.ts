@@ -35,6 +35,10 @@ const registerServiceConfig = async <TConfig = StoreContents>(
     removeUpdateListener();
   };
 
+  const unset = (key: keyof TConfig) => {
+    return ipcRenderer.invoke(AppEvent.UnsetStoreItem, storePath, key);
+  };
+
   const removeUpdateListener = onChange(updatedConfig => {
     config = updatedConfig;
   });
@@ -44,6 +48,7 @@ const registerServiceConfig = async <TConfig = StoreContents>(
     onChange,
     set,
     unregister,
+    unset,
   };
 };
 
