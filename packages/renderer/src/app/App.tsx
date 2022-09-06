@@ -2,7 +2,7 @@ import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import { LabeledHotkeys, ServiceRegistry } from '@domain';
 import cc from 'classcat';
-import { FC, useEffect } from 'react';
+import { FC, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './App.module.scss';
 import { selectOverlayView, selectServiceId, serviceChange } from './appSlice';
@@ -37,6 +37,8 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
 
   const overlayView = useSelector(selectOverlayView);
 
+  const ServiceContainer = activeService?.service.Container ?? Fragment;
+
   return (
     <HotkeysProvider hotkeys={hotkeys}>
       <DialActionsProvider>
@@ -50,7 +52,9 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
                   [styles.isHidden]: Boolean(overlayView),
                 })}
               >
-                <Routes />
+                <ServiceContainer>
+                  <Routes />
+                </ServiceContainer>
               </div>
             </ServiceProvider>
           ) : !isReady && serviceId ? (

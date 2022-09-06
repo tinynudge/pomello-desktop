@@ -7,9 +7,11 @@ import { InitializingView } from './InitializingView';
 import { SelectItem } from './SelectItem';
 import { SelectOptionType } from './SelectOptionType';
 import { SelectTaskView } from './SelectTaskView';
+import { ServiceContainer } from './ServiceContainer';
 
 export interface Service {
   AuthView?: FC;
+  Container?: ServiceContainer;
   CustomSelectGroup?: CustomSelectGroupComponent;
   CustomSelectOption?: CustomSelectOptionComponent;
   displayName: string;

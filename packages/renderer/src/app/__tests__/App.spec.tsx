@@ -1,7 +1,7 @@
 import useTranslation from '@/shared/hooks/useTranslation';
-import { ServiceConfigStore } from '@domain';
+import { ServiceConfigStore, ServiceContainer } from '@domain';
 import { vi } from 'vitest';
-import mountApp, { screen } from '../__fixtures__/mountApp';
+import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
 describe('App', () => {
   it('should show the menu when toggled', async () => {
@@ -117,5 +117,23 @@ describe('App', () => {
     await simulate.selectService('mock');
 
     expect(screen.getByText('Hello world!')).toBeInTheDocument();
+  });
+
+  it('should load a service container if provided', async () => {
+    const Container: ServiceContainer = ({ children }) => (
+      <div data-testid="container">{children}</div>
+    );
+
+    mountApp({
+      mockService: {
+        service: {
+          Container,
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('container')).toBeInTheDocument();
+    });
   });
 });
