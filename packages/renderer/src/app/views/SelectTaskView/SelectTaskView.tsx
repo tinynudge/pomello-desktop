@@ -1,5 +1,4 @@
 import { selectPomelloState } from '@/app/appSlice';
-import DialLayout from '@/app/components/DialLayout';
 import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
 import useDialActions from '@/app/hooks/useDialActions';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
@@ -35,18 +34,14 @@ const SelectTaskView: FC = () => {
     selectTask(id);
   };
 
-  return (
-    <DialLayout>
-      {!SelectTaskView ? (
-        <SelectField
-          items={tasks!}
-          onChange={handleTaskSelect}
-          placeholder={t('selectTaskPlaceholder')}
-        />
-      ) : (
-        <SelectTaskView selectTask={selectTask} />
-      )}
-    </DialLayout>
+  return !SelectTaskView ? (
+    <SelectField
+      items={tasks!}
+      onChange={handleTaskSelect}
+      placeholder={t('selectTaskPlaceholder')}
+    />
+  ) : (
+    <SelectTaskView selectTask={selectTask} />
   );
 };
 

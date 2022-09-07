@@ -1,5 +1,4 @@
 import { selectPomelloState } from '@/app/appSlice';
-import DialLayout from '@/app/components/DialLayout';
 import useDialActions from '@/app/hooks/useDialActions';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
@@ -43,10 +42,10 @@ const BreakView: FC<BreakViewProps> = ({ type }) => {
   const breakMessageKey = type === 'SHORT_BREAK' ? 'shortBreakMessage' : 'longBreakMessage';
 
   return (
-    <DialLayout>
+    <>
       {currentTaskId ? <NextTaskHeading /> : <Heading>{t('newTaskHeading')}</Heading>}
       <p>{t(breakMessageKey)}</p>
-    </DialLayout>
+    </>
   );
 };
 
