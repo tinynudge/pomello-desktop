@@ -11,6 +11,7 @@ import Routes from './components/Routes';
 import { DialActionsProvider } from './context/DialActionsContext';
 import { HotkeysProvider } from './context/HotkeysContext';
 import useTimerSounds from './hooks/useTimerSounds';
+import Content from './ui/Content';
 import LoadingText from './ui/LoadingText';
 import AddNoteView from './views/AddNoteView';
 import SelectServiceView from './views/SelectServiceView';
@@ -46,11 +47,11 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
           {activeService ? (
             <ServiceProvider service={activeService}>
               {overlayView && <AddNoteView noteType={overlayView} />}
-              <div className={cc({ [styles.contentHidden]: Boolean(overlayView) })}>
+              <Content className={cc({ [styles.contentHidden]: Boolean(overlayView) })}>
                 <ServiceContainer>
                   <Routes />
                 </ServiceContainer>
-              </div>
+              </Content>
             </ServiceProvider>
           ) : !isReady && serviceId ? (
             <LoadingText />
