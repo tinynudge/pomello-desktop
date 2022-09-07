@@ -41,6 +41,13 @@ const defaultTheme: ThemeConfig = {
       'short-break': colors.white,
       'long-break': colors.white,
     },
+    button: {
+      background: {
+        default: 'transparent',
+        hover: [opacity(colors.dark, 4), opacity(colors.white, 2)],
+      },
+    },
+    divider: [opacity(colors.dark, 12), colors.darkAlt],
   },
   auth: {
     background: [colors.lightAlt, colors.dark],
@@ -60,10 +67,6 @@ const defaultTheme: ThemeConfig = {
   },
   menu: {
     toggle: {
-      background: {
-        default: 'transparent',
-        hover: [opacity(colors.dark, 4), opacity(colors.white, 2)],
-      },
       content: {
         default: opacity(colors.white, 38),
         hover: opacity(colors.white, 60),

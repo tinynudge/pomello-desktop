@@ -1,4 +1,4 @@
-import ButtonsLayout from '@/app/ui/ButtonsLayout';
+import ButtonsLayout from '@/app/ui/ButtonsOverlay';
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC } from 'react';

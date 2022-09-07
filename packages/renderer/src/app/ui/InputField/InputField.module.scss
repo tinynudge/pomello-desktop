@@ -1,5 +1,9 @@
 @import '@/shared/styles/global';
 
+.inputField {
+  width: 100%;
+}
+
 .input {
   @extend %clickable;
 

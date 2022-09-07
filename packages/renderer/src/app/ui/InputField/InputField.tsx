@@ -24,7 +24,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     };
 
     return (
-      <form onSubmit={handleFormSubmit}>
+      <form className={styles.inputField} onSubmit={handleFormSubmit}>
         <input
           {...remainingProps}
           className={cc([styles.input, className])}
