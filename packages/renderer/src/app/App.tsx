@@ -54,7 +54,9 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
               </Content>
             </ServiceProvider>
           ) : !isReady && serviceId ? (
-            <LoadingText />
+            <Content>
+              <LoadingText />
+            </Content>
           ) : (
             <SelectServiceView services={services} />
           )}

@@ -18,6 +18,7 @@ const SelectTaskView: FC = () => {
 
   const { data: tasks } = useQuery(getTasksCacheKey(id), fetchTasks, {
     cacheTime: Infinity,
+    suspense: true,
   });
 
   const { timer } = useSelector(selectPomelloState);

@@ -4,7 +4,7 @@ import useServiceConfig from '@/shared/hooks/useServiceConfig';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC } from 'react';
 import { TRELLO_KEY } from '../constants';
-import { TrelloConfig } from '../TrelloConfig';
+import { TrelloConfig } from '../domain';
 import trelloLogo from './assets/trello.png';
 
 const TrelloAuthView: FC = () => {
