@@ -5,6 +5,7 @@ import cc from 'classcat';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector } from 'react-redux';
+import Dial from '../Dial';
 import { ReactComponent as MenuIcon } from './assets/menu.svg';
 import styles from './Layout.module.scss';
 import Menu from './Menu';
@@ -64,6 +65,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         </button>
         <ErrorBoundary fallback={<>TODO: Error handler</>}>
           <div className={styles.content}>{children}</div>
+          {timer && <Dial key={timer.type} timer={timer} />}
         </ErrorBoundary>
       </main>
     </>

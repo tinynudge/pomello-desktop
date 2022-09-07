@@ -1,4 +1,3 @@
-import DialLayout from '@/app/components/DialLayout';
 import useCurrentTask from '@/app/hooks/useCurrentTask';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import Heading from '@/app/ui/Heading';
@@ -38,14 +37,14 @@ const TaskCompleteView: FC = () => {
   }
 
   return (
-    <DialLayout>
+    <>
       <Heading>{currentTaskLabel}</Heading>
       <SelectField
         items={options}
         onChange={handleOptionSelect}
         placeholder={t('taskCompletePlaceholder')}
       />
-    </DialLayout>
+    </>
   );
 };
 

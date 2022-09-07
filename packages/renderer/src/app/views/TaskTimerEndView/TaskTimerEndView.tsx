@@ -1,4 +1,3 @@
-import DialLayout from '@/app/components/DialLayout';
 import useCurrentTask from '@/app/hooks/useCurrentTask';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
@@ -50,14 +49,14 @@ const TaskTimerEndView: FC = () => {
   ];
 
   return (
-    <DialLayout>
+    <>
       <Heading>{currentTaskLabel}</Heading>
       <SelectField
         items={items}
         onChange={handleActionSelect}
         placeholder={t('taskTimerEndPlaceholder')}
       />
-    </DialLayout>
+    </>
   );
 };
 
