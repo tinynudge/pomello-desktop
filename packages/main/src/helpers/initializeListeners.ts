@@ -13,6 +13,7 @@ import handleSetSelectBounds from '@/events/handleSetSelectBounds';
 import handleSetSelectItems from '@/events/handleSetSelectItems';
 import handleSetStoreItem from '@/events/handleSetStoreItem';
 import handleShowAuthWindow from '@/events/handleShowAuthWindow';
+import handleShowMessageBox from '@/events/handleShowMessageBox';
 import handleShowSelect from '@/events/handleShowSelect';
 import handleThemeUpdate from '@/events/handleThemeUpdate';
 import handleUnsetStoreItem from '@/events/handleUnsetStoreItem';
@@ -32,6 +33,7 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.SetSelectItems, handleSetSelectItems);
   ipcMain.handle(AppEvent.SetStoreItem, handleSetStoreItem);
   ipcMain.handle(AppEvent.ShowAuthWindow, handleShowAuthWindow);
+  ipcMain.handle(AppEvent.ShowMessageBox, handleShowMessageBox);
   ipcMain.handle(AppEvent.ShowSelect, handleShowSelect);
   ipcMain.handle(AppEvent.UnsetStoreItem, handleUnsetStoreItem);
 

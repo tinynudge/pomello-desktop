@@ -21,7 +21,9 @@ import setActiveServiceId from './setActiveServiceId';
 import setSelectBounds from './setSelectBounds';
 import setSelectItems from './setSelectItems';
 import showAuthWindow from './showAuthWindow';
+import showMessageBox from './showMessageBox';
 import showSelect from './showSelect';
+import writeClipboardText from './writeClipboardText';
 
 const api = {
   decryptValue,
@@ -46,7 +48,9 @@ const api = {
   setSelectBounds,
   setSelectItems,
   showAuthWindow,
+  showMessageBox,
   showSelect,
+  writeClipboardText,
 };
 
 contextBridge.exposeInMainWorld('app', api);
