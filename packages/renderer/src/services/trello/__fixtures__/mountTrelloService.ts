@@ -19,6 +19,7 @@ interface TrelloApiResponses {
 }
 
 interface MountTrelloServiceOptions {
+  appApi?: Partial<AppApi>;
   config?: Partial<TrelloConfig>;
   trelloApi?: Partial<TrelloApiResponses>;
 }
@@ -30,6 +31,7 @@ vi.mock('@/shared/helpers/createCache', () => ({
 }));
 
 const mountTrelloService = async ({
+  appApi,
   config: initialConfig,
   trelloApi,
 }: MountTrelloServiceOptions = {}) => {
@@ -59,6 +61,7 @@ const mountTrelloService = async ({
     appApi: {
       registerServiceConfig,
       getTranslations: () => Promise.resolve(translations),
+      ...appApi,
     },
     createServiceRegistry: () => ({
       [createTrelloService.id]: createTrelloService,

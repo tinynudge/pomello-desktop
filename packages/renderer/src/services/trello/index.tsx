@@ -1,10 +1,9 @@
-import { CacheProvider } from '@/shared/context/CacheContext';
 import createCache from '@/shared/helpers/createCache';
 import { ServiceFactory } from '@domain';
-import { TrelloCache } from './domain';
+import { TrelloCache, TrelloConfig } from './domain';
 import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
-import { TrelloConfig } from './domain/TrelloConfig';
+import TrelloContainer from './TrelloContainer';
 import TrelloInitializingView from './TrelloInitializingView';
 
 const createTrelloService: ServiceFactory<TrelloConfig> = ({ config }) => {
@@ -21,7 +20,7 @@ const createTrelloService: ServiceFactory<TrelloConfig> = ({ config }) => {
   const cache = createCache<TrelloCache>();
 
   return {
-    Container: ({ children }) => <CacheProvider cache={cache}>{children}</CacheProvider>,
+    Container: props => <TrelloContainer {...props} cache={cache} />,
     displayName: createTrelloService.displayName,
     fetchTasks: () => Promise.resolve([]),
     id: createTrelloService.id,

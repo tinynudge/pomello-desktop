@@ -1,3 +1,5 @@
 import { FC, ReactNode } from 'react';
 
-export type ServiceContainer = FC<{ children: ReactNode }>;
+export type ServiceContainer<TProps = Record<string, unknown>> = FC<
+  { children: ReactNode } & TProps
+>;

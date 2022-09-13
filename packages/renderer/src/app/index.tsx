@@ -10,7 +10,13 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 
 const renderApp = async () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        useErrorBoundary: true,
+      },
+    },
+  });
 
   const container = document.getElementById('root');
 

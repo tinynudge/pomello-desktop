@@ -60,7 +60,9 @@ const mountApp = (options: MountAppOptions = {}) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
+        retry: 0,
         staleTime: Infinity, // https://github.com/TanStack/query/issues/270
+        useErrorBoundary: true,
       },
     },
   });

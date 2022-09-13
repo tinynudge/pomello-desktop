@@ -10,7 +10,7 @@ const createMockServiceConfig = <TConfig = StoreContents>(
   configStore: ServiceConfigStore<TConfig>,
   initialConfig?: TConfig
 ): Promise<ServiceConfig<TConfig>> => {
-  const config = JSON.parse(JSON.stringify(initialConfig ?? configStore.defaults));
+  let config = JSON.parse(JSON.stringify(initialConfig ?? configStore.defaults));
 
   const listeners = new Set<ServiceConfigChangeCallback<TConfig>>();
 
@@ -25,7 +25,7 @@ const createMockServiceConfig = <TConfig = StoreContents>(
   };
 
   const set = <TKey extends keyof TConfig>(key: TKey, value: TConfig[TKey]) => {
-    config[key] = value;
+    config = { ...config, [key]: value };
 
     emitChangeEvent();
   };
@@ -35,7 +35,10 @@ const createMockServiceConfig = <TConfig = StoreContents>(
   };
 
   const unset = (key: keyof TConfig) => {
+    config = { ...config };
     delete config[key];
+
+    emitChangeEvent();
   };
 
   const emitChangeEvent = () => {

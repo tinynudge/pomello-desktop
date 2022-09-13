@@ -1,5 +1,6 @@
 {
   "invalidListBody": "An issue occurred when loading your previously used list.",
   "invalidListHeading": "Please select a new list",
-  "selectListPlaceholder": "Pick a list"
+  "selectListPlaceholder": "Pick a list",
+  "serverErrorMessage": "The Trello servers are not responding and may be experiencing an outage. Please try again later."
 }
