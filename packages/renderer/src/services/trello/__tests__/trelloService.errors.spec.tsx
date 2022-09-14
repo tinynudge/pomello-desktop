@@ -35,7 +35,7 @@ describe('Trello service - Errors', () => {
   it('should handle Trello authorization errors', async () => {
     const { appApi, userEvent } = await mountTrelloService({
       trelloApi: {
-        'members/me': resolveAuthError,
+        fetchBoardsAndLists: resolveAuthError,
       },
     });
 
@@ -58,7 +58,7 @@ describe('Trello service - Errors', () => {
   it('should open the auth window from the sign in button', async () => {
     const { appApi, userEvent } = await mountTrelloService({
       trelloApi: {
-        'members/me': resolveAuthError,
+        fetchBoardsAndLists: resolveAuthError,
       },
     });
 
@@ -75,7 +75,7 @@ describe('Trello service - Errors', () => {
         showMessageBox: vi.fn().mockResolvedValue({ response: 0 }),
       },
       trelloApi: {
-        'members/me': resolveAuthError,
+        fetchBoardsAndLists: resolveAuthError,
       },
     });
 
@@ -92,7 +92,7 @@ describe('Trello service - Errors', () => {
         showMessageBox: vi.fn().mockResolvedValue({ response: 1 }),
       },
       trelloApi: {
-        'members/me': resolveAuthError,
+        fetchBoardsAndLists: resolveAuthError,
       },
     });
 
@@ -109,7 +109,7 @@ describe('Trello service - Errors', () => {
         token: 'MY_BAD_TOKEN',
       },
       trelloApi: {
-        'members/me': resolveAuthError,
+        fetchBoardsAndLists: resolveAuthError,
       },
     });
 
@@ -133,7 +133,7 @@ describe('Trello service - Errors', () => {
   it('should handle server errors', async () => {
     const { appApi, userEvent } = await mountTrelloService({
       trelloApi: {
-        'members/me': resolveServerError,
+        fetchBoardsAndLists: resolveServerError,
       },
     });
 
@@ -157,7 +157,7 @@ describe('Trello service - Errors', () => {
   it('should refetch the request when retry is click', async () => {
     const { userEvent } = await mountTrelloService({
       trelloApi: {
-        'members/me': resolveServerError,
+        fetchBoardsAndLists: resolveServerError,
       },
     });
 
@@ -182,7 +182,7 @@ describe('Trello service - Errors', () => {
         showMessageBox: vi.fn().mockResolvedValue({ response: 0 }),
       },
       trelloApi: {
-        'members/me': resolveServerError,
+        fetchBoardsAndLists: resolveServerError,
       },
     });
 
@@ -196,7 +196,7 @@ describe('Trello service - Errors', () => {
   it('should throw non-API related errors to the next boundary', async () => {
     await mountTrelloService({
       trelloApi: {
-        'members/me': {} as TrelloMember,
+        fetchBoardsAndLists: {} as TrelloMember,
       },
     });
 
