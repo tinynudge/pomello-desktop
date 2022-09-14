@@ -9,12 +9,15 @@ import { vi } from 'vitest';
 import createTrelloService from '..';
 import { TRELLO_API_URL } from '../constants';
 import { TrelloCache, TrelloConfig, TrelloMember } from '../domain';
+import { TrelloCard } from '../domain/TrelloCard';
 import translations from '../translations/en-US.json';
+import generateTrelloCard from './generateTrelloCard';
 import generateTrelloMember from './generateTrelloMember';
 
 export * from '@testing-library/react';
 
 interface TrelloApiResponses {
+  fetchCardsByListId: TrelloCard[] | ResponseResolver<RestRequest, RestContext, TrelloCard[]>;
   'members/me': TrelloMember | ResponseResolver<RestRequest, RestContext, TrelloMember>;
 }
 
@@ -41,6 +44,10 @@ const mountTrelloService = async ({
     rest.get(
       `${TRELLO_API_URL}members/me`,
       createRestResolver<TrelloMember>(generateTrelloMember(), trelloApi?.['members/me'])
+    ),
+    rest.get(
+      `${TRELLO_API_URL}lists/:listId/cards`,
+      createRestResolver<TrelloCard[]>([generateTrelloCard()], trelloApi?.fetchCardsByListId)
     )
   );
 
