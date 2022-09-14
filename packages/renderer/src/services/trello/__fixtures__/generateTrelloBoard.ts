@@ -1,13 +1,11 @@
 import { TrelloBoard } from '../domain';
 import generateTrelloList from './generateTrelloList';
 
-const generateTrelloBoard = (): TrelloBoard => {
-  return {
-    id: 'TRELLO_BOARD_ID',
-    lists: [generateTrelloList()],
-    name: 'My test board',
-    prefs: {},
-  };
-};
+const generateTrelloBoard = (values: Partial<TrelloBoard> = {}): TrelloBoard => ({
+  id: values.id ?? 'TRELLO_BOARD_ID',
+  lists: values.lists ?? [generateTrelloList()],
+  name: values.name ?? 'My test board',
+  prefs: values.prefs ?? {},
+});
 
 export default generateTrelloBoard;

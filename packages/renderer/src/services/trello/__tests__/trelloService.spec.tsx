@@ -37,24 +37,21 @@ describe('Trello service', () => {
         currentList: undefined,
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
+            generateTrelloBoard({
               name: 'My tasks',
               lists: [
-                { ...generateTrelloList(), id: '1', name: 'Today' },
-                { ...generateTrelloList(), id: '2', name: 'Tomorrow' },
+                generateTrelloList({ id: '1', name: 'Today' }),
+                generateTrelloList({ id: '2', name: 'Tomorrow' }),
               ],
-            },
-            {
-              ...generateTrelloBoard(),
+            }),
+            generateTrelloBoard({
               name: 'House projects',
-              lists: [{ ...generateTrelloList(), id: '3', name: 'Garage' }],
-            },
+              lists: [generateTrelloList({ id: '3', name: 'Garage' })],
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -76,15 +73,13 @@ describe('Trello service', () => {
         currentList: '1',
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
-              lists: [{ ...generateTrelloList(), id: '1' }],
-            },
+            generateTrelloBoard({
+              lists: [generateTrelloList({ id: '1' })],
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -102,15 +97,13 @@ describe('Trello service', () => {
         currentList: 'INVALID_LIST',
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
-              lists: [{ ...generateTrelloList(), id: '1' }],
-            },
+            generateTrelloBoard({
+              lists: [generateTrelloList({ id: '1' })],
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -130,27 +123,24 @@ describe('Trello service', () => {
         listFilter: '(to)',
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
+            generateTrelloBoard({
               name: 'My tasks',
               lists: [
-                { ...generateTrelloList(), id: '1', name: 'Today' },
-                { ...generateTrelloList(), id: '2', name: 'Tomorrow' },
+                generateTrelloList({ id: '1', name: 'Today' }),
+                generateTrelloList({ id: '2', name: 'Tomorrow' }),
               ],
-            },
-            {
-              ...generateTrelloBoard(),
+            }),
+            generateTrelloBoard({
               name: 'House projects',
               lists: [
-                { ...generateTrelloList(), id: '3', name: 'Garage' },
-                { ...generateTrelloList(), id: '4', name: 'Potato shack' },
+                generateTrelloList({ id: '3', name: 'Garage' }),
+                generateTrelloList({ id: '4', name: 'Potato shack' }),
               ],
-            },
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -174,27 +164,24 @@ describe('Trello service', () => {
         listFilterCaseSensitive: true,
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
+            generateTrelloBoard({
               name: 'My tasks',
               lists: [
-                { ...generateTrelloList(), id: '1', name: 'Today' },
-                { ...generateTrelloList(), id: '2', name: 'Tomorrow' },
+                generateTrelloList({ id: '1', name: 'Today' }),
+                generateTrelloList({ id: '2', name: 'Tomorrow' }),
               ],
-            },
-            {
-              ...generateTrelloBoard(),
+            }),
+            generateTrelloBoard({
               name: 'House projects',
               lists: [
-                { ...generateTrelloList(), id: '3', name: 'Garage' },
-                { ...generateTrelloList(), id: '4', name: 'Potato shack' },
+                generateTrelloList({ id: '3', name: 'Garage' }),
+                generateTrelloList({ id: '4', name: 'Potato shack' }),
               ],
-            },
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -216,27 +203,24 @@ describe('Trello service', () => {
         recentLists: ['4', '2'],
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
+            generateTrelloBoard({
               name: 'My tasks',
               lists: [
-                { ...generateTrelloList(), id: '1', name: 'Today' },
-                { ...generateTrelloList(), id: '2', name: 'Tomorrow' },
+                generateTrelloList({ id: '1', name: 'Today' }),
+                generateTrelloList({ id: '2', name: 'Tomorrow' }),
               ],
-            },
-            {
-              ...generateTrelloBoard(),
+            }),
+            generateTrelloBoard({
               name: 'House projects',
               lists: [
-                { ...generateTrelloList(), id: '3', name: 'Garage' },
-                { ...generateTrelloList(), id: '4', name: 'Potato shack' },
+                generateTrelloList({ id: '3', name: 'Garage' }),
+                generateTrelloList({ id: '4', name: 'Potato shack' }),
               ],
-            },
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -259,19 +243,17 @@ describe('Trello service', () => {
         currentList: undefined,
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
+            generateTrelloBoard({
               name: 'My tasks',
               lists: [
-                { ...generateTrelloList(), id: '1', name: 'Today' },
-                { ...generateTrelloList(), id: '2', name: 'Tomorrow' },
+                generateTrelloList({ id: '1', name: 'Today' }),
+                generateTrelloList({ id: '2', name: 'Tomorrow' }),
               ],
-            },
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -336,16 +318,14 @@ describe('Trello service', () => {
         },
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
+            generateTrelloBoard({
               id: 'BOARD_ID',
-              lists: [{ ...generateTrelloList(), idBoard: 'BOARD_ID', id: 'LIST_ID' }],
-            },
+              lists: [generateTrelloList({ idBoard: 'BOARD_ID', id: 'LIST_ID' })],
+            }),
           ],
-        },
+        }),
       },
     });
 
@@ -383,15 +363,13 @@ describe('Trello service', () => {
         },
       },
       trelloApi: {
-        'members/me': {
-          ...generateTrelloMember(),
+        fetchBoardsAndLists: generateTrelloMember({
           boards: [
-            {
-              ...generateTrelloBoard(),
-              lists: [{ ...generateTrelloList(), idBoard: 'BOARD_ID', id: 'LIST_ID' }],
-            },
+            generateTrelloBoard({
+              lists: [generateTrelloList({ idBoard: 'BOARD_ID', id: 'LIST_ID' })],
+            }),
           ],
-        },
+        }),
       },
     });
 

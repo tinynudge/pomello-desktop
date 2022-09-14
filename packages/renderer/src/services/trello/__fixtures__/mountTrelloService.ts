@@ -17,8 +17,8 @@ import generateTrelloMember from './generateTrelloMember';
 export * from '@testing-library/react';
 
 interface TrelloApiResponses {
+  fetchBoardsAndLists: TrelloMember | ResponseResolver<RestRequest, RestContext, TrelloMember>;
   fetchCardsByListId: TrelloCard[] | ResponseResolver<RestRequest, RestContext, TrelloCard[]>;
-  'members/me': TrelloMember | ResponseResolver<RestRequest, RestContext, TrelloMember>;
 }
 
 interface MountTrelloServiceOptions {
@@ -43,7 +43,7 @@ const mountTrelloService = async ({
   mockServer.use(
     rest.get(
       `${TRELLO_API_URL}members/me`,
-      createRestResolver<TrelloMember>(generateTrelloMember(), trelloApi?.['members/me'])
+      createRestResolver<TrelloMember>(generateTrelloMember(), trelloApi?.fetchBoardsAndLists)
     ),
     rest.get(
       `${TRELLO_API_URL}lists/:listId/cards`,
