@@ -2,6 +2,36 @@ import { vi } from 'vitest';
 import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
 describe('App - Task', () => {
+  it('should be able to select nested tasks', async () => {
+    const { simulate } = mountApp({
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              {
+                id: 'group',
+                items: [
+                  { id: 'group-one', label: 'Group One' },
+                  {
+                    id: 'nested-group',
+                    items: [{ id: 'nested-group-one', label: 'Nested Group One' }],
+                    label: 'My nested group',
+                    type: 'group',
+                  },
+                ],
+                label: 'My group',
+                type: 'group',
+              },
+            ]),
+        },
+      },
+    });
+
+    await simulate.selectTask('nested-group-one');
+
+    expect(screen.getByText('Nested Group One')).toBeInTheDocument();
+  });
+
   it('should show the dial', async () => {
     const { simulate } = mountApp();
 

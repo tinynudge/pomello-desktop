@@ -1,6 +1,7 @@
 import { selectPomelloState } from '@/app/appSlice';
+import assertNonNullish from '@/shared/helpers/assertNonNullish';
 import useService from '@/shared/hooks/useService';
-import { SelectOptionType } from '@domain';
+import { SelectItem, SelectOptionType } from '@domain';
 import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -15,14 +16,28 @@ const useCurrentTask = (): CurrentTask => {
   const { getTaskLabel, id } = useService();
 
   const queryClient = useQueryClient();
-  const tasks = queryClient.getQueryData<SelectOptionType[]>(getTasksCacheKey(id));
+  const tasks = queryClient.getQueryData<SelectItem[]>(getTasksCacheKey(id));
 
   const { currentTaskId } = useSelector(selectPomelloState);
 
+  assertNonNullish(tasks, 'Unable to get cached tasks');
+
   const currentTask = useMemo(() => {
-    if (tasks) {
-      return tasks.find(item => item.id === currentTaskId);
+    let task: SelectOptionType | undefined;
+
+    const itemsToSearch = [...tasks];
+
+    while (!task && itemsToSearch.length) {
+      const item = itemsToSearch.shift()!; // "item" must exist due to the length check above
+
+      if (item.type === 'group' || item.type === 'customGroup') {
+        itemsToSearch.unshift(...item.items);
+      } else if (item.id === currentTaskId) {
+        task = item;
+      }
     }
+
+    return task;
   }, [tasks, currentTaskId]);
 
   if (!currentTask) {
