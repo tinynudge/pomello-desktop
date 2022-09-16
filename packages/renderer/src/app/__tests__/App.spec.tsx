@@ -1,5 +1,5 @@
 import useTranslation from '@/shared/hooks/useTranslation';
-import { ServiceConfigStore, ServiceContainer } from '@domain';
+import { ServiceConfigStore, ServiceContainer, ServiceFactory } from '@domain';
 import { vi } from 'vitest';
 import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
@@ -117,6 +117,37 @@ describe('App', () => {
     await simulate.selectService('mock');
 
     expect(screen.getByText('Hello world!')).toBeInTheDocument();
+  });
+
+  it('should be able to translate from the service', async () => {
+    const getTranslations = vi.fn().mockResolvedValue({
+      fooMessage: 'Goodbye {{object}}!',
+    });
+
+    const fooService: ServiceFactory = ({ translate }) => {
+      return {
+        getTaskHeading: () => translate('fooMessage', { object: 'World' }),
+        displayName: fooService.displayName,
+        fetchTasks: () => Promise.resolve([{ id: 'one', label: 'My task' }]),
+        id: fooService.id,
+      };
+    };
+    fooService.displayName = 'Foo';
+    fooService.id = 'foo';
+
+    const { simulate } = mountApp({
+      appApi: {
+        getTranslations,
+      },
+      createServiceRegistry: () => ({
+        [fooService.id]: fooService,
+      }),
+      serviceId: 'foo',
+    });
+
+    await simulate.selectTask('one');
+
+    expect(screen.getByRole('heading', { name: 'Goodbye World!' })).toBeInTheDocument();
   });
 
   it('should load a service container if provided', async () => {

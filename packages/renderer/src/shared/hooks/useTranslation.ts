@@ -1,4 +1,4 @@
-import { TranslationsDictionary } from '@domain';
+import { Translate, TranslationsDictionary } from '@domain';
 import { useCallback, useContext } from 'react';
 import { TranslationsContext } from '../context/TranslationsContext';
 
@@ -7,8 +7,6 @@ interface UseTranslation {
   removeNamespace(namespace: string): void;
   t: Translate;
 }
-
-type Translate = (input: string, mappings?: Record<string, string>) => string;
 
 const useTranslation = (): UseTranslation => {
   const context = useContext(TranslationsContext);

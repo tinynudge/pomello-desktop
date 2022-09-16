@@ -44,6 +44,7 @@ export type { ThemeConfig } from './ThemeConfig';
 export type { TimerPhase } from './TimerPhase';
 export type { TimerSounds } from './TimerSounds';
 export { TimerType } from './TimerType';
+export type { Translate } from './Translate';
 export type { Translations } from './Translations';
 export type { TranslationsDictionary } from './TranslationsDictionary';
 export type { WindowManager } from './WindowManager';

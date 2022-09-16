@@ -1,6 +1,7 @@
 import { ActiveService, ServiceConfig, ServiceRegistry } from '@domain';
 import { useEffect, useState } from 'react';
-import useTranslation from './useTranslation';
+import useTranslation from '../useTranslation';
+import createTranslator from './createTranslator';
 
 type UseInitializeService = ServiceInitializing | ServiceReady;
 
@@ -49,7 +50,10 @@ const useInitializeService = (
       setActiveService({
         // Individual service factories will have the correct type, but since
         // the ServiceFactory config defaults to void, we need to cast as null
-        service: serviceFactory({ config: config as null }),
+        service: serviceFactory({
+          config: config as null,
+          translate: createTranslator(translations),
+        }),
         config,
       });
 
