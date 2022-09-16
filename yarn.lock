@@ -1801,10 +1801,10 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.2.1.tgz#8c5ff2d004544bb2220e1d864f7267fe7eb6c556"
   integrity sha512-HOr1QiODrq+0j9lKU5i10y9TbhxMBMRMGimNx10asdmau9cb8Xb1Vyg0GvTwyIL2ziQyh2kAloOtAQFBQVuecA==
 
-"@tinynudge/pomello-service@^0.1.9":
-  version "0.1.9"
-  resolved "https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.9/79eac6fe5ddeacd407ea4f9018b5416ad0ef2b5f#79eac6fe5ddeacd407ea4f9018b5416ad0ef2b5f"
-  integrity sha512-ONeMigQONJPUvxtp9SKnGG+Fx5YGsDcbRVix4T+z2u37EScaMyC4DKuqJdvq9xFKDTLhVh6vvKSnkaPpF4B/AQ==
+"@tinynudge/pomello-service@^0.1.10":
+  version "0.1.10"
+  resolved "https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.10/ed0085404356e28174318d460077d0f0c76fb528#ed0085404356e28174318d460077d0f0c76fb528"
+  integrity sha512-3U+oVLuJMpSb9HztJyI5P5IxyLUiGAZUYwG12zkJ5OxS9o45wD9F+D3FydqCVjc/kcxp/aNFyXImhg0uIPr1xQ==
 
 "@tootallnate/once@2":
   version "2.0.0"
