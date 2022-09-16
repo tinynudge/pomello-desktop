@@ -1,7 +1,7 @@
 import SelectField from '@/app/ui/SelectField';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem } from '@domain';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
 interface SelectListViewProps {
   lists: SelectItem[];

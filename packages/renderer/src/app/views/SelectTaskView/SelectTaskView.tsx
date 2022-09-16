@@ -4,6 +4,7 @@ import useDialActions from '@/app/hooks/useDialActions';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import SelectField from '@/app/ui/SelectField';
+import assertNonNullish from '@/shared/helpers/assertNonNullish';
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC, useEffect } from 'react';
@@ -31,13 +32,15 @@ const SelectTaskView: FC = () => {
     }
   }, [pauseDialAction, registerDialActions, timer?.isActive]);
 
+  assertNonNullish(tasks, 'Unable to get tasks');
+
   const handleTaskSelect = (id: string) => {
     selectTask(id);
   };
 
   return !SelectTaskView ? (
     <SelectField
-      items={tasks!}
+      items={tasks}
       onChange={handleTaskSelect}
       placeholder={t('selectTaskPlaceholder')}
     />
