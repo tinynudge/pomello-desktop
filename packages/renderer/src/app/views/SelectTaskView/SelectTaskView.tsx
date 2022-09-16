@@ -3,6 +3,7 @@ import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
 import useDialActions from '@/app/hooks/useDialActions';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import Heading from '@/app/ui/Heading';
 import SelectField from '@/app/ui/SelectField';
 import assertNonNullish from '@/shared/helpers/assertNonNullish';
 import useService from '@/shared/hooks/useService';
@@ -12,7 +13,7 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const SelectTaskView: FC = () => {
-  const { fetchTasks, id, SelectTaskView } = useService();
+  const { fetchTasks, getSelectTaskHeading, id, SelectTaskView } = useService();
   const { t } = useTranslation();
 
   const { selectTask } = usePomelloActions();
@@ -39,11 +40,14 @@ const SelectTaskView: FC = () => {
   };
 
   return !SelectTaskView ? (
-    <SelectField
-      items={tasks}
-      onChange={handleTaskSelect}
-      placeholder={t('selectTaskPlaceholder')}
-    />
+    <>
+      {getSelectTaskHeading && <Heading>{getSelectTaskHeading()}</Heading>}
+      <SelectField
+        items={tasks}
+        onChange={handleTaskSelect}
+        placeholder={t('selectTaskPlaceholder')}
+      />
+    </>
   ) : (
     <SelectTaskView selectTask={selectTask} />
   );
