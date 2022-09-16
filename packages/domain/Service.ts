@@ -17,6 +17,7 @@ export interface Service {
   displayName: string;
   fetchTasks(): Promise<SelectItem[]>;
   getCompleteTaskOptions?(taskId: string): SelectItem[] | void;
+  getSelectTaskHeading?(): string;
   getTaskHeading?(): string;
   getTaskLabel?(task: SelectOptionType): string;
   getTaskTimerEndOptions?(): SelectItem[];
