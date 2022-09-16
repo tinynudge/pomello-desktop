@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.3",
-    "@tinynudge/pomello-service": "^0.1.9",
+    "@tinynudge/pomello-service": "^0.1.10",
     "ajv": "^8.11.0",
     "axios": "^0.27.2",
     "classcat": "^5.0.3",
