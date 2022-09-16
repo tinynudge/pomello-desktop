@@ -1,6 +1,7 @@
 import useCurrentTask from '@/app/hooks/useCurrentTask';
 import useShowAddNoteView from '@/app/hooks/useShowAddNoteView';
 import Heading from '@/app/ui/Heading';
+import Text from '@/app/ui/Text';
 import useService from '@/shared/hooks/useService';
 import { FC } from 'react';
 import useTaskDialActions from './useTaskDialActions';
@@ -20,7 +21,7 @@ const TaskView: FC = () => {
   return (
     <>
       {getTaskHeading && <Heading>{getTaskHeading()}</Heading>}
-      <p>{currentTaskLabel}</p>
+      <Text>{currentTaskLabel}</Text>
     </>
   );
 };
