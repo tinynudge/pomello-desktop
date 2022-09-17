@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.3",
-    "@tinynudge/pomello-service": "^0.1.10",
+    "@tinynudge/pomello-service": "^0.1.12",
     "ajv": "^8.11.0",
     "axios": "^0.27.2",
     "classcat": "^5.0.3",
@@ -58,6 +58,7 @@
     "@typescript-eslint/parser": "^5.15.0",
     "@vitejs/plugin-react": "^2.0.0",
     "@vitest/coverage-c8": "^0.23.2",
+    "@vitest/ui": "^0.23.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.0",
     "electron": "^19.0.6",

@@ -6,6 +6,7 @@ import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector } from 'react-redux';
 import Dial from '../Dial';
+import Overtime from '../Overtime';
 import { ReactComponent as MenuIcon } from './assets/menu.svg';
 import styles from './Layout.module.scss';
 import Menu from './Menu';
@@ -18,7 +19,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const { t } = useTranslation();
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
-  const { timer } = useSelector(selectPomelloState);
+  const { timer, overtime } = useSelector(selectPomelloState);
 
   const menuRef = useRef<HTMLElement>(null);
   const [menuOffset, setMenuOffset] = useState(0);
@@ -65,9 +66,10 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         </button>
         <ErrorBoundary fallback={<>TODO: Error handler</>}>
           <div className={styles.content}>{children}</div>
-          {timer && (
-            <div className={styles.dial}>
-              <Dial key={timer.type} timer={timer} />
+          {(timer || overtime) && (
+            <div className={styles.timers}>
+              {overtime && <Overtime isDialVisible={Boolean(timer)} overtime={overtime} />}
+              {timer && <Dial key={timer.type} timer={timer} />}
             </div>
           )}
         </ErrorBoundary>
