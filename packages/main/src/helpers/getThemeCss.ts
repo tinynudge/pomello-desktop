@@ -65,6 +65,32 @@ const defaultTheme: ThemeConfig = {
       color: colors.white,
     },
   },
+  dial: {
+    background: {
+      default: [colors.white, colors.darkAlt],
+      task: [colors.white, colors.taskDark],
+      'short-break': [colors.white, colors.shortBreakDark],
+      'long-break': [colors.white, colors.longBreakDark],
+    },
+    content: {
+      default: [colors.primary, colors.white],
+      task: [colors.task, colors.dark],
+      'short-break': [colors.shortBreak, colors.dark],
+      'long-break': [colors.longBreak, colors.dark],
+    },
+    overlay: opacity(colors.black, 24),
+  },
+  input: {
+    content: {
+      default: colors.white,
+      placeholder: [opacity(colors.white, 60), opacity(colors.white, 38)],
+    },
+    divider: {
+      default: opacity(colors.white, 38),
+      focused: colors.white,
+    },
+    selection: [opacity(colors.black, 10), opacity(colors.white, 20)],
+  },
   menu: {
     toggle: {
       content: {
@@ -84,20 +110,9 @@ const defaultTheme: ThemeConfig = {
     },
     background: [colors.lightAlt, colors.darkAlt],
   },
-  dial: {
-    background: {
-      default: [colors.white, colors.darkAlt],
-      task: [colors.white, colors.taskDark],
-      'short-break': [colors.white, colors.shortBreakDark],
-      'long-break': [colors.white, colors.longBreakDark],
-    },
-    content: {
-      default: [colors.primary, colors.white],
-      task: [colors.task, colors.dark],
-      'short-break': [colors.shortBreak, colors.dark],
-      'long-break': [colors.longBreak, colors.dark],
-    },
-    overlay: opacity(colors.black, 24),
+  overtime: {
+    background: [colors.task, colors.taskDark],
+    content: colors.white,
   },
   select: {
     background: {
@@ -110,17 +125,6 @@ const defaultTheme: ThemeConfig = {
       helper: [opacity(colors.black, 38), opacity(colors.white, 38)],
     },
     divider: [colors.lightAlt, colors.dark],
-  },
-  input: {
-    content: {
-      default: colors.white,
-      placeholder: [opacity(colors.white, 60), opacity(colors.white, 38)],
-    },
-    divider: {
-      default: opacity(colors.white, 38),
-      focused: colors.white,
-    },
-    selection: [opacity(colors.black, 10), opacity(colors.white, 20)],
   },
 };
 
