@@ -32,6 +32,123 @@ describe('App', () => {
     Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
   });
 
+  it('should reset to the select task state when the home button is clicked', async () => {
+    const { simulate, userEvent } = mountApp();
+
+    await simulate.selectTask();
+    await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+
+    expect(screen.getByText('Pick a task')).toBeInTheDocument();
+    expect(screen.queryByTestId('dial')).not.toBeInTheDocument();
+  });
+
+  it('should prompt the user for confirmation if resetting during an active task (if enabled)', async () => {
+    const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
+
+    const { simulate } = mountApp({
+      appApi: {
+        showMessageBox: mockShowMessageBox,
+      },
+      settings: {
+        warnBeforeTaskCancel: true,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.hotkey('routeHome');
+
+    expect(mockShowMessageBox).toHaveBeenCalledWith({
+      type: 'warning',
+      title: 'Pomello',
+      message: 'Are you sure?',
+      detail: 'This action will cancel your current task.',
+      buttons: ['Yes, cancel task', 'No, resume task'],
+      defaultId: 0,
+      cancelId: 1,
+    });
+  });
+
+  it('should not reset the state if the cancel task dialog is cancelled', async () => {
+    const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 1 });
+
+    const { simulate } = mountApp({
+      appApi: {
+        showMessageBox: mockShowMessageBox,
+      },
+      settings: {
+        warnBeforeTaskCancel: true,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.hotkey('routeHome');
+
+    expect(screen.getByTestId('dial')).toBeInTheDocument();
+  });
+
+  it('should not prompt the user for confirmation if resetting during an active task (if disabled)', async () => {
+    const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
+
+    const { simulate, userEvent } = mountApp({
+      appApi: {
+        showMessageBox: mockShowMessageBox,
+      },
+      settings: {
+        warnBeforeTaskCancel: false,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+
+    expect(mockShowMessageBox).not.toHaveBeenCalled();
+    expect(screen.getByText('Pick a task')).toBeInTheDocument();
+    expect(screen.queryByTestId('dial')).not.toBeInTheDocument();
+  });
+
+  it('should not prompt the user for confirmation if resetting while a break is active', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
+
+    const { simulate, userEvent } = mountApp({
+      appApi: {
+        showMessageBox: mockShowMessageBox,
+      },
+      settings: {
+        taskTime: 3,
+        warnBeforeTaskCancel: true,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer();
+    await simulate.selectOption('continueTask');
+    await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+
+    expect(mockShowMessageBox).not.toHaveBeenCalled();
+    expect(screen.getByText('Pick a task')).toBeInTheDocument();
+    expect(screen.queryByTestId('dial')).not.toBeInTheDocument();
+
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+  });
+
+  it('should reset to the select task state via hotkey', async () => {
+    const { simulate } = mountApp();
+
+    await simulate.selectTask();
+    await simulate.hotkey('routeHome');
+
+    expect(screen.getByText('Pick a task')).toBeInTheDocument();
+  });
+
   it('should prompt the user to select a service if not set', () => {
     mountApp({ serviceId: null });
 
