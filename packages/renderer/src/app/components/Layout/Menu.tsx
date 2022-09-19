@@ -7,17 +7,19 @@ import styles from './Menu.module.scss';
 
 interface MenuProps {
   isOpen: boolean;
+  onHomeClick(): void;
 }
 
-const Menu = forwardRef<HTMLElement, MenuProps>(({ isOpen }, ref) => {
+const Menu = forwardRef<HTMLElement, MenuProps>(({ isOpen, onHomeClick }, ref) => {
   const { t } = useTranslation();
 
   return (
     <nav aria-label={t('menuLabel')} className={styles.menu} ref={ref}>
       <button
-        aria-label={t('homeButtonLabel')}
         aria-hidden={!isOpen}
+        aria-label={t('homeButtonLabel')}
         className={styles.button}
+        onClick={onHomeClick}
         tabIndex={isOpen ? 0 : -1}
       >
         <HomeIcon aria-hidden />
