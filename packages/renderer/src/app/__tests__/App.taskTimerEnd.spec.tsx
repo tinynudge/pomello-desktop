@@ -48,10 +48,10 @@ describe('App - Task Timer End', () => {
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
         items: [
-          { id: 'continueTask', label: 'Continue after break' },
+          { hint: 'Continue task label', id: 'continueTask', label: 'Continue after break' },
           { id: 'switchTask', label: 'Switch tasks after break' },
-          { id: 'voidTask', label: 'Void this pomodoro' },
-          { id: 'addNote', label: 'Add a note first' },
+          { hint: 'Void task label', id: 'voidTask', label: 'Void this pomodoro' },
+          { hint: 'Add note label', id: 'addNote', label: 'Add a note first' },
         ],
       })
     );
