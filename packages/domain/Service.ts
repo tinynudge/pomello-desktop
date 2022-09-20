@@ -8,6 +8,7 @@ import { SelectItem } from './SelectItem';
 import { SelectOptionType } from './SelectOptionType';
 import { SelectTaskView } from './SelectTaskView';
 import { ServiceContainer } from './ServiceContainer';
+import { TaskTimerEndItems } from './TaskTimerEndItems';
 
 export interface Service {
   AuthView?: FC;
@@ -20,7 +21,7 @@ export interface Service {
   getSelectTaskHeading?(): string;
   getTaskHeading?(): string;
   getTaskLabel?(task: SelectOptionType): string;
-  getTaskTimerEndOptions?(): SelectItem[];
+  getTaskTimerEndItems?(): TaskTimerEndItems;
   handleNoteAdd?: AddNoteHandler;
   id: string;
   InitializingView?: InitializingView;

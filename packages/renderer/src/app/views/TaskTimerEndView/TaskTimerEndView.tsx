@@ -7,47 +7,96 @@ import SelectField from '@/app/ui/SelectField';
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem } from '@domain';
-import { FC, useEffect } from 'react';
+import produce from 'immer';
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 
 const TaskTimerEndView: FC = () => {
   const { t } = useTranslation();
-  const { getTaskTimerEndOptions, onTaskTimerEndPromptHandled } = useService();
+  const { getTaskTimerEndItems, onTaskTimerEndPromptHandled } = useService();
   const { taskTimerEndPromptHandled } = usePomelloActions();
 
   const { currentTask, currentTaskLabel } = useCurrentTask();
 
   const showAddNoteView = useShowAddNoteView();
 
+  const customMoveTaskItemId = useRef<string>();
+
+  const handleActionSelect = useCallback(
+    (id: string) => {
+      if (id === 'continueTask' || id === 'switchTask' || id === 'voidTask') {
+        taskTimerEndPromptHandled(id);
+      } else if (id === 'addNote') {
+        showAddNoteView('generalNote');
+      } else {
+        const response = onTaskTimerEndPromptHandled?.(currentTask, id);
+
+        if (response) {
+          taskTimerEndPromptHandled(response);
+        }
+      }
+    },
+    [currentTask, onTaskTimerEndPromptHandled, showAddNoteView, taskTimerEndPromptHandled]
+  );
+
+  const handleTaskMove = useCallback(() => {
+    if (customMoveTaskItemId.current) {
+      handleActionSelect(customMoveTaskItemId.current);
+    } else {
+      taskTimerEndPromptHandled('switchTask');
+    }
+  }, [handleActionSelect, taskTimerEndPromptHandled]);
+
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
   useEffect(() => {
     return registerHotkeys({
       addNote: () => showAddNoteView('generalNote'),
       continueTask: () => taskTimerEndPromptHandled('continueTask'),
+      moveTask: handleTaskMove,
       voidTask: () => taskTimerEndPromptHandled('voidTask'),
     });
-  }, [registerHotkeys, showAddNoteView, taskTimerEndPromptHandled]);
+  }, [handleTaskMove, registerHotkeys, showAddNoteView, taskTimerEndPromptHandled]);
 
-  const handleActionSelect = (id: string) => {
-    if (id === 'continueTask' || id === 'switchTask' || id === 'voidTask') {
-      taskTimerEndPromptHandled(id);
-    } else if (id === 'addNote') {
-      showAddNoteView('generalNote');
-    } else {
-      const response = onTaskTimerEndPromptHandled?.(currentTask, id);
+  const items = useMemo(() => {
+    let customItems: SelectItem[] = [];
 
-      if (response) {
-        taskTimerEndPromptHandled(response);
-      }
+    const taskTimerEndItems = getTaskTimerEndItems?.();
+    if (Array.isArray(taskTimerEndItems)) {
+      customItems = taskTimerEndItems;
+    } else if (taskTimerEndItems) {
+      customItems = produce(taskTimerEndItems.items, draft => {
+        const moveTaskOption = draft.find(item => item.id === taskTimerEndItems.moveTaskItemId);
+
+        if (moveTaskOption) {
+          customMoveTaskItemId.current = taskTimerEndItems.moveTaskItemId;
+          moveTaskOption.hint = getHotkeyLabel('moveTask');
+        }
+      });
     }
-  };
 
-  const items: SelectItem[] = [
-    { hint: getHotkeyLabel('continueTask'), id: 'continueTask', label: t('taskTimerEndContinue') },
-    { id: 'switchTask', label: t('taskTimerEndSwitch') },
-    { hint: getHotkeyLabel('voidTask'), id: 'voidTask', label: t('taskTimerEndVoid') },
-    { hint: getHotkeyLabel('addNote'), id: 'addNote', label: t('taskTimerEndAddNote') },
-    ...(getTaskTimerEndOptions ? getTaskTimerEndOptions() : []),
-  ];
+    return [
+      {
+        hint: getHotkeyLabel('continueTask'),
+        id: 'continueTask',
+        label: t('taskTimerEndContinue'),
+      },
+      {
+        hint: !customMoveTaskItemId.current ? getHotkeyLabel('moveTask') : undefined,
+        id: 'switchTask',
+        label: t('taskTimerEndSwitch'),
+      },
+      {
+        hint: getHotkeyLabel('voidTask'),
+        id: 'voidTask',
+        label: t('taskTimerEndVoid'),
+      },
+      {
+        hint: getHotkeyLabel('addNote'),
+        id: 'addNote',
+        label: t('taskTimerEndAddNote'),
+      },
+      ...customItems,
+    ];
+  }, [getHotkeyLabel, getTaskTimerEndItems, t]);
 
   return (
     <>
