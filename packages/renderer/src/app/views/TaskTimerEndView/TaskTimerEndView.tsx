@@ -6,6 +6,7 @@ import Heading from '@/app/ui/Heading';
 import SelectField from '@/app/ui/SelectField';
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
+import { SelectItem } from '@domain';
 import { FC, useEffect } from 'react';
 
 const TaskTimerEndView: FC = () => {
@@ -17,7 +18,7 @@ const TaskTimerEndView: FC = () => {
 
   const showAddNoteView = useShowAddNoteView();
 
-  const { registerHotkeys } = useHotkeys();
+  const { getHotkeyLabel, registerHotkeys } = useHotkeys();
   useEffect(() => {
     return registerHotkeys({
       addNote: () => showAddNoteView('generalNote'),
@@ -40,11 +41,11 @@ const TaskTimerEndView: FC = () => {
     }
   };
 
-  const items = [
-    { id: 'continueTask', label: t('taskTimerEndContinue') },
+  const items: SelectItem[] = [
+    { hint: getHotkeyLabel('continueTask'), id: 'continueTask', label: t('taskTimerEndContinue') },
     { id: 'switchTask', label: t('taskTimerEndSwitch') },
-    { id: 'voidTask', label: t('taskTimerEndVoid') },
-    { id: 'addNote', label: t('taskTimerEndAddNote') },
+    { hint: getHotkeyLabel('voidTask'), id: 'voidTask', label: t('taskTimerEndVoid') },
+    { hint: getHotkeyLabel('addNote'), id: 'addNote', label: t('taskTimerEndAddNote') },
     ...(getTaskTimerEndOptions ? getTaskTimerEndOptions() : []),
   ];
 

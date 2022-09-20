@@ -36,11 +36,14 @@ const DropdownItem: FC<DropdownItemProps> = ({
         role="group"
         service={service}
       >
-        <DropdownRow className={styles.group} id={item.id} role="presentation">
+        <DropdownRow className={cc([styles.item, styles.group])} id={item.id} role="presentation">
           {item.type === 'customGroup' && service?.CustomSelectGroup ? (
             <service.CustomSelectGroup group={item} />
           ) : (
-            item.label
+            <>
+              <span className={styles.label}>{item.label}</span>
+              {item.hint && <span className={styles.hint}>{item.hint}</span>}
+            </>
           )}
         </DropdownRow>
       </DropdownList>
@@ -54,6 +57,7 @@ const DropdownItem: FC<DropdownItemProps> = ({
   return (
     <DropdownRow
       className={cc({
+        [styles.item]: true,
         [styles.selected]: activeOptionId === item.id,
       })}
       id={item.id}
@@ -64,7 +68,10 @@ const DropdownItem: FC<DropdownItemProps> = ({
       {item.type === 'customOption' && service?.CustomSelectOption ? (
         <service.CustomSelectOption option={item} children={item.label} />
       ) : (
-        item.label
+        <>
+          <span className={styles.label}>{item.label}</span>
+          {item.hint && <span className={styles.hint}>{item.hint}</span>}
+        </>
       )}
     </DropdownRow>
   );

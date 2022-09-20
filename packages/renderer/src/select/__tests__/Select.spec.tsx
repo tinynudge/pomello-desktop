@@ -30,6 +30,34 @@ describe('Select', () => {
     expect(options.at(1)).toHaveTextContent('Two');
   });
 
+  it('should render hints for options', () => {
+    mountSelect({
+      setSelectItems: {
+        items: [{ hint: 'Click me!', id: 'one', label: 'One' }],
+      },
+    });
+
+    expect(screen.getByRole('option')).toHaveTextContent('Click me!');
+  });
+
+  it('should render hints for option groups', () => {
+    mountSelect({
+      setSelectItems: {
+        items: [
+          {
+            hint: 'Stay away!',
+            id: 'mama-group',
+            label: 'Mama group',
+            type: 'group',
+            items: [{ id: 'child', label: 'Child option' }],
+          },
+        ],
+      },
+    });
+
+    expect(screen.getByRole('group')).toHaveTextContent('Stay away!');
+  });
+
   it('should render option groups', () => {
     mountSelect({
       setSelectItems: {

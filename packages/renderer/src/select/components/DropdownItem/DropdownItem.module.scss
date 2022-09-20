@@ -1,3 +1,21 @@
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hint {
+  display: inline-block;
+  padding-left: 8px;
+  color: var(--select-content-helper);
+  font-size: 12px;
+}
+
 .group {
   padding-top: 10px;
   padding-bottom: 10px;
