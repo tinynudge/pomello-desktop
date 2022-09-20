@@ -40,6 +40,7 @@ export type { Sound } from './Sound';
 export type { Store } from './Store';
 export type { StoreContents } from './StoreContents';
 export type { StoreManager } from './StoreManager';
+export type { TaskTimerEndItems } from './TaskTimerEndItems';
 export type { ThemeConfig } from './ThemeConfig';
 export type { TimerPhase } from './TimerPhase';
 export type { TimerSounds } from './TimerSounds';
