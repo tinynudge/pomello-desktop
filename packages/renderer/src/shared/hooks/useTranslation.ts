@@ -1,6 +1,7 @@
 import { Translate, TranslationsDictionary } from '@domain';
 import { useCallback, useContext } from 'react';
 import { TranslationsContext } from '../context/TranslationsContext';
+import assertNonNullish from '../helpers/assertNonNullish';
 
 interface UseTranslation {
   addNamespace(namespace: string, translations: TranslationsDictionary): void;
@@ -11,9 +12,7 @@ interface UseTranslation {
 const useTranslation = (): UseTranslation => {
   const context = useContext(TranslationsContext);
 
-  if (!context) {
-    throw new Error('useTranslation must be used inside a <TranslationsProvider>');
-  }
+  assertNonNullish(context, 'useTranslation must be used inside a <TranslationsProvider>');
 
   const { addNamespace, removeNamespace, translations } = context;
 
