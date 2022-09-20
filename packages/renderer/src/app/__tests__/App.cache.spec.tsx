@@ -50,13 +50,11 @@ describe('App - Cache', async () => {
       serviceId: serviceWithCache.id,
     });
 
-    await waitFor(() => {
+    await waitFor(async () => {
       expect(screen.getByText('Hello, Brian')).toBeInTheDocument();
-    });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Change name' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Change name' }));
 
-    await waitFor(() => {
       expect(screen.getByText('Hello, Tom')).toBeInTheDocument();
     });
   });

@@ -1,6 +1,7 @@
 import { ActiveService } from '@domain';
 import { useContext, useEffect, useState } from 'react';
 import { ServiceContext } from '../context/ServiceContext';
+import assertNonNullish from '../helpers/assertNonNullish';
 
 type UseServiceConfig<TConfig> = [
   TConfig,
@@ -18,15 +19,11 @@ type ServiceConfigUnsetter<TConfig> = (key: keyof TConfig) => void;
 const useServiceConfig = <TConfig>(): UseServiceConfig<TConfig> => {
   const activeService = useContext(ServiceContext);
 
-  if (!activeService) {
-    throw new Error('useServiceConfig must be used inside a <ServiceProvider>');
-  }
+  assertNonNullish(activeService, 'useServiceConfig must be used inside a <ServiceProvider>');
 
   const { config } = activeService as ActiveService<TConfig>;
 
-  if (!config) {
-    throw new Error('The active service does not have a config');
-  }
+  assertNonNullish(config, 'The active service does not have a config');
 
   const [contents, setContents] = useState(config.get());
 
