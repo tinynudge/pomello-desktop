@@ -8,9 +8,9 @@ describe('App', () => {
     const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect;
     Element.prototype.getBoundingClientRect = () => ({ width: 100 } as DOMRect);
 
-    const { userEvent } = mountApp();
+    const { simulate } = mountApp();
 
-    await userEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    await simulate.openMenu();
 
     expect(screen.getByRole('button', { name: /home/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /dashboard/i })).toBeInTheDocument();
@@ -33,11 +33,11 @@ describe('App', () => {
   });
 
   it('should reset to the select task state when the home button is clicked', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate } = mountApp();
 
     await simulate.selectTask();
-    await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+    await simulate.openMenu();
+    await simulate.clickMenuButton('home');
 
     expect(screen.getByText('Pick a task')).toBeInTheDocument();
     expect(screen.queryByTestId('dial')).not.toBeInTheDocument();
@@ -92,7 +92,7 @@ describe('App', () => {
   it('should not prompt the user for confirmation if resetting during an active task (if disabled)', async () => {
     const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate } = mountApp({
       appApi: {
         showMessageBox: mockShowMessageBox,
       },
@@ -103,8 +103,8 @@ describe('App', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+    await simulate.openMenu();
+    await simulate.clickMenuButton('home');
 
     expect(mockShowMessageBox).not.toHaveBeenCalled();
     expect(screen.getByText('Pick a task')).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe('App', () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate } = mountApp({
       appApi: {
         showMessageBox: mockShowMessageBox,
       },
@@ -129,8 +129,8 @@ describe('App', () => {
     await simulate.startTimer();
     await simulate.advanceTimer();
     await simulate.selectOption('continueTask');
-    await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+    await simulate.openMenu();
+    await simulate.clickMenuButton('home');
 
     expect(mockShowMessageBox).not.toHaveBeenCalled();
     expect(screen.getByText('Pick a task')).toBeInTheDocument();

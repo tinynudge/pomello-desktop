@@ -3,16 +3,21 @@ import { useEffect, useState } from 'react';
 import useTranslation from '../useTranslation';
 import createTranslator from './createTranslator';
 
-type UseInitializeService = ServiceInitializing | ServiceReady;
+type UseInitializeService = ServiceIdle | ServiceInitializing | ServiceReady;
+
+type ServiceIdle = {
+  activeService: undefined;
+  status: 'IDLE';
+};
 
 type ServiceInitializing = {
   activeService: undefined;
-  isReady: false;
+  status: 'INITIALIZING';
 };
 
 type ServiceReady = {
   activeService: ActiveService;
-  isReady: true;
+  status: 'READY';
 };
 
 const useInitializeService = (
@@ -77,16 +82,23 @@ const useInitializeService = (
     };
   }, [activeService]);
 
+  if (!serviceId) {
+    return {
+      activeService: undefined,
+      status: 'IDLE',
+    };
+  }
+
   if (!isReady || !activeService) {
     return {
       activeService: undefined,
-      isReady: false,
+      status: 'INITIALIZING',
     };
   }
 
   return {
     activeService,
-    isReady: true,
+    status: 'READY',
   };
 };
 

@@ -38,6 +38,9 @@ const createMockService: ServiceFactory = () => {
     handleNoteAdd: (type, note) => {
       new Notification(type, { body: note });
     },
+    handleTaskCreate: text => {
+      new Notification(text);
+    },
     InitializingView: MockInitializingView,
     onTaskCompletePromptHandled(taskId, action) {
       new Notification(taskId, { body: action });

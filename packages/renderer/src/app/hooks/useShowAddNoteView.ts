@@ -15,7 +15,7 @@ const useShowAddNoteView = () => {
     (type: NoteType) => {
       if (!handleNoteAdd) {
         new Notification(t('notesDisabledHeading'), {
-          body: t('notesDisabledContent', { service: displayName }),
+          body: t('serviceActionUnavailable', { service: displayName }),
         });
 
         return;

@@ -1,3 +1,4 @@
+import Content from '@/app/ui/Content';
 import Heading from '@/app/ui/Heading';
 import SelectField from '@/app/ui/SelectField';
 import useTranslation from '@/shared/hooks/useTranslation';
@@ -21,14 +22,14 @@ const SelectServiceView: FC<SelectServiceViewProps> = ({ services }) => {
   }));
 
   return (
-    <>
+    <Content>
       <Heading>{t('selectServiceHeading')}</Heading>
       <SelectField
         onChange={handleServiceChange}
         placeholder={t('selectServiceLabel')}
         items={items}
       />
-    </>
+    </Content>
   );
 };
 
