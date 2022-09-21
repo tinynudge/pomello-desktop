@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { PomelloState } from '@tinynudge/pomello-service';
 import { RootState } from './createStore';
 
-type OverlayView = NoteType;
+type OverlayView = 'create-task' | NoteType;
 
 interface AppState {
   overlayView: OverlayView | null;

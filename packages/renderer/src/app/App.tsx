@@ -1,11 +1,12 @@
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
+import useTranslation from '@/shared/hooks/useTranslation';
 import { LabeledHotkeys, ServiceRegistry } from '@domain';
 import cc from 'classcat';
 import { FC, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './App.module.scss';
-import { selectOverlayView, selectServiceId, serviceChange } from './appSlice';
+import { selectOverlayView, selectServiceId, serviceChange, setOverlayView } from './appSlice';
 import Layout from './components/Layout';
 import Routes from './components/Routes';
 import { DialActionsProvider } from './context/DialActionsContext';
@@ -14,6 +15,7 @@ import useTimerSounds from './hooks/useTimerSounds';
 import Content from './ui/Content';
 import LoadingText from './ui/LoadingText';
 import AddNoteView from './views/AddNoteView';
+import CreateTaskView from './views/CreateTaskView';
 import SelectServiceView from './views/SelectServiceView';
 
 interface AppProps {
@@ -22,9 +24,10 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ hotkeys, services }) => {
-  useTimerSounds();
-
+  const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  useTimerSounds();
 
   const serviceId = useSelector(selectServiceId);
 
@@ -34,26 +37,48 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
     });
   });
 
-  const { activeService, isReady } = useInitializeService(services, serviceId);
+  const { activeService, status } = useInitializeService(services, serviceId);
 
   const overlayView = useSelector(selectOverlayView);
+
+  const handleTaskCreate = () => {
+    if (activeService?.service.handleTaskCreate) {
+      dispatch(setOverlayView('create-task'));
+      return;
+    }
+
+    const message =
+      status === 'READY'
+        ? t('serviceActionUnavailable', { service: activeService.service.displayName })
+        : status === 'INITIALIZING'
+        ? t('createTaskNotReadyMessage')
+        : t('createTaskNoServiceMessage');
+
+    new Notification(t('createTaskDisabledHeading'), {
+      body: message,
+    });
+  };
 
   const ServiceContainer = activeService?.service.Container ?? Fragment;
 
   return (
     <HotkeysProvider hotkeys={hotkeys}>
       <DialActionsProvider>
-        <Layout>
-          {activeService ? (
+        <Layout onTaskCreate={handleTaskCreate}>
+          {status === 'READY' ? (
             <ServiceProvider service={activeService}>
-              {overlayView && <AddNoteView noteType={overlayView} />}
+              {overlayView === 'create-task' ? (
+                <CreateTaskView />
+              ) : overlayView ? (
+                <AddNoteView noteType={overlayView} />
+              ) : null}
               <Content className={cc({ [styles.contentHidden]: Boolean(overlayView) })}>
                 <ServiceContainer>
                   <Routes />
                 </ServiceContainer>
               </Content>
             </ServiceProvider>
-          ) : !isReady && serviceId ? (
+          ) : status === 'INITIALIZING' ? (
             <Content>
               <LoadingText />
             </Content>

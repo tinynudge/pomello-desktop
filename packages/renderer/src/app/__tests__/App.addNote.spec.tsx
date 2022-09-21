@@ -6,7 +6,7 @@ describe('App - Add Note', () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);
 
-    const errorMessage = ['Unable to add note', { body: 'Mock service does not support notes' }];
+    const errorMessage = ['Unable to add note', { body: 'Mock service does not support this' }];
 
     const { simulate, userEvent } = mountApp({
       mockService: {
@@ -44,7 +44,7 @@ describe('App - Add Note', () => {
     await simulate.showDialActions();
     await userEvent.click(screen.getByRole('button', { name: 'Add note' }));
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Add note' })).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
     });
@@ -56,7 +56,7 @@ describe('App - Add Note', () => {
     await simulate.selectTask();
     await simulate.hotkey('addNote');
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Add note' })).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
     });
@@ -68,7 +68,7 @@ describe('App - Add Note', () => {
     await simulate.selectTask();
     await simulate.hotkey('externalDistraction');
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
     });
@@ -80,7 +80,7 @@ describe('App - Add Note', () => {
     await simulate.selectTask();
     await simulate.hotkey('internalDistraction');
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Internal distraction' })).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
     });

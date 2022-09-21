@@ -36,6 +36,19 @@ const advanceTimer = async (_results: MountAppResults, time?: number) => {
   }
 };
 
+const clickMenuButton = async (
+  { userEvent }: MountAppResults,
+  button: 'createTask' | 'dashboard' | 'home'
+) => {
+  const buttonNames = {
+    createTask: 'Create task',
+    dashboard: 'Dashboard',
+    home: 'Home',
+  };
+
+  await userEvent.click(screen.getByRole('button', { name: buttonNames[button] }));
+};
+
 const enterNote = async ({ userEvent }: MountAppResults, note: string) => {
   await screen.findByRole('textbox');
 
@@ -76,6 +89,10 @@ const hotkey = async (_results: MountAppResults, command: keyof Hotkeys) => {
 
     await sleep(1);
   });
+};
+
+const openMenu = async ({ userEvent }: MountAppResults) => {
+  await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
 };
 
 const selectService = async (results: MountAppResults, serviceId: string) => {
@@ -122,9 +139,11 @@ const waitForSelectTaskView = async () => {
 
 const simulate = {
   advanceTimer,
+  clickMenuButton,
   enterNote,
   hideDialActions,
   hotkey,
+  openMenu,
   selectOption,
   selectService,
   selectTask,

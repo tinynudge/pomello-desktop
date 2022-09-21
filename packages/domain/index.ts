@@ -5,6 +5,7 @@ export { AppProtocol } from './AppProtocol';
 export type { Cache } from './Cache';
 export type { CacheChangeEventHandler } from './CacheChangeEventHandler';
 export type { CacheUpdateAction } from './CacheUpdateAction';
+export type { CreateTaskHandler } from './CreateTaskHandler';
 export type { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 export type { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
 export type { DialAction } from './DialAction';

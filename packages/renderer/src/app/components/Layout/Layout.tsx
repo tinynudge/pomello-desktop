@@ -15,9 +15,10 @@ import Menu from './Menu';
 
 interface LayoutProps {
   children: ReactNode;
+  onTaskCreate(): void;
 }
 
-const Layout: FC<LayoutProps> = ({ children }) => {
+const Layout: FC<LayoutProps> = ({ children, onTaskCreate }) => {
   const { t } = useTranslation();
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
@@ -28,6 +29,11 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const menuRef = useRef<HTMLElement>(null);
   const [menuOffset, setMenuOffset] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const createTask = useCallback(() => {
+    onTaskCreate();
+    setIsMenuOpen(false);
+  }, [onTaskCreate]);
 
   const routeHome = useCallback(async () => {
     if (showCancelTaskDialog) {
@@ -52,13 +58,18 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
   useEffect(() => {
     return registerHotkeys({
-      toggleMenu,
+      createTask,
       routeHome,
+      toggleMenu,
     });
-  }, [registerHotkeys, routeHome]);
+  }, [createTask, registerHotkeys, routeHome]);
 
   const handleMenuClick = () => {
     toggleMenu();
+  };
+
+  const handleCreateTaskClick = () => {
+    createTask();
   };
 
   const handleHomeButtonClick = () => {
@@ -77,7 +88,12 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
   return (
     <>
-      <Menu isOpen={isMenuOpen} onHomeClick={handleHomeButtonClick} ref={menuRef} />
+      <Menu
+        isOpen={isMenuOpen}
+        onCreateTaskClick={handleCreateTaskClick}
+        onHomeClick={handleHomeButtonClick}
+        ref={menuRef}
+      />
       <main
         className={cc({
           [styles.container]: true,
