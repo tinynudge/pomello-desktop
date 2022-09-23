@@ -2,23 +2,25 @@ import { selectPomelloState } from '@/app/appSlice';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
+import { ActiveService } from '@domain';
 import cc from 'classcat';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { useSelector } from 'react-redux';
 import Dial from '../Dial';
 import Overtime from '../Overtime';
 import { ReactComponent as MenuIcon } from './assets/menu.svg';
+import ErrorBoundary from './ErrorBoundary';
 import selectShowCancelTaskDialog from './helpers/selectShowCancelTaskDialog';
 import styles from './Layout.module.scss';
 import Menu from './Menu';
 
 interface LayoutProps {
+  activeService?: ActiveService;
   children: ReactNode;
   onTaskCreate(): void;
 }
 
-const Layout: FC<LayoutProps> = ({ children, onTaskCreate }) => {
+const Layout: FC<LayoutProps> = ({ activeService, children, onTaskCreate }) => {
   const { t } = useTranslation();
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
@@ -112,7 +114,10 @@ const Layout: FC<LayoutProps> = ({ children, onTaskCreate }) => {
         >
           <MenuIcon aria-hidden width={4} />
         </button>
-        <ErrorBoundary fallback={<>TODO: Error handler</>}>
+        <ErrorBoundary
+          activeService={activeService}
+          renderError={children => <div className={styles.content}>{children}</div>}
+        >
           <div className={styles.content}>{children}</div>
           {(timer || overtime) && (
             <div className={styles.timers}>

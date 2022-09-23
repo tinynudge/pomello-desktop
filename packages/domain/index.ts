@@ -10,6 +10,7 @@ export type { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 export type { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
 export type { DialAction } from './DialAction';
 export type { DialActionClickHandler } from './DialActionClickHandler';
+export type { ErrorHandler } from './ErrorHandler';
 export type { FindOrCreateWindowOptions } from './FindOrCreateWindowOptions';
 export type { Hotkeys } from './Hotkeys';
 export type { InitializingView } from './InitializingView';

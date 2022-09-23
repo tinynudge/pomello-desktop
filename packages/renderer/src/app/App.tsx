@@ -64,7 +64,7 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
   return (
     <HotkeysProvider hotkeys={hotkeys}>
       <DialActionsProvider>
-        <Layout onTaskCreate={handleTaskCreate}>
+        <Layout activeService={activeService} onTaskCreate={handleTaskCreate}>
           {status === 'READY' ? (
             <ServiceProvider service={activeService}>
               {overlayView === 'create-task' ? (

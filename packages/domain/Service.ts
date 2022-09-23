@@ -4,6 +4,7 @@ import { AddNoteHandler } from './AddNoteHandler';
 import { CreateTaskHandler } from './CreateTaskHandler';
 import { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 import { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
+import { ErrorHandler } from './ErrorHandler';
 import { InitializingView } from './InitializingView';
 import { SelectItem } from './SelectItem';
 import { SelectOptionType } from './SelectOptionType';
@@ -23,6 +24,7 @@ export interface Service {
   getTaskHeading?(): string;
   getTaskLabel?(task: SelectOptionType): string;
   getTaskTimerEndItems?(): TaskTimerEndItems;
+  handleError?: ErrorHandler;
   handleNoteAdd?: AddNoteHandler;
   handleTaskCreate?: CreateTaskHandler;
   id: string;
