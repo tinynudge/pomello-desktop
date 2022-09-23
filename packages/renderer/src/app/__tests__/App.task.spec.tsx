@@ -223,7 +223,7 @@ describe('App - Task', () => {
 
     await simulate.selectTask('foo');
 
-    expect(screen.getByText('TODO: Error handler')).toBeInTheDocument();
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
 
     mockedConsole.mockRestore();
   });

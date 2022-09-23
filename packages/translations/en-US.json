@@ -71,6 +71,7 @@
   "taskTimerEndPlaceholder": "Time's up! How'd you do?",
   "taskTimerEndSwitch": "Switch tasks after break",
   "taskTimerEndVoid": "Void this pomodoro",
+  "unexpectedErrorTitle": "An unexpected error occurred: {{message}}",
   "validAuthTokenRequired": "A valid token is required",
   "voidTaskLabel": "Void task",
   "voidTaskTitle": "Void task ({{hotkey}})",
