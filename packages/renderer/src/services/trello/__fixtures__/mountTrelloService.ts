@@ -56,11 +56,10 @@ const mountTrelloService = async ({
     currentList: 'TRELLO_LIST_ID',
   };
 
-  const config = await createMockServiceConfig<TrelloConfig>(
-    createTrelloService.id,
-    createTrelloService.config!,
-    { ...defaultConfig, ...initialConfig }
-  );
+  const config = createMockServiceConfig<TrelloConfig>(createTrelloService.id, {
+    ...defaultConfig,
+    ...initialConfig,
+  });
 
   const registerServiceConfig = () => Promise.resolve(config) as any;
 
