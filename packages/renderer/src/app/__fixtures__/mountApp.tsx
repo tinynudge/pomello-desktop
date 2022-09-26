@@ -1,10 +1,13 @@
+import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
+import createMockServiceConfig from '@/__fixtures__/createMockServiceConfig';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
 import {
   Hotkeys,
+  PomelloServiceConfig,
   Service,
   ServiceConfigStore,
   ServiceFactory,
@@ -37,6 +40,7 @@ interface MountAppOptions {
     config?: ServiceConfigStore;
     service?: Partial<Service>;
   };
+  pomelloConfig?: Partial<PomelloServiceConfig>;
   serviceId?: string | null;
   settings?: Partial<Settings>;
 }
@@ -73,15 +77,23 @@ const mountApp = (options: MountAppOptions = {}) => {
 
   const services = options.createServiceRegistry?.(defaultServices) ?? defaultServices;
 
+  const pomelloConfig = createMockServiceConfig('pomello', {
+    didPromptRegistration: true,
+    token: 'MY_POMELLO_TOKEN',
+    ...options.pomelloConfig,
+  });
+
   render(
     <Provider store={store}>
-      <PomelloProvider service={pomelloService}>
-        <QueryClientProvider client={queryClient}>
-          <TranslationsProvider commonTranslations={translations}>
-            <App hotkeys={mockHotkeys} services={services as ServiceRegistry} />
-          </TranslationsProvider>
-        </QueryClientProvider>
-      </PomelloProvider>
+      <QueryClientProvider client={queryClient}>
+        <PomelloProvider service={pomelloService}>
+          <PomelloConfigProvider config={pomelloConfig}>
+            <TranslationsProvider commonTranslations={translations}>
+              <App hotkeys={mockHotkeys} services={services as ServiceRegistry} />
+            </TranslationsProvider>
+          </PomelloConfigProvider>
+        </PomelloProvider>
+      </QueryClientProvider>
     </Provider>
   );
 

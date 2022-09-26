@@ -8,16 +8,8 @@ type CallbackFunction = (...args: any[]) => any;
 
 type EventEmitter = (event: string, ...args: unknown[]) => void;
 
-const getPomelloServiceConfig = () =>
-  createMockServiceConfig<PomelloServiceConfig>('service/pomello', {
-    defaults: {},
-    schema: {
-      type: 'object',
-      properties: {
-        token: { type: 'string', nullable: true },
-      },
-    },
-  });
+const getPomelloServiceConfig = async () =>
+  createMockServiceConfig<PomelloServiceConfig>('service/pomello', {});
 
 const createMockAppApi = (
   appApi: Partial<AppApi> = {},
@@ -72,7 +64,10 @@ const createMockAppApi = (
     ),
     onShowSelect: vi.fn(appApi.onShowSelect ?? (callback => addListener('onShowSelect', callback))),
     openUrl: vi.fn(),
-    registerServiceConfig: vi.fn(appApi.registerServiceConfig ?? createMockServiceConfig),
+    registerServiceConfig: vi.fn(
+      appApi.registerServiceConfig ??
+        ((serviceId, { defaults }) => Promise.resolve(createMockServiceConfig(serviceId, defaults)))
+    ),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),
     setActiveServiceId: vi.fn(),
     setSelectBounds: vi.fn(),

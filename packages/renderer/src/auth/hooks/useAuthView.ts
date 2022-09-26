@@ -1,12 +1,11 @@
+import assertNonNullish from '@/shared/helpers/assertNonNullish';
 import { useContext } from 'react';
 import { AuthViewContext } from '../context/AuthViewProvider';
 
 const useAuthView = () => {
   const context = useContext(AuthViewContext);
 
-  if (!context) {
-    throw new Error(`useAuthView must be used inside <AuthViewProvider>`);
-  }
+  assertNonNullish(context, 'useAuthView must be used inside <AuthViewProvider>');
 
   return context;
 };

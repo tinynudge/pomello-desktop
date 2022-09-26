@@ -1,16 +1,10 @@
-import {
-  ServiceConfig,
-  ServiceConfigChangeCallback,
-  ServiceConfigStore,
-  StoreContents,
-} from '@domain';
+import { ServiceConfig, ServiceConfigChangeCallback, StoreContents } from '@domain';
 
 const createMockServiceConfig = <TConfig = StoreContents>(
   _serviceId: string,
-  configStore: ServiceConfigStore<TConfig>,
-  initialConfig?: TConfig
-): Promise<ServiceConfig<TConfig>> => {
-  let config = JSON.parse(JSON.stringify(initialConfig ?? configStore.defaults));
+  initialConfig: TConfig
+): ServiceConfig<TConfig> => {
+  let config = JSON.parse(JSON.stringify(initialConfig));
 
   const listeners = new Set<ServiceConfigChangeCallback<TConfig>>();
 
@@ -45,13 +39,13 @@ const createMockServiceConfig = <TConfig = StoreContents>(
     listeners.forEach(callback => callback(config));
   };
 
-  return Promise.resolve({
+  return {
     get,
     onChange,
     set,
     unregister,
     unset,
-  });
+  };
 };
 
 export default createMockServiceConfig;

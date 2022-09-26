@@ -7,6 +7,7 @@ const getPomelloServiceConfig = (): Promise<ServiceConfig<PomelloServiceConfig>>
     schema: {
       type: 'object',
       properties: {
+        didPromptRegistration: { type: 'boolean', nullable: true },
         token: { type: 'string', nullable: true },
       },
     },
