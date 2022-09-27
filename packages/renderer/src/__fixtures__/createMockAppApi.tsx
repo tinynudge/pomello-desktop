@@ -32,11 +32,11 @@ const createMockAppApi = (
   const emit = (event: string, ...args: any[]) => {
     const listeners = listenersMap.get(event) ?? [];
 
-    act(() => {
-      for (const listener of listeners) {
+    for (const listener of listeners) {
+      act(() => {
         listener(...args);
-      }
-    });
+      });
+    }
   };
 
   const api: AppApi = {

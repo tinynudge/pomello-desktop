@@ -1,3 +1,4 @@
+import { FC, useState } from 'react';
 import { vi } from 'vitest';
 import SelectField from '.';
 import mountComponent, { screen } from '../__fixtures__/mountComponent';
@@ -30,6 +31,14 @@ describe('UI - Select Field', () => {
     });
   });
 
+  it('should open the select automatically if specified', () => {
+    const { appApi } = mountComponent(
+      <SelectField defaultOpen items={[]} onChange={vi.fn()} placeholder="Pick a Pokemon" />
+    );
+
+    expect(appApi.showSelect).toHaveBeenCalled();
+  });
+
   it('should open the select when clicked', async () => {
     const { appApi, userEvent } = mountComponent(<SelectField items={[]} onChange={vi.fn()} />);
 
@@ -56,5 +65,24 @@ describe('UI - Select Field', () => {
     emitAppApiEvent('onSelectChange', 'foo');
 
     expect(onSelectChange).toHaveBeenCalledWith('foo');
+  });
+
+  it('should hide the select when unmounted', async () => {
+    const Container: FC = () => {
+      const [showSelect, setShowSelect] = useState(true);
+
+      return (
+        <>
+          <button onClick={() => setShowSelect(false)}>Hide select</button>
+          {showSelect && <SelectField items={[]} onChange={vi.fn()} />}
+        </>
+      );
+    };
+
+    const { appApi, userEvent } = mountComponent(<Container />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hide select' }));
+
+    expect(appApi.hideSelect).toHaveBeenCalled();
   });
 });

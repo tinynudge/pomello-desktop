@@ -43,6 +43,7 @@ const SelectTaskContents: FC = () => {
     <>
       {getSelectTaskHeading && <Heading>{getSelectTaskHeading()}</Heading>}
       <SelectField
+        defaultOpen={timer?.isActive}
         items={tasks}
         onChange={handleTaskSelect}
         placeholder={t('selectTaskPlaceholder')}
