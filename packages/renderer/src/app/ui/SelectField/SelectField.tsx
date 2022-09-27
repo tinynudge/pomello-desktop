@@ -1,20 +1,47 @@
 import useTranslation from '@/shared/hooks/useTranslation';
 import { SelectItem } from '@domain';
-import { FC, useEffect, useRef } from 'react';
+import { FC, useCallback, useEffect, useRef } from 'react';
 import styles from './SelectField.module.scss';
+import useHideSelectOnUnmount from './useHideSelectOnUnmount';
+import useShowSelectOnMount from './useShowSelectOnMount';
 
 interface SelectFieldProps {
+  defaultOpen?: boolean;
   items: SelectItem[];
   placeholder?: string;
   onChange(optionId: string): void;
 }
 
-const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlaceholder, onChange }) => {
+const SelectField: FC<SelectFieldProps> = ({
+  defaultOpen = false,
+  items,
+  placeholder: customPlaceholder,
+  onChange,
+}) => {
   const { t } = useTranslation();
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const placeholder = customPlaceholder ?? t('selectPlaceholder');
+
+  const showSelectWindow = useCallback(() => {
+    if (buttonRef.current) {
+      const bounds = buttonRef.current.getBoundingClientRect();
+
+      window.app.showSelect({
+        buttonBounds: {
+          height: bounds.height,
+          width: bounds.width,
+          x: bounds.x,
+          y: bounds.y,
+        },
+      });
+    }
+  }, []);
+
+  useHideSelectOnUnmount();
+
+  useShowSelectOnMount(defaultOpen, showSelectWindow);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -28,7 +55,7 @@ const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlacehold
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [showSelectWindow]);
 
   useEffect(() => {
     return window.app.onSelectChange(onChange);
@@ -40,21 +67,6 @@ const SelectField: FC<SelectFieldProps> = ({ items, placeholder: customPlacehold
 
   const handleButtonClick = () => {
     showSelectWindow();
-  };
-
-  const showSelectWindow = () => {
-    if (buttonRef.current) {
-      const bounds = buttonRef.current.getBoundingClientRect();
-
-      window.app.showSelect({
-        buttonBounds: {
-          height: bounds.height,
-          width: bounds.width,
-          x: bounds.x,
-          y: bounds.y,
-        },
-      });
-    }
   };
 
   return (
