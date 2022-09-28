@@ -41,12 +41,28 @@ export const appSlice = createSlice({
 export const { pomelloStateUpdate, serviceChange, setOverlayView, unsetOverlayView } =
   appSlice.actions;
 
-export const selectOverlayView = (state: RootState) => state.app.overlayView;
+export const selectAppMode = ({ app }: RootState) =>
+  app.pomelloState.timer?.isActive ? app.pomelloState.timer.type : undefined;
 
-export const selectPomelloState = (state: RootState) => state.app.pomelloState;
+export const selectCurrentTaskId = ({ app }: RootState) => app.pomelloState.currentTaskId;
 
-export const selectServiceId = (state: RootState) => state.app.serviceId;
+export const selectIsTimerVisible = ({ app }: RootState) => Boolean(app.pomelloState.timer);
 
-export const selectSettings = (state: RootState) => state.app.settings;
+export const selectIsOvertimeVisible = ({ app }: RootState) => Boolean(app.pomelloState.overtime);
+
+export const selectIsTimerActive = ({ app }: RootState) =>
+  Boolean(app.pomelloState.timer?.isActive);
+
+export const selectOverlayView = ({ app }: RootState) => app.overlayView;
+
+export const selectOvertime = ({ app }: RootState) => app.pomelloState.overtime;
+
+export const selectPomelloStatus = ({ app }: RootState) => app.pomelloState.status;
+
+export const selectServiceId = ({ app }: RootState) => app.serviceId;
+
+export const selectSettings = ({ app }: RootState) => app.settings;
+
+export const selectTimer = ({ app }: RootState) => app.pomelloState.timer;
 
 export default appSlice.reducer;

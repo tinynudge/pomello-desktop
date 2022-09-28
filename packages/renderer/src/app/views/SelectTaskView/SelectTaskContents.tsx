@@ -1,4 +1,4 @@
-import { selectPomelloState } from '@/app/appSlice';
+import { selectIsTimerActive } from '@/app/appSlice';
 import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
 import useDialActions from '@/app/hooks/useDialActions';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
@@ -23,15 +23,15 @@ const SelectTaskContents: FC = () => {
     suspense: true,
   });
 
-  const { timer } = useSelector(selectPomelloState);
+  const isTimerActive = useSelector(selectIsTimerActive);
   const { registerDialActions } = useDialActions();
   const pauseDialAction = usePauseDialAction();
 
   useEffect(() => {
-    if (timer?.isActive) {
+    if (isTimerActive) {
       return registerDialActions([pauseDialAction]);
     }
-  }, [pauseDialAction, registerDialActions, timer?.isActive]);
+  }, [isTimerActive, pauseDialAction, registerDialActions]);
 
   assertNonNullish(tasks, 'Unable to get tasks');
 
@@ -43,7 +43,7 @@ const SelectTaskContents: FC = () => {
     <>
       {getSelectTaskHeading && <Heading>{getSelectTaskHeading()}</Heading>}
       <SelectField
-        defaultOpen={timer?.isActive}
+        defaultOpen={isTimerActive}
         items={tasks}
         onChange={handleTaskSelect}
         placeholder={t('selectTaskPlaceholder')}

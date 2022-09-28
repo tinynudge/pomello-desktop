@@ -1,4 +1,4 @@
-import { selectPomelloState } from '@/app/appSlice';
+import { selectCurrentTaskId } from '@/app/appSlice';
 import assertNonNullish from '@/shared/helpers/assertNonNullish';
 import useService from '@/shared/hooks/useService';
 import { SelectItem, SelectOptionType } from '@domain';
@@ -18,7 +18,7 @@ const useCurrentTask = (): CurrentTask => {
   const queryClient = useQueryClient();
   const tasks = queryClient.getQueryData<SelectItem[]>(getTasksCacheKey(id));
 
-  const { currentTaskId } = useSelector(selectPomelloState);
+  const currentTaskId = useSelector(selectCurrentTaskId);
 
   assertNonNullish(tasks, 'Unable to get cached tasks');
 

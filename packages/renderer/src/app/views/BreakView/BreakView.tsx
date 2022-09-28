@@ -1,4 +1,4 @@
-import { selectPomelloState } from '@/app/appSlice';
+import { selectCurrentTaskId } from '@/app/appSlice';
 import useDialActions from '@/app/hooks/useDialActions';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
@@ -18,7 +18,7 @@ const BreakView: FC<BreakViewProps> = ({ type }) => {
   const { skipTimer } = usePomelloActions();
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
-  const { currentTaskId } = useSelector(selectPomelloState);
+  const currentTaskId = useSelector(selectCurrentTaskId);
 
   useEffect(() => {
     return registerHotkeys({
