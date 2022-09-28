@@ -1,4 +1,4 @@
-import { selectPomelloState } from '@/app/appSlice';
+import { selectAppMode, selectIsTimerVisible, selectIsOvertimeVisible } from '@/app/appSlice';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
@@ -25,7 +25,11 @@ const Layout: FC<LayoutProps> = ({ activeService, children, onTaskCreate }) => {
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
   const { reset } = usePomelloActions();
-  const { timer, overtime } = useSelector(selectPomelloState);
+
+  const appMode = useSelector(selectAppMode);
+  const isDialVisible = useSelector(selectIsTimerVisible);
+  const isOvertimeVisible = useSelector(selectIsOvertimeVisible);
+
   const showCancelTaskDialog = useSelector(selectShowCancelTaskDialog);
 
   const menuRef = useRef<HTMLElement>(null);
@@ -101,7 +105,7 @@ const Layout: FC<LayoutProps> = ({ activeService, children, onTaskCreate }) => {
           [styles.container]: true,
           [styles.menuOpen]: isMenuOpen,
         })}
-        data-mode={timer?.isActive ? timer.type : undefined}
+        data-mode={appMode}
         style={{
           transform: isMenuOpen && menuOffset ? `translate(${menuOffset}px)` : undefined,
         }}
@@ -119,10 +123,10 @@ const Layout: FC<LayoutProps> = ({ activeService, children, onTaskCreate }) => {
           renderError={children => <div className={styles.content}>{children}</div>}
         >
           <div className={styles.content}>{children}</div>
-          {(timer || overtime) && (
+          {(isDialVisible || isOvertimeVisible) && (
             <div className={styles.timers}>
-              {overtime && <Overtime isDialVisible={Boolean(timer)} overtime={overtime} />}
-              {timer && <Dial key={timer.type} timer={timer} />}
+              <Overtime />
+              <Dial />
             </div>
           )}
         </ErrorBoundary>

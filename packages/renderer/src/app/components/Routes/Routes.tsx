@@ -1,4 +1,4 @@
-import { selectPomelloState } from '@/app/appSlice';
+import { selectPomelloStatus } from '@/app/appSlice';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import BreakView from '@/app/views/BreakView';
 import CreatePomelloAccountView from '@/app/views/CreatePomelloAccountView';
@@ -20,7 +20,7 @@ const Routes: FC = () => {
 
   const promptCreatePomelloAccount = usePomelloConfigSelector(selectPromptCreatePomelloAccount);
 
-  const { status } = useSelector(selectPomelloState);
+  const status = useSelector(selectPomelloStatus);
 
   if (status === 'INITIALIZING') {
     if (service.InitializingView) {

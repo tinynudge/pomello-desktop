@@ -1,14 +1,17 @@
-import { Overtime as IOvertime } from '@tinynudge/pomello-service';
+import { selectIsTimerVisible, selectOvertime } from '@/app/appSlice';
 import cc from 'classcat';
 import { FC } from 'react';
+import { useSelector } from 'react-redux';
 import styles from './Overtime.module.scss';
 
-interface OvertimeProps {
-  isDialVisible: boolean;
-  overtime: IOvertime;
-}
+const Overtime: FC = () => {
+  const isTimerVisible = useSelector(selectIsTimerVisible);
+  const overtime = useSelector(selectOvertime);
 
-const Overtime: FC<OvertimeProps> = ({ isDialVisible, overtime }) => {
+  if (!overtime) {
+    return null;
+  }
+
   const hours = Math.floor(overtime.time / 3600);
   const minutes = Math.floor((overtime.time - hours * 3600) / 60);
   const seconds = overtime.time % 60;
@@ -34,7 +37,7 @@ const Overtime: FC<OvertimeProps> = ({ isDialVisible, overtime }) => {
     <div
       className={cc({
         [styles.overtime]: true,
-        [styles.dialVisible]: isDialVisible,
+        [styles.dialVisible]: isTimerVisible,
       })}
       data-testid="overtime"
     >
