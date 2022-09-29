@@ -2,6 +2,7 @@ import mountApp from '@/app/__fixtures__/mountApp';
 import createMockCache from '@/__fixtures__/createMockCache';
 import createMockServiceConfig from '@/__fixtures__/createMockServiceConfig';
 import createRestResolver from '@/__fixtures__/createRestResolver';
+import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import mockServer from '@/__fixtures__/mockServer';
 import { Cache } from '@domain';
 import { ResponseResolver, rest, RestContext, RestRequest } from 'msw';
@@ -51,21 +52,16 @@ const mountTrelloService = async ({
     )
   );
 
-  const defaultConfig: TrelloConfig = {
+  const configActions = mockRegisterServiceConfig<TrelloConfig>(createTrelloService.id, {
     token: 'MY_TRELLO_TOKEN',
     currentList: 'TRELLO_LIST_ID',
-  };
-
-  const config = createMockServiceConfig<TrelloConfig>(createTrelloService.id, {
-    ...defaultConfig,
     ...initialConfig,
   });
-
-  const registerServiceConfig = () => Promise.resolve(config) as any;
+  const config = createMockServiceConfig(configActions);
 
   const results = mountApp({
     appApi: {
-      registerServiceConfig,
+      registerServiceConfig: () => Promise.resolve(configActions) as any,
       getTranslations: () => Promise.resolve(translations),
       ...appApi,
     },

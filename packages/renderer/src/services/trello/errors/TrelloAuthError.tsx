@@ -1,10 +1,9 @@
 import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
 import useService from '@/shared/hooks/useService';
-import useServiceConfig from '@/shared/hooks/useServiceConfig';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { AxiosError } from 'axios';
 import { FC, useEffect, useRef } from 'react';
-import { TrelloConfig } from '../domain';
+import { selectToken, useTrelloConfigSelector, useTrelloConfigUpdater } from '../useTrelloConfig';
 import sanitizeTrelloError from './sanitizeTrelloError';
 
 interface TrelloAuthErrorProps {
@@ -16,16 +15,18 @@ const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
   const { t } = useTranslation();
   const { displayName, id } = useService();
 
-  const [config, , unsetConfig] = useServiceConfig<TrelloConfig>();
+  const [, unsetConfig] = useTrelloConfigUpdater();
+  const token = useTrelloConfigSelector(selectToken);
+
   const didUnsetToken = useRef(false);
 
   useEffect(() => {
-    if (!config.token && !didUnsetToken.current) {
+    if (!token && !didUnsetToken.current) {
       didUnsetToken.current = true;
-    } else if (config.token && didUnsetToken.current) {
+    } else if (token && didUnsetToken.current) {
       onTokenSet();
     }
-  }, [config.token, onTokenSet]);
+  }, [onTokenSet, token]);
 
   const handleSignInClick = () => {
     openAuthWindow();

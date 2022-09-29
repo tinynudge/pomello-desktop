@@ -3,7 +3,6 @@ import decryptValue from './decryptValue';
 import encryptValue from './encryptValue';
 import getActiveServiceId from './getActiveServiceId';
 import getHotkeys from './getHotkeys';
-import getPomelloServiceConfig from './getPomelloServiceConfig';
 import getSettings from './getSettings';
 import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
@@ -30,7 +29,6 @@ const api = {
   encryptValue,
   getActiveServiceId,
   getHotkeys,
-  getPomelloServiceConfig,
   getSettings,
   getThemeCss,
   getTranslations,

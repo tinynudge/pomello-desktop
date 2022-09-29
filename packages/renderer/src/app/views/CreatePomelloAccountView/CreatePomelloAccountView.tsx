@@ -1,5 +1,5 @@
 import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
-import usePomelloConfigUpdater from '@/shared/hooks/usePomelloConfigUpdater';
+import { usePomelloConfigUpdater } from '@/shared/hooks/usePomelloConfig';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC } from 'react';
 

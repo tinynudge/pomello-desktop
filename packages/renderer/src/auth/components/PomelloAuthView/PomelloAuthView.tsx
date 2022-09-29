@@ -1,4 +1,5 @@
 import AuthView from '@/auth/ui/AuthView';
+import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC } from 'react';
 import pomelloLogo from './assets/pomello.png';
@@ -7,7 +8,7 @@ const PomelloAuthView: FC = () => {
   const { t } = useTranslation();
 
   const handleTokenSubmit = async (token: string) => {
-    const config = await window.app.getPomelloServiceConfig();
+    const config = await getPomelloServiceConfig();
 
     config.set('token', token);
   };

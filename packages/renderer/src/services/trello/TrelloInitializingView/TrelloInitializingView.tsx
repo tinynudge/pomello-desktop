@@ -1,12 +1,20 @@
 import LoadingText from '@/app/ui/LoadingText';
-import useCache from '@/shared/hooks/useCache';
-import useServiceConfig from '@/shared/hooks/useServiceConfig';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { InitializingView, SelectItem } from '@domain';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { TrelloCache, TrelloConfig } from '../domain';
 import fetchBoardsAndLists from '../queries/fetchBoardsAndLists';
+import { selectLists, useTrelloCacheSelector, useTrelloCacheUpdater } from '../useTrelloCache';
+import {
+  selectCurrentListId,
+  selectListFilter,
+  selectListFilterCaseSensitive,
+  selectPreferences,
+  selectRecentLists,
+  selectToken,
+  useTrelloConfigSelector,
+  useTrelloConfigUpdater,
+} from '../useTrelloConfig';
 import getPreferences from './helpers/getPreferences';
 import parseBoardsAndLists from './helpers/parseBoardsAndLists';
 import LoginView from './LoginView';
@@ -15,13 +23,21 @@ import SelectListView from './SelectListView';
 const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const { t } = useTranslation();
 
-  const [cache, setCache] = useCache<TrelloCache>();
-  const [config, setConfig, unsetConfig] = useServiceConfig<TrelloConfig>();
+  const setCache = useTrelloCacheUpdater();
+  const cachedLists = useTrelloCacheSelector(selectLists);
+
+  const [setConfig, unsetConfig] = useTrelloConfigUpdater();
+  const currentListId = useTrelloConfigSelector(selectCurrentListId);
+  const listFilter = useTrelloConfigSelector(selectListFilter);
+  const listFilterCaseSensitive = useTrelloConfigSelector(selectListFilterCaseSensitive);
+  const preferences = useTrelloConfigSelector(selectPreferences);
+  const recentLists = useTrelloConfigSelector(selectRecentLists);
+  const token = useTrelloConfigSelector(selectToken);
 
   const [lists, setLists] = useState<SelectItem[]>();
 
   const { data: boardsAndLists } = useQuery({
-    enabled: Boolean(config.token),
+    enabled: Boolean(token),
     queryKey: 'trello-boards-lists',
     queryFn: fetchBoardsAndLists,
   });
@@ -33,9 +49,9 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
 
     const { boards, lists, selectItems } = parseBoardsAndLists({
       boardsAndLists,
-      listFilter: config.listFilter,
-      listFilterCaseSensitive: config.listFilterCaseSensitive,
-      recentLists: config.recentLists,
+      listFilter,
+      listFilterCaseSensitive,
+      recentLists,
     });
 
     setLists(selectItems);
@@ -44,27 +60,21 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
       draft.boards = boards;
       draft.lists = lists;
     });
-  }, [
-    boardsAndLists,
-    config.listFilter,
-    config.listFilterCaseSensitive,
-    config.recentLists,
-    setCache,
-  ]);
+  }, [boardsAndLists, listFilter, listFilterCaseSensitive, recentLists, setCache]);
 
   useEffect(() => {
-    if (!config.currentList || !cache.lists) {
+    if (!currentListId || !cachedLists) {
       return;
     }
 
-    const currentList = cache.lists.get(config.currentList);
+    const currentList = cachedLists.get(currentListId);
 
     if (currentList) {
-      const preferences = getPreferences(currentList, config.preferences);
+      const listPreferences = getPreferences(currentList, preferences);
 
       setCache(draft => {
-        draft.currentListId = config.currentList;
-        draft.preferences = preferences;
+        draft.currentListId = currentListId;
+        draft.preferences = listPreferences;
       });
 
       onReady();
@@ -73,21 +83,21 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
 
       unsetConfig('currentList');
     }
-  }, [cache.lists, config.currentList, config.preferences, onReady, setCache, t, unsetConfig]);
+  }, [cachedLists, currentListId, onReady, preferences, setCache, t, unsetConfig]);
 
   const handleListSelect = (listId: string) => {
-    const recentLists = new Set(config.recentLists ?? []);
-    recentLists.delete(listId);
+    const updatedRecentLists = new Set(recentLists ?? []);
+    updatedRecentLists.delete(listId);
 
-    setConfig('recentLists', [listId, ...recentLists]);
+    setConfig('recentLists', [listId, ...updatedRecentLists]);
     setConfig('currentList', listId);
   };
 
-  if (!config.token) {
+  if (!token) {
     return <LoginView />;
   }
 
-  if (!config.currentList && lists) {
+  if (!currentListId && lists) {
     return <SelectListView lists={lists} onListSelect={handleListSelect} />;
   }
 

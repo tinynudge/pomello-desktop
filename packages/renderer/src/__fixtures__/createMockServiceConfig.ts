@@ -1,42 +1,21 @@
-import { ServiceConfig, ServiceConfigChangeCallback, StoreContents } from '@domain';
+import { ServiceConfig, ServiceConfigActions, StoreContents } from '@domain';
+import { vi } from 'vitest';
 
 const createMockServiceConfig = <TConfig = StoreContents>(
-  _serviceId: string,
-  initialConfig: TConfig
+  configActions: ServiceConfigActions<TConfig>
 ): ServiceConfig<TConfig> => {
-  let config = JSON.parse(JSON.stringify(initialConfig));
+  const { onChange, set, unset } = configActions;
 
-  const listeners = new Set<ServiceConfigChangeCallback<TConfig>>();
+  let contents = configActions.contents;
 
-  const get = () => config;
+  const get = vi.fn(() => contents);
 
-  const onChange = (callback: ServiceConfigChangeCallback<TConfig>) => {
-    listeners.add(callback);
-
-    return () => {
-      listeners.delete(callback);
-    };
-  };
-
-  const set = <TKey extends keyof TConfig>(key: TKey, value: TConfig[TKey]) => {
-    config = { ...config, [key]: value };
-
-    emitChangeEvent();
-  };
+  const removeChangeListener = onChange(updatedContents => {
+    contents = updatedContents;
+  });
 
   const unregister = () => {
-    listeners.clear();
-  };
-
-  const unset = (key: keyof TConfig) => {
-    config = { ...config };
-    delete config[key];
-
-    emitChangeEvent();
-  };
-
-  const emitChangeEvent = () => {
-    listeners.forEach(callback => callback(config));
+    removeChangeListener();
   };
 
   return {

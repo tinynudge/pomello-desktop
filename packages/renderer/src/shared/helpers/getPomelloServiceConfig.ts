@@ -1,8 +1,8 @@
+import createServiceConfig from '@/shared/helpers/createServiceConfig';
 import { PomelloServiceConfig, ServiceConfig } from '@domain';
-import registerServiceConfig from './registerServiceConfig';
 
-const getPomelloServiceConfig = (): Promise<ServiceConfig<PomelloServiceConfig>> =>
-  registerServiceConfig<PomelloServiceConfig>('pomello', {
+const getPomelloServiceConfig = (): Promise<ServiceConfig<PomelloServiceConfig>> => {
+  return createServiceConfig<PomelloServiceConfig>('pomello', {
     defaults: {},
     schema: {
       type: 'object',
@@ -12,5 +12,6 @@ const getPomelloServiceConfig = (): Promise<ServiceConfig<PomelloServiceConfig>>
       },
     },
   });
+};
 
 export default getPomelloServiceConfig;
