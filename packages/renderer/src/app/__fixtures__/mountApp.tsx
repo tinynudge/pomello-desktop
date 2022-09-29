@@ -5,6 +5,7 @@ import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockServiceConfig from '@/__fixtures__/createMockServiceConfig';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
+import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import {
   Hotkeys,
   PomelloServiceConfig,
@@ -77,11 +78,13 @@ const mountApp = (options: MountAppOptions = {}) => {
 
   const services = options.createServiceRegistry?.(defaultServices) ?? defaultServices;
 
-  const pomelloConfig = createMockServiceConfig('pomello', {
-    didPromptRegistration: true,
-    token: 'MY_POMELLO_TOKEN',
-    ...options.pomelloConfig,
-  });
+  const pomelloConfig = createMockServiceConfig(
+    mockRegisterServiceConfig<PomelloServiceConfig>('pomello', {
+      didPromptRegistration: true,
+      token: 'MY_POMELLO_TOKEN',
+      ...options.pomelloConfig,
+    })
+  );
 
   render(
     <Provider store={store}>

@@ -4,6 +4,7 @@ import createStore from '@/app/createStore';
 import services from '@/services';
 import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
 import createPomelloService from '@/__bootstrap__/createPomelloService';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -29,7 +30,7 @@ const renderApp = async () => {
     window.app.getHotkeys(),
     window.app.getThemeCss(),
     window.app.getTranslations(),
-    window.app.getPomelloServiceConfig(),
+    getPomelloServiceConfig(),
     window.app.getActiveServiceId(),
     window.app.getSettings(),
   ]);

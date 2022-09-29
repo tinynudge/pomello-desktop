@@ -1,6 +1,6 @@
 import {
   AppEvent,
-  ServiceConfig,
+  ServiceConfigActions,
   ServiceConfigChangeCallback,
   ServiceConfigStore,
   StoreContents,
@@ -10,12 +10,10 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 const registerServiceConfig = async <TConfig = StoreContents>(
   serviceId: string,
   configStore: ServiceConfigStore<TConfig>
-): Promise<ServiceConfig<TConfig>> => {
+): Promise<ServiceConfigActions<TConfig>> => {
   const storePath = `services/${serviceId}`;
 
-  let config = await ipcRenderer.invoke(AppEvent.RegisterServiceConfig, storePath, configStore);
-
-  const get = () => config;
+  const contents = await ipcRenderer.invoke(AppEvent.RegisterServiceConfig, storePath, configStore);
 
   const onChange = (callback: ServiceConfigChangeCallback<TConfig>) => {
     const handler = (_event: IpcRendererEvent, config: TConfig) => callback(config);
@@ -31,23 +29,14 @@ const registerServiceConfig = async <TConfig = StoreContents>(
     return ipcRenderer.invoke(AppEvent.SetStoreItem, storePath, key, value);
   };
 
-  const unregister = () => {
-    removeUpdateListener();
-  };
-
   const unset = (key: keyof TConfig) => {
     return ipcRenderer.invoke(AppEvent.UnsetStoreItem, storePath, key);
   };
 
-  const removeUpdateListener = onChange(updatedConfig => {
-    config = updatedConfig;
-  });
-
   return {
-    get,
+    contents,
     onChange,
     set,
-    unregister,
     unset,
   };
 };

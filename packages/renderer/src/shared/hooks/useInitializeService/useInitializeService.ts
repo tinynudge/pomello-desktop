@@ -1,3 +1,4 @@
+import createServiceConfig from '@/shared/helpers/createServiceConfig';
 import { ActiveService, ServiceConfig, ServiceRegistry } from '@domain';
 import { useEffect, useState } from 'react';
 import useTranslation from '../useTranslation';
@@ -46,7 +47,7 @@ const useInitializeService = (
       }
 
       if (serviceFactory.config) {
-        config = await window.app.registerServiceConfig(serviceFactory.id, serviceFactory.config);
+        config = await createServiceConfig(serviceFactory.id, serviceFactory.config);
       }
 
       const translations = await window.app.getTranslations(serviceFactory.id);

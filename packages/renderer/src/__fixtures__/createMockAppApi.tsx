@@ -1,15 +1,12 @@
-import { PomelloServiceConfig, Settings } from '@domain';
+import { Settings } from '@domain';
 import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
-import createMockServiceConfig from './createMockServiceConfig';
+import mockRegisterServiceConfig from './mockRegisterServiceConfig';
 import mockHotkeys from './mockHotkeys';
 
 type CallbackFunction = (...args: any[]) => any;
 
 type EventEmitter = (event: string, ...args: unknown[]) => void;
-
-const getPomelloServiceConfig = async () =>
-  createMockServiceConfig<PomelloServiceConfig>('service/pomello', {});
 
 const createMockAppApi = (
   appApi: Partial<AppApi> = {},
@@ -44,7 +41,6 @@ const createMockAppApi = (
     encryptValue: vi.fn(),
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
-    getPomelloServiceConfig: vi.fn(appApi.getPomelloServiceConfig ?? getPomelloServiceConfig),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve(''))),
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
@@ -66,7 +62,8 @@ const createMockAppApi = (
     openUrl: vi.fn(),
     registerServiceConfig: vi.fn(
       appApi.registerServiceConfig ??
-        ((serviceId, { defaults }) => Promise.resolve(createMockServiceConfig(serviceId, defaults)))
+        ((serviceId, { defaults }) =>
+          Promise.resolve(mockRegisterServiceConfig(serviceId, defaults)))
     ),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),
     setActiveServiceId: vi.fn(),

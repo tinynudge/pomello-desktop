@@ -1,17 +1,16 @@
 import AuthView from '@/auth/ui/AuthView';
 import useService from '@/shared/hooks/useService';
-import useServiceConfig from '@/shared/hooks/useServiceConfig';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC } from 'react';
 import { TRELLO_KEY } from '../constants';
-import { TrelloConfig } from '../domain';
+import { useTrelloConfigUpdater } from '../useTrelloConfig';
 import trelloLogo from './assets/trello.png';
 
 const TrelloAuthView: FC = () => {
   const { t } = useTranslation();
 
   const { displayName } = useService();
-  const [, setConfig] = useServiceConfig<TrelloConfig>();
+  const [setConfig] = useTrelloConfigUpdater();
 
   const authParams = new URLSearchParams({
     key: TRELLO_KEY,

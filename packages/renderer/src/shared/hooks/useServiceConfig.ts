@@ -1,10 +1,11 @@
-import { ActiveService } from '@domain';
-import { useContext, useEffect, useState } from 'react';
+import { ActiveService, ServiceConfig } from '@domain';
+import { useContext, useSyncExternalStore } from 'react';
 import { ServiceContext } from '../context/ServiceContext';
 import assertNonNullish from '../helpers/assertNonNullish';
 
-type UseServiceConfig<TConfig> = [
-  TConfig,
+type Selector<TConfig, TValue> = (cache: TConfig) => TValue;
+
+type UseServiceConfigUpdater<TConfig> = [
   ServiceConfigSetter<TConfig>,
   ServiceConfigUnsetter<TConfig>
 ];
@@ -16,7 +17,7 @@ type ServiceConfigSetter<TConfig> = <TKey extends keyof TConfig>(
 
 type ServiceConfigUnsetter<TConfig> = (key: keyof TConfig) => void;
 
-const useServiceConfig = <TConfig>(): UseServiceConfig<TConfig> => {
+const useServiceConfig = <TConfig>(): ServiceConfig<TConfig> => {
   const activeService = useContext(ServiceContext);
 
   assertNonNullish(activeService, 'useServiceConfig must be used inside a <ServiceProvider>');
@@ -25,13 +26,19 @@ const useServiceConfig = <TConfig>(): UseServiceConfig<TConfig> => {
 
   assertNonNullish(config, 'The active service does not have a config');
 
-  const [contents, setContents] = useState(config.get());
-
-  useEffect(() => {
-    return config.onChange(setContents);
-  }, [config]);
-
-  return [contents, config.set, config.unset];
+  return config;
 };
 
-export default useServiceConfig;
+export const useServiceConfigSelector = <TConfig, TValue = unknown>(
+  selector: Selector<TConfig, TValue>
+): TValue => {
+  const config = useServiceConfig<TConfig>();
+
+  return useSyncExternalStore(config.onChange, () => selector(config.get()));
+};
+
+export const useServiceConfigUpdater = <TConfig>(): UseServiceConfigUpdater<TConfig> => {
+  const config = useServiceConfig<TConfig>();
+
+  return [config.set, config.unset];
+};

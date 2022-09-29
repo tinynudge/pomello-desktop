@@ -7,7 +7,7 @@ import TaskCompleteView from '@/app/views/TaskCompleteView';
 import TaskTimerEndView from '@/app/views/TaskTimerEndView';
 import TaskView from '@/app/views/TaskView';
 import TaskVoidView from '@/app/views/TaskVoidView';
-import usePomelloConfigSelector from '@/shared/hooks/usePomelloConfigSelector';
+import { usePomelloConfigSelector } from '@/shared/hooks/usePomelloConfig';
 import useService from '@/shared/hooks/useService';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';

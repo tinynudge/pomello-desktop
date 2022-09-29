@@ -1,25 +1,29 @@
 import { CacheProvider } from '@/shared/context/CacheContext';
 import createCache from '@/shared/helpers/createCache';
-import useCache from '@/shared/hooks/useCache';
+import { useCacheSelector, useCacheUpdater } from '@/shared/hooks/useCache';
 import { InitializingView, ServiceFactory } from '@domain';
 import { vi } from 'vitest';
 import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
+interface MockCache {
+  name?: string;
+}
+
 describe('App - Cache', async () => {
   it('should reflect cache changes from the service in the UI', async () => {
     const InitializingView: InitializingView<{ onNameChange: () => void }> = ({ onNameChange }) => {
-      const [cache] = useCache<{ name?: string }>();
+      const name = useCacheSelector((cache: MockCache) => cache.name);
 
       return (
         <div>
-          <p>Hello, {cache.name}</p>
+          <p>Hello, {name}</p>
           <button onClick={onNameChange}>Change name</button>
         </div>
       );
     };
 
     const serviceWithCache: ServiceFactory = () => {
-      const cache = createCache<{ name?: string }>();
+      const cache = createCache<MockCache>();
 
       cache.set(draft => {
         draft.name = 'Brian';
@@ -63,7 +67,8 @@ describe('App - Cache', async () => {
     const handleCacheChange = vi.fn();
 
     const InitializingView: InitializingView = () => {
-      const [cache, setCache] = useCache<{ name?: string }>();
+      const setCache = useCacheUpdater<MockCache>();
+      const name = useCacheSelector((cache: MockCache) => cache.name);
 
       const handleNameChange = () => {
         setCache(draft => {
@@ -73,14 +78,14 @@ describe('App - Cache', async () => {
 
       return (
         <div>
-          <p>Hello, {cache.name}</p>
+          <p>Hello, {name}</p>
           <button onClick={handleNameChange}>Change name</button>
         </div>
       );
     };
 
     const serviceWithCache: ServiceFactory = () => {
-      const cache = createCache<{ name?: string }>();
+      const cache = createCache<MockCache>();
 
       cache.set(draft => {
         draft.name = 'Brian';

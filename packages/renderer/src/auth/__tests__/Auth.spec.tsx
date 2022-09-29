@@ -1,3 +1,4 @@
+import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
 import AuthView from '../ui/AuthView';
@@ -26,17 +27,11 @@ describe('Auth', () => {
   });
 
   it('should store the Pomello token when a valid token is entered', async () => {
-    const pomelloServiceConfig = {
-      get: vi.fn(),
-      onChange: vi.fn(),
-      set: vi.fn(),
-      unregister: vi.fn(),
-      unset: vi.fn(),
-    };
+    const pomelloServiceConfig = mockRegisterServiceConfig('pomello', {});
 
     const { userEvent } = mountAuth({
       appApi: {
-        getPomelloServiceConfig: () => Promise.resolve(pomelloServiceConfig),
+        registerServiceConfig: () => Promise.resolve(pomelloServiceConfig as any),
       },
     });
 

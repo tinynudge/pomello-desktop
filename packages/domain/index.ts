@@ -27,6 +27,7 @@ export type { SelectOptionType } from './SelectOptionType';
 export type { SelectTaskView } from './SelectTaskView';
 export type { Service } from './Service';
 export type { ServiceConfig } from './ServiceConfig';
+export type { ServiceConfigActions } from './ServiceConfigActions';
 export type { ServiceConfigChangeCallback } from './ServiceConfigChangeCallback';
 export type { ServiceConfigStore } from './ServiceConfigStore';
 export type { ServiceContainer } from './ServiceContainer';
