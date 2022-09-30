@@ -6,6 +6,7 @@ import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
 import createPomelloService from '@/__bootstrap__/createPomelloService';
+import setTheme from '@/__bootstrap__/setTheme';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -43,10 +44,7 @@ const renderApp = async () => {
     settings,
   });
 
-  document.body.style.cssText = themeCss;
-  window.app.onThemeCssChange(newThemeCss => {
-    document.body.style.cssText = newThemeCss;
-  });
+  setTheme(themeCss);
 
   createRoot(container).render(
     <StrictMode>

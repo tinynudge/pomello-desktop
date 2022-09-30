@@ -1,4 +1,4 @@
-import { ThemeConfig } from '@domain';
+import { ThemeConfig, ThemeCss } from '@domain';
 import { nativeTheme } from 'electron';
 
 const colors = {
@@ -128,8 +128,8 @@ const defaultTheme: ThemeConfig = {
   },
 };
 
-const getThemeCss = (): string => {
-  const mode = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+const getThemeCss = (): ThemeCss => {
+  const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 
   let css = '';
 
@@ -142,7 +142,11 @@ const getThemeCss = (): string => {
         continue;
       }
 
-      const propertyValue = Array.isArray(value) ? (mode === 'light' ? value[0] : value[1]) : value;
+      const propertyValue = Array.isArray(value)
+        ? theme === 'light'
+          ? value[0]
+          : value[1]
+        : value;
 
       css += `${propertyName}: ${propertyValue}; `;
     }
@@ -150,7 +154,10 @@ const getThemeCss = (): string => {
 
   parseTheme(defaultTheme);
 
-  return css;
+  return {
+    css,
+    theme,
+  };
 };
 
 export default getThemeCss;

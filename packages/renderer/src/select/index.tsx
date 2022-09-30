@@ -1,6 +1,7 @@
 import Select from '@/select/Select';
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import setTheme from '@/__bootstrap__/setTheme';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -18,10 +19,7 @@ const renderSelect = async () => {
     window.app.getActiveServiceId(),
   ]);
 
-  document.body.style.cssText = themeCss;
-  window.app.onThemeCssChange(newThemeCss => {
-    document.body.style.cssText = newThemeCss;
-  });
+  setTheme(themeCss);
 
   createRoot(container).render(
     <StrictMode>

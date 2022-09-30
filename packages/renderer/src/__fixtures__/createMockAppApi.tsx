@@ -42,7 +42,7 @@ const createMockAppApi = (
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
-    getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve(''))),
+    getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve({ css: '', theme: 'light' }))),
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),
     onThemeCssChange: vi.fn(),

@@ -1,5 +1,6 @@
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import setTheme from '@/__bootstrap__/setTheme';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import Auth from './Auth';
@@ -16,10 +17,7 @@ const renderAuth = async () => {
     window.app.getTranslations(),
   ]);
 
-  document.body.style.cssText = themeCss;
-  window.app.onThemeCssChange(newThemeCss => {
-    document.body.style.cssText = newThemeCss;
-  });
+  setTheme(themeCss);
 
   const queryParams = new URLSearchParams(window.location.search);
 

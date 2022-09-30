@@ -45,6 +45,7 @@ export type { StoreContents } from './StoreContents';
 export type { StoreManager } from './StoreManager';
 export type { TaskTimerEndItems } from './TaskTimerEndItems';
 export type { ThemeConfig } from './ThemeConfig';
+export type { ThemeCss } from './ThemeCss';
 export type { TimerPhase } from './TimerPhase';
 export type { TimerSounds } from './TimerSounds';
 export { TimerType } from './TimerType';
