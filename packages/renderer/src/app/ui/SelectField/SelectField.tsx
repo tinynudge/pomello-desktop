@@ -8,13 +8,15 @@ import useShowSelectOnMount from './useShowSelectOnMount';
 interface SelectFieldProps {
   defaultOpen?: boolean;
   items: SelectItem[];
-  placeholder?: string;
+  noResultsMessage?: string;
   onChange(optionId: string): void;
+  placeholder?: string;
 }
 
 const SelectField: FC<SelectFieldProps> = ({
   defaultOpen = false,
   items,
+  noResultsMessage,
   placeholder: customPlaceholder,
   onChange,
 }) => {
@@ -62,8 +64,8 @@ const SelectField: FC<SelectFieldProps> = ({
   }, [onChange]);
 
   useEffect(() => {
-    window.app.setSelectItems({ placeholder, items });
-  }, [placeholder, items]);
+    window.app.setSelectItems({ items, noResultsMessage, placeholder });
+  }, [items, noResultsMessage, placeholder]);
 
   const handleButtonClick = () => {
     showSelectWindow();

@@ -30,6 +30,27 @@ describe('Select', () => {
     expect(options.at(1)).toHaveTextContent('Two');
   });
 
+  it('should show a message if the list is empty', () => {
+    mountSelect({
+      setSelectItems: {
+        items: [],
+      },
+    });
+
+    expect(screen.getByText('No results')).toBeInTheDocument();
+  });
+
+  it('should show a custom no results message', () => {
+    mountSelect({
+      setSelectItems: {
+        items: [],
+        noResultsMessage: 'Say the magic word',
+      },
+    });
+
+    expect(screen.getByText('Say the magic word')).toBeInTheDocument();
+  });
+
   it('should render hints for options', () => {
     mountSelect({
       setSelectItems: {

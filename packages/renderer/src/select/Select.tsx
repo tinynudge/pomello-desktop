@@ -40,6 +40,7 @@ const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
   const filteredItems = useFilterItems(query, items);
 
   const [placeholder, setPlaceholder] = useState<string>();
+  const [noResultsMessage, setNoResultsMessage] = useState<string>();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const inputHeight = useRef(0);
@@ -80,9 +81,10 @@ const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
   }, []);
 
   useEffect(() => {
-    return window.app.onSetSelectItems(({ placeholder, items }) => {
-      setPlaceholder(placeholder);
+    return window.app.onSetSelectItems(({ items, noResultsMessage, placeholder }) => {
       setItems(items);
+      setNoResultsMessage(noResultsMessage);
+      setPlaceholder(placeholder);
 
       if (placeholder) {
         // Update the title so screen readers have more context.
@@ -174,9 +176,9 @@ const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
         role="listbox"
         service={activeService?.service}
       >
-        {query && filteredItems.length === 0 && (
+        {filteredItems.length === 0 && (
           <DropdownRow className={styles.noResults} role="alert">
-            {t('selectNoResults')}
+            {Boolean(query) ? t('selectNoMatchesFound') : t(noResultsMessage ?? 'selectNoResults')}
           </DropdownRow>
         )}
       </DropdownList>
