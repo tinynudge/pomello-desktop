@@ -8,4 +8,5 @@ export interface PomelloConfig {
   dashboardWidth: number;
   dashboardHeight: number;
   dev?: boolean;
+  releaseChannel?: 'alpha';
 }

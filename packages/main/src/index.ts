@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import logger from 'electron-log';
 import createAppWindows from './createAppWindows';
+import getPomelloConfig from './getPomelloConfig';
 import initializeListeners from './helpers/initializeListeners';
 
 const isSingleInstance = app.requestSingleInstanceLock();
@@ -37,7 +38,10 @@ if (import.meta.env.PROD) {
     .whenReady()
     .then(() => import('electron-updater'))
     .then(({ autoUpdater }) => {
-      autoUpdater.channel = 'alpha';
+      const pomelloConfig = getPomelloConfig();
+      const releaseChannel = pomelloConfig.get('releaseChannel') ?? 'latest';
+
+      autoUpdater.channel = releaseChannel;
 
       autoUpdater.logger = logger;
 
