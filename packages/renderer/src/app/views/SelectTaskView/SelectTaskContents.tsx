@@ -45,6 +45,7 @@ const SelectTaskContents: FC = () => {
       <SelectField
         defaultOpen={isTimerActive}
         items={tasks}
+        noResultsMessage={t('noTasksFound')}
         onChange={handleTaskSelect}
         placeholder={t('selectTaskPlaceholder')}
       />

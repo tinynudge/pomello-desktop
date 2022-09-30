@@ -18,14 +18,15 @@ describe('Trello service - Select task', () => {
     await simulate.waitForSelectTaskView();
 
     await waitFor(() => {
-      expect(appApi.setSelectItems).toHaveBeenCalledWith({
-        items: [
-          { id: '1', label: 'First' },
-          { id: '2', label: 'Second' },
-          { id: '3', label: 'Third' },
-        ],
-        placeholder: 'Pick a task',
-      });
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            { id: '1', label: 'First' },
+            { id: '2', label: 'Second' },
+            { id: '3', label: 'Third' },
+          ],
+        })
+      );
     });
   });
 
@@ -112,29 +113,30 @@ describe('Trello service - Select task', () => {
     await simulate.waitForSelectTaskView();
 
     await waitFor(() => {
-      expect(appApi.setSelectItems).toHaveBeenCalledWith({
-        items: [
-          { id: 'important', label: 'Important' },
-          { id: 'today', label: 'Today' },
-          {
-            id: 'goToBank',
-            label: 'Go to bank',
-            type: 'group',
-            items: [{ id: 'depositCheck', label: 'Deposit check' }],
-          },
-          {
-            id: 'buyGroceries',
-            label: 'Buy groceries',
-            type: 'group',
-            items: [
-              { id: 'eggs', label: 'Eggs' },
-              { id: 'bread', label: 'Bread' },
-              { id: 'milk', label: 'Milk' },
-            ],
-          },
-        ],
-        placeholder: 'Pick a task',
-      });
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            { id: 'important', label: 'Important' },
+            { id: 'today', label: 'Today' },
+            {
+              id: 'goToBank',
+              label: 'Go to bank',
+              type: 'group',
+              items: [{ id: 'depositCheck', label: 'Deposit check' }],
+            },
+            {
+              id: 'buyGroceries',
+              label: 'Buy groceries',
+              type: 'group',
+              items: [
+                { id: 'eggs', label: 'Eggs' },
+                { id: 'bread', label: 'Bread' },
+                { id: 'milk', label: 'Milk' },
+              ],
+            },
+          ],
+        })
+      );
     });
   });
 });
