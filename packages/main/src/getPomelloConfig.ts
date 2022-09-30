@@ -34,6 +34,11 @@ const getPomelloConfig = (): Store<PomelloConfig> =>
         height: {
           type: 'number',
         },
+        releaseChannel: {
+          type: 'string',
+          enum: ['alpha'],
+          nullable: true,
+        },
         width: {
           type: 'number',
         },
