@@ -24,7 +24,7 @@ import showMessageBox from './showMessageBox';
 import showSelect from './showSelect';
 import writeClipboardText from './writeClipboardText';
 
-const api = {
+export const api = {
   decryptValue,
   encryptValue,
   getActiveServiceId,
@@ -52,5 +52,3 @@ const api = {
 };
 
 contextBridge.exposeInMainWorld('app', api);
-
-export default api;
