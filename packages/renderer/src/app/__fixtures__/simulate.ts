@@ -11,7 +11,7 @@ const sleep = (timeout: number) =>
 const advanceTimer = async (_results: MountAppResults, time?: number) => {
   if (time) {
     act(() => {
-      vi.advanceTimersByTime(time);
+      vi.advanceTimersByTime(time * 1000);
     });
   } else {
     const hasDial = () => Boolean(screen.queryByTestId('dial'));
