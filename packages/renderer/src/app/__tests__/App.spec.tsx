@@ -32,6 +32,19 @@ describe('App', () => {
     Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
   });
 
+  it('should not toggle the menu if the hotkey is not set', async () => {
+    const { simulate } = mountApp({
+      hotkeys: {
+        toggleMenu: undefined,
+      },
+    });
+
+    await simulate.hotkey('toggleMenu');
+
+    expect(screen.getByRole('button', { name: 'Open menu' })).toHaveAttribute('title', 'Open menu');
+    expect(screen.queryByRole('button', { name: 'Close menu' })).not.toBeInTheDocument();
+  });
+
   it('should reset to the select task state when the home button is clicked', async () => {
     const { simulate } = mountApp();
 

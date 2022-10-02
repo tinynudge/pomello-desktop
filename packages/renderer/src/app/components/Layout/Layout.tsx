@@ -1,6 +1,7 @@
-import { selectAppMode, selectIsTimerVisible, selectIsOvertimeVisible } from '@/app/appSlice';
+import { selectAppMode, selectIsOvertimeVisible, selectIsTimerVisible } from '@/app/appSlice';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import createHintTitle from '@/shared/helpers/createHintTitle';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { ActiveService } from '@domain';
 import cc from 'classcat';
@@ -114,7 +115,7 @@ const Layout: FC<LayoutProps> = ({ activeService, children, onTaskCreate }) => {
           aria-label={t(`${menuTranslationKey}Label`)}
           className={styles.menuButton}
           onClick={handleMenuClick}
-          title={t(`${menuTranslationKey}Title`, { hotkey: getHotkeyLabel('toggleMenu') })}
+          title={createHintTitle(t, 'openMenuLabel', getHotkeyLabel('toggleMenu'))}
         >
           <MenuIcon aria-hidden width={4} />
         </button>

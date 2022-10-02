@@ -1,3 +1,4 @@
+import createHintTitle from '@/shared/helpers/createHintTitle';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { DialAction } from '@domain';
 import { useEffect, useMemo } from 'react';
@@ -22,7 +23,7 @@ const usePauseDialAction = (): DialAction => {
       id: 'pauseTimer',
       label: t('pauseTimerLabel'),
       onClick: pauseTimer,
-      title: t('pauseTimerTitle', { hotkey: getHotkeyLabel('pauseTimer') }),
+      title: createHintTitle(t, 'pauseTimerLabel', getHotkeyLabel('pauseTimer')),
     }),
     [getHotkeyLabel, pauseTimer, t]
   );

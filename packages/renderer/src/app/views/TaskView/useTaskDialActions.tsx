@@ -2,6 +2,7 @@ import useDialActions from '@/app/hooks/useDialActions';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import createHintTitle from '@/shared/helpers/createHintTitle';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { NoteType } from '@domain';
 import { useEffect } from 'react';
@@ -32,28 +33,28 @@ const useTaskDialActions = ({ showAddNoteView }: UseTaskDialActionsOptions): voi
         id: 'addNote',
         label: t('addNoteLabel'),
         onClick: () => showAddNoteView('generalNote'),
-        title: t('addNoteTitle', { hotkey: getHotkeyLabel('addNote') }),
+        title: createHintTitle(t, 'addNoteLabel', getHotkeyLabel('addNote')),
       },
       {
         Content: <SwitchIcon width={16} />,
         id: 'switchTask',
         label: t('switchTaskLabel'),
         onClick: switchTask,
-        title: t('switchTaskTitle', { hotkey: getHotkeyLabel('switchTask') }),
+        title: createHintTitle(t, 'switchTaskLabel', getHotkeyLabel('switchTask')),
       },
       {
         Content: <CloseIcon width={10} />,
         id: 'voidTask',
         label: t('voidTaskLabel'),
         onClick: voidTask,
-        title: t('voidTaskTitle', { hotkey: getHotkeyLabel('voidTask') }),
+        title: createHintTitle(t, 'voidTaskLabel', getHotkeyLabel('voidTask')),
       },
       {
         Content: <CheckIcon width={13} />,
         id: 'completeTask',
         label: t('completeTaskLabel'),
         onClick: completeTask,
-        title: t('completeTaskTitle', { hotkey: getHotkeyLabel('completeTaskEarly') }),
+        title: createHintTitle(t, 'completeTaskLabel', getHotkeyLabel('completeTaskEarly')),
       },
     ]);
   }, [
