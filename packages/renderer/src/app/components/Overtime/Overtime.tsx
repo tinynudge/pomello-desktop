@@ -22,7 +22,7 @@ const Overtime: FC = () => {
     timeUnits.push(`${hours}`);
   }
 
-  if (minutes) {
+  if (hours || minutes) {
     timeUnits.push(hours && minutes < 10 ? `0${minutes}` : `${minutes}`);
   }
 
