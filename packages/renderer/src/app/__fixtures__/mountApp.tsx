@@ -7,7 +7,7 @@ import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import {
-  Hotkeys,
+  LabeledHotkeys,
   PomelloServiceConfig,
   Service,
   ServiceConfigStore,
@@ -36,7 +36,7 @@ interface MountAppOptions {
   createServiceRegistry?(
     defaultRegistry: ServiceRegistry
   ): Record<string, ServiceFactory<void> | ServiceFactory<any>>;
-  hotkeys?: Partial<Hotkeys>;
+  hotkeys?: Partial<LabeledHotkeys>;
   mockService?: {
     config?: ServiceConfigStore;
     service?: Partial<Service>;
@@ -86,13 +86,18 @@ const mountApp = (options: MountAppOptions = {}) => {
     })
   );
 
+  const hotkeys: LabeledHotkeys = {
+    ...mockHotkeys,
+    ...options.hotkeys,
+  };
+
   render(
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <PomelloProvider service={pomelloService}>
           <PomelloConfigProvider config={pomelloConfig}>
             <TranslationsProvider commonTranslations={translations}>
-              <App hotkeys={mockHotkeys} services={services as ServiceRegistry} />
+              <App hotkeys={hotkeys} services={services as ServiceRegistry} />
             </TranslationsProvider>
           </PomelloConfigProvider>
         </PomelloProvider>

@@ -1,9 +1,11 @@
-import { Hotkeys } from './Hotkeys';
+import { HotkeyCommand } from './HotkeyCommand';
 
-export type LabeledHotkeys = Record<
-  keyof Hotkeys,
-  {
-    binding: string;
-    label: string;
-  }
+export type LabeledHotkeys = Partial<
+  Record<
+    HotkeyCommand,
+    {
+      binding: string;
+      label: string;
+    }
+  >
 >;

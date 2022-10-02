@@ -3,6 +3,7 @@ import useDialActions from '@/app/hooks/useDialActions';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import Heading from '@/app/ui/Heading';
+import createHintTitle from '@/shared/helpers/createHintTitle';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -34,7 +35,7 @@ const BreakView: FC<BreakViewProps> = ({ type }) => {
         id: 'skipBreak',
         label: t('skipBreakLabel'),
         onClick: skipTimer,
-        title: t('skipBreakTitle', { hotkey: getHotkeyLabel('skipBreak') }),
+        title: createHintTitle(t, 'skipBreakLabel', getHotkeyLabel('skipBreak')),
       },
     ]);
   }, [getHotkeyLabel, registerDialActions, skipTimer, t]);

@@ -27,6 +27,10 @@ const appendHotkeyLabels = (hotkeys: Hotkeys): LabeledHotkeys => {
   return Object.keys(hotkeys).reduce((labeledHotkeys, command) => {
     const binding = hotkeys[command as keyof Hotkeys];
 
+    if (!binding) {
+      return labeledHotkeys;
+    }
+
     const label = binding.split(' ').map(humanizeBinding).join(' ');
 
     return {

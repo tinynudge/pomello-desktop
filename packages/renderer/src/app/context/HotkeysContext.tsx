@@ -8,7 +8,7 @@ interface HotkeysProviderProps {
 }
 
 interface HotkeysContextValue {
-  getHotkeyLabel(command: keyof Hotkeys): string;
+  getHotkeyLabel(command: keyof Hotkeys): string | undefined;
   registerHotkeys(hotkeys: HotkeysRegistry): UnregisterHotkeys;
 }
 
@@ -23,22 +23,24 @@ export const HotkeysContext = createContext<HotkeysContextValue | undefined>(und
 export const HotkeysProvider: FC<HotkeysProviderProps> = ({ children, hotkeys }) => {
   const value = useMemo(() => {
     const getHotkeyLabel = (command: keyof Hotkeys) => {
-      return hotkeys[command].label;
+      return hotkeys[command]?.label;
     };
 
     const registerHotkeys = (registry: HotkeysRegistry) => {
-      Object.entries(registry).forEach(([command, handler]) => {
-        const { binding } = hotkeys[command as keyof Hotkeys];
+      const unregisterHotkeys: UnregisterHotkeys[] = [];
 
-        Mousetrap.bind(binding, handler);
+      Object.entries(registry).forEach(([command, handler]) => {
+        const hotkey = hotkeys[command as keyof Hotkeys];
+
+        if (hotkey) {
+          Mousetrap.bind(hotkey.binding, handler);
+
+          unregisterHotkeys.push(() => Mousetrap.unbind(hotkey.binding));
+        }
       });
 
       return () => {
-        Object.keys(registry).forEach(command => {
-          const { binding } = hotkeys[command as keyof Hotkeys];
-
-          Mousetrap.unbind(binding);
-        });
+        unregisterHotkeys.forEach(unregisterHotkey => unregisterHotkey());
       };
     };
 
