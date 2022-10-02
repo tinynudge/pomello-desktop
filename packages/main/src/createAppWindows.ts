@@ -1,4 +1,7 @@
 import { join } from 'path';
+import { throttle } from 'throttle-debounce';
+import handleAppWindowMove from './events/handleAppWindowMove';
+import handleAppWindowResize from './events/handleAppWindowResize';
 import getPomelloConfig from './getPomelloConfig';
 import getSettings from './getSettings';
 import hideSelectWindow from './helpers/hideSelectWindow';
@@ -37,6 +40,9 @@ const createAppWindows = async (): Promise<void> => {
     x,
     y,
   });
+
+  appWindow.on('resize', throttle(250, handleAppWindowResize));
+  appWindow.on('move', throttle(250, handleAppWindowMove));
 
   selectWindow.setParentWindow(appWindow);
   selectWindow.excludedFromShownWindowsMenu = true;
