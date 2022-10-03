@@ -1,3 +1,4 @@
+import handleAppQuit from '@/events/handleAppQuit';
 import handleAudioFileProtocol from '@/events/handleAudioFileProtocol';
 import handleDecryptValue from '@/events/handleDecryptValue';
 import handleEncryptValue from '@/events/handleEncryptValue';
@@ -27,6 +28,7 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.GetThemeCss, handleGetThemeCss);
   ipcMain.handle(AppEvent.GetTranslations, handleGetTranslations);
   ipcMain.handle(AppEvent.HideSelect, handleSelectHide);
+  ipcMain.handle(AppEvent.QuitApp, handleAppQuit);
   ipcMain.handle(AppEvent.RegisterServiceConfig, handleRegisterServiceConfig);
   ipcMain.handle(AppEvent.SelectOption, handleOptionSelect);
   ipcMain.handle(AppEvent.SetSelectBounds, handleSetSelectBounds);
