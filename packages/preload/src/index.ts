@@ -14,6 +14,7 @@ import onSetSelectItems from './onSetSelectItems';
 import onShowSelect from './onShowSelect';
 import onThemeCssChange from './onThemeCssChange';
 import openUrl from './openUrl';
+import quitApp from './quitApp';
 import registerServiceConfig from './registerServiceConfig';
 import selectOption from './selectOption';
 import setActiveServiceId from './setActiveServiceId';
@@ -40,6 +41,7 @@ export const api = {
   onShowSelect,
   onThemeCssChange,
   openUrl,
+  quitApp,
   registerServiceConfig,
   selectOption,
   setActiveServiceId,

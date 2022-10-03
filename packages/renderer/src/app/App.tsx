@@ -6,7 +6,13 @@ import cc from 'classcat';
 import { FC, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './App.module.scss';
-import { selectOverlayView, selectServiceId, serviceChange, setOverlayView } from './appSlice';
+import {
+  selectOverlayView,
+  selectServiceId,
+  selectSettings,
+  serviceChange,
+  setOverlayView,
+} from './appSlice';
 import Layout from './components/Layout';
 import Routes from './components/Routes';
 import { DialActionsProvider } from './context/DialActionsContext';
@@ -26,6 +32,35 @@ interface AppProps {
 const App: FC<AppProps> = ({ hotkeys, services }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const settings = useSelector(selectSettings);
+
+  useEffect(() => {
+    const handleWindowClose = async (event: BeforeUnloadEvent) => {
+      if (!settings.warnBeforeAppQuit) {
+        return;
+      }
+
+      event.returnValue = false;
+
+      const { response } = await window.app.showMessageBox({
+        type: 'question',
+        message: t('quitAppMessage'),
+        buttons: [t('quitAppConfirm'), t('quitAppCancel')],
+        defaultId: 0,
+        cancelId: 1,
+      });
+
+      if (response === 0) {
+        window.app.quitApp();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleWindowClose);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleWindowClose);
+    };
+  }, [settings.warnBeforeAppQuit, t]);
 
   useTimerSounds();
 
