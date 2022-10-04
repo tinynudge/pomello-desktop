@@ -7,6 +7,7 @@ export enum AppEvent {
   GetThemeCss = 'get-theme-css',
   GetTranslations = 'get-translations',
   HideSelect = 'hide-select',
+  OpenUrl = 'open-url',
   QuitApp = 'quit-app',
   RegisterServiceConfig = 'register-service-config',
   SelectChange = 'select-change',
