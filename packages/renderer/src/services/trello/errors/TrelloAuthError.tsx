@@ -51,7 +51,7 @@ const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
   const openAuthWindow = () => {
     unsetConfig('token');
 
-    window.app.showAuthWindow(id);
+    window.app.showAuthWindow({ type: 'service', serviceId: id });
   };
 
   return (

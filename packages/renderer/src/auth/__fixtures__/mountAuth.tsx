@@ -2,7 +2,7 @@ import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
-import { Service, ServiceRegistry, Settings } from '@domain';
+import { AuthWindowType, Service, ServiceRegistry, Settings } from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import translations from '../../../../translations/en-US.json';
@@ -11,6 +11,7 @@ import Auth from '../Auth';
 export * from '@testing-library/react';
 
 interface MountAuthOptions {
+  authWindow?: AuthWindowType;
   appApi?: Partial<AppApi>;
   service?: Partial<Service>;
   serviceId?: string;
@@ -28,9 +29,11 @@ const mountAuth = (options: MountAuthOptions = {}) => {
     [mockServiceFactory.id]: mockServiceFactory,
   };
 
+  const authWindow = options.authWindow ?? { type: 'service', serviceId: mockServiceFactory.id };
+
   const result = render(
     <TranslationsProvider commonTranslations={translations}>
-      <Auth services={services} serviceId={options.serviceId} />
+      <Auth authWindow={authWindow} services={services} />
     </TranslationsProvider>
   );
 

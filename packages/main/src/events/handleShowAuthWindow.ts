@@ -1,13 +1,17 @@
 import runtime from '@/runtime';
+import { AuthWindowType } from '@domain';
 import { IpcMainInvokeEvent } from 'electron';
 import { join } from 'path';
 
-const handleShowAuthWindow = async (_event: IpcMainInvokeEvent, serviceId?: string) => {
-  const params = serviceId ? `?serviceId=${serviceId}` : '';
+const handleShowAuthWindow = async (_event: IpcMainInvokeEvent, windowType: AuthWindowType) => {
+  const windowId =
+    windowType.type === 'pomello'
+      ? `auth-pomello-${windowType.action}`
+      : `auth-service-${windowType.serviceId}`;
 
   const authWindow = await runtime.windowManager.findOrCreateWindow({
-    id: `auth-${serviceId}`,
-    path: `auth.html${params}`,
+    id: windowId,
+    path: `auth.html?auth=${JSON.stringify(windowType)}`,
     width: 500,
     height: 590,
     autoHideMenuBar: true,
@@ -18,7 +22,7 @@ const handleShowAuthWindow = async (_event: IpcMainInvokeEvent, serviceId?: stri
   authWindow.focus();
 
   authWindow.on('close', () => {
-    runtime.windowManager.destroyWindow(`auth-${serviceId}`);
+    runtime.windowManager.destroyWindow(windowId);
   });
 };
 

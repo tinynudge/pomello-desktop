@@ -66,7 +66,10 @@ describe('Trello service - Errors', () => {
 
     await userEvent.click(signInButton);
 
-    expect(appApi.showAuthWindow).toHaveBeenCalledWith('trello');
+    expect(appApi.showAuthWindow).toHaveBeenCalledWith({
+      type: 'service',
+      serviceId: 'trello',
+    });
   });
 
   it('should open the auth window from the authorization error dialog', async () => {
@@ -83,7 +86,10 @@ describe('Trello service - Errors', () => {
 
     await userEvent.click(detailsButton);
 
-    expect(appApi.showAuthWindow).toHaveBeenCalledWith('trello');
+    expect(appApi.showAuthWindow).toHaveBeenCalledWith({
+      type: 'service',
+      serviceId: 'trello',
+    });
   });
 
   it('should copy the error message from the authorization error dialog', async () => {

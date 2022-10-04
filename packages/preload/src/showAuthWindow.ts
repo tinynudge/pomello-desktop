@@ -1,7 +1,7 @@
+import { AppEvent, AuthWindowType } from '@domain';
 import { ipcRenderer } from 'electron';
-import { AppEvent } from '../../domain/AppEvent';
 
-const showAuthWindow = (serviceId?: string): Promise<void> =>
-  ipcRenderer.invoke(AppEvent.ShowAuthWindow, serviceId);
+const showAuthWindow = (authWindow: AuthWindowType): Promise<void> =>
+  ipcRenderer.invoke(AppEvent.ShowAuthWindow, authWindow);
 
 export default showAuthWindow;
