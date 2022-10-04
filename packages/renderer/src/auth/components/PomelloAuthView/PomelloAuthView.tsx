@@ -4,7 +4,11 @@ import useTranslation from '@/shared/hooks/useTranslation';
 import { FC } from 'react';
 import pomelloLogo from './assets/pomello.png';
 
-const PomelloAuthView: FC = () => {
+interface PomelloAuthViewProps {
+  action: 'authorize' | 'register';
+}
+
+const PomelloAuthView: FC<PomelloAuthViewProps> = ({ action }) => {
   const { t } = useTranslation();
 
   const handleTokenSubmit = async (token: string) => {
@@ -16,7 +20,7 @@ const PomelloAuthView: FC = () => {
   return (
     <AuthView>
       <AuthView.Instructions
-        authUrl={`${import.meta.env.VITE_APP_URL}/api/authorize/`}
+        authUrl={`${import.meta.env.VITE_APP_URL}/api/${action}/`}
         heading={t('authPomelloHeading')}
         logo={pomelloLogo}
       />

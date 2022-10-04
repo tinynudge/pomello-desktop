@@ -9,7 +9,7 @@ const CreatePomelloAccountView: FC = () => {
   const [setPomelloConfig] = usePomelloConfigUpdater();
 
   const handleConfirmClick = () => {
-    window.app.showAuthWindow();
+    window.app.showAuthWindow({ type: 'pomello', action: 'register' });
 
     setPomelloConfig('didPromptRegistration', true);
   };

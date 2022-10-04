@@ -5,17 +5,34 @@ import AuthView from '../ui/AuthView';
 import mountAuth, { screen, waitFor } from '../__fixtures__/mountAuth';
 
 describe('Auth', () => {
-  it('should show the Pomello auth view if no service id is selected', () => {
-    mountAuth();
+  it('should show the Pomello authorize view', () => {
+    mountAuth({
+      authWindow: { type: 'pomello', action: 'authorize' },
+    });
 
     expect(
       screen.getByRole('heading', { name: 'Connect your Pomello account' })
     ).toBeInTheDocument();
+    expect(screen.getByText('/api/authorize/', { exact: false })).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
+  it('should show the Pomello register view', () => {
+    mountAuth({
+      authWindow: { type: 'pomello', action: 'register' },
+    });
+
+    expect(
+      screen.getByRole('heading', { name: 'Connect your Pomello account' })
+    ).toBeInTheDocument();
+    expect(screen.getByText('/api/register/', { exact: false })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('should require a token to submit the form', async () => {
-    const { userEvent } = mountAuth();
+    const { userEvent } = mountAuth({
+      authWindow: { type: 'pomello', action: 'authorize' },
+    });
 
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
 
@@ -33,6 +50,7 @@ describe('Auth', () => {
       appApi: {
         registerServiceConfig: () => Promise.resolve(pomelloServiceConfig as any),
       },
+      authWindow: { type: 'pomello', action: 'authorize' },
     });
 
     await userEvent.type(screen.getByRole('textbox'), 'MY_SECRET_TOKEN');
@@ -54,7 +72,9 @@ describe('Auth', () => {
     const mockWindowClose = vi.fn();
     window.close = mockWindowClose;
 
-    const { userEvent } = mountAuth();
+    const { userEvent } = mountAuth({
+      authWindow: { type: 'pomello', action: 'authorize' },
+    });
 
     await userEvent.type(screen.getByRole('textbox'), 'MY_SECRET_TOKEN');
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));

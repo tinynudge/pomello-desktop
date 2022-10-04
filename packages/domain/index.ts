@@ -2,6 +2,7 @@ export type { ActiveService } from './ActiveService';
 export type { AddNoteHandler } from './AddNoteHandler';
 export { AppEvent } from './AppEvent';
 export { AppProtocol } from './AppProtocol';
+export type { AuthWindowType } from './AuthWindowType';
 export type { Cache } from './Cache';
 export type { CacheChangeEventHandler } from './CacheChangeEventHandler';
 export type { CacheUpdateAction } from './CacheUpdateAction';

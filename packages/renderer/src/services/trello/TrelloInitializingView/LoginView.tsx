@@ -13,7 +13,7 @@ const LoginView: FC = () => {
         {
           id: 'connect',
           content: t('signIn'),
-          onClick: () => window.app.showAuthWindow(id),
+          onClick: () => window.app.showAuthWindow({ type: 'service', serviceId: id }),
         },
       ]}
     >
