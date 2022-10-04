@@ -7,6 +7,7 @@ import handleGetHotkeys from '@/events/handleGetHotkeys';
 import handleGetSettings from '@/events/handleGetSettings';
 import handleGetThemeCss from '@/events/handleGetThemeCss';
 import handleGetTranslations from '@/events/handleGetTranslations';
+import handleOpenUrl from '@/events/handleOpenUrl';
 import handleOptionSelect from '@/events/handleOptionSelect';
 import handleRegisterServiceConfig from '@/events/handleRegisterServiceConfig';
 import handleSelectHide from '@/events/handleSelectHide';
@@ -28,6 +29,7 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.GetThemeCss, handleGetThemeCss);
   ipcMain.handle(AppEvent.GetTranslations, handleGetTranslations);
   ipcMain.handle(AppEvent.HideSelect, handleSelectHide);
+  ipcMain.handle(AppEvent.OpenUrl, handleOpenUrl);
   ipcMain.handle(AppEvent.QuitApp, handleAppQuit);
   ipcMain.handle(AppEvent.RegisterServiceConfig, handleRegisterServiceConfig);
   ipcMain.handle(AppEvent.SelectOption, handleOptionSelect);
