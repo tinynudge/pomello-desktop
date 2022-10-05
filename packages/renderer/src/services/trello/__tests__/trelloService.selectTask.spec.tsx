@@ -1,9 +1,34 @@
+import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
 import generateTrelloCard from '../__fixtures__/generateTrelloCard';
 import generateTrelloCheckItem from '../__fixtures__/generateTrelloCheckItem';
 import generateTrelloChecklist from '../__fixtures__/generateTrelloChecklist';
-import mountTrelloService, { waitFor } from '../__fixtures__/mountTrelloService';
+import generateTrelloList from '../__fixtures__/generateTrelloList';
+import generateTrelloMember from '../__fixtures__/generateTrelloMember';
+import mountTrelloService, { screen, waitFor } from '../__fixtures__/mountTrelloService';
 
 describe('Trello service - Select task', () => {
+  it('should show the board and list in the heading', async () => {
+    const { simulate } = await mountTrelloService({
+      config: {
+        currentList: 'TASKS_ID',
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              name: 'World Domination',
+              lists: [generateTrelloList({ id: 'TASKS_ID', name: 'Tasks' })],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await simulate.waitForSelectTaskView();
+
+    expect(screen.getByRole('heading', { name: 'World Domination: Tasks' })).toBeInTheDocument();
+  });
+
   it('should fetch the cards in the correct order', async () => {
     const { appApi, simulate } = await mountTrelloService({
       trelloApi: {
