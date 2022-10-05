@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import logger from 'electron-log';
 import createAppWindows from './createAppWindows';
+import createMenu from './createMenu';
 import getPomelloConfig from './getPomelloConfig';
 import initializeListeners from './helpers/initializeListeners';
 
@@ -10,16 +11,20 @@ if (!isSingleInstance) {
   process.exit(0);
 }
 
+app.setName('Pomello');
+
+if (process.platform === 'win32') {
+  app.setAppUserModelId(import.meta.env.VITE_APP_ID);
+}
+
 app.on('second-instance', createAppWindows);
 
 app.on('window-all-closed', () => app.quit());
 
 app.whenReady().then(() => {
-  if (process.platform === 'win32') {
-    app.setAppUserModelId(import.meta.env.VITE_APP_ID);
-  }
-
   initializeListeners();
+
+  createMenu();
 
   createAppWindows();
 });
