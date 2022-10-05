@@ -112,6 +112,50 @@ describe('App - Task Timer End', () => {
     );
   });
 
+  it('should enable overriding the move task hotkey action on nested items', async () => {
+    const { appApi, simulate } = mountApp({
+      settings: {
+        taskTime: 3,
+      },
+      mockService: {
+        service: {
+          getTaskTimerEndItems: () => ({
+            items: [
+              {
+                id: 'foo-group',
+                items: [{ id: 'foo', label: 'Foo' }],
+                label: 'Foobar',
+                type: 'group',
+              },
+            ],
+            moveTaskItemId: 'foo',
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer();
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: [
+          { hint: 'Continue task label', id: 'continueTask', label: 'Continue after break' },
+          { id: 'switchTask', label: 'Switch tasks after break' },
+          { hint: 'Void task label', id: 'voidTask', label: 'Void this pomodoro' },
+          { hint: 'Add note label', id: 'addNote', label: 'Add a note first' },
+          {
+            id: 'foo-group',
+            items: [{ hint: 'Move task label', id: 'foo', label: 'Foo' }],
+            label: 'Foobar',
+            type: 'group',
+          },
+        ],
+      })
+    );
+  });
+
   it('should handle the continue task option', async () => {
     const { simulate } = mountApp({
       settings: {

@@ -64,7 +64,23 @@ const TaskTimerEndView: FC = () => {
       customItems = taskTimerEndItems;
     } else if (taskTimerEndItems) {
       customItems = produce(taskTimerEndItems.items, draft => {
-        const moveTaskOption = draft.find(item => item.id === taskTimerEndItems.moveTaskItemId);
+        if (!taskTimerEndItems.moveTaskItemId) {
+          return;
+        }
+
+        let moveTaskOption: SelectItem | undefined;
+
+        const itemsToSearch = [...draft];
+
+        while (!moveTaskOption && itemsToSearch.length) {
+          const item = itemsToSearch.shift()!;
+
+          if (item.type === 'group' || item.type === 'customGroup') {
+            itemsToSearch.unshift(...item.items);
+          } else if (item.id === taskTimerEndItems.moveTaskItemId) {
+            moveTaskOption = item;
+          }
+        }
 
         if (moveTaskOption) {
           customMoveTaskItemId.current = taskTimerEndItems.moveTaskItemId;
