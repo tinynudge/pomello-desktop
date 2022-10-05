@@ -4,5 +4,5 @@ export type TaskTimerEndItems =
   | SelectItem[]
   | {
       items: SelectItem[];
-      moveTaskItemId: string;
+      moveTaskItemId?: string;
     };
