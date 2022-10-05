@@ -4,11 +4,12 @@ import { ServiceFactory } from '@domain';
 import { TrelloCache, TrelloConfig } from './domain';
 import handleError from './errors/handleError';
 import fetchTasks from './fetchTasks';
+import getDefaultTrelloHeading from './getDefaultTrelloHeading';
 import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
 import TrelloInitializingView from './TrelloInitializingView';
 
-const createTrelloService: ServiceFactory<TrelloConfig> = ({ config }) => {
+const createTrelloService: ServiceFactory<TrelloConfig> = ({ config, translate }) => {
   trelloClient.interceptors.request.use(requestConfig => {
     const { token } = config.get();
 
@@ -22,12 +23,14 @@ const createTrelloService: ServiceFactory<TrelloConfig> = ({ config }) => {
   const cache = createCache<TrelloCache>();
 
   return {
+    AuthView: TrelloAuthView,
     Container: ({ children }) => <CacheProvider cache={cache} children={children} />,
     displayName: createTrelloService.displayName,
-    handleError,
     fetchTasks: fetchTasks.bind(null, config),
+    getSelectTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
+    getTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
+    handleError,
     id: createTrelloService.id,
-    AuthView: TrelloAuthView,
     InitializingView: TrelloInitializingView,
   };
 };

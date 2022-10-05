@@ -366,6 +366,7 @@ describe('Trello service', () => {
         fetchBoardsAndLists: generateTrelloMember({
           boards: [
             generateTrelloBoard({
+              id: 'BOARD_ID',
               lists: [generateTrelloList({ idBoard: 'BOARD_ID', id: 'LIST_ID' })],
             }),
           ],

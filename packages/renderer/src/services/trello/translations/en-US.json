@@ -1,4 +1,5 @@
 {
+  "boardAndListHeading": "{{board}}: {{list}}",
   "invalidListBody": "An issue occurred when loading your previously used list.",
   "invalidListHeading": "Please select a new list",
   "selectListPlaceholder": "Pick a list",
