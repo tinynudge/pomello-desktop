@@ -342,10 +342,7 @@ describe('App - Task Timer End', () => {
     await simulate.advanceTimer();
     await simulate.selectOption('foo');
 
-    expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith(
-      { id: 'hello', label: 'World' },
-      'foo'
-    );
+    expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith('hello', 'foo');
   });
 
   it('should handle a custom continue task option', async () => {

@@ -9,4 +9,6 @@ export const useTrelloCacheSelector = <TValue>(selector: Selector<TValue>): TVal
 
 export const useTrelloCacheUpdater = useCacheUpdater<TrelloCache>;
 
+export const selectBoards = (cache: TrelloCache) => cache.boards;
+
 export const selectLists = (cache: TrelloCache) => cache.lists;
