@@ -1,15 +1,14 @@
 import { Cache, TaskTimerEndItems, Translate } from '@domain';
 import { TrelloCache } from './domain';
+import createMoveCardList from './helpers/createMoveCardList';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
 
 const getTaskTimerEndItems = (
-  cache: Cache<TrelloCache>,
   translate: Translate,
+  cache: Cache<TrelloCache>,
   currentTaskId: string
 ): TaskTimerEndItems => {
-  const { currentBoard, preferences } = cache.get();
-
   const currentTask = findOrFailTask(cache, currentTaskId);
 
   if (isCheckItem(currentTask)) {
@@ -24,17 +23,7 @@ const getTaskTimerEndItems = (
     };
   }
 
-  return {
-    items: [
-      {
-        id: 'move-card',
-        items: currentBoard.lists.map(list => ({ id: list.id, label: list.name })),
-        label: translate('moveTaskLabel'),
-        type: 'group',
-      },
-    ],
-    moveTaskItemId: preferences.doneList,
-  };
+  return createMoveCardList(translate, cache);
 };
 
 export default getTaskTimerEndItems;

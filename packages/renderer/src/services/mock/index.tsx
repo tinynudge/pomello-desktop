@@ -6,7 +6,7 @@ import MockInitializingView from './MockInitializingView';
 const createMockService: ServiceFactory = () => {
   const getTaskHeading = (): string => 'Task';
 
-  const getCompleteTaskOptions = (): SelectOptionType[] => [
+  const getTaskCompleteItems = (): SelectOptionType[] => [
     { id: 'do-something', label: 'Do something' },
   ];
 
@@ -32,7 +32,7 @@ const createMockService: ServiceFactory = () => {
     CustomSelectOption: MockCustomSelectOption,
     displayName: createMockService.displayName,
     fetchTasks,
-    getCompleteTaskOptions,
+    getTaskCompleteItems,
     getTaskHeading,
     getTaskTimerEndOptions,
     handleNoteAdd: (type, note) => {

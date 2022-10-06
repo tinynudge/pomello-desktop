@@ -6,7 +6,7 @@ describe('App - Complete Task', () => {
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          getCompleteTaskOptions: undefined,
+          getTaskCompleteItems: undefined,
         },
       },
     });
@@ -25,7 +25,7 @@ describe('App - Complete Task', () => {
     const { simulate } = mountApp({
       mockService: {
         service: {
-          getCompleteTaskOptions: () => {},
+          getTaskCompleteItems: () => {},
         },
       },
     });
@@ -44,7 +44,7 @@ describe('App - Complete Task', () => {
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'task', label: 'My task' }]),
-          getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+          getTaskCompleteItems: () => [{ id: 'option', label: 'Option' }],
         },
       },
     });
@@ -66,7 +66,7 @@ describe('App - Complete Task', () => {
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
-          getCompleteTaskOptions: () => [
+          getTaskCompleteItems: () => [
             { id: 'foo', label: 'Foo' },
             { id: 'bar', label: 'Bar' },
           ],

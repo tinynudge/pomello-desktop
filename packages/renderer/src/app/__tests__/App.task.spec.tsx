@@ -157,7 +157,7 @@ describe('App - Task', () => {
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+          getTaskCompleteItems: () => [{ id: 'option', label: 'Option' }],
         },
       },
     });
@@ -174,7 +174,7 @@ describe('App - Task', () => {
     const { simulate } = mountApp({
       mockService: {
         service: {
-          getCompleteTaskOptions: () => [{ id: 'option', label: 'Option' }],
+          getTaskCompleteItems: () => [{ id: 'option', label: 'Option' }],
         },
       },
     });
