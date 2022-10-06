@@ -5,7 +5,9 @@ import { TrelloCache, TrelloConfig } from './domain';
 import handleError from './errors/handleError';
 import fetchTasks from './fetchTasks';
 import getDefaultTrelloHeading from './getDefaultTrelloHeading';
+import getTaskCompleteItems from './getTaskCompleteItems';
 import getTaskTimerEndItems from './getTaskTimerEndItems';
+import onTaskCompletePromptHandled from './onTaskCompletePromptHandled';
 import onTaskTimerEndPromptHandled from './onTaskTimerEndPromptHandled';
 import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
@@ -30,11 +32,13 @@ const createTrelloService: ServiceFactory<TrelloConfig> = ({ config, translate }
     displayName: createTrelloService.displayName,
     fetchTasks: fetchTasks.bind(null, cache, config),
     getSelectTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
+    getTaskCompleteItems: getTaskCompleteItems.bind(null, translate, cache),
     getTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
-    getTaskTimerEndItems: getTaskTimerEndItems.bind(null, cache, translate),
+    getTaskTimerEndItems: getTaskTimerEndItems.bind(null, translate, cache),
     handleError,
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,
+    onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, config, cache),
     onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, config, cache),
   };
 };

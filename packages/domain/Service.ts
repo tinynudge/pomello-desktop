@@ -10,6 +10,7 @@ import { SelectItem } from './SelectItem';
 import { SelectOptionType } from './SelectOptionType';
 import { SelectTaskView } from './SelectTaskView';
 import { ServiceContainer } from './ServiceContainer';
+import { TaskCompleteItems } from './TaskCompleteItems';
 import { TaskTimerEndItems } from './TaskTimerEndItems';
 
 export interface Service {
@@ -19,8 +20,8 @@ export interface Service {
   CustomSelectOption?: CustomSelectOptionComponent;
   displayName: string;
   fetchTasks(): Promise<SelectItem[]>;
-  getCompleteTaskOptions?(taskId: string): SelectItem[] | void;
   getSelectTaskHeading?(): string;
+  getTaskCompleteItems?(taskId: string): TaskCompleteItems;
   getTaskHeading?(): string;
   getTaskLabel?(task: SelectOptionType): string;
   getTaskTimerEndItems?(currentTaskId: string): TaskTimerEndItems;
