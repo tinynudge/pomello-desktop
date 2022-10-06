@@ -1,4 +1,4 @@
-import { TrelloCard } from '../domain/TrelloCard';
+import { TrelloCard } from '../domain';
 import trelloClient from '../trelloClient';
 
 const limit = 300;

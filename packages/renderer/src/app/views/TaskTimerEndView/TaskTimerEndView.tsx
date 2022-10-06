@@ -28,14 +28,14 @@ const TaskTimerEndView: FC = () => {
       } else if (id === 'addNote') {
         showAddNoteView('generalNote');
       } else {
-        const response = onTaskTimerEndPromptHandled?.(currentTask, id);
+        const response = onTaskTimerEndPromptHandled?.(currentTask.id, id);
 
         if (response) {
           taskTimerEndPromptHandled(response);
         }
       }
     },
-    [currentTask, onTaskTimerEndPromptHandled, showAddNoteView, taskTimerEndPromptHandled]
+    [currentTask.id, onTaskTimerEndPromptHandled, showAddNoteView, taskTimerEndPromptHandled]
   );
 
   const handleTaskMove = useCallback(() => {
@@ -59,7 +59,7 @@ const TaskTimerEndView: FC = () => {
   const items = useMemo(() => {
     let customItems: SelectItem[] = [];
 
-    const taskTimerEndItems = getTaskTimerEndItems?.();
+    const taskTimerEndItems = getTaskTimerEndItems?.(currentTask.id);
     if (Array.isArray(taskTimerEndItems)) {
       customItems = taskTimerEndItems;
     } else if (taskTimerEndItems) {
@@ -112,7 +112,7 @@ const TaskTimerEndView: FC = () => {
       },
       ...customItems,
     ];
-  }, [getHotkeyLabel, getTaskTimerEndItems, t]);
+  }, [currentTask.id, getHotkeyLabel, getTaskTimerEndItems, t]);
 
   return (
     <>

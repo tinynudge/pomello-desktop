@@ -3,8 +3,13 @@ import useTranslation from '@/shared/hooks/useTranslation';
 import { InitializingView, SelectItem } from '@domain';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import fetchBoardsAndLists from '../queries/fetchBoardsAndLists';
-import { selectLists, useTrelloCacheSelector, useTrelloCacheUpdater } from '../useTrelloCache';
+import fetchBoardsAndLists from '../api/fetchBoardsAndLists';
+import {
+  selectBoards,
+  selectLists,
+  useTrelloCacheSelector,
+  useTrelloCacheUpdater,
+} from '../useTrelloCache';
 import {
   selectCurrentListId,
   selectListFilter,
@@ -24,6 +29,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const { t } = useTranslation();
 
   const setCache = useTrelloCacheUpdater();
+  const cachedBoards = useTrelloCacheSelector(selectBoards);
   const cachedLists = useTrelloCacheSelector(selectLists);
 
   const [setConfig, unsetConfig] = useTrelloConfigUpdater();
@@ -68,12 +74,14 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     }
 
     const currentList = cachedLists.get(currentListId);
+    const currentBoard = currentList ? cachedBoards.get(currentList.idBoard) : null;
 
-    if (currentList) {
+    if (currentBoard && currentList) {
       const listPreferences = getPreferences(currentList, preferences);
 
       setCache(draft => {
-        draft.currentListId = currentListId;
+        draft.currentBoard = currentBoard;
+        draft.currentList = currentList;
         draft.preferences = listPreferences;
       });
 
@@ -83,7 +91,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
 
       unsetConfig('currentList');
     }
-  }, [cachedLists, currentListId, onReady, preferences, setCache, t, unsetConfig]);
+  }, [cachedBoards, cachedLists, currentListId, onReady, preferences, setCache, t, unsetConfig]);
 
   const handleListSelect = (listId: string) => {
     const updatedRecentLists = new Set(recentLists ?? []);

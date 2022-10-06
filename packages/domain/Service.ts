@@ -23,7 +23,7 @@ export interface Service {
   getSelectTaskHeading?(): string;
   getTaskHeading?(): string;
   getTaskLabel?(task: SelectOptionType): string;
-  getTaskTimerEndItems?(): TaskTimerEndItems;
+  getTaskTimerEndItems?(currentTaskId: string): TaskTimerEndItems;
   handleError?: ErrorHandler;
   handleNoteAdd?: AddNoteHandler;
   handleTaskCreate?: CreateTaskHandler;
@@ -32,7 +32,7 @@ export interface Service {
   onMount?(): void;
   onTaskCompletePromptHandled?(taskId: string, action: string): void;
   onTaskTimerEndPromptHandled?(
-    task: SelectOptionType,
+    taskId: string,
     action: string
   ): TaskTimerEndPromptHandledAction | void;
   onUnmount?(): void;

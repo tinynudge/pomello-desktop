@@ -5,6 +5,8 @@ import { TrelloCache, TrelloConfig } from './domain';
 import handleError from './errors/handleError';
 import fetchTasks from './fetchTasks';
 import getDefaultTrelloHeading from './getDefaultTrelloHeading';
+import getTaskTimerEndItems from './getTaskTimerEndItems';
+import onTaskTimerEndPromptHandled from './onTaskTimerEndPromptHandled';
 import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
 import TrelloInitializingView from './TrelloInitializingView';
@@ -26,12 +28,14 @@ const createTrelloService: ServiceFactory<TrelloConfig> = ({ config, translate }
     AuthView: TrelloAuthView,
     Container: ({ children }) => <CacheProvider cache={cache} children={children} />,
     displayName: createTrelloService.displayName,
-    fetchTasks: fetchTasks.bind(null, config),
+    fetchTasks: fetchTasks.bind(null, cache, config),
     getSelectTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
     getTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
+    getTaskTimerEndItems: getTaskTimerEndItems.bind(null, cache, translate),
     handleError,
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,
+    onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, config, cache),
   };
 };
 
