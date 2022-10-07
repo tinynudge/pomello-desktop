@@ -1,5 +1,6 @@
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
+import createMockLogger from '@/__fixtures__/createMockLogger';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import { AuthWindowType, Service, ServiceRegistry, Settings } from '@domain';
@@ -33,7 +34,7 @@ const mountAuth = (options: MountAuthOptions = {}) => {
 
   const result = render(
     <TranslationsProvider commonTranslations={translations}>
-      <Auth authWindow={authWindow} services={services} />
+      <Auth authWindow={authWindow} logger={createMockLogger()} services={services} />
     </TranslationsProvider>
   );
 

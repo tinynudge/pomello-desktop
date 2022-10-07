@@ -5,6 +5,7 @@ import services from '@/services';
 import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
+import createLogger from '@/__bootstrap__/createLogger';
 import createPomelloService from '@/__bootstrap__/createPomelloService';
 import setTheme from '@/__bootstrap__/setTheme';
 import { StrictMode } from 'react';
@@ -53,7 +54,7 @@ const renderApp = async () => {
           <PomelloProvider service={pomelloService}>
             <PomelloConfigProvider config={pomelloConfig}>
               <TranslationsProvider commonTranslations={translations}>
-                <App hotkeys={hotkeys} services={services} />
+                <App hotkeys={hotkeys} logger={createLogger()} services={services} />
               </TranslationsProvider>
             </PomelloConfigProvider>
           </PomelloProvider>

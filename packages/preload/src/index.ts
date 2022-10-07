@@ -7,6 +7,7 @@ import getSettings from './getSettings';
 import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
 import hideSelect from './hideSelect';
+import logMessage from './logMessage';
 import onSelectChange from './onSelectChange';
 import onSelectHide from './onSelectHide';
 import onServicesChange from './onServicesChange';
@@ -34,6 +35,7 @@ export const api = {
   getThemeCss,
   getTranslations,
   hideSelect,
+  logMessage,
   onSelectChange,
   onSelectHide,
   onServicesChange,

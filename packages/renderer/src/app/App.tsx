@@ -1,7 +1,7 @@
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { LabeledHotkeys, ServiceRegistry } from '@domain';
+import { LabeledHotkeys, Logger, ServiceRegistry } from '@domain';
 import cc from 'classcat';
 import { FC, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,10 +26,11 @@ import SelectServiceView from './views/SelectServiceView';
 
 interface AppProps {
   hotkeys: LabeledHotkeys;
+  logger: Logger;
   services: ServiceRegistry;
 }
 
-const App: FC<AppProps> = ({ hotkeys, services }) => {
+const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const settings = useSelector(selectSettings);
@@ -72,7 +73,7 @@ const App: FC<AppProps> = ({ hotkeys, services }) => {
     });
   });
 
-  const { activeService, status } = useInitializeService(services, serviceId);
+  const { activeService, status } = useInitializeService(logger, services, serviceId);
 
   const overlayView = useSelector(selectOverlayView);
 

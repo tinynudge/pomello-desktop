@@ -1,9 +1,9 @@
 import { app } from 'electron';
-import logger from 'electron-log';
 import createAppWindows from './createAppWindows';
 import createMenu from './createMenu';
 import getPomelloConfig from './getPomelloConfig';
 import initializeListeners from './helpers/initializeListeners';
+import logger from './logger';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 if (!isSingleInstance) {

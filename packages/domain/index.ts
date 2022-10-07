@@ -16,6 +16,8 @@ export type { FindOrCreateWindowOptions } from './FindOrCreateWindowOptions';
 export type { Hotkeys } from './Hotkeys';
 export type { InitializingView } from './InitializingView';
 export type { LabeledHotkeys } from './LabeledHotkeys';
+export type { Logger } from './Logger';
+export type { LogLevel } from './LogLevel';
 export type { NoteType } from './NoteType';
 export type { PomelloConfig } from './PomelloConfig';
 export type { PomelloServiceConfig } from './PomelloServiceConfig';

@@ -1,5 +1,6 @@
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
+import createMockLogger from '@/__fixtures__/createMockLogger';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import { Service, ServiceRegistry, SetSelectItemsOptions, Settings } from '@domain';
@@ -31,7 +32,12 @@ const mountSelect = (options: MountSelectOptions = {}) => {
 
   const result = render(
     <TranslationsProvider commonTranslations={translations}>
-      <Select initialServiceId={options.serviceId} services={services} settings={settings} />
+      <Select
+        initialServiceId={options.serviceId}
+        logger={createMockLogger()}
+        services={services}
+        settings={settings}
+      />
     </TranslationsProvider>
   );
 

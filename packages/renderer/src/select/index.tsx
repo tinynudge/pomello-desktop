@@ -1,6 +1,7 @@
 import Select from '@/select/Select';
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import createLogger from '@/__bootstrap__/createLogger';
 import setTheme from '@/__bootstrap__/setTheme';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -24,7 +25,12 @@ const renderSelect = async () => {
   createRoot(container).render(
     <StrictMode>
       <TranslationsProvider commonTranslations={translations}>
-        <Select initialServiceId={serviceId} services={services} settings={settings} />
+        <Select
+          initialServiceId={serviceId}
+          logger={createLogger()}
+          services={services}
+          settings={settings}
+        />
       </TranslationsProvider>
     </StrictMode>
   );
