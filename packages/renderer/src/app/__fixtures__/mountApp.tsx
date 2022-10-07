@@ -1,6 +1,7 @@
 import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
+import createMockLogger from '@/__fixtures__/createMockLogger';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockServiceConfig from '@/__fixtures__/createMockServiceConfig';
 import createMockSettings from '@/__fixtures__/createMockSettings';
@@ -97,7 +98,11 @@ const mountApp = (options: MountAppOptions = {}) => {
         <PomelloProvider service={pomelloService}>
           <PomelloConfigProvider config={pomelloConfig}>
             <TranslationsProvider commonTranslations={translations}>
-              <App hotkeys={hotkeys} services={services as ServiceRegistry} />
+              <App
+                hotkeys={hotkeys}
+                logger={createMockLogger()}
+                services={services as ServiceRegistry}
+              />
             </TranslationsProvider>
           </PomelloConfigProvider>
         </PomelloProvider>

@@ -1,6 +1,6 @@
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
+import { Logger, SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import DropdownList from './components/DropdownList';
 import DropdownRow from './components/DropdownRow';
@@ -15,17 +15,18 @@ import styles from './Select.module.scss';
 
 interface SelectProps {
   initialServiceId?: string;
+  logger: Logger;
   services: ServiceRegistry;
   settings: Settings;
 }
 
-const Select: FC<SelectProps> = ({ initialServiceId, services, settings }) => {
+const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings }) => {
   const { t } = useTranslation();
 
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState(initialServiceId);
-  const { activeService, status } = useInitializeService(services, serviceId);
+  const { activeService, status } = useInitializeService(logger, services, serviceId);
 
   useEffect(() => {
     return window.app.onServicesChange(services => {

@@ -1,5 +1,5 @@
 import createServiceConfig from '@/shared/helpers/createServiceConfig';
-import { ActiveService, ServiceConfig, ServiceRegistry } from '@domain';
+import { ActiveService, Logger, ServiceConfig, ServiceRegistry } from '@domain';
 import { useEffect, useState } from 'react';
 import useTranslation from '../useTranslation';
 import createTranslator from './createTranslator';
@@ -22,6 +22,7 @@ type ServiceReady = {
 };
 
 const useInitializeService = (
+  logger: Logger,
   services: ServiceRegistry,
   serviceId?: string
 ): UseInitializeService => {
@@ -58,6 +59,7 @@ const useInitializeService = (
         // the ServiceFactory config defaults to void, we need to cast as null
         service: serviceFactory({
           config: config as null,
+          logger,
           translate: createTranslator(translations),
         }),
         config,
@@ -73,7 +75,7 @@ const useInitializeService = (
 
       removeNamespace('service');
     };
-  }, [addNamespace, removeNamespace, serviceId, services]);
+  }, [addNamespace, logger, removeNamespace, serviceId, services]);
 
   useEffect(() => {
     activeService?.service.onMount?.();

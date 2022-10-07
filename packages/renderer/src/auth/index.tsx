@@ -1,6 +1,7 @@
 import services from '@/services';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import assertNonNullish from '@/shared/helpers/assertNonNullish';
+import createLogger from '@/__bootstrap__/createLogger';
 import setTheme from '@/__bootstrap__/setTheme';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -28,7 +29,7 @@ const renderAuth = async () => {
   createRoot(container).render(
     <StrictMode>
       <TranslationsProvider commonTranslations={translations}>
-        <Auth authWindow={JSON.parse(authParm)} services={services} />
+        <Auth authWindow={JSON.parse(authParm)} logger={createLogger()} services={services} />
       </TranslationsProvider>
     </StrictMode>
   );
