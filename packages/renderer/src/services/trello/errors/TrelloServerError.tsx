@@ -2,7 +2,7 @@ import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { AxiosError } from 'axios';
 import { FC } from 'react';
-import sanitizeTrelloError from './sanitizeTrelloError';
+import sanitizeTrelloError from '../helpers/sanitizeTrelloError';
 
 interface TrelloServerErrorProps {
   error: AxiosError;

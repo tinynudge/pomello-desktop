@@ -1,5 +1,6 @@
 import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import bindContext from '@/shared/helpers/bindContext';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockLogger from '@/__fixtures__/createMockLogger';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
@@ -24,7 +25,6 @@ import translations from '../../../../translations/en-US.json';
 import App from '../App';
 import { PomelloProvider } from '../context/PomelloContext';
 import createStore from '../createStore';
-import bindContext from './bindContext';
 import createMockPomelloService from './createMockPomelloService';
 import simulate from './simulate';
 

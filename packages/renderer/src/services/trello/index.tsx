@@ -1,6 +1,8 @@
 import { CacheProvider } from '@/shared/context/CacheContext';
+import bindContext from '@/shared/helpers/bindContext';
 import createCache from '@/shared/helpers/createCache';
 import { ServiceFactory } from '@domain';
+import api from './api';
 import { TrelloCache, TrelloConfig } from './domain';
 import handleError from './errors/handleError';
 import fetchTasks from './fetchTasks';
@@ -12,10 +14,17 @@ import onTaskTimerEndPromptHandled from './onTaskTimerEndPromptHandled';
 import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
 import TrelloInitializingView from './TrelloInitializingView';
+import { TrelloRuntime } from './TrelloRuntime';
 
-const createTrelloService: ServiceFactory<TrelloConfig> = ({ config, translate }) => {
+const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
+  const trelloRuntime: TrelloRuntime = {
+    ...runtime,
+    api: bindContext(api, runtime.logger),
+    cache: createCache<TrelloCache>(),
+  };
+
   trelloClient.interceptors.request.use(requestConfig => {
-    const { token } = config.get();
+    const { token } = runtime.config.get();
 
     if (token) {
       requestConfig.params.token = window.app.decryptValue(token);
@@ -24,22 +33,20 @@ const createTrelloService: ServiceFactory<TrelloConfig> = ({ config, translate }
     return requestConfig;
   });
 
-  const cache = createCache<TrelloCache>();
-
   return {
     AuthView: TrelloAuthView,
-    Container: ({ children }) => <CacheProvider cache={cache} children={children} />,
+    Container: ({ children }) => <CacheProvider cache={trelloRuntime.cache} children={children} />,
     displayName: createTrelloService.displayName,
-    fetchTasks: fetchTasks.bind(null, cache, config),
-    getSelectTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
-    getTaskCompleteItems: getTaskCompleteItems.bind(null, translate, cache),
-    getTaskHeading: getDefaultTrelloHeading.bind(null, cache, translate),
-    getTaskTimerEndItems: getTaskTimerEndItems.bind(null, translate, cache),
+    fetchTasks: fetchTasks.bind(null, trelloRuntime),
+    getSelectTaskHeading: getDefaultTrelloHeading.bind(null, trelloRuntime),
+    getTaskCompleteItems: getTaskCompleteItems.bind(null, trelloRuntime),
+    getTaskHeading: getDefaultTrelloHeading.bind(null, trelloRuntime),
+    getTaskTimerEndItems: getTaskTimerEndItems.bind(null, trelloRuntime),
     handleError,
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,
-    onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, config, cache),
-    onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, config, cache),
+    onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, trelloRuntime),
+    onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, trelloRuntime),
   };
 };
 

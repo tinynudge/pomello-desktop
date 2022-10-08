@@ -1,13 +1,12 @@
-import { Cache, TaskCompleteItems, Translate } from '@domain';
+import { TaskCompleteItems } from '@domain';
 import markCheckItemComplete from './api/markCheckItemComplete';
-import { TrelloCache } from './domain';
 import createMoveCardList from './helpers/createMoveCardList';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
+import { TrelloRuntime } from './TrelloRuntime';
 
 const getTaskCompleteItems = (
-  translate: Translate,
-  cache: Cache<TrelloCache>,
+  { cache, logger, translate }: TrelloRuntime,
   taskId: string
 ): TaskCompleteItems => {
   const task = findOrFailTask(cache, taskId);
@@ -16,7 +15,7 @@ const getTaskCompleteItems = (
     return createMoveCardList(translate, cache);
   }
 
-  markCheckItemComplete(task);
+  markCheckItemComplete(logger, task);
 };
 
 export default getTaskCompleteItems;

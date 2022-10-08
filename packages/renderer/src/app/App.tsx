@@ -100,7 +100,7 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   return (
     <HotkeysProvider hotkeys={hotkeys}>
       <DialActionsProvider>
-        <Layout activeService={activeService} onTaskCreate={handleTaskCreate}>
+        <Layout activeService={activeService} logger={logger} onTaskCreate={handleTaskCreate}>
           {status === 'READY' ? (
             <ServiceProvider service={activeService}>
               {overlayView === 'create-task' ? (

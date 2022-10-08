@@ -3,7 +3,7 @@ import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import createHintTitle from '@/shared/helpers/createHintTitle';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { ActiveService } from '@domain';
+import { ActiveService, Logger } from '@domain';
 import cc from 'classcat';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -18,10 +18,11 @@ import Menu from './Menu';
 interface LayoutProps {
   activeService?: ActiveService;
   children: ReactNode;
+  logger: Logger;
   onTaskCreate(): void;
 }
 
-const Layout: FC<LayoutProps> = ({ activeService, children, onTaskCreate }) => {
+const Layout: FC<LayoutProps> = ({ activeService, children, logger, onTaskCreate }) => {
   const { t } = useTranslation();
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
@@ -121,6 +122,7 @@ const Layout: FC<LayoutProps> = ({ activeService, children, onTaskCreate }) => {
         </button>
         <ErrorBoundary
           activeService={activeService}
+          logger={logger}
           renderError={children => <div className={styles.content}>{children}</div>}
         >
           <div className={styles.content}>{children}</div>

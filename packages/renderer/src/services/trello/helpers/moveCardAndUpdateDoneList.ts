@@ -1,10 +1,8 @@
-import { Cache, ServiceConfig } from '@domain';
-import moveCardToList from '../api/moveCardToList';
-import { TrelloCache, TrelloCard, TrelloConfig } from '../domain';
+import { TrelloCard } from '../domain';
+import { TrelloRuntime } from '../TrelloRuntime';
 
 const moveCardAndUpdateDoneList = (
-  config: ServiceConfig<TrelloConfig>,
-  cache: Cache<TrelloCache>,
+  { api, config, cache }: TrelloRuntime,
   task: TrelloCard,
   listId: string
 ): void => {
@@ -25,7 +23,7 @@ const moveCardAndUpdateDoneList = (
 
   config.set('preferences', updatedPreferences);
 
-  moveCardToList(task, listId);
+  api.moveCardToList(task, listId);
 };
 
 export default moveCardAndUpdateDoneList;
