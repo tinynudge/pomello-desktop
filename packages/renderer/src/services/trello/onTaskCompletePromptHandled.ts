@@ -1,19 +1,17 @@
-import { Cache, ServiceConfig } from '@domain';
-import { TrelloCache, TrelloConfig } from './domain';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
 import moveCardAndUpdateDoneList from './helpers/moveCardAndUpdateDoneList';
+import { TrelloRuntime } from './TrelloRuntime';
 
 const onTaskCompletePromptHandled = (
-  config: ServiceConfig<TrelloConfig>,
-  cache: Cache<TrelloCache>,
+  runtime: TrelloRuntime,
   taskId: string,
   optionId: string
 ): void => {
-  const task = findOrFailTask(cache, taskId);
+  const task = findOrFailTask(runtime.cache, taskId);
 
   if (!isCheckItem(task)) {
-    moveCardAndUpdateDoneList(config, cache, task, optionId);
+    moveCardAndUpdateDoneList(runtime, task, optionId);
   }
 };
 

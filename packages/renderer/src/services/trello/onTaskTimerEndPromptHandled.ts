@@ -1,23 +1,20 @@
-import { Cache, ServiceConfig } from '@domain';
 import { TaskTimerEndPromptHandledAction } from '@tinynudge/pomello-service';
-import markCheckItemComplete from './api/markCheckItemComplete';
-import { TrelloCache, TrelloConfig } from './domain';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
 import moveCardAndUpdateDoneList from './helpers/moveCardAndUpdateDoneList';
+import { TrelloRuntime } from './TrelloRuntime';
 
 const onTaskTimerEndPromptHandled = (
-  config: ServiceConfig<TrelloConfig>,
-  cache: Cache<TrelloCache>,
+  runtime: TrelloRuntime,
   taskId: string,
   action: string
 ): TaskTimerEndPromptHandledAction => {
-  const task = findOrFailTask(cache, taskId);
+  const task = findOrFailTask(runtime.cache, taskId);
 
   if (isCheckItem(task)) {
-    markCheckItemComplete(task);
+    runtime.api.markCheckItemComplete(task);
   } else {
-    moveCardAndUpdateDoneList(config, cache, task, action);
+    moveCardAndUpdateDoneList(runtime, task, action);
   }
 
   return 'switchTask';

@@ -1,7 +1,6 @@
-import { Cache, Translate } from '@domain';
-import { TrelloCache } from './domain';
+import { TrelloRuntime } from './TrelloRuntime';
 
-const getDefaultTrelloHeading = (cache: Cache<TrelloCache>, translate: Translate) => {
+const getDefaultTrelloHeading = ({ cache, translate }: TrelloRuntime) => {
   const { currentBoard, currentList } = cache.get();
 
   return translate('boardAndListHeading', { board: currentBoard.name, list: currentList.name });

@@ -36,6 +36,7 @@ export type { ServiceConfigStore } from './ServiceConfigStore';
 export type { ServiceContainer } from './ServiceContainer';
 export type { ServiceFactory } from './ServiceFactory';
 export type { ServiceRegistry } from './ServiceRegistry';
+export type { ServiceRuntime } from './ServiceRuntime';
 export type { Services } from './Services';
 export type { SetSelectBoundsOptions } from './SetSelectBoundsOptions';
 export type { SetSelectItemsOptions } from './SetSelectItemsOptions';

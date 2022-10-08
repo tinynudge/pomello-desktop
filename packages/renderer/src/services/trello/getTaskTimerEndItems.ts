@@ -1,12 +1,11 @@
-import { Cache, TaskTimerEndItems, Translate } from '@domain';
-import { TrelloCache } from './domain';
+import { TaskTimerEndItems } from '@domain';
 import createMoveCardList from './helpers/createMoveCardList';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
+import { TrelloRuntime } from './TrelloRuntime';
 
 const getTaskTimerEndItems = (
-  translate: Translate,
-  cache: Cache<TrelloCache>,
+  { cache, translate }: TrelloRuntime,
   currentTaskId: string
 ): TaskTimerEndItems => {
   const currentTask = findOrFailTask(cache, currentTaskId);

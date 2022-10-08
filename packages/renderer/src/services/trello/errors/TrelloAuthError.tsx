@@ -4,7 +4,7 @@ import useTranslation from '@/shared/hooks/useTranslation';
 import { AxiosError } from 'axios';
 import { FC, useEffect, useRef } from 'react';
 import { selectToken, useTrelloConfigSelector, useTrelloConfigUpdater } from '../useTrelloConfig';
-import sanitizeTrelloError from './sanitizeTrelloError';
+import sanitizeTrelloError from '../helpers/sanitizeTrelloError';
 
 interface TrelloAuthErrorProps {
   error: AxiosError;

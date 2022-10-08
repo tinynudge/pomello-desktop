@@ -1,17 +1,14 @@
 import assertNonNullish from '@/shared/helpers/assertNonNullish';
-import { Cache, SelectItem, ServiceConfig } from '@domain';
-import fetchCardsByListId from './api/fetchCardsByListId';
-import { TrelloCache, TrelloCard, TrelloCheckItem, TrelloConfig } from './domain';
+import { SelectItem } from '@domain';
+import { TrelloCard, TrelloCheckItem } from './domain';
+import { TrelloRuntime } from './TrelloRuntime';
 
-const fetchTasks = async (
-  cache: Cache<TrelloCache>,
-  config: ServiceConfig<TrelloConfig>
-): Promise<SelectItem[]> => {
+const fetchTasks = async ({ api, cache, config }: TrelloRuntime): Promise<SelectItem[]> => {
   const { currentList } = config.get();
 
   assertNonNullish(currentList, 'Unable to get current list');
 
-  const cards = await fetchCardsByListId(currentList);
+  const cards = await api.fetchCardsByListId(currentList);
 
   const tasksById = new Map<string, TrelloCard | TrelloCheckItem>();
 
