@@ -9,17 +9,27 @@ import { ResponseResolver, rest, RestContext, RestRequest } from 'msw';
 import { vi } from 'vitest';
 import createTrelloService from '..';
 import { TRELLO_API_URL } from '../constants';
-import { TrelloCache, TrelloCard, TrelloCheckItem, TrelloConfig, TrelloMember } from '../domain';
+import {
+  TrelloCache,
+  TrelloCard,
+  TrelloCheckItem,
+  TrelloConfig,
+  TrelloLabel,
+  TrelloMember,
+} from '../domain';
 import translations from '../translations/en-US.json';
 import generateTrelloCard from './generateTrelloCard';
 import generateTrelloCheckItem from './generateTrelloCheckItem';
+import generateTrelloLabel from './generateTrelloLabel';
 import generateTrelloMember from './generateTrelloMember';
 
 export * from '@testing-library/react';
 
 interface TrelloApiResponses {
+  createCard: TrelloCard | ResponseResolver<RestRequest, RestContext, TrelloCard>;
   fetchBoardsAndLists: TrelloMember | ResponseResolver<RestRequest, RestContext, TrelloMember>;
   fetchCardsByListId: TrelloCard[] | ResponseResolver<RestRequest, RestContext, TrelloCard[]>;
+  fetchLabelsByBoardId: TrelloLabel[] | ResponseResolver<RestRequest, RestContext, TrelloLabel[]>;
   markCheckItemComplete:
     | TrelloCheckItem
     | ResponseResolver<RestRequest, RestContext, TrelloCheckItem>;
@@ -53,8 +63,16 @@ const mountTrelloService = async ({
       createRestResolver<TrelloMember>(generateTrelloMember(), trelloApi?.fetchBoardsAndLists)
     ),
     rest.get(
+      `${TRELLO_API_URL}boards/:boardId/labels`,
+      createRestResolver<TrelloLabel[]>([generateTrelloLabel()], trelloApi?.fetchLabelsByBoardId)
+    ),
+    rest.get(
       `${TRELLO_API_URL}lists/:listId/cards`,
       createRestResolver<TrelloCard[]>([generateTrelloCard()], trelloApi?.fetchCardsByListId)
+    ),
+    rest.post(
+      `${TRELLO_API_URL}cards`,
+      createRestResolver<TrelloCard>(generateTrelloCard(), trelloApi?.createCard)
     ),
     rest.put(
       `${TRELLO_API_URL}cards/:idCard/checkItem/:idCheckItem`,

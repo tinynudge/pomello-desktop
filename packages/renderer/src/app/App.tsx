@@ -78,7 +78,7 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   const overlayView = useSelector(selectOverlayView);
 
   const handleTaskCreate = () => {
-    if (activeService?.service.handleTaskCreate) {
+    if (activeService?.service.onTaskCreate) {
       dispatch(setOverlayView('create-task'));
       return;
     }
