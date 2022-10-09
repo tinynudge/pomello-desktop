@@ -41,9 +41,11 @@ const CreateTaskView: FC = () => {
       return;
     }
 
-    service.handleTaskCreate?.(text);
+    const response = service.onTaskCreate?.(text);
 
-    dispatch(unsetOverlayView());
+    if (response !== false) {
+      dispatch(unsetOverlayView());
+    }
   };
 
   return (

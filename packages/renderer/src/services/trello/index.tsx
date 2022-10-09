@@ -10,6 +10,7 @@ import getDefaultTrelloHeading from './getDefaultTrelloHeading';
 import getTaskCompleteItems from './getTaskCompleteItems';
 import getTaskTimerEndItems from './getTaskTimerEndItems';
 import onTaskCompletePromptHandled from './onTaskCompletePromptHandled';
+import onTaskCreate from './onTaskCreate';
 import onTaskTimerEndPromptHandled from './onTaskTimerEndPromptHandled';
 import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
@@ -47,6 +48,7 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
     InitializingView: TrelloInitializingView,
     onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, trelloRuntime),
     onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, trelloRuntime),
+    onTaskCreate: onTaskCreate.bind(null, trelloRuntime),
   };
 };
 
@@ -58,6 +60,7 @@ createTrelloService.config = {
   schema: {
     type: 'object',
     properties: {
+      createdTaskPosition: { type: 'string', enum: ['bottom', 'top'], nullable: true },
       currentList: { type: 'string', nullable: true },
       listFilter: { type: 'string', nullable: true },
       listFilterCaseSensitive: { type: 'boolean', nullable: true },

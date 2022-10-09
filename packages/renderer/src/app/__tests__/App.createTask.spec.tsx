@@ -43,7 +43,7 @@ describe('App - Create task', () => {
     const { simulate } = mountApp({
       mockService: {
         service: {
-          handleTaskCreate: undefined,
+          onTaskCreate: undefined,
         },
       },
     });
@@ -87,7 +87,7 @@ describe('App - Create task', () => {
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          handleTaskCreate,
+          onTaskCreate: handleTaskCreate,
         },
       },
     });
@@ -106,7 +106,7 @@ describe('App - Create task', () => {
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          handleTaskCreate,
+          onTaskCreate: handleTaskCreate,
         },
       },
     });
