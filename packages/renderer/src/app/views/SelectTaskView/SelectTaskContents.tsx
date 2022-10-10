@@ -13,7 +13,7 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const SelectTaskContents: FC = () => {
-  const { fetchTasks, getSelectTaskHeading, id, SelectTaskView } = useService();
+  const { fetchTasks, getSelectTaskHeading, id, onTaskSelect, SelectTaskView } = useService();
   const { t } = useTranslation();
 
   const { selectTask } = usePomelloActions();
@@ -36,7 +36,11 @@ const SelectTaskContents: FC = () => {
   assertNonNullish(tasks, 'Unable to get tasks');
 
   const handleTaskSelect = (id: string) => {
-    selectTask(id);
+    const response = onTaskSelect?.(id);
+
+    if (response !== false) {
+      selectTask(id);
+    }
   };
 
   return !SelectTaskView ? (

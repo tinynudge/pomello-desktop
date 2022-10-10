@@ -32,6 +32,7 @@ export interface Service {
   onMount?(): void;
   onTaskCompletePromptHandled?(taskId: string, action: string): void;
   onTaskCreate?: OnTaskCreate;
+  onTaskSelect?(taskId: string): boolean | void;
   onTaskTimerEndPromptHandled?(
     taskId: string,
     action: string
