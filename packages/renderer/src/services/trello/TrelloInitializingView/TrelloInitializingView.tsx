@@ -7,6 +7,7 @@ import fetchBoardsAndLists from '../api/fetchBoardsAndLists';
 import {
   selectBoards,
   selectLists,
+  selectToken as selectCachedToken,
   useTrelloCacheSelector,
   useTrelloCacheUpdater,
 } from '../useTrelloCache';
@@ -31,6 +32,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const setCache = useTrelloCacheUpdater();
   const cachedBoards = useTrelloCacheSelector(selectBoards);
   const cachedLists = useTrelloCacheSelector(selectLists);
+  const cachedToken = useTrelloCacheSelector(selectCachedToken);
 
   const [setConfig, unsetConfig] = useTrelloConfigUpdater();
   const currentListId = useTrelloConfigSelector(selectCurrentListId);
@@ -43,10 +45,28 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const [lists, setLists] = useState<SelectItem[]>();
 
   const { data: boardsAndLists } = useQuery({
-    enabled: Boolean(token),
+    enabled: Boolean(cachedToken),
     queryKey: 'trello-boards-lists',
     queryFn: fetchBoardsAndLists,
   });
+
+  useEffect(() => {
+    if (token) {
+      const decryptedToken = window.app.decryptValue(token);
+
+      if (decryptedToken) {
+        setCache(draft => {
+          draft.token = decryptedToken;
+        });
+      } else {
+        unsetConfig('token');
+      }
+    } else {
+      setCache(draft => {
+        delete draft.token;
+      });
+    }
+  }, [setCache, token, unsetConfig]);
 
   useEffect(() => {
     if (!boardsAndLists) {
@@ -101,7 +121,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     setConfig('currentList', listId);
   };
 
-  if (!token) {
+  if (!cachedToken && !token) {
     return <LoginView />;
   }
 

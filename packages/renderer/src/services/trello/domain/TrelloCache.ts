@@ -11,4 +11,5 @@ export interface TrelloCache {
   lists: Map<string, TrelloList>;
   preferences: TrelloListPreferences;
   tasks: Map<string, TrelloCard | TrelloCheckItem>;
+  token?: string;
 }

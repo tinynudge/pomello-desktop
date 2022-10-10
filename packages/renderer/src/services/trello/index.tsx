@@ -25,10 +25,10 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
   };
 
   trelloClient.interceptors.request.use(requestConfig => {
-    const { token } = runtime.config.get();
+    const { token } = trelloRuntime.cache.get();
 
     if (token) {
-      requestConfig.params.token = window.app.decryptValue(token);
+      requestConfig.params.token = token;
     }
 
     return requestConfig;
