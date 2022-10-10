@@ -2,6 +2,7 @@ import { TrelloListPreferences } from './TrelloListPreferences';
 import { TrelloPreferences } from './TrelloPreferences';
 
 export interface TrelloConfig {
+  completedTaskPosition?: 'top' | 'bottom';
   createdTaskPosition?: 'top' | 'bottom';
   currentList?: string;
   listFilter?: string;

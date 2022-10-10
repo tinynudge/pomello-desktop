@@ -7,6 +7,7 @@ const moveCardAndUpdateDoneList = (
   listId: string
 ): void => {
   const { currentList } = cache.get();
+  const position = config.get().completedTaskPosition ?? 'top';
 
   const updatedPreferences = { ...config.get().preferences };
   updatedPreferences.lists = {
@@ -23,7 +24,7 @@ const moveCardAndUpdateDoneList = (
 
   config.set('preferences', updatedPreferences);
 
-  api.moveCardToList(task, listId);
+  api.moveCardToList(task, listId, position);
 };
 
 export default moveCardAndUpdateDoneList;
