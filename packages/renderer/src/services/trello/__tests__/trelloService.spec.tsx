@@ -18,6 +18,22 @@ describe('Trello service', () => {
     });
   });
 
+  it('should show the login view if unable to decrypt the token', async () => {
+    await mountTrelloService({
+      appApi: {
+        decryptValue: () => null,
+      },
+      config: {
+        token: 'MY_INDECIPHERABLE_TOKEN',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Connect to Trello')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+    });
+  });
+
   it('should prompt the user to select a list if there is no current list in the config', async () => {
     await mountTrelloService({
       config: {
