@@ -48,4 +48,27 @@ describe('App - Select task', () => {
       expect(appApi.showSelect).toHaveBeenCalled();
     });
   });
+
+  it('should not go to the task view if overridden', async () => {
+    const { simulate } = mountApp({
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              { id: 'task', label: 'Real task' },
+              { id: 'some-action', label: 'Do something else' },
+            ]),
+          onTaskSelect: taskId => taskId !== 'some-action',
+        },
+      },
+    });
+
+    await simulate.selectTask('some-action');
+
+    expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
+
+    await simulate.selectTask('task');
+
+    expect(screen.getByRole('button', { name: 'Start timer' })).toBeInTheDocument();
+  });
 });
