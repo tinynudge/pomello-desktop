@@ -60,6 +60,7 @@ createTrelloService.config = {
   schema: {
     type: 'object',
     properties: {
+      completedTaskPosition: { type: 'string', enum: ['bottom', 'top'], nullable: true },
       createdTaskPosition: { type: 'string', enum: ['bottom', 'top'], nullable: true },
       currentList: { type: 'string', nullable: true },
       listFilter: { type: 'string', nullable: true },
