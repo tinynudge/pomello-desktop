@@ -1,4 +1,5 @@
 {
+  "backToListLabel": "Back to \"{{list}}\"",
   "boardAndListHeading": "{{board}}: {{list}}",
   "completeCheckItemLabel": "Mark item complete",
   "createTaskNoBoardsFound": "Could find any boards matching \"{{query}}\"",
@@ -13,5 +14,6 @@
   "invalidListHeading": "Please select a new list",
   "moveTaskLabel": "Move task to...",
   "selectListPlaceholder": "Pick a list",
-  "serverErrorMessage": "The Trello servers are not responding and may be experiencing an outage. Please try again later."
+  "serverErrorMessage": "The Trello servers are not responding and may be experiencing an outage. Please try again later.",
+  "switchListsLabel": "Switch to a different list"
 }

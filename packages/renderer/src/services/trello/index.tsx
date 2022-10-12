@@ -1,4 +1,3 @@
-import { CacheProvider } from '@/shared/context/CacheContext';
 import bindContext from '@/shared/helpers/bindContext';
 import createCache from '@/shared/helpers/createCache';
 import { ServiceFactory } from '@domain';
@@ -11,11 +10,14 @@ import getTaskCompleteItems from './getTaskCompleteItems';
 import getTaskTimerEndItems from './getTaskTimerEndItems';
 import onTaskCompletePromptHandled from './onTaskCompletePromptHandled';
 import onTaskCreate from './onTaskCreate';
+import onTaskSelect from './onTaskSelect';
 import onTaskTimerEndPromptHandled from './onTaskTimerEndPromptHandled';
 import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
+import TrelloContainer from './TrelloContainer';
 import TrelloInitializingView from './TrelloInitializingView';
 import { TrelloRuntime } from './TrelloRuntime';
+import TrelloSelectOption from './TrelloSelectOption';
 
 const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
   const trelloRuntime: TrelloRuntime = {
@@ -36,7 +38,10 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
 
   return {
     AuthView: TrelloAuthView,
-    Container: ({ children }) => <CacheProvider cache={trelloRuntime.cache} children={children} />,
+    Container: ({ children }) => (
+      <TrelloContainer cache={trelloRuntime.cache} children={children} />
+    ),
+    CustomSelectOption: TrelloSelectOption,
     displayName: createTrelloService.displayName,
     fetchTasks: fetchTasks.bind(null, trelloRuntime),
     getSelectTaskHeading: getDefaultTrelloHeading.bind(null, trelloRuntime),
@@ -47,6 +52,7 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,
     onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, trelloRuntime),
+    onTaskSelect: onTaskSelect.bind(null, trelloRuntime),
     onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, trelloRuntime),
     onTaskCreate: onTaskCreate.bind(null, trelloRuntime),
   };

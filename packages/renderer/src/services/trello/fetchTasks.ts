@@ -3,7 +3,12 @@ import { SelectItem } from '@domain';
 import { TrelloCard, TrelloCheckItem } from './domain';
 import { TrelloRuntime } from './TrelloRuntime';
 
-const fetchTasks = async ({ api, cache, config }: TrelloRuntime): Promise<SelectItem[]> => {
+const fetchTasks = async ({
+  api,
+  cache,
+  config,
+  translate,
+}: TrelloRuntime): Promise<SelectItem[]> => {
   const { currentList } = config.get();
 
   assertNonNullish(currentList, 'Unable to get current list');
@@ -64,6 +69,12 @@ const fetchTasks = async ({ api, cache, config }: TrelloRuntime): Promise<Select
 
   cache.set(draft => {
     draft.tasks = tasksById;
+  });
+
+  tasks.push({
+    id: 'switch-lists',
+    label: translate('switchListsLabel'),
+    type: 'customOption',
   });
 
   return tasks;

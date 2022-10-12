@@ -4,15 +4,17 @@ import { SelectItem } from '@domain';
 import { FC } from 'react';
 
 interface SelectListViewProps {
+  defaultOpen: boolean;
   lists: SelectItem[];
   onListSelect(listId: string): void;
 }
 
-const SelectListView: FC<SelectListViewProps> = ({ lists, onListSelect }) => {
+const SelectListView: FC<SelectListViewProps> = ({ defaultOpen, lists, onListSelect }) => {
   const { t } = useTranslation();
 
   return (
     <SelectField
+      defaultOpen={defaultOpen}
       items={lists}
       onChange={onListSelect}
       placeholder={t('service:selectListPlaceholder')}

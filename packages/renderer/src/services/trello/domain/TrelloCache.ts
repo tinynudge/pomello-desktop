@@ -10,6 +10,7 @@ export interface TrelloCache {
   currentList: TrelloList;
   lists: Map<string, TrelloList>;
   preferences: TrelloListPreferences;
+  previousListId?: string;
   tasks: Map<string, TrelloCard | TrelloCheckItem>;
   token?: string;
 }
