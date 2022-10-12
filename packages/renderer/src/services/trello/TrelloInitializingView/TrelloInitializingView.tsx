@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 import fetchBoardsAndLists from '../api/fetchBoardsAndLists';
 import {
   selectBoards,
+  selectPreviousListId,
   selectLists,
   selectToken as selectCachedToken,
   useTrelloCacheSelector,
@@ -33,6 +34,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const cachedBoards = useTrelloCacheSelector(selectBoards);
   const cachedLists = useTrelloCacheSelector(selectLists);
   const cachedToken = useTrelloCacheSelector(selectCachedToken);
+  const previousListId = useTrelloCacheSelector(selectPreviousListId);
 
   const [setConfig, unsetConfig] = useTrelloConfigUpdater();
   const currentListId = useTrelloConfigSelector(selectCurrentListId);
@@ -77,7 +79,9 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
       boardsAndLists,
       listFilter,
       listFilterCaseSensitive,
+      previousListId,
       recentLists,
+      translate: t,
     });
 
     setLists(selectItems);
@@ -86,7 +90,16 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
       draft.boards = boards;
       draft.lists = lists;
     });
-  }, [boardsAndLists, listFilter, listFilterCaseSensitive, recentLists, setCache]);
+  }, [
+    boardsAndLists,
+    currentListId,
+    listFilter,
+    listFilterCaseSensitive,
+    previousListId,
+    recentLists,
+    setCache,
+    t,
+  ]);
 
   useEffect(() => {
     if (!currentListId || !cachedLists) {
@@ -113,7 +126,17 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     }
   }, [cachedBoards, cachedLists, currentListId, onReady, preferences, setCache, t, unsetConfig]);
 
-  const handleListSelect = (listId: string) => {
+  const handleListSelect = (optionId: string) => {
+    let listId = optionId;
+
+    if (optionId === 'previous-list' && previousListId) {
+      listId = previousListId;
+
+      setCache(draft => {
+        delete draft.previousListId;
+      });
+    }
+
     const updatedRecentLists = new Set(recentLists ?? []);
     updatedRecentLists.delete(listId);
 
@@ -126,7 +149,13 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
   }
 
   if (!currentListId && lists) {
-    return <SelectListView lists={lists} onListSelect={handleListSelect} />;
+    return (
+      <SelectListView
+        defaultOpen={Boolean(previousListId)}
+        lists={lists}
+        onListSelect={handleListSelect}
+      />
+    );
   }
 
   return <LoadingText />;

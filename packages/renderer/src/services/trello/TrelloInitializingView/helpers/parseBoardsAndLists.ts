@@ -1,23 +1,28 @@
-import { SelectItem } from '@domain';
+import { SelectItem, SelectOptionType, Translate } from '@domain';
 import { TrelloBoard, TrelloList, TrelloMember } from '../../domain';
 
 interface ParseBoardsAndListsOptions {
   boardsAndLists: TrelloMember;
   listFilter?: string;
   listFilterCaseSensitive?: boolean;
+  previousListId?: string;
   recentLists?: string[];
+  translate: Translate;
 }
 
 const parseBoardsAndLists = ({
   boardsAndLists,
   listFilter,
   listFilterCaseSensitive,
+  previousListId,
   recentLists,
+  translate,
 }: ParseBoardsAndListsOptions) => {
   const boards = new Map<string, TrelloBoard>();
   const lists = new Map<string, TrelloList>();
 
   let selectItems: SelectItem[] = [];
+  let previousListOption: SelectOptionType | undefined;
 
   boardsAndLists.boards.forEach(board => {
     boards.set(board.id, board);
@@ -36,7 +41,15 @@ const parseBoardsAndLists = ({
         }
       }
 
-      selectItems.push({ id: list.id, label });
+      if (list.id === previousListId) {
+        previousListOption = {
+          id: 'previous-list',
+          label: translate('service:backToListLabel', { list: label }),
+          type: 'customOption',
+        };
+      } else {
+        selectItems.push({ id: list.id, label });
+      }
     });
   });
 
@@ -58,6 +71,10 @@ const parseBoardsAndLists = ({
         ? -1
         : aIndex - bIndex;
     });
+  }
+
+  if (previousListOption) {
+    selectItems.unshift(previousListOption);
   }
 
   return { boards, lists, selectItems };

@@ -1,0 +1,28 @@
+.option {
+  display: inline-flex;
+  align-items: center;
+  color: var(--select-content-helper);
+
+  &.topBorder::before,
+  &.bottomBorder::before {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: var(--select-divider);
+    content: '';
+  }
+
+  &.topBorder::before {
+    top: 0;
+  }
+
+  &.bottomBorder::before {
+    bottom: 0;
+  }
+}
+
+.icon {
+  margin-right: 8px;
+}

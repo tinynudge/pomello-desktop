@@ -49,6 +49,7 @@ describe('Trello service - Select task', () => {
             { id: '1', label: 'First' },
             { id: '2', label: 'Second' },
             { id: '3', label: 'Third' },
+            { id: 'switch-lists', label: 'Switch to a different list', type: 'customOption' },
           ],
         })
       );
@@ -159,9 +160,57 @@ describe('Trello service - Select task', () => {
                 { id: 'milk', label: 'Milk' },
               ],
             },
+            { id: 'switch-lists', label: 'Switch to a different list', type: 'customOption' },
           ],
         })
       );
+    });
+  });
+
+  it('should be able to return to the select list view', async () => {
+    const { appApi, simulate } = await mountTrelloService({
+      config: {
+        currentList: 'ONE',
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              name: 'My tasks',
+              lists: [
+                generateTrelloList({ id: 'ONE', name: 'First' }),
+                generateTrelloList({ id: 'TWO', name: 'Second' }),
+              ],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await simulate.selectTask('switch-lists');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Pick a list' })).toBeInTheDocument();
+      expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          items: [
+            { id: 'previous-list', label: 'Back to "My tasks: First"', type: 'customOption' },
+            { id: 'TWO', label: 'My tasks: Second' },
+          ],
+        })
+      );
+    });
+  });
+
+  it('should be able to return to their original list', async () => {
+    const { simulate } = await mountTrelloService();
+
+    await simulate.selectTask('switch-lists');
+    await screen.findByRole('button', { name: 'Pick a list' });
+    await simulate.selectOption('previous-list');
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
     });
   });
 });

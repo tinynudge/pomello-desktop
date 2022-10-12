@@ -13,4 +13,6 @@ export const selectBoards = (cache: TrelloCache) => cache.boards;
 
 export const selectLists = (cache: TrelloCache) => cache.lists;
 
+export const selectPreviousListId = (cache: TrelloCache) => cache.previousListId;
+
 export const selectToken = (cache: TrelloCache) => cache.token;
