@@ -1,6 +1,11 @@
 {
   "backToListLabel": "Back to \"{{list}}\"",
   "boardAndListHeading": "{{board}}: {{list}}",
+  "commentLogEntry": "{{entry}} - *{{time}} on {{date}}*",
+  "commentLogFooter": "*Do not delete. Please avoid editing this comment.*",
+  "commentLogHeader": "**Pomello Log**",
+  "commentLogHeaderContinued": "**Pomello Log** *(cont.)*",
+  "commentLogTimeSpent": "**Total time spent:** {{time}}",
   "completeCheckItemLabel": "Mark item complete",
   "createTaskNoBoardsFound": "Could find any boards matching \"{{query}}\"",
   "createTaskNoListsFound": "Could find any lists matching \"{{query}}\"",
@@ -13,7 +18,10 @@
   "invalidListBody": "An issue occurred when loading your previously used list.",
   "invalidListHeading": "Please select a new list",
   "moveTaskLabel": "Move task to...",
+  "noteEntry": "**{{label}}:** {{text}}",
   "selectListPlaceholder": "Pick a list",
   "serverErrorMessage": "The Trello servers are not responding and may be experiencing an outage. Please try again later.",
-  "switchListsLabel": "Switch to a different list"
+  "switchListsLabel": "Switch to a different list",
+  "updateLogErrorHeading": "Unable to update Trello log",
+  "updateLogErrorMessage": "You do not have permissions to comment on this card. Click here to disable logging for this list."
 }

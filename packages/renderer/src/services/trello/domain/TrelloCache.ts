@@ -13,4 +13,5 @@ export interface TrelloCache {
   previousListId?: string;
   tasks: Map<string, TrelloCard | TrelloCheckItem>;
   token?: string;
+  userId: string;
 }

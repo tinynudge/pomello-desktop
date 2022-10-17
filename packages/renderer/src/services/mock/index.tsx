@@ -35,10 +35,10 @@ const createMockService: ServiceFactory = () => {
     getTaskCompleteItems,
     getTaskHeading,
     getTaskTimerEndOptions,
-    handleNoteAdd: (type, note) => {
-      new Notification(type, { body: note });
-    },
     InitializingView: MockInitializingView,
+    onNoteCreate: (_taskId, { type, text }) => {
+      new Notification(type, { body: text });
+    },
     onTaskCreate: text => {
       new Notification(text);
     },

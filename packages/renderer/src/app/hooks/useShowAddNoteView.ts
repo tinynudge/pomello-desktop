@@ -6,14 +6,14 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 const useShowAddNoteView = () => {
-  const { displayName, handleNoteAdd } = useService();
+  const { displayName, onNoteCreate } = useService();
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
 
   return useCallback(
     (type: NoteType) => {
-      if (!handleNoteAdd) {
+      if (!onNoteCreate) {
         new Notification(t('notesDisabledHeading'), {
           body: t('serviceActionUnavailable', { service: displayName }),
         });
@@ -23,7 +23,7 @@ const useShowAddNoteView = () => {
 
       dispatch(setOverlayView(type));
     },
-    [dispatch, displayName, handleNoteAdd, t]
+    [dispatch, displayName, onNoteCreate, t]
   );
 };
 

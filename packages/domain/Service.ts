@@ -1,6 +1,6 @@
 import { TaskTimerEndPromptHandledAction } from '@tinynudge/pomello-service';
 import { FC } from 'react';
-import { AddNoteHandler } from './AddNoteHandler';
+import { OnNoteCreate } from './OnNoteCreate';
 import { OnTaskCreate } from './OnTaskCreate';
 import { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 import { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
@@ -26,10 +26,10 @@ export interface Service {
   getTaskLabel?(task: SelectOptionType): string;
   getTaskTimerEndItems?(currentTaskId: string): TaskTimerEndItems;
   handleError?: ErrorHandler;
-  handleNoteAdd?: AddNoteHandler;
   id: string;
   InitializingView?: InitializingView;
   onMount?(): void;
+  onNoteCreate?: OnNoteCreate;
   onTaskCompletePromptHandled?(taskId: string, action: string): void;
   onTaskCreate?: OnTaskCreate;
   onTaskSelect?(taskId: string): boolean | void;

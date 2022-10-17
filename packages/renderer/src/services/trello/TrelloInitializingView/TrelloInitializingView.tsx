@@ -89,6 +89,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     setCache(draft => {
       draft.boards = boards;
       draft.lists = lists;
+      draft.userId = boardsAndLists.id;
     });
   }, [
     boardsAndLists,

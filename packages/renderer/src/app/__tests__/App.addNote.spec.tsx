@@ -11,7 +11,7 @@ describe('App - Add Note', () => {
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          handleNoteAdd: undefined,
+          onNoteCreate: undefined,
         },
       },
     });
@@ -87,21 +87,26 @@ describe('App - Add Note', () => {
   });
 
   it('should handle when a general note is added', async () => {
-    const handleNoteAdd = vi.fn();
+    const onNoteCreate = vi.fn();
 
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          handleNoteAdd,
+          fetchTasks: () => Promise.resolve([{ id: 'MY_TASK', label: 'My task' }]),
+          onNoteCreate,
         },
       },
     });
 
-    await simulate.selectTask();
+    await simulate.selectTask('MY_TASK');
     await simulate.hotkey('addNote');
     await userEvent.type(screen.getByRole('textbox'), 'Foo{Enter}');
 
-    expect(handleNoteAdd).toHaveBeenCalledWith('generalNote', 'Foo');
+    expect(onNoteCreate).toHaveBeenCalledWith('MY_TASK', {
+      label: 'Note',
+      text: 'Foo',
+      type: 'generalNote',
+    });
     expect(screen.queryByRole('heading', { name: 'Add note' })).not.toBeInTheDocument();
   });
 
@@ -111,16 +116,21 @@ describe('App - Add Note', () => {
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          handleNoteAdd,
+          fetchTasks: () => Promise.resolve([{ id: 'MY_TASK', label: 'My task' }]),
+          onNoteCreate: handleNoteAdd,
         },
       },
     });
 
-    await simulate.selectTask();
+    await simulate.selectTask('MY_TASK');
     await simulate.hotkey('internalDistraction');
     await userEvent.type(screen.getByRole('textbox'), 'Bar{Enter}');
 
-    expect(handleNoteAdd).toHaveBeenCalledWith('internalDistraction', 'Bar');
+    expect(handleNoteAdd).toHaveBeenCalledWith('MY_TASK', {
+      label: 'Internal distraction',
+      text: 'Bar',
+      type: 'internalDistraction',
+    });
     expect(screen.queryByRole('heading', { name: 'Internal distraction' })).not.toBeInTheDocument();
   });
 
@@ -130,26 +140,31 @@ describe('App - Add Note', () => {
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          handleNoteAdd,
+          fetchTasks: () => Promise.resolve([{ id: 'MY_TASK', label: 'My task' }]),
+          onNoteCreate: handleNoteAdd,
         },
       },
     });
 
-    await simulate.selectTask();
+    await simulate.selectTask('MY_TASK');
     await simulate.hotkey('externalDistraction');
     await userEvent.type(screen.getByRole('textbox'), 'Baz{Enter}');
 
-    expect(handleNoteAdd).toHaveBeenCalledWith('externalDistraction', 'Baz');
+    expect(handleNoteAdd).toHaveBeenCalledWith('MY_TASK', {
+      label: 'External distraction',
+      text: 'Baz',
+      type: 'externalDistraction',
+    });
     expect(screen.queryByRole('heading', { name: 'External distraction' })).not.toBeInTheDocument();
   });
 
   it('should not do anything if the input is blank', async () => {
-    const handleNoteAdd = vi.fn();
+    const onNoteCreate = vi.fn();
 
     const { simulate, userEvent } = mountApp({
       mockService: {
         service: {
-          handleNoteAdd,
+          onNoteCreate,
         },
       },
     });
@@ -158,7 +173,7 @@ describe('App - Add Note', () => {
     await simulate.hotkey('addNote');
     await userEvent.type(screen.getByRole('textbox'), '{Enter}');
 
-    expect(handleNoteAdd).not.toHaveBeenCalled();
+    expect(onNoteCreate).not.toHaveBeenCalled();
     expect(screen.getByRole('heading', { name: 'Add note' })).toBeInTheDocument();
   });
 
