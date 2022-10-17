@@ -20,7 +20,7 @@ describe('App - Task void', () => {
       },
       mockService: {
         service: {
-          handleNoteAdd: undefined,
+          onNoteCreate: undefined,
         },
       },
     });
@@ -99,12 +99,13 @@ describe('App - Task void', () => {
   });
 
   it('should show the break after entering a note', async () => {
-    const handleNoteAdd = vi.fn();
+    const onNoteCreate = vi.fn();
 
     const { simulate } = mountApp({
       mockService: {
         service: {
-          handleNoteAdd,
+          fetchTasks: () => Promise.resolve([{ id: 'MY_TASK', label: 'My task' }]),
+          onNoteCreate,
         },
       },
       settings: {
@@ -112,14 +113,18 @@ describe('App - Task void', () => {
       },
     });
 
-    await simulate.selectTask();
+    await simulate.selectTask('MY_TASK');
     await simulate.startTimer();
     await simulate.advanceTimer();
     await simulate.selectOption('voidTask');
     await simulate.enterNote('foo{Enter}');
 
     await waitFor(() => {
-      expect(handleNoteAdd).toHaveBeenCalledWith('externalDistraction', 'foo');
+      expect(onNoteCreate).toHaveBeenCalledWith('MY_TASK', {
+        label: 'External distraction',
+        text: 'foo',
+        type: 'externalDistraction',
+      });
       expect(screen.getByText('Take a short break')).toBeInTheDocument();
     });
   });

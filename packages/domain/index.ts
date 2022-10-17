@@ -1,5 +1,4 @@
 export type { ActiveService } from './ActiveService';
-export type { AddNoteHandler } from './AddNoteHandler';
 export { AppEvent } from './AppEvent';
 export { AppProtocol } from './AppProtocol';
 export type { AuthWindowType } from './AuthWindowType';
@@ -17,7 +16,9 @@ export type { InitializingView } from './InitializingView';
 export type { LabeledHotkeys } from './LabeledHotkeys';
 export type { Logger } from './Logger';
 export type { LogLevel } from './LogLevel';
+export type { Note } from './Note';
 export type { NoteType } from './NoteType';
+export type { OnNoteCreate } from './OnNoteCreate';
 export type { OnTaskCreate } from './OnTaskCreate';
 export type { PomelloConfig } from './PomelloConfig';
 export type { PomelloServiceConfig } from './PomelloServiceConfig';

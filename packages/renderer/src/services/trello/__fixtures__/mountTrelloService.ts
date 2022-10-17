@@ -12,6 +12,7 @@ import { TRELLO_API_URL } from '../constants';
 import {
   TrelloCache,
   TrelloCard,
+  TrelloCardAction,
   TrelloCheckItem,
   TrelloConfig,
   TrelloLabel,
@@ -19,6 +20,7 @@ import {
 } from '../domain';
 import translations from '../translations/en-US.json';
 import generateTrelloCard from './generateTrelloCard';
+import generateTrelloCardAction from './generateTrelloCardAction';
 import generateTrelloCheckItem from './generateTrelloCheckItem';
 import generateTrelloLabel from './generateTrelloLabel';
 import generateTrelloMember from './generateTrelloMember';
@@ -26,6 +28,7 @@ import generateTrelloMember from './generateTrelloMember';
 export * from '@testing-library/react';
 
 interface TrelloApiResponses {
+  addComment: TrelloCardAction | ResponseResolver<RestRequest, RestContext, TrelloCardAction>;
   createCard: TrelloCard | ResponseResolver<RestRequest, RestContext, TrelloCard>;
   fetchBoardsAndLists: TrelloMember | ResponseResolver<RestRequest, RestContext, TrelloMember>;
   fetchCardsByListId: TrelloCard[] | ResponseResolver<RestRequest, RestContext, TrelloCard[]>;
@@ -34,6 +37,7 @@ interface TrelloApiResponses {
     | TrelloCheckItem
     | ResponseResolver<RestRequest, RestContext, TrelloCheckItem>;
   moveCardToList: TrelloCard | ResponseResolver<RestRequest, RestContext, TrelloCard>;
+  updateComment: TrelloCardAction | ResponseResolver<RestRequest, RestContext, TrelloCardAction>;
 }
 
 interface MountTrelloServiceOptions {
@@ -74,6 +78,10 @@ const mountTrelloService = async ({
       `${TRELLO_API_URL}cards`,
       createRestResolver<TrelloCard>(generateTrelloCard(), trelloApi?.createCard)
     ),
+    rest.post(
+      `${TRELLO_API_URL}cards/:idCard/actions/comments`,
+      createRestResolver<TrelloCardAction>(generateTrelloCardAction(), trelloApi?.addComment)
+    ),
     rest.put(
       `${TRELLO_API_URL}cards/:idCard/checkItem/:idCheckItem`,
       createRestResolver<TrelloCheckItem>(
@@ -84,6 +92,10 @@ const mountTrelloService = async ({
     rest.put(
       `${TRELLO_API_URL}cards/:idCard`,
       createRestResolver<TrelloCard>(generateTrelloCard(), trelloApi?.moveCardToList)
+    ),
+    rest.put(
+      `${TRELLO_API_URL}actions/:idAction`,
+      createRestResolver<TrelloCardAction>(generateTrelloCardAction(), trelloApi?.updateComment)
     )
   );
 

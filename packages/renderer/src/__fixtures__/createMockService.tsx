@@ -15,8 +15,8 @@ const createMockServiceFactory = ({ config, service = {} }: MockService = {}): S
 
     return {
       displayName: createMockService.displayName,
-      handleNoteAdd: vi.fn(),
       id: createMockService.id,
+      onNoteCreate: vi.fn(),
       onTaskCreate: vi.fn(),
       ...service,
       fetchTasks: vi.fn(service.fetchTasks ?? fetchTasks),

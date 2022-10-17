@@ -8,6 +8,7 @@ import fetchTasks from './fetchTasks';
 import getDefaultTrelloHeading from './getDefaultTrelloHeading';
 import getTaskCompleteItems from './getTaskCompleteItems';
 import getTaskTimerEndItems from './getTaskTimerEndItems';
+import onNoteCreate from './onNoteCreate';
 import onTaskCompletePromptHandled from './onTaskCompletePromptHandled';
 import onTaskCreate from './onTaskCreate';
 import onTaskSelect from './onTaskSelect';
@@ -51,6 +52,7 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
     handleError,
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,
+    onNoteCreate: onNoteCreate.bind(null, trelloRuntime),
     onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, trelloRuntime),
     onTaskSelect: onTaskSelect.bind(null, trelloRuntime),
     onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, trelloRuntime),

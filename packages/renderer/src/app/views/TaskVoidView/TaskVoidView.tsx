@@ -7,17 +7,17 @@ import { useDispatch, useSelector } from 'react-redux';
 const TaskVoidView: FC = () => {
   const dispatch = useDispatch();
 
-  const { handleNoteAdd } = useService();
+  const { onNoteCreate } = useService();
 
   const { voidPromptHandled } = usePomelloActions();
 
   useEffect(() => {
-    if (!handleNoteAdd) {
+    if (!onNoteCreate) {
       voidPromptHandled();
     } else {
       dispatch(setOverlayView('externalDistraction'));
     }
-  }, [dispatch, handleNoteAdd, voidPromptHandled]);
+  }, [dispatch, onNoteCreate, voidPromptHandled]);
 
   const didShowAddNoteView = useRef(false);
   const overlayView = useSelector(selectOverlayView);

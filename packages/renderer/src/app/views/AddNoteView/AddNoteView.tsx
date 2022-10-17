@@ -1,4 +1,5 @@
 import { setOverlayView, unsetOverlayView } from '@/app/appSlice';
+import useCurrentTask from '@/app/hooks/useCurrentTask';
 import Content from '@/app/ui/Content';
 import Heading from '@/app/ui/Heading';
 import InputField from '@/app/ui/InputField';
@@ -22,6 +23,8 @@ const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
   const dispatch = useDispatch();
   const service = useService();
   const { t } = useTranslation();
+
+  const { currentTask } = useCurrentTask();
 
   const [note, setNote] = useState('');
 
@@ -66,7 +69,11 @@ const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
       return;
     }
 
-    service.handleNoteAdd?.(noteType, note);
+    service.onNoteCreate?.(currentTask.id, {
+      label: t(`${noteType}Label`),
+      text: note,
+      type: noteType,
+    });
 
     dispatch(unsetOverlayView());
   };
