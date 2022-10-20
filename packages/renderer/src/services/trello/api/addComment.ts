@@ -1,15 +1,23 @@
 import { Logger } from '@domain';
-import sanitizeTrelloError from '../helpers/sanitizeTrelloError';
+import { TrelloCardAction } from '../domain';
 import trelloClient from '../trelloClient';
 
-const addComment = async (logger: Logger, taskId: string, text: string): Promise<void> => {
-  await trelloClient.post(`/cards/${taskId}/actions/comments`, { text }).catch(error => {
-    if (error.response.status === 401) {
-      throw new Error('no commenting permissions');
-    }
+const addComment = async (
+  logger: Logger,
+  taskId: string,
+  text: string
+): Promise<TrelloCardAction> => {
+  const { data } = await trelloClient
+    .post<TrelloCardAction>(`/cards/${taskId}/actions/comments`, { text })
+    .catch(error => {
+      if (error.response.status === 401) {
+        throw new Error('no commenting permissions');
+      }
 
-    logger.error(sanitizeTrelloError(error));
-  });
+      throw error;
+    });
+
+  return data;
 };
 
 export default addComment;

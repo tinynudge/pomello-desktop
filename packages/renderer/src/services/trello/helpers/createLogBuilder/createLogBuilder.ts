@@ -62,7 +62,9 @@ const createLogBuilder = (
       if (log.id) {
         await api.updateComment(log.id, text);
       } else {
-        await api.addComment(card.id, text);
+        const { id } = await api.addComment(card.id, text);
+
+        log.id = id;
       }
     } catch (error) {
       if (error instanceof Error && error.message === 'no commenting permissions') {
