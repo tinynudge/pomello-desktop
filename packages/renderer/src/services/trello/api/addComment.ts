@@ -1,12 +1,7 @@
-import { Logger } from '@domain';
 import { TrelloCardAction } from '../domain';
 import trelloClient from '../trelloClient';
 
-const addComment = async (
-  logger: Logger,
-  taskId: string,
-  text: string
-): Promise<TrelloCardAction> => {
+const addComment = async (taskId: string, text: string): Promise<TrelloCardAction> => {
   const { data } = await trelloClient
     .post<TrelloCardAction>(`/cards/${taskId}/actions/comments`, { text })
     .catch(error => {

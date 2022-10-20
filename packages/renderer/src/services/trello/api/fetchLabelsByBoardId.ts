@@ -1,8 +1,7 @@
-import { Logger } from '@domain';
 import { TrelloLabel } from '../domain';
 import trelloClient from '../trelloClient';
 
-const fetchLabelsByBoardId = async (_logger: Logger, boardId: string): Promise<TrelloLabel[]> => {
+const fetchLabelsByBoardId = async (boardId: string): Promise<TrelloLabel[]> => {
   const { data } = await trelloClient.get<TrelloLabel[]>(`boards/${boardId}/labels`);
 
   return data;

@@ -1,5 +1,5 @@
+import fetchLabelsByBoardId from '../api/fetchLabelsByBoardId';
 import { TrelloList } from '../domain';
-import { TrelloRuntime } from '../TrelloRuntime';
 import createQueryRegex from './createQueryRegex';
 
 interface LabelIds {
@@ -7,11 +7,7 @@ interface LabelIds {
   unknownLabels: string[];
 }
 
-const findLabelIds = async (
-  { api }: TrelloRuntime,
-  list: TrelloList,
-  input?: string
-): Promise<LabelIds> => {
+const findLabelIds = async (list: TrelloList, input?: string): Promise<LabelIds> => {
   const labelIds: string[] = [];
   const unknownLabels: string[] = [];
 
@@ -19,7 +15,7 @@ const findLabelIds = async (
     return { labelIds, unknownLabels };
   }
 
-  const labels = await api.fetchLabelsByBoardId(list.idBoard);
+  const labels = await fetchLabelsByBoardId(list.idBoard);
 
   input.split(',').forEach(query => {
     const normalizedQuery = query.trim();
