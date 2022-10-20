@@ -1,6 +1,4 @@
-import { Logger } from '@domain';
 import { TrelloCard } from '../domain';
-import sanitizeTrelloError from '../helpers/sanitizeTrelloError';
 import trelloClient from '../trelloClient';
 
 interface CreateCardOptions {
@@ -11,19 +9,15 @@ interface CreateCardOptions {
   title: string;
 }
 
-const createCard = async (logger: Logger, options: CreateCardOptions): Promise<void> => {
-  await trelloClient
-    .post<TrelloCard>('cards', {
-      desc: options.description ?? '',
-      due: null,
-      idLabels: options.labelIds,
-      idList: options.listId,
-      name: options.title,
-      pos: options.position,
-    })
-    .catch(error => {
-      logger.error(sanitizeTrelloError(error));
-    });
+const createCard = async (options: CreateCardOptions): Promise<void> => {
+  await trelloClient.post<TrelloCard>('cards', {
+    desc: options.description ?? '',
+    due: null,
+    idLabels: options.labelIds,
+    idList: options.listId,
+    name: options.title,
+    pos: options.position,
+  });
 };
 
 export default createCard;

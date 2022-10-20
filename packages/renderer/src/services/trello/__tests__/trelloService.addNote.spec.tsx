@@ -63,7 +63,6 @@ describe('Trello service - Add note', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Find out who the muffin man is{Enter}');
 
     expect(mockUpdateComment).toHaveBeenCalledWith(
-      expect.anything(),
       'MY_COMMENT_ID',
       '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
@@ -91,7 +90,6 @@ describe('Trello service - Add note', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Find out who the muffin man is{Enter}');
 
     expect(mockAddComment).toHaveBeenCalledWith(
-      expect.anything(),
       'MY_CARD_ID',
       '**Pomello Log**\n \n---\n**Total time spent:** **\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
@@ -136,7 +134,6 @@ describe('Trello service - Add note', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Find out who the muffin man is{Enter}');
 
     expect(mockAddComment).toHaveBeenCalledWith(
-      expect.anything(),
       'MY_CARD_ID',
       '**Pomello Log** *(cont.)*\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
@@ -188,7 +185,6 @@ describe('Trello service - Add note', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Find out who the muffin man is{Enter}');
 
     expect(mockUpdateComment).toHaveBeenCalledWith(
-      expect.anything(),
       'MY_COMMENT_ID',
       '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
@@ -215,7 +211,6 @@ describe('Trello service - Add note', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Find out who the muffin man is{Enter}');
 
     expect(mockAddComment).toHaveBeenCalledWith(
-      expect.anything(),
       'INVESTIGATION',
       '**Note:** Find out who the muffin man is'
     );
@@ -258,7 +253,6 @@ describe('Trello service - Add note', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Find out who the muffin man is{Enter}');
 
     expect(mockUpdateComment).toHaveBeenCalledWith(
-      expect.anything(),
       'MY_COMMENT_ID',
       '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
     );

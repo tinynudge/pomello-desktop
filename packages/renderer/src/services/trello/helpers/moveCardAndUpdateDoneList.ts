@@ -1,8 +1,9 @@
+import moveCardToList from '../api/moveCardToList';
 import { TrelloCard } from '../domain';
 import { TrelloRuntime } from '../TrelloRuntime';
 
 const moveCardAndUpdateDoneList = (
-  { api, config, cache }: TrelloRuntime,
+  { config, cache }: TrelloRuntime,
   task: TrelloCard,
   listId: string
 ): void => {
@@ -24,7 +25,7 @@ const moveCardAndUpdateDoneList = (
 
   config.set('preferences', updatedPreferences);
 
-  api.moveCardToList(task, listId, position);
+  moveCardToList(task, listId, position);
 };
 
 export default moveCardAndUpdateDoneList;

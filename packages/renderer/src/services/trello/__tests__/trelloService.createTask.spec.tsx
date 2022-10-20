@@ -66,7 +66,7 @@ describe('Trello service - Create task', () => {
       'World domination -desc Take over the world{Enter}'
     );
 
-    expect(mockCreateCard).toHaveBeenCalledWith(expect.anything(), {
+    expect(mockCreateCard).toHaveBeenCalledWith({
       description: 'Take over the world',
       labelIds: [],
       listId: 'MY_CURRENT_LIST',
@@ -101,7 +101,7 @@ describe('Trello service - Create task', () => {
     await simulate.hotkey('createTask');
     await userEvent.type(screen.getByRole('textbox'), 'Buy groceries -list pckme{Enter}');
 
-    expect(mockCreateCard).toHaveBeenCalledWith(expect.anything(), {
+    expect(mockCreateCard).toHaveBeenCalledWith({
       labelIds: [],
       listId: 'PICK_ME',
       position: 'top',
@@ -146,7 +146,7 @@ describe('Trello service - Create task', () => {
       '-t Show Princess Jasmine something -l scnd/a whlenewlist{Enter}'
     );
 
-    expect(mockCreateCard).toHaveBeenCalledWith(expect.anything(), {
+    expect(mockCreateCard).toHaveBeenCalledWith({
       labelIds: [],
       listId: 'A_WHOLE_NEW_LIST',
       position: 'top',
@@ -325,7 +325,7 @@ describe('Trello service - Create task', () => {
     await simulate.hotkey('createTask');
     await userEvent.type(screen.getByRole('textbox'), 'Do laundry -# red, urgent{Enter}');
 
-    expect(mockCreateCard).toHaveBeenCalledWith(expect.anything(), {
+    expect(mockCreateCard).toHaveBeenCalledWith({
       labelIds: ['RED_LABEL', 'URGENT_LABEL'],
       listId: 'MY_LIST',
       position: 'top',
@@ -361,7 +361,7 @@ describe('Trello service - Create task', () => {
     expect(NotificationMock).toHaveBeenCalledWith('Success!', {
       body: 'Task created. Ignored labels: urgent, taupe. See help for details.',
     });
-    expect(mockCreateCard).toHaveBeenCalledWith(expect.anything(), {
+    expect(mockCreateCard).toHaveBeenCalledWith({
       labelIds: ['PURPLE_LABEL'],
       listId: 'MY_LIST',
       position: 'top',

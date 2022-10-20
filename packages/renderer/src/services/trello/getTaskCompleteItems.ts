@@ -6,7 +6,7 @@ import isCheckItem from './helpers/isCheckItem';
 import { TrelloRuntime } from './TrelloRuntime';
 
 const getTaskCompleteItems = (
-  { cache, logger, translate }: TrelloRuntime,
+  { cache, translate }: TrelloRuntime,
   taskId: string
 ): TaskCompleteItems => {
   const task = findOrFailTask(cache, taskId);
@@ -15,7 +15,7 @@ const getTaskCompleteItems = (
     return createMoveCardList(translate, cache);
   }
 
-  markCheckItemComplete(logger, task);
+  markCheckItemComplete(task);
 };
 
 export default getTaskCompleteItems;

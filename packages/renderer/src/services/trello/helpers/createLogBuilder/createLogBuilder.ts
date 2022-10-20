@@ -1,11 +1,13 @@
 import { format } from 'date-fns';
+import addComment from '../../api/addComment';
+import updateComment from '../../api/updateComment';
 import { TrelloCard, TrelloLogBuilder } from '../../domain';
 import { TrelloRuntime } from '../../TrelloRuntime';
 import createCommentLog from './createCommentLog';
 import parseCommentLog from './parseCommentLog';
 
 const createLogBuilder = (
-  { api, cache, config, translate }: TrelloRuntime,
+  { cache, config, translate }: TrelloRuntime,
   card: TrelloCard
 ): TrelloLogBuilder => {
   const { userId } = cache.get();
@@ -60,9 +62,9 @@ const createLogBuilder = (
 
     try {
       if (log.id) {
-        await api.updateComment(log.id, text);
+        await updateComment(log.id, text);
       } else {
-        const { id } = await api.addComment(card.id, text);
+        const { id } = await addComment(card.id, text);
 
         log.id = id;
       }

@@ -1,7 +1,5 @@
-import bindContext from '@/shared/helpers/bindContext';
 import createCache from '@/shared/helpers/createCache';
 import { ServiceFactory } from '@domain';
-import api from './api';
 import { TrelloCache, TrelloConfig } from './domain';
 import handleError from './errors/handleError';
 import fetchTasks from './fetchTasks';
@@ -24,7 +22,6 @@ import TrelloSelectOption from './TrelloSelectOption';
 const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
   const trelloRuntime: TrelloRuntime = {
     ...runtime,
-    api: bindContext(api, runtime.logger),
     cache: createCache<TrelloCache>(),
   };
 
