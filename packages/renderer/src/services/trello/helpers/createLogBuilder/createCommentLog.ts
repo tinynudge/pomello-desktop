@@ -7,8 +7,8 @@ const createCommentLog = (translate: Translate, cardId: string): TrelloLog => {
     entries: [],
     footer: translate('commentLogFooter'),
     header: translate('commentLogHeader'),
-    json: [],
-    timeSpent: `---\n${translate('commentLogTimeSpent', { time: '**' })}\n---`,
+    time: { total: 0 },
+    timeSpent: translate('commentLogTimeSpent', { time: '**' }),
   };
 };
 

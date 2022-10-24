@@ -38,10 +38,10 @@ const createLogBuilder = (
     const text = [
       log.header,
       ' ',
-      log.timeSpent,
+      `---\n${log.timeSpent}\n---`,
       ...log.entries,
       ' ',
-      `>*#${btoa(JSON.stringify(log.json))}*`,
+      `>*#${btoa(JSON.stringify(log.time))}*`,
       ' ',
       log.footer,
     ].join('\n');
@@ -55,6 +55,12 @@ const createLogBuilder = (
     }
 
     return text;
+  };
+
+  const removeLastEntry = () => {
+    log.entries.shift();
+
+    return builder;
   };
 
   const save = async () => {
@@ -93,9 +99,44 @@ const createLogBuilder = (
     }
   };
 
+  const updateTimeSpent = (totalTime: number) => {
+    log.time.total += totalTime;
+
+    const hours = Math.floor(log.time.total / 3600);
+    const minutes = Math.round((log.time.total % 3600) / 60);
+
+    let time = '**';
+    const timeKeys: string[] = [];
+
+    if (log.time.total) {
+      if (log.time.total < 60) {
+        timeKeys.push('UnderMinute');
+      } else {
+        if (hours) {
+          timeKeys.push(hours > 1 ? 'Hours' : 'SingularHour');
+        }
+
+        if (minutes) {
+          timeKeys.push(minutes > 1 ? 'Minutes' : 'SingularMinute');
+        }
+      }
+
+      time = translate(`duration${timeKeys.join('')}`, {
+        hours: hours.toString(),
+        minutes: minutes.toString(),
+      });
+    }
+
+    log.timeSpent = translate('commentLogTimeSpent', { time });
+
+    return builder;
+  };
+
   const builder = {
     addEntry,
+    removeLastEntry,
     save,
+    updateTimeSpent,
   };
 
   return builder;

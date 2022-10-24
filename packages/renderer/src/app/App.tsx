@@ -1,7 +1,8 @@
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { LabeledHotkeys, Logger, ServiceRegistry } from '@domain';
+import { LabeledHotkeys, Logger, PomelloEventType, ServiceRegistry } from '@domain';
+import { PomelloEvent } from '@tinynudge/pomello-service';
 import cc from 'classcat';
 import { FC, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +18,7 @@ import Layout from './components/Layout';
 import Routes from './components/Routes';
 import { DialActionsProvider } from './context/DialActionsContext';
 import { HotkeysProvider } from './context/HotkeysContext';
+import usePomelloService from './hooks/usePomelloService';
 import useTimerSounds from './hooks/useTimerSounds';
 import Content from './ui/Content';
 import LoadingText from './ui/LoadingText';
@@ -74,6 +76,29 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   });
 
   const { activeService, status } = useInitializeService(logger, services, serviceId);
+
+  const service = usePomelloService();
+  useEffect(() => {
+    const onPomelloEvent = activeService?.service.onPomelloEvent;
+
+    if (!onPomelloEvent) {
+      return;
+    }
+
+    const unsubscribeHandlers = Object.values(PomelloEventType).map(eventType => {
+      const type = eventType as PomelloEventType;
+
+      const handler = (event: PomelloEvent) => onPomelloEvent(type, event);
+
+      service.on(type, handler);
+
+      return { type, handler };
+    });
+
+    return () => {
+      unsubscribeHandlers.forEach(({ type, handler }) => service.off(type, handler));
+    };
+  }, [activeService?.service.onPomelloEvent, service]);
 
   const overlayView = useSelector(selectOverlayView);
 

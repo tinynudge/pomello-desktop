@@ -45,7 +45,7 @@ describe('Trello service - Add note', () => {
               generateTrelloCardAction({
                 id: 'MY_COMMENT_ID',
                 data: {
-                  text: '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*',
+                  text: '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*',
                 },
                 type: 'commentCard',
                 memberCreator: {
@@ -64,7 +64,7 @@ describe('Trello service - Add note', () => {
 
     expect(mockUpdateComment).toHaveBeenCalledWith(
       'MY_COMMENT_ID',
-      '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
+      '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
   });
 
@@ -91,7 +91,7 @@ describe('Trello service - Add note', () => {
 
     expect(mockAddComment).toHaveBeenCalledWith(
       'MY_CARD_ID',
-      '**Pomello Log**\n \n---\n**Total time spent:** **\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
+      '**Pomello Log**\n \n---\n**Total time spent:** **\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
   });
 
@@ -116,7 +116,7 @@ describe('Trello service - Add note', () => {
             actions: [
               generateTrelloCardAction({
                 data: {
-                  text: `**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n${mockEntries}\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*`,
+                  text: `**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n${mockEntries}\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*`,
                 },
                 type: 'commentCard',
                 memberCreator: {
@@ -135,7 +135,7 @@ describe('Trello service - Add note', () => {
 
     expect(mockAddComment).toHaveBeenCalledWith(
       'MY_CARD_ID',
-      '**Pomello Log** *(cont.)*\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
+      '**Pomello Log** *(cont.)*\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
   });
 
@@ -158,7 +158,7 @@ describe('Trello service - Add note', () => {
               generateTrelloCardAction({
                 id: 'MY_COMMENT_ID',
                 data: {
-                  text: '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*',
+                  text: '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*',
                 },
                 type: 'commentCard',
                 memberCreator: {
@@ -186,7 +186,7 @@ describe('Trello service - Add note', () => {
 
     expect(mockUpdateComment).toHaveBeenCalledWith(
       'MY_COMMENT_ID',
-      '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
+      '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
   });
 
@@ -254,7 +254,7 @@ describe('Trello service - Add note', () => {
 
     expect(mockUpdateComment).toHaveBeenCalledWith(
       'MY_COMMENT_ID',
-      '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#W10=*\n \n*Do not delete. Please avoid editing this comment.*'
+      '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\n**Note:** Find out who the muffin man is - *1:02 pm on Oct 10, 2022*\nTask stopped  - *3:04 pm on Aug 22, 2022\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
   });
 
