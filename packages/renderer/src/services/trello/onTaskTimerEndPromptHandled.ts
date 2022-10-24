@@ -1,5 +1,5 @@
 import { TaskTimerEndPromptHandledAction } from '@tinynudge/pomello-service';
-import markCheckItemComplete from './api/markCheckItemComplete';
+import completeCheckItem from './helpers/completeCheckItem';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
 import moveCardAndUpdateDoneList from './helpers/moveCardAndUpdateDoneList';
@@ -13,7 +13,7 @@ const onTaskTimerEndPromptHandled = (
   const task = findOrFailTask(runtime.cache, taskId);
 
   if (isCheckItem(task)) {
-    markCheckItemComplete(task);
+    completeCheckItem(runtime, task);
   } else {
     moveCardAndUpdateDoneList(runtime, task, action);
   }

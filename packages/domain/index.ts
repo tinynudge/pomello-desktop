@@ -21,6 +21,7 @@ export type { NoteType } from './NoteType';
 export type { OnNoteCreate } from './OnNoteCreate';
 export type { OnTaskCreate } from './OnTaskCreate';
 export type { PomelloConfig } from './PomelloConfig';
+export { PomelloEventType } from './PomelloEventType';
 export type { PomelloServiceConfig } from './PomelloServiceConfig';
 export type { RegisterStoreOptions } from './RegisterStoreOptions';
 export type { RemoveListenerFunction } from './RemoveListenerFunction';

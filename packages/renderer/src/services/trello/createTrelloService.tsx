@@ -8,6 +8,7 @@ import getTaskCompleteItems from './getTaskCompleteItems';
 import getTaskTimerEndItems from './getTaskTimerEndItems';
 import sanitizeTrelloError from './helpers/sanitizeTrelloError';
 import onNoteCreate from './onNoteCreate';
+import onPomelloEvent from './onPomelloEvent';
 import onTaskCompletePromptHandled from './onTaskCompletePromptHandled';
 import onTaskCreate from './onTaskCreate';
 import onTaskSelect from './onTaskSelect';
@@ -57,10 +58,11 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,
     onNoteCreate: onNoteCreate.bind(null, trelloRuntime),
+    onPomelloEvent: onPomelloEvent.bind(null, trelloRuntime),
     onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, trelloRuntime),
+    onTaskCreate: onTaskCreate.bind(null, trelloRuntime),
     onTaskSelect: onTaskSelect.bind(null, trelloRuntime),
     onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, trelloRuntime),
-    onTaskCreate: onTaskCreate.bind(null, trelloRuntime),
   };
 };
 
