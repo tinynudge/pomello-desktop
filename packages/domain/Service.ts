@@ -8,7 +8,6 @@ import { OnNoteCreate } from './OnNoteCreate';
 import { OnTaskCreate } from './OnTaskCreate';
 import { PomelloEventType } from './PomelloEventType';
 import { SelectItem } from './SelectItem';
-import { SelectOptionType } from './SelectOptionType';
 import { SelectTaskView } from './SelectTaskView';
 import { ServiceContainer } from './ServiceContainer';
 import { TaskCompleteItems } from './TaskCompleteItems';
@@ -24,7 +23,7 @@ export interface Service {
   getSelectTaskHeading?(): string;
   getTaskCompleteItems?(taskId: string): TaskCompleteItems;
   getTaskHeading?(): string;
-  getTaskLabel?(task: SelectOptionType): string;
+  getTaskLabel?(taskId: string): string;
   getTaskTimerEndItems?(currentTaskId: string): TaskTimerEndItems;
   handleError?: ErrorHandler;
   id: string;

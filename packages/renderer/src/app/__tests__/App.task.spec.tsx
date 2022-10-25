@@ -59,14 +59,14 @@ describe('App - Task', () => {
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'custom', label: 'Task' }]),
-          getTaskLabel: ({ label }) => `Custom ${label}`,
+          getTaskLabel: id => `Custom ${id}`,
         },
       },
     });
 
     await simulate.selectTask('custom');
 
-    expect(screen.getByText('Custom Task')).toBeInTheDocument();
+    expect(screen.getByText('Custom custom')).toBeInTheDocument();
   });
 
   it('should show the correct dial actions', async () => {

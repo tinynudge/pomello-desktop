@@ -1,8 +1,15 @@
 import createServiceConfig from '@/shared/helpers/createServiceConfig';
-import { ActiveService, Logger, ServiceConfig, ServiceRegistry } from '@domain';
+import { ActiveService, Logger, ServiceConfig, ServiceRegistry, Settings } from '@domain';
 import { useEffect, useState } from 'react';
 import useTranslation from '../useTranslation';
 import createTranslator from './createTranslator';
+
+interface UseInitializeServiceOptions {
+  logger: Logger;
+  serviceId?: string;
+  services: ServiceRegistry;
+  settings: Settings;
+}
 
 type UseInitializeService = ServiceIdle | ServiceInitializing | ServiceReady;
 
@@ -21,11 +28,12 @@ type ServiceReady = {
   status: 'READY';
 };
 
-const useInitializeService = (
-  logger: Logger,
-  services: ServiceRegistry,
-  serviceId?: string
-): UseInitializeService => {
+const useInitializeService = ({
+  logger,
+  services,
+  serviceId,
+  settings,
+}: UseInitializeServiceOptions): UseInitializeService => {
   const { addNamespace, removeNamespace } = useTranslation();
   const [isReady, setReady] = useState(true);
 
@@ -60,6 +68,7 @@ const useInitializeService = (
         service: serviceFactory({
           config: config as null,
           logger,
+          settings,
           translate: createTranslator(translations),
         }),
         config,
@@ -75,7 +84,7 @@ const useInitializeService = (
 
       removeNamespace('service');
     };
-  }, [addNamespace, logger, removeNamespace, serviceId, services]);
+  }, [addNamespace, logger, removeNamespace, serviceId, services, settings]);
 
   useEffect(() => {
     activeService?.service.onMount?.();

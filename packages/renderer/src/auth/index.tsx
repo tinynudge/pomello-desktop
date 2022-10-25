@@ -14,7 +14,8 @@ const renderAuth = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [themeCss, translations] = await Promise.all([
+  const [settings, themeCss, translations] = await Promise.all([
+    window.app.getSettings(),
     window.app.getThemeCss(),
     window.app.getTranslations(),
   ]);
@@ -29,7 +30,12 @@ const renderAuth = async () => {
   createRoot(container).render(
     <StrictMode>
       <TranslationsProvider commonTranslations={translations}>
-        <Auth authWindow={JSON.parse(authParm)} logger={createLogger()} services={services} />
+        <Auth
+          authWindow={JSON.parse(authParm)}
+          logger={createLogger()}
+          services={services}
+          settings={settings}
+        />
       </TranslationsProvider>
     </StrictMode>
   );
