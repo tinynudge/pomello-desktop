@@ -75,7 +75,7 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
     });
   });
 
-  const { activeService, status } = useInitializeService(logger, services, serviceId);
+  const { activeService, status } = useInitializeService({ logger, services, serviceId, settings });
 
   const service = usePomelloService();
   useEffect(() => {

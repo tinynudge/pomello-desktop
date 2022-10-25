@@ -27,4 +27,18 @@ describe('Trello service - Task', () => {
 
     expect(screen.getByRole('heading', { name: 'World Domination: Tasks' })).toBeInTheDocument();
   });
+
+  it('should not show the pomodoro marker in the task label', async () => {
+    const { simulate } = await mountTrelloService({
+      trelloApi: {
+        fetchCardsByListId: [
+          generateTrelloCard({ id: 'become-kinda-rich', name: '6 🍅 Become kinda rich' }),
+        ],
+      },
+    });
+
+    await simulate.selectTask('become-kinda-rich');
+
+    expect(screen.getByText('Become kinda rich')).toBeInTheDocument();
+  });
 });

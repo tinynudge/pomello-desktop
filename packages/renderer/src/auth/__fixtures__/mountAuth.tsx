@@ -34,7 +34,12 @@ const mountAuth = (options: MountAuthOptions = {}) => {
 
   const result = render(
     <TranslationsProvider commonTranslations={translations}>
-      <Auth authWindow={authWindow} logger={createMockLogger()} services={services} />
+      <Auth
+        authWindow={authWindow}
+        logger={createMockLogger()}
+        services={services}
+        settings={settings}
+      />
     </TranslationsProvider>
   );
 

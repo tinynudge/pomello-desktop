@@ -45,7 +45,7 @@ const useCurrentTask = (): CurrentTask => {
   }
 
   const currentTaskLabel = useMemo(
-    () => getTaskLabel?.(currentTask) ?? currentTask.label,
+    () => getTaskLabel?.(currentTask.id) ?? currentTask.label,
     [currentTask, getTaskLabel]
   );
 

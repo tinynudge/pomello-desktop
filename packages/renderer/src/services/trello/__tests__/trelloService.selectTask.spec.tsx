@@ -167,6 +167,50 @@ describe('Trello service - Select task', () => {
     });
   });
 
+  it('should not show pomodoro markers in the options', async () => {
+    const { appApi, simulate } = await mountTrelloService({
+      trelloApi: {
+        fetchCardsByListId: [
+          generateTrelloCard({
+            checklists: [
+              generateTrelloChecklist({
+                checkItems: [
+                  generateTrelloCheckItem({
+                    id: 'do-specific-stuff',
+                    name: '2.125 🍅 Do specific stuff',
+                  }),
+                ],
+                id: 'tasks',
+                name: 'Tasks',
+              }),
+            ],
+            id: 'do-stuff',
+            name: '6 🍅 Do stuff',
+          }),
+        ],
+      },
+    });
+
+    await simulate.waitForSelectTaskView();
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            { id: 'do-stuff', label: 'Do stuff' },
+            {
+              id: 'tasks',
+              label: 'Tasks',
+              type: 'group',
+              items: [{ id: 'do-specific-stuff', label: 'Do specific stuff' }],
+            },
+            { id: 'switch-lists', label: 'Switch to a different list', type: 'customOption' },
+          ],
+        })
+      );
+    });
+  });
+
   it('should be able to return to the select list view', async () => {
     const { appApi, simulate } = await mountTrelloService({
       config: {
