@@ -61,7 +61,7 @@ const mountTrelloService = async ({
 }: MountTrelloServiceOptions = {}) => {
   cache = createMockCache<TrelloCache>();
 
-  mockServer.use(
+  mockServer.resetHandlers(
     rest.get(
       `${TRELLO_API_URL}members/me`,
       createRestResolver<TrelloMember>(generateTrelloMember(), trelloApi?.fetchBoardsAndLists)

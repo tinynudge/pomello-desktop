@@ -10,6 +10,12 @@ import generateTrelloList from '../__fixtures__/generateTrelloList';
 import generateTrelloMember from '../__fixtures__/generateTrelloMember';
 import mountTrelloService, { waitFor } from '../__fixtures__/mountTrelloService';
 
+vi.mock('../api/addComment', () => ({ default: vi.fn() }));
+vi.mock('../api/updateComment', () => ({ default: vi.fn() }));
+
+const mockAddComment = vi.mocked(addComment).mockResolvedValue(generateTrelloCardAction());
+const mockUpdateComment = vi.mocked(updateComment);
+
 describe('Trello service - Log', () => {
   beforeEach(() => {
     vi.useFakeTimers({
@@ -19,23 +25,23 @@ describe('Trello service - Log', () => {
 
     const date = new Date(2022, 9, 10, 13, 2, 23);
     vi.setSystemTime(date);
-
-    vi.mock('../api/addComment');
-    vi.mock('../api/updateComment', () => ({ default: vi.fn() }));
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
     vi.useRealTimers();
   });
 
-  it("should add a task started entry when a card's task timer starts", async () => {
-    const mockAddComment = vi.mocked(addComment);
+  afterAll(() => {
+    vi.restoreAllMocks();
+  });
 
+  it("should add a task started entry when a card's task timer starts", async () => {
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -55,12 +61,11 @@ describe('Trello service - Log', () => {
   });
 
   it("should add a task started entry when a checklist item's task timer starts", async () => {
-    const mockAddComment = vi.mocked(addComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -89,12 +94,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a task started entry when switching to a new card', async () => {
-    const mockAddComment = vi.mocked(addComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -119,12 +123,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a task paused entry when pausing a timer', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -146,12 +149,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a task resumed entry when resuming a timer', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -177,12 +179,11 @@ describe('Trello service - Log', () => {
   });
 
   it("should add a task ended and update the total time when a card's task timer ends", async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -210,12 +211,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a task ended and update the total time when a task is switched', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -244,12 +244,11 @@ describe('Trello service - Log', () => {
   });
 
   it("should add a check item stopped and update the total time when a check item's task timer ends", async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -286,12 +285,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should handle logs where the time spent is less than a minute', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -319,12 +317,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should handle logs where the time spent contains exactly one minute', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -360,12 +357,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should handle logs where the time spent is less than an hour', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -379,7 +375,7 @@ describe('Trello service - Log', () => {
             actions: [
               generateTrelloCardAction({
                 data: {
-                  text: '**Pomello Log**\n \n---\n**Total time spent:** 30 minutes\n---\nTask stopped - *9:30 pm on Oct 9, 2022*\nTask started - *9:00 pm on Oct 9, 2022*\n \n>*#eyJ0b3RhbCI6MTgwMH0==*\n \n*Do not delete. Please avoid editing this comment.*',
+                  text: '**Pomello Log**\n \n---\n**Total time spent:** 30 minutes\n---\nTask stopped - *9:30 pm on Oct 9, 2022*\nTask started - *9:00 pm on Oct 9, 2022*\n \n>*#eyJ0b3RhbCI6MTgwMH0=*\n \n*Do not delete. Please avoid editing this comment.*',
                 },
                 id: 'MY_ACTION_ID',
               }),
@@ -401,12 +397,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should handle logs where the time spent is exactly one hour', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -442,12 +437,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should handle logs where the time spent is many hours', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -483,12 +477,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a task voided entry when a task is voided mid-timer', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -513,12 +506,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a task voided entry when a task is voided after a timer ends', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -543,12 +535,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a check item voided entry when a check item is voided mid-timer', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -586,12 +577,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a check item voided entry when a task is voided after a timer ends', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -625,13 +615,12 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a task moved entry when a card to moved to another list', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         currentList: 'MY_FIRST_LIST',
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
@@ -666,12 +655,11 @@ describe('Trello service - Log', () => {
   });
 
   it('should add a check item completed entry when a card to marked as complete', async () => {
-    const mockUpdateComment = vi.mocked(updateComment);
-
     const { simulate } = await mountTrelloService({
       config: {
         preferences: {
           global: {
+            addChecks: false,
             keepLogs: true,
           },
         },
