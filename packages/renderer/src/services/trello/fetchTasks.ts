@@ -1,8 +1,8 @@
 import assertNonNullish from '@/shared/helpers/assertNonNullish';
+import parseTaskName from '@/shared/helpers/parseTaskName';
 import { SelectItem } from '@domain';
 import fetchCardsByListId from './api/fetchCardsByListId';
 import { TrelloCard, TrelloCheckItem } from './domain';
-import parseName from './helpers/parseName';
 import { TrelloRuntime } from './TrelloRuntime';
 
 const fetchTasks = async ({
@@ -27,7 +27,7 @@ const fetchTasks = async ({
       const items: SelectItem[] = [
         {
           id: card.id,
-          label: parseName(card.name, settings.titleMarker).title,
+          label: parseTaskName(card.name, settings.titleMarker).name,
         },
       ];
 
@@ -50,7 +50,7 @@ const fetchTasks = async ({
 
             checklistItems.push({
               id: checkItem.id,
-              label: parseName(checkItem.name, settings.titleMarker).title,
+              label: parseTaskName(checkItem.name, settings.titleMarker).name,
             });
           });
 

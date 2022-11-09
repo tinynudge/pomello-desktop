@@ -1,7 +1,11 @@
 import { AxiosError } from 'axios';
 import produce from 'immer';
 
-const sanitizeTrelloError = (error: AxiosError) => {
+const sanitizeTrelloError = (error: unknown) => {
+  if (!(error instanceof AxiosError)) {
+    return error;
+  }
+
   const details = error.response ?? error.toJSON();
 
   return produce<any>(details, draft => {
