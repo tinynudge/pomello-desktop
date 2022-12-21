@@ -103,6 +103,9 @@ describe('Trello service - Log', () => {
           },
         },
       },
+      settings: {
+        taskTime: 120,
+      },
       trelloApi: {
         fetchCardsByListId: [
           generateTrelloCard({ id: 'MY_CARD_ID' }),
@@ -113,12 +116,21 @@ describe('Trello service - Log', () => {
 
     await simulate.selectTask('MY_CARD_ID');
     await simulate.startTimer();
+    await simulate.advanceTimer(50);
     await simulate.hotkey('switchTask');
     await simulate.selectTask('MY_SECOND_CARD_ID');
+    await simulate.advanceTimer(70);
 
-    expect(mockAddComment).toHaveBeenCalledWith(
+    expect(mockAddComment).toHaveBeenNthCalledWith(
+      2,
       'MY_SECOND_CARD_ID',
-      '**Pomello Log**\n \n---\n**Total time spent:** **\n---\nTask started - *1:02 pm on Oct 10, 2022*\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
+      '**Pomello Log**\n \n---\n**Total time spent:** **\n---\nTask started - *1:03 pm on Oct 10, 2022*\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
+    );
+
+    expect(mockUpdateComment).toHaveBeenNthCalledWith(
+      2,
+      'TRELLO_ACTION_ID',
+      '**Pomello Log**\n \n---\n**Total time spent:** 1 minute\n---\nTask stopped - *1:04 pm on Oct 10, 2022*\nTask started - *1:03 pm on Oct 10, 2022*\n \n>*#eyJ0b3RhbCI6NzB9*\n \n*Do not delete. Please avoid editing this comment.*'
     );
   });
 
@@ -531,6 +543,41 @@ describe('Trello service - Log', () => {
     expect(mockUpdateComment).toHaveBeenLastCalledWith(
       'TRELLO_ACTION_ID',
       '**Pomello Log**\n \n---\n**Total time spent:** **\n---\nTask voided - *1:03 pm on Oct 10, 2022*\nTask started - *1:02 pm on Oct 10, 2022*\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
+    );
+  });
+
+  it('should add a task voided entry when a switched task is voided after a timer ends', async () => {
+    const { simulate } = await mountTrelloService({
+      config: {
+        preferences: {
+          global: {
+            addChecks: false,
+            keepLogs: true,
+          },
+        },
+      },
+      settings: {
+        taskTime: 120,
+      },
+      trelloApi: {
+        fetchCardsByListId: [
+          generateTrelloCard({ id: 'MY_CARD_ID' }),
+          generateTrelloCard({ id: 'MY_SECOND_CARD_ID' }),
+        ],
+      },
+    });
+
+    await simulate.selectTask('MY_CARD_ID');
+    await simulate.startTimer();
+    await simulate.advanceTimer(60);
+    await simulate.hotkey('switchTask');
+    await simulate.selectTask('MY_SECOND_CARD_ID');
+    await simulate.advanceTimer(60);
+    await simulate.hotkey('voidTask');
+
+    expect(mockUpdateComment).toHaveBeenLastCalledWith(
+      'TRELLO_ACTION_ID',
+      '**Pomello Log**\n \n---\n**Total time spent:** **\n---\nTask voided - *1:04 pm on Oct 10, 2022*\nTask started - *1:03 pm on Oct 10, 2022*\n \n>*#eyJ0b3RhbCI6MH0=*\n \n*Do not delete. Please avoid editing this comment.*'
     );
   });
 
