@@ -16,7 +16,7 @@ const onTaskEnd = (runtime: TrelloRuntime, event: PomelloEvent): void => {
     }
 
     if (preferences.keepLogs) {
-      const time = event.timer.totalTime - event.timer.time;
+      const time = event.timer.adjustedTotalTime - event.timer.time;
       const entry = isCheckItem(task) ? 'commentLogCheckItemStop' : 'commentLogTaskStop';
 
       log.addEntry(translate(entry)).updateTimeSpent(time).save();

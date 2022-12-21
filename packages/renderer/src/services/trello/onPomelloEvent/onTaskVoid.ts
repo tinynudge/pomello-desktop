@@ -11,8 +11,8 @@ const onTaskVoid = (runtime: TrelloRuntime, event: PomelloEvent): void => {
     const task = findOrFailTask(cache, event.taskId);
     const entry = isCheckItem(task) ? 'commentLogCheckItemVoid' : 'commentLogTaskVoid';
 
-    if (event.timer.totalTime === event.timer.time) {
-      log.removeLastEntry().updateTimeSpent(event.timer.totalTime * -1);
+    if (event.timer.adjustedTotalTime === event.timer.time) {
+      log.removeLastEntry().updateTimeSpent(event.timer.adjustedTotalTime * -1);
     }
 
     log.addEntry(translate(entry)).save();

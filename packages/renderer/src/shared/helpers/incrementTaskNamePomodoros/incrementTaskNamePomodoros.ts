@@ -7,6 +7,7 @@ interface IncrementTaskNamePomodorosOptions {
   mode: string;
   taskName: string;
   timer: {
+    adjustedTotalTime: number;
     time: number;
     totalTime: number;
   };
@@ -20,7 +21,7 @@ const incrementTaskNamePomodoros = ({
 }: IncrementTaskNamePomodorosOptions): string => {
   const { pomodoroCount, name } = parseTaskName(taskName, marker);
 
-  const remainingTime = timer.totalTime - timer.time;
+  const remainingTime = timer.adjustedTotalTime - timer.time;
   const addedPomodoros = roundToNearestEighth(remainingTime / timer.totalTime);
   const totalPomodoros = pomodoroCount + addedPomodoros;
 

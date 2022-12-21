@@ -8,7 +8,11 @@ import isCheckItem from './isCheckItem';
 const updateTaskNamePomodoros = (
   runtime: TrelloRuntime,
   taskId: string,
-  timer: { time: number; totalTime: number }
+  timer: {
+    adjustedTotalTime: number;
+    time: number;
+    totalTime: number;
+  }
 ): void => {
   const { cache, settings } = runtime;
 
