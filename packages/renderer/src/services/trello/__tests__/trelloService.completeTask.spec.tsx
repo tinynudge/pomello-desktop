@@ -145,7 +145,7 @@ describe('Trello service - Complete task', () => {
     });
   });
 
-  it('should move the card to the target list Trello', async () => {
+  it('should move the card to the target list in Trello', async () => {
     const mockMoveCardToList = vi.mocked(moveCardToList);
 
     const { simulate } = await mountTrelloService({
@@ -177,6 +177,49 @@ describe('Trello service - Complete task', () => {
     await simulate.selectOption('DONE');
 
     expect(mockMoveCardToList).toHaveBeenCalled();
+  });
+
+  it('should archive the card upon moving the card in Trello if enabled', async () => {
+    const mockMoveCardToList = vi.mocked(moveCardToList);
+
+    const { simulate } = await mountTrelloService({
+      config: {
+        currentList: 'PHASE_ONE',
+        preferences: {
+          global: {
+            archiveCards: true,
+          },
+        },
+      },
+      settings: {
+        taskTime: 5,
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              name: 'World Domination',
+              lists: [
+                generateTrelloList({ id: 'PHASE_ONE', name: 'Phase one' }),
+                generateTrelloList({ id: 'DONE', name: 'Done' }),
+              ],
+            }),
+          ],
+        }),
+        fetchCardsByListId: [generateTrelloCard({ id: 'MY_TASK' })],
+      },
+    });
+
+    await simulate.selectTask('MY_TASK');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.selectOption('DONE');
+
+    expect(mockMoveCardToList).toHaveBeenCalledWith(
+      expect.objectContaining({
+        closed: true,
+      })
+    );
   });
 
   it('should mark the checklist item as complete in Trello', async () => {
