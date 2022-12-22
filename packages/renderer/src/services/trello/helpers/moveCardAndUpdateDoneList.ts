@@ -33,7 +33,12 @@ const moveCardAndUpdateDoneList = (
 
   config.set('preferences', updatedPreferences);
 
-  moveCardToList(task, listId, position);
+  moveCardToList({
+    card: task,
+    closed: preferences.archiveCards,
+    listId,
+    position,
+  });
 };
 
 export default moveCardAndUpdateDoneList;
