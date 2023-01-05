@@ -34,6 +34,7 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     });
   }, []);
 
+  const isReady = useRef(false);
   const [activeOptionId, setActiveOptionId] = useState<string>();
 
   const [query, setQuery] = useState('');
@@ -62,12 +63,6 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     setActiveOptionId,
   });
 
-  useUpdateWindowDimensions({
-    container: listRef.current,
-    items: filteredItems,
-    maxRows: settings.selectMaxRows,
-  });
-
   useEffect(() => {
     return window.app.onShowSelect(() => {
       inputRef.current?.focus();
@@ -78,6 +73,17 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     return window.app.onSelectHide(() => {
       setQuery('');
       setActiveOptionId(undefined);
+    });
+  }, []);
+
+  useEffect(() => {
+    return window.app.onSelectReset(() => {
+      isReady.current = false;
+
+      setQuery('');
+      setActiveOptionId(undefined);
+      setPlaceholder(undefined);
+      setNoResultsMessage(undefined);
     });
   }, []);
 
@@ -93,6 +99,23 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
       }
     });
   }, []);
+
+  const handleDimensionsUpdate = useCallback(() => {
+    if (isReady.current) {
+      return;
+    }
+
+    isReady.current = true;
+
+    window.app.notifySelectReady();
+  }, []);
+
+  useUpdateWindowDimensions({
+    container: listRef.current,
+    items: filteredItems,
+    maxRows: settings.selectMaxRows,
+    onUpdate: handleDimensionsUpdate,
+  });
 
   const handleInputEnter = () => {
     selectActiveOption();

@@ -8,8 +8,11 @@ import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
 import hideSelect from './hideSelect';
 import logMessage from './logMessage';
+import notifySelectReady from './notifySelectReady';
 import onSelectChange from './onSelectChange';
 import onSelectHide from './onSelectHide';
+import onSelectReady from './onSelectReady';
+import onSelectReset from './onSelectReset';
 import onServicesChange from './onServicesChange';
 import onSetSelectItems from './onSetSelectItems';
 import onShowSelect from './onShowSelect';
@@ -17,6 +20,7 @@ import onThemeCssChange from './onThemeCssChange';
 import openUrl from './openUrl';
 import quitApp from './quitApp';
 import registerServiceConfig from './registerServiceConfig';
+import resetSelect from './resetSelect';
 import selectOption from './selectOption';
 import setActiveServiceId from './setActiveServiceId';
 import setSelectBounds from './setSelectBounds';
@@ -36,8 +40,11 @@ export const api = {
   getTranslations,
   hideSelect,
   logMessage,
+  notifySelectReady,
   onSelectChange,
   onSelectHide,
+  onSelectReady,
+  onSelectReset,
   onServicesChange,
   onSetSelectItems,
   onShowSelect,
@@ -45,6 +52,7 @@ export const api = {
   openUrl,
   quitApp,
   registerServiceConfig,
+  resetSelect,
   selectOption,
   setActiveServiceId,
   setSelectBounds,

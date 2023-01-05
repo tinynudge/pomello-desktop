@@ -16,7 +16,7 @@ describe('App - Select task', () => {
   });
 
   it('should automatically open the select window after switching tasks', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, emitAppApiEvent, simulate } = mountApp({
       settings: {
         taskTime: 3,
       },
@@ -27,13 +27,15 @@ describe('App - Select task', () => {
     await simulate.hotkey('switchTask');
 
     await waitFor(() => {
+      emitAppApiEvent('onSelectReady');
+
       expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
       expect(appApi.showSelect).toHaveBeenCalled();
     });
   });
 
   it('should automatically open the select window after completing tasks', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, emitAppApiEvent, simulate } = mountApp({
       settings: {
         taskTime: 3,
       },
@@ -44,6 +46,8 @@ describe('App - Select task', () => {
     await simulate.hotkey('completeTaskEarly');
 
     await waitFor(() => {
+      emitAppApiEvent('onSelectReady');
+
       expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
       expect(appApi.showSelect).toHaveBeenCalled();
     });

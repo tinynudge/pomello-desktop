@@ -72,11 +72,7 @@ const handleShowSelect = async (
     orientation: exceedsBottomEdge ? 'bottom' : 'top',
   });
 
-  // The timeout fixes an issue during development when the SelectField mounts
-  // and unmounts twice during StrictMode. The double-firing of the useEffect
-  // useHideSelectOnUnmount seems to cancel out the final showSelect call when
-  // useShowSelectOnMount's defaultOpen is true.
-  setTimeout(() => selectWindow.show(), 0);
+  selectWindow.show();
 };
 
 export default handleShowSelect;

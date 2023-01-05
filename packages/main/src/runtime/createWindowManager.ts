@@ -77,11 +77,16 @@ const createWindowManager = (): WindowManager => {
     return Array.from(windows.values());
   };
 
+  const getWindow = (id: string): BrowserWindow | undefined => {
+    return windows.get(id);
+  };
+
   return {
     destroyWindow,
     findOrCreateWindow,
     findOrFailWindow,
     getAllWindows,
+    getWindow,
   };
 };
 
