@@ -1,13 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 const useShowSelectOnMount = (shouldOpen: boolean, showSelect: () => void) => {
-  const shouldOpenRef = useRef(shouldOpen);
-
   useEffect(() => {
-    if (shouldOpenRef.current) {
-      showSelect();
-    }
-  }, [showSelect]);
+    return window.app.onSelectReady(() => {
+      if (shouldOpen) {
+        showSelect();
+      }
+    });
+  }, [shouldOpen, showSelect]);
 };
 
 export default useShowSelectOnMount;

@@ -6,12 +6,14 @@ interface UseUpdateWindowDimensionsOptions {
   container: HTMLElement | null;
   items: SelectItem[];
   maxRows: number;
+  onUpdate(): void;
 }
 
 const useUpdateWindowDimensions = ({
   container,
   items,
   maxRows,
+  onUpdate,
 }: UseUpdateWindowDimensionsOptions): void => {
   const didSetWidth = useRef(false);
   const windowOrientation = useRef<'bottom' | 'top'>();
@@ -60,7 +62,9 @@ const useUpdateWindowDimensions = ({
       bounds,
       orientation: windowOrientation.current,
     });
-  }, [container, maxRows, items]);
+
+    onUpdate();
+  }, [container, maxRows, items, onUpdate]);
 };
 
 export default useUpdateWindowDimensions;

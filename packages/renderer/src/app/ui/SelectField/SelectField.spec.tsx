@@ -32,9 +32,11 @@ describe('UI - Select Field', () => {
   });
 
   it('should open the select automatically if specified', () => {
-    const { appApi } = mountComponent(
+    const { appApi, emitAppApiEvent } = mountComponent(
       <SelectField defaultOpen items={[]} onChange={vi.fn()} placeholder="Pick a Pokemon" />
     );
+
+    emitAppApiEvent('onSelectReady');
 
     expect(appApi.showSelect).toHaveBeenCalled();
   });
@@ -67,7 +69,7 @@ describe('UI - Select Field', () => {
     expect(onSelectChange).toHaveBeenCalledWith('foo');
   });
 
-  it('should hide the select when unmounted', async () => {
+  it('should reset the select when unmounted', async () => {
     const Container: FC = () => {
       const [showSelect, setShowSelect] = useState(true);
 
@@ -83,6 +85,6 @@ describe('UI - Select Field', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Hide select' }));
 
-    expect(appApi.hideSelect).toHaveBeenCalled();
+    expect(appApi.resetSelect).toHaveBeenCalled();
   });
 });

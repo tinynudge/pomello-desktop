@@ -46,12 +46,19 @@ const createMockAppApi = (
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),
     logMessage: vi.fn(),
+    notifySelectReady: vi.fn(),
     onThemeCssChange: vi.fn(),
     onSelectChange: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectChange', callback))
     ),
     onSelectHide: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectHide', callback))
+    ),
+    onSelectReady: vi.fn(
+      appApi.onSelectReady ?? (callback => addListener('onSelectReady', callback))
+    ),
+    onSelectReset: vi.fn(
+      appApi.onSelectReset ?? (callback => addListener('onSelectReset', callback))
     ),
     onServicesChange: vi.fn(
       appApi.onServicesChange ?? (callback => addListener('onServicesChange', callback))
@@ -67,6 +74,7 @@ const createMockAppApi = (
         ((serviceId, { defaults }) =>
           Promise.resolve(mockRegisterServiceConfig(serviceId, defaults)))
     ),
+    resetSelect: vi.fn(),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),
     setActiveServiceId: vi.fn(),
     setSelectBounds: vi.fn(),
