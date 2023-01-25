@@ -1,3 +1,19 @@
+import {
+  selectOverlayView,
+  selectServiceId,
+  selectSettings,
+  serviceChange,
+  setOverlayView,
+} from '@/app/appSlice';
+import { DialActionsProvider } from '@/app/context/DialActionsContext';
+import { HotkeysProvider } from '@/app/context/HotkeysContext';
+import usePomelloService from '@/app/hooks/usePomelloService';
+import useTimerSounds from '@/app/hooks/useTimerSounds';
+import Content from '@/app/ui/Content';
+import LoadingText from '@/app/ui/LoadingText';
+import AddNoteView from '@/app/views/AddNoteView';
+import CreateTaskView from '@/app/views/CreateTaskView';
+import SelectServiceView from '@/app/views/SelectServiceView';
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
@@ -6,25 +22,9 @@ import { PomelloEvent } from '@tinynudge/pomello-service';
 import cc from 'classcat';
 import { FC, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Layout from '../Layout';
+import Routes from '../Routes';
 import styles from './App.module.scss';
-import {
-  selectOverlayView,
-  selectServiceId,
-  selectSettings,
-  serviceChange,
-  setOverlayView,
-} from './appSlice';
-import Layout from './components/Layout';
-import Routes from './components/Routes';
-import { DialActionsProvider } from './context/DialActionsContext';
-import { HotkeysProvider } from './context/HotkeysContext';
-import usePomelloService from './hooks/usePomelloService';
-import useTimerSounds from './hooks/useTimerSounds';
-import Content from './ui/Content';
-import LoadingText from './ui/LoadingText';
-import AddNoteView from './views/AddNoteView';
-import CreateTaskView from './views/CreateTaskView';
-import SelectServiceView from './views/SelectServiceView';
 
 interface AppProps {
   hotkeys: LabeledHotkeys;
@@ -78,6 +78,16 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   const { activeService, status } = useInitializeService({ logger, services, serviceId, settings });
 
   const service = usePomelloService();
+
+  useEffect(() => {
+    // This should only fire in dev as <App> shouldn't unmount in production. We
+    // add this to avoid any potential cache issues due to useInitializeService
+    // re-running and clearing any previous cache that existed before HMR.
+    return () => {
+      service.reset({ reinitialize: true });
+    };
+  }, [service]);
+
   useEffect(() => {
     const onPomelloEvent = activeService?.service.onPomelloEvent;
 
