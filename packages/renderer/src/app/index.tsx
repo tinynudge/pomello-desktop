@@ -1,4 +1,3 @@
-import App from '@/app/App';
 import { PomelloProvider } from '@/app/context/PomelloContext';
 import createStore from '@/app/createStore';
 import services from '@/services';
@@ -12,6 +11,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
+import App from './components/App';
 
 const renderApp = async () => {
   const queryClient = new QueryClient({

@@ -22,7 +22,7 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import translations from '../../../../translations/en-US.json';
-import App from '../App';
+import App from '../components/App';
 import { PomelloProvider } from '../context/PomelloContext';
 import createStore from '../createStore';
 import createMockPomelloService from './createMockPomelloService';
