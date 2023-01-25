@@ -53,7 +53,9 @@ describe('Auth', () => {
       authWindow: { type: 'pomello', action: 'authorize' },
     });
 
-    await userEvent.type(screen.getByRole('textbox'), 'MY_SECRET_TOKEN');
+    const encryptedToken = window.btoa(JSON.stringify({ pomelloToken: 'MY_SECRET_TOKEN' }));
+
+    await userEvent.type(screen.getByRole('textbox'), encryptedToken);
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
 
     await waitFor(() => {
@@ -76,7 +78,9 @@ describe('Auth', () => {
       authWindow: { type: 'pomello', action: 'authorize' },
     });
 
-    await userEvent.type(screen.getByRole('textbox'), 'MY_SECRET_TOKEN');
+    const encryptedToken = window.btoa(JSON.stringify({ pomelloToken: 'MY_SECRET_TOKEN' }));
+
+    await userEvent.type(screen.getByRole('textbox'), encryptedToken);
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
 
     await screen.findByText('Success! You may now close your browser window.');

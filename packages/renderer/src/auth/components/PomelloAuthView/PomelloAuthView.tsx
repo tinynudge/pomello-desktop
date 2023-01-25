@@ -11,10 +11,14 @@ interface PomelloAuthViewProps {
 const PomelloAuthView: FC<PomelloAuthViewProps> = ({ action }) => {
   const { t } = useTranslation();
 
-  const handleTokenSubmit = async (token: string) => {
+  const handleTokenSubmit = async (input: string) => {
     const config = await getPomelloServiceConfig();
 
-    config.set('token', token);
+    const { pomelloToken } = JSON.parse(window.atob(input));
+    const encryptedToken = window.app.encryptValue(pomelloToken);
+
+    config.set('token', encryptedToken);
+    config.unregister();
   };
 
   return (

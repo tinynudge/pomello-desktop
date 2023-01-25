@@ -38,7 +38,7 @@ const createMockAppApi = (
 
   const api: AppApi = {
     decryptValue: vi.fn(appApi.decryptValue ?? (value => value)),
-    encryptValue: vi.fn(),
+    encryptValue: vi.fn(appApi.encryptValue ?? (value => value)),
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
