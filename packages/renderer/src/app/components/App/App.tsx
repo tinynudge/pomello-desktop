@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../Layout';
 import Routes from '../Routes';
 import styles from './App.module.scss';
+import useCheckPomelloAccount from './useCheckPomelloAccount';
 
 interface AppProps {
   hotkeys: LabeledHotkeys;
@@ -109,6 +110,8 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
       unsubscribeHandlers.forEach(({ type, handler }) => service.off(type, handler));
     };
   }, [activeService?.service.onPomelloEvent, service]);
+
+  useCheckPomelloAccount();
 
   const overlayView = useSelector(selectOverlayView);
 

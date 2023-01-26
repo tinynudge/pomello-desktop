@@ -1,8 +1,10 @@
 import { PomelloProvider } from '@/app/context/PomelloContext';
 import createStore from '@/app/createStore';
 import services from '@/services';
+import { PomelloApiProvider } from '@/shared/context/PomelloApiContext';
 import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import createPomelloApi from '@/shared/helpers/createPomelloApi';
 import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
 import createLogger from '@/__bootstrap__/createLogger';
 import createPomelloService from '@/__bootstrap__/createPomelloService';
@@ -53,9 +55,11 @@ const renderApp = async () => {
         <QueryClientProvider client={queryClient}>
           <PomelloProvider service={pomelloService}>
             <PomelloConfigProvider config={pomelloConfig}>
-              <TranslationsProvider commonTranslations={translations}>
-                <App hotkeys={hotkeys} logger={createLogger()} services={services} />
-              </TranslationsProvider>
+              <PomelloApiProvider pomelloApi={createPomelloApi(pomelloConfig)}>
+                <TranslationsProvider commonTranslations={translations}>
+                  <App hotkeys={hotkeys} logger={createLogger()} services={services} />
+                </TranslationsProvider>
+              </PomelloApiProvider>
             </PomelloConfigProvider>
           </PomelloProvider>
         </QueryClientProvider>
