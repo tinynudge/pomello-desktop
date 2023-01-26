@@ -5,6 +5,13 @@ import assertNonNullish from '../helpers/assertNonNullish';
 
 type Selector<TValue> = (config: PomelloServiceConfig) => TValue;
 
+type SetPomelloConfig = <TKey extends keyof PomelloServiceConfig = keyof PomelloServiceConfig>(
+  key: TKey,
+  value: PomelloServiceConfig[TKey]
+) => void;
+
+type UnsetPomelloConfig = (key: keyof PomelloServiceConfig) => void;
+
 export const usePomelloConfigSelector = <TValue>(selector: Selector<TValue>): TValue => {
   const pomelloConfig = useContext(PomelloConfigContext);
 
@@ -16,7 +23,7 @@ export const usePomelloConfigSelector = <TValue>(selector: Selector<TValue>): TV
   return useSyncExternalStore(pomelloConfig.onChange, () => selector(pomelloConfig.get()));
 };
 
-export const usePomelloConfigUpdater = () => {
+export const usePomelloConfigUpdater = (): [SetPomelloConfig, UnsetPomelloConfig] => {
   const pomelloConfig = useContext(PomelloConfigContext);
 
   assertNonNullish(
