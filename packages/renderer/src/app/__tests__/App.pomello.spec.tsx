@@ -123,6 +123,29 @@ describe('App - Pomello', () => {
     });
   });
 
+  it('should set checkPomelloStatus to false if disabled in the dialog', async () => {
+    const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 2 });
+
+    const { appApi } = mountApp({
+      appApi: {
+        showMessageBox: mockShowMessageBox,
+      },
+      pomelloApi: {
+        fetchUser: (_request, response, context) => response(context.status(401)),
+      },
+      pomelloConfig: {
+        token: undefined,
+      },
+      settings: {
+        checkPomelloStatus: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(appApi.updateSetting).toHaveBeenCalledWith('checkPomelloStatus', false);
+    });
+  });
+
   it('should show a notification if unable to connect to Pomello servers', async () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);

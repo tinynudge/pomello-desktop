@@ -15,6 +15,7 @@ import onSelectReady from './onSelectReady';
 import onSelectReset from './onSelectReset';
 import onServicesChange from './onServicesChange';
 import onSetSelectItems from './onSetSelectItems';
+import onSettingsChange from './onSettingsChange';
 import onShowSelect from './onShowSelect';
 import onThemeCssChange from './onThemeCssChange';
 import openUrl from './openUrl';
@@ -28,6 +29,7 @@ import setSelectItems from './setSelectItems';
 import showAuthWindow from './showAuthWindow';
 import showMessageBox from './showMessageBox';
 import showSelect from './showSelect';
+import updateSetting from './updateSetting';
 import writeClipboardText from './writeClipboardText';
 
 export const api = {
@@ -47,6 +49,7 @@ export const api = {
   onSelectReset,
   onServicesChange,
   onSetSelectItems,
+  onSettingsChange,
   onShowSelect,
   onThemeCssChange,
   openUrl,
@@ -60,6 +63,7 @@ export const api = {
   showAuthWindow,
   showMessageBox,
   showSelect,
+  updateSetting,
   writeClipboardText,
 };
 
