@@ -22,6 +22,7 @@ import handleShowMessageBox from '@/events/handleShowMessageBox';
 import handleShowSelect from '@/events/handleShowSelect';
 import handleThemeUpdate from '@/events/handleThemeUpdate';
 import handleUnsetStoreItem from '@/events/handleUnsetStoreItem';
+import handleUpdateSetting from '@/events/handleUpdateSetting';
 import { AppEvent, AppProtocol } from '@domain';
 import { ipcMain, nativeTheme, protocol } from 'electron';
 
@@ -46,6 +47,7 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.ShowMessageBox, handleShowMessageBox);
   ipcMain.handle(AppEvent.ShowSelect, handleShowSelect);
   ipcMain.handle(AppEvent.UnsetStoreItem, handleUnsetStoreItem);
+  ipcMain.handle(AppEvent.UpdateSetting, handleUpdateSetting);
 
   ipcMain.on(AppEvent.DecryptValue, handleDecryptValue);
   ipcMain.on(AppEvent.EncryptValue, handleEncryptValue);

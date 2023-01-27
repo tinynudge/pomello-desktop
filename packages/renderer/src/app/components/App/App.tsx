@@ -4,6 +4,7 @@ import {
   selectSettings,
   serviceChange,
   setOverlayView,
+  settingsChange,
 } from '@/app/appSlice';
 import { DialActionsProvider } from '@/app/context/DialActionsContext';
 import { HotkeysProvider } from '@/app/context/HotkeysContext';
@@ -76,18 +77,15 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
     });
   });
 
+  useEffect(() => {
+    return window.app.onSettingsChange(settings => {
+      dispatch(settingsChange(settings));
+    });
+  }, [dispatch]);
+
   const { activeService, status } = useInitializeService({ logger, services, serviceId, settings });
 
   const service = usePomelloService();
-
-  useEffect(() => {
-    // This should only fire in dev as <App> shouldn't unmount in production. We
-    // add this to avoid any potential cache issues due to useInitializeService
-    // re-running and clearing any previous cache that existed before HMR.
-    return () => {
-      service.reset({ reinitialize: true });
-    };
-  }, [service]);
 
   useEffect(() => {
     const onPomelloEvent = activeService?.service.onPomelloEvent;

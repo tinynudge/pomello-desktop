@@ -43,7 +43,7 @@ const useInitializeService = ({
     let config: ServiceConfig<void> | null = null;
 
     const initializeService = async () => {
-      if (!serviceId) {
+      if (!serviceId || activeService?.service.id === serviceId) {
         return;
       }
 
@@ -80,11 +80,21 @@ const useInitializeService = ({
     initializeService();
 
     return () => {
-      config?.unregister();
+      if (activeService?.service.id === serviceId) {
+        config?.unregister();
 
-      removeNamespace('service');
+        removeNamespace('service');
+      }
     };
-  }, [addNamespace, logger, removeNamespace, serviceId, services, settings]);
+  }, [
+    activeService?.service.id,
+    addNamespace,
+    logger,
+    removeNamespace,
+    serviceId,
+    services,
+    settings,
+  ]);
 
   useEffect(() => {
     activeService?.service.onMount?.();

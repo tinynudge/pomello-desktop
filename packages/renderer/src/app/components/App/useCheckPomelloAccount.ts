@@ -60,7 +60,7 @@ const useCheckPomelloAccount = () => {
           }
 
           if (response === 2) {
-            // TODO: Set checkPomelloStatus to false
+            window.app.updateSetting('checkPomelloStatus', false);
           }
         }
       },

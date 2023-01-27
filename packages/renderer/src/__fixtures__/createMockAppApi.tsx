@@ -66,6 +66,9 @@ const createMockAppApi = (
     onSetSelectItems: vi.fn(
       appApi.onSetSelectItems ?? (callback => addListener('onSetSelectItems', callback))
     ),
+    onSettingsChange: vi.fn(
+      appApi.onSettingsChange ?? (callback => addListener('onSettingsChange', callback))
+    ),
     onShowSelect: vi.fn(appApi.onShowSelect ?? (callback => addListener('onShowSelect', callback))),
     openUrl: vi.fn(),
     quitApp: vi.fn(),
@@ -84,6 +87,7 @@ const createMockAppApi = (
       appApi.showMessageBox ?? (() => Promise.resolve({ checkboxChecked: false, response: 0 }))
     ),
     showSelect: vi.fn(),
+    updateSetting: vi.fn(),
     writeClipboardText: vi.fn(),
   };
 

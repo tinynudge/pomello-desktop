@@ -29,6 +29,9 @@ export const appSlice = createSlice({
     serviceChange: (state, { payload }: PayloadAction<string | undefined>) => {
       state.serviceId = payload;
     },
+    settingsChange: (state, { payload }: PayloadAction<Settings>) => {
+      state.settings = payload;
+    },
     setOverlayView: (state, { payload }: PayloadAction<OverlayView>) => {
       state.overlayView = payload;
     },
@@ -38,8 +41,13 @@ export const appSlice = createSlice({
   },
 });
 
-export const { pomelloStateUpdate, serviceChange, setOverlayView, unsetOverlayView } =
-  appSlice.actions;
+export const {
+  pomelloStateUpdate,
+  serviceChange,
+  settingsChange,
+  setOverlayView,
+  unsetOverlayView,
+} = appSlice.actions;
 
 export const selectAppMode = ({ app }: RootState) =>
   app.pomelloState.timer?.isActive ? app.pomelloState.timer.type : undefined;
