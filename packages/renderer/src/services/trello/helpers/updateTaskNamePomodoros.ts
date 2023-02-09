@@ -14,14 +14,15 @@ const updateTaskNamePomodoros = (
     totalTime: number;
   }
 ): void => {
-  const { cache, settings } = runtime;
+  const { cache, getSettings } = runtime;
+  const { titleFormat, titleMarker } = getSettings();
 
   const task = findOrFailTask(cache, taskId);
 
   const updatedLabel = incrementTaskPomodoroCount({
     taskName: task.name,
-    marker: settings.titleMarker,
-    mode: settings.titleFormat,
+    marker: titleMarker,
+    mode: titleFormat,
     timer,
   });
 

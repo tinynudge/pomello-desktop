@@ -5,7 +5,7 @@ import { SelectItem, SelectOptionType } from '@domain';
 import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import getTasksCacheKey from '../helpers/getTasksCacheKey';
+import useTasksCacheKey from './useTasksCacheKey';
 
 interface CurrentTask {
   currentTask: SelectOptionType;
@@ -13,10 +13,11 @@ interface CurrentTask {
 }
 
 const useCurrentTask = (): CurrentTask => {
-  const { getTaskLabel, id } = useService();
+  const { getTaskLabel } = useService();
 
+  const tasksCacheKey = useTasksCacheKey();
   const queryClient = useQueryClient();
-  const tasks = queryClient.getQueryData<SelectItem[]>(getTasksCacheKey(id));
+  const tasks = queryClient.getQueryData<SelectItem[]>(tasksCacheKey);
 
   const currentTaskId = useSelector(selectCurrentTaskId);
 

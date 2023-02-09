@@ -26,7 +26,7 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
   const listRef = useRef<HTMLUListElement>(null);
 
   const [serviceId, setServiceId] = useState(initialServiceId);
-  const { activeService, status } = useInitializeService({ logger, services, serviceId, settings });
+  const { activeService, status } = useInitializeService({ logger, services, serviceId });
 
   useEffect(() => {
     return window.app.onServicesChange(services => {

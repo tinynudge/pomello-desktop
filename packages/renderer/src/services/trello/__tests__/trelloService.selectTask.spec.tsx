@@ -1,3 +1,4 @@
+import generatePomelloUser from '@/app/__fixtures__/generatePomelloUser';
 import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
 import generateTrelloCard from '../__fixtures__/generateTrelloCard';
 import generateTrelloCheckItem from '../__fixtures__/generateTrelloCheckItem';
@@ -159,6 +160,62 @@ describe('Trello service - Select task', () => {
                 { id: 'bread', label: 'Bread' },
                 { id: 'milk', label: 'Milk' },
               ],
+            },
+            { id: 'switch-lists', label: 'Switch to a different list', type: 'customOption' },
+          ],
+        })
+      );
+    });
+  });
+
+  it('should not show checklists if they are not a premium user', async () => {
+    const { appApi, simulate } = await mountTrelloService({
+      pomelloApi: {
+        fetchUser: generatePomelloUser({
+          type: 'free',
+        }),
+      },
+      trelloApi: {
+        fetchCardsByListId: [
+          generateTrelloCard({
+            checklists: [
+              generateTrelloChecklist({
+                checkItems: [
+                  generateTrelloCheckItem({
+                    id: 'milk',
+                    name: 'Milk',
+                    state: 'incomplete',
+                  }),
+                ],
+                id: 'buyGroceries',
+                name: 'Buy groceries',
+              }),
+            ],
+            id: 'today',
+            name: 'Today',
+          }),
+          generateTrelloCard({
+            id: 'tomorrow',
+            name: 'Tomorrow',
+            checklists: [],
+          }),
+        ],
+      },
+    });
+
+    await simulate.waitForSelectTaskView();
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            {
+              id: 'today',
+              label: 'Today',
+            },
+            {
+              id: 'tomorrow',
+              label: 'Tomorrow',
             },
             { id: 'switch-lists', label: 'Switch to a different list', type: 'customOption' },
           ],

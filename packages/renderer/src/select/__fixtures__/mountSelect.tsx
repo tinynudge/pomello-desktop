@@ -23,7 +23,10 @@ const mountSelect = (options: MountSelectOptions = {}) => {
   const settings = createMockSettings(options.settings);
   const mockServiceFactory = createMockServiceFactory({ service: options.service });
 
-  const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
+  const [appApi, emitAppApiEvent] = createMockAppApi({
+    appApi: options.appApi,
+    settings,
+  });
   window.app = appApi;
 
   const services: ServiceRegistry = {

@@ -1,5 +1,6 @@
 import createServiceConfig from '@/shared/helpers/createServiceConfig';
-import { ActiveService, Logger, ServiceConfig, ServiceRegistry, Settings } from '@domain';
+import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
+import { ActiveService, Logger, ServiceConfig, ServiceRegistry } from '@domain';
 import { useEffect, useState } from 'react';
 import useTranslation from '../useTranslation';
 import createTranslator from './createTranslator';
@@ -8,7 +9,6 @@ interface UseInitializeServiceOptions {
   logger: Logger;
   serviceId?: string;
   services: ServiceRegistry;
-  settings: Settings;
 }
 
 type UseInitializeService = ServiceIdle | ServiceInitializing | ServiceReady;
@@ -28,11 +28,12 @@ type ServiceReady = {
   status: 'READY';
 };
 
+type UnsubscribeHandlers = () => void;
+
 const useInitializeService = ({
   logger,
   services,
   serviceId,
-  settings,
 }: UseInitializeServiceOptions): UseInitializeService => {
   const { addNamespace, removeNamespace } = useTranslation();
   const [isReady, setReady] = useState(true);
@@ -40,6 +41,8 @@ const useInitializeService = ({
   const [activeService, setActiveService] = useState<ActiveService | undefined>(undefined);
 
   useEffect(() => {
+    const unsubscribeHandlers: UnsubscribeHandlers[] = [];
+
     let config: ServiceConfig<void> | null = null;
 
     const initializeService = async () => {
@@ -57,9 +60,15 @@ const useInitializeService = ({
 
       if (serviceFactory.config) {
         config = await createServiceConfig(serviceFactory.id, serviceFactory.config);
+        unsubscribeHandlers.push(config.unregister);
       }
 
-      const translations = await window.app.getTranslations(serviceFactory.id);
+      let [pomelloConfig, settings, translations] = await Promise.all([
+        getPomelloServiceConfig(),
+        window.app.getSettings(),
+        window.app.getTranslations(serviceFactory.id),
+      ]);
+
       addNamespace('service', translations);
 
       setActiveService({
@@ -67,12 +76,20 @@ const useInitializeService = ({
         // the ServiceFactory config defaults to void, we need to cast as null
         service: serviceFactory({
           config: config as null,
+          getSettings: () => settings,
+          getUser: () => pomelloConfig.get().user,
           logger,
-          settings,
           translate: createTranslator(translations),
         }),
         config,
       });
+
+      const unsubscribeSettingsChange = window.app.onSettingsChange(updatedSettings => {
+        settings = updatedSettings;
+      });
+
+      unsubscribeHandlers.push(pomelloConfig.unregister);
+      unsubscribeHandlers.push(unsubscribeSettingsChange);
 
       setReady(true);
     };
@@ -81,20 +98,12 @@ const useInitializeService = ({
 
     return () => {
       if (activeService?.service.id === serviceId) {
-        config?.unregister();
+        unsubscribeHandlers.forEach(handler => handler());
 
         removeNamespace('service');
       }
     };
-  }, [
-    activeService?.service.id,
-    addNamespace,
-    logger,
-    removeNamespace,
-    serviceId,
-    services,
-    settings,
-  ]);
+  }, [activeService?.service.id, addNamespace, logger, removeNamespace, serviceId, services]);
 
   useEffect(() => {
     activeService?.service.onMount?.();

@@ -1,6 +1,6 @@
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
-import { AuthWindowType, Logger, ServiceRegistry, Settings } from '@domain';
+import { AuthWindowType, Logger, ServiceRegistry } from '@domain';
 import { FC, useState } from 'react';
 import styles from './Auth.module.scss';
 import PomelloAuthView from './components/PomelloAuthView';
@@ -11,14 +11,13 @@ interface AuthProps {
   authWindow: AuthWindowType;
   logger: Logger;
   services: ServiceRegistry;
-  settings: Settings;
 }
 
-const Auth: FC<AuthProps> = ({ authWindow, logger, services, settings }) => {
+const Auth: FC<AuthProps> = ({ authWindow, logger, services }) => {
   const [didSaveToken, setDidSaveToken] = useState(false);
 
   const serviceId = authWindow.type === 'service' ? authWindow.serviceId : undefined;
-  const { activeService } = useInitializeService({ logger, services, serviceId, settings });
+  const { activeService } = useInitializeService({ logger, services, serviceId });
 
   const handleTokenSave = () => {
     setDidSaveToken(true);

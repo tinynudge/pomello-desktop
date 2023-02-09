@@ -1,4 +1,6 @@
+import { ServiceFactory } from '@domain';
 import { SpyInstance, vi } from 'vitest';
+import generatePomelloUser from '../__fixtures__/generatePomelloUser';
 import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
 describe('App - Pomello', () => {
@@ -158,6 +160,118 @@ describe('App - Pomello', () => {
 
     await waitFor(() => {
       expect(NotificationMock).toHaveBeenCalledWith("Couldn't connect to Pomello servers");
+    });
+  });
+
+  it('should refetch the tasks if the user changes to premium account', async () => {
+    const fooService: ServiceFactory = ({ getUser }) => {
+      return {
+        displayName: fooService.displayName,
+        fetchTasks: async () => {
+          const isPremium = getUser()?.type === 'premium';
+
+          return isPremium
+            ? [{ id: 'premium', label: 'Premium item' }]
+            : [{ id: 'boring', label: 'Boring item' }];
+        },
+        id: fooService.id,
+      };
+    };
+    fooService.displayName = 'Foo';
+    fooService.id = 'foo';
+
+    const { appApi } = mountApp({
+      createServiceRegistry: () => ({
+        [fooService.id]: fooService,
+      }),
+      pomelloApi: {
+        fetchUser: (_request, response, context) =>
+          response(
+            context.delay(50),
+            context.json(
+              generatePomelloUser({
+                type: 'premium',
+              })
+            )
+          ),
+      },
+      pomelloConfig: {
+        user: {
+          name: 'Johnny Appleseed',
+          email: 'johnny@apple.com',
+          timezone: 'America/Chicago',
+          type: 'free',
+        },
+      },
+      serviceId: fooService.id,
+      settings: {
+        checkPomelloStatus: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledTimes(2);
+      expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          items: [{ id: 'premium', label: 'Premium item' }],
+        })
+      );
+    });
+  });
+
+  it('should refetch the tasks if the user changes to free account', async () => {
+    const fooService: ServiceFactory = ({ getUser }) => {
+      return {
+        displayName: fooService.displayName,
+        fetchTasks: async () => {
+          const isPremium = getUser()?.type === 'premium';
+
+          return isPremium
+            ? [{ id: 'premium', label: 'Premium item' }]
+            : [{ id: 'boring', label: 'Boring item' }];
+        },
+        id: fooService.id,
+      };
+    };
+    fooService.displayName = 'Foo';
+    fooService.id = 'foo';
+
+    const { appApi } = mountApp({
+      createServiceRegistry: () => ({
+        [fooService.id]: fooService,
+      }),
+      pomelloApi: {
+        fetchUser: (_request, response, context) =>
+          response(
+            context.delay(50),
+            context.json(
+              generatePomelloUser({
+                type: 'free',
+              })
+            )
+          ),
+      },
+      pomelloConfig: {
+        user: {
+          name: 'Johnny Appleseed',
+          email: 'johnny@apple.com',
+          timezone: 'America/Chicago',
+          type: 'premium',
+        },
+      },
+      serviceId: fooService.id,
+      settings: {
+        checkPomelloStatus: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledTimes(2);
+      expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          items: [{ id: 'boring', label: 'Boring item' }],
+        })
+      );
     });
   });
 });
