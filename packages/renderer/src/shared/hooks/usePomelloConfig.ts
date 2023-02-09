@@ -33,3 +33,5 @@ export const usePomelloConfigUpdater = (): [SetPomelloConfig, UnsetPomelloConfig
 
   return [pomelloConfig.set, pomelloConfig.unset];
 };
+
+export const selectIsPremium = (config: PomelloServiceConfig) => config.user?.type === 'premium';

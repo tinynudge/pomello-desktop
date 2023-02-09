@@ -14,9 +14,11 @@ import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig'
 import mockServer from '@/__fixtures__/mockServer';
 import {
   LabeledHotkeys,
+  PomelloApiResponse,
   PomelloServiceConfig,
   PomelloUser,
   Service,
+  ServiceConfigActions,
   ServiceConfigStore,
   ServiceFactory,
   ServiceRegistry,
@@ -39,11 +41,7 @@ export * from '@testing-library/react';
 
 export type MountAppResults = ReturnType<typeof mountApp>;
 
-interface PomelloApiResponses {
-  fetchUser: PomelloUser | ResponseResolver<RestRequest, RestContext, PomelloUser>;
-}
-
-interface MountAppOptions {
+export interface MountAppOptions {
   appApi?: Partial<AppApi>;
   createServiceRegistry?(
     defaultRegistry: ServiceRegistry
@@ -55,8 +53,15 @@ interface MountAppOptions {
   };
   pomelloApi?: Partial<PomelloApiResponses>;
   pomelloConfig?: Partial<PomelloServiceConfig>;
+  serviceConfigs?: Record<string, ServiceConfigActions<any>>;
   serviceId?: string | null;
   settings?: Partial<Settings>;
+}
+
+interface PomelloApiResponses {
+  fetchUser:
+    | PomelloApiResponse<PomelloUser>
+    | ResponseResolver<RestRequest, RestContext, PomelloApiResponse<PomelloUser>>;
 }
 
 const mountApp = (options: MountAppOptions = {}) => {
@@ -66,7 +71,28 @@ const mountApp = (options: MountAppOptions = {}) => {
   const mockServiceFactory = createMockServiceFactory(options.mockService);
 
   const pomelloService = createMockPomelloService(settings);
-  const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
+
+  const pomelloConfigActions = mockRegisterServiceConfig<PomelloServiceConfig>('pomello', {
+    didPromptRegistration: true,
+    token: 'MY_POMELLO_TOKEN',
+    user: {
+      email: 'thomas@tester.com',
+      name: 'Thomas Tester',
+      timezone: 'America/Chicago',
+      type: 'premium',
+    },
+    ...options.pomelloConfig,
+  });
+  const pomelloConfig = createMockServiceConfig(pomelloConfigActions);
+
+  const [appApi, emitAppApiEvent] = createMockAppApi({
+    appApi: options.appApi,
+    serviceConfigs: {
+      pomello: pomelloConfigActions,
+      ...options.serviceConfigs,
+    },
+    settings,
+  });
   window.app = appApi;
 
   const store = createStore({
@@ -91,14 +117,6 @@ const mountApp = (options: MountAppOptions = {}) => {
 
   const services = options.createServiceRegistry?.(defaultServices) ?? defaultServices;
 
-  const pomelloConfig = createMockServiceConfig(
-    mockRegisterServiceConfig<PomelloServiceConfig>('pomello', {
-      didPromptRegistration: true,
-      token: 'MY_POMELLO_TOKEN',
-      ...options.pomelloConfig,
-    })
-  );
-
   const hotkeys: LabeledHotkeys = {
     ...mockHotkeys,
     ...options.hotkeys,
@@ -107,7 +125,10 @@ const mountApp = (options: MountAppOptions = {}) => {
   mockServer.use(
     rest.get(
       `${import.meta.env.VITE_APP_URL}/api/users`,
-      createRestResolver<PomelloUser>(generatePomelloUser(), options.pomelloApi?.fetchUser)
+      createRestResolver<PomelloApiResponse<PomelloUser>>(
+        generatePomelloUser(),
+        options.pomelloApi?.fetchUser
+      )
     )
   );
 

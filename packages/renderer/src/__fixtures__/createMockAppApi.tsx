@@ -1,4 +1,4 @@
-import { Settings } from '@domain';
+import { ServiceConfigActions, Settings } from '@domain';
 import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
 import mockRegisterServiceConfig from './mockRegisterServiceConfig';
@@ -8,10 +8,17 @@ type CallbackFunction = (...args: any[]) => any;
 
 type EventEmitter = (event: string, ...args: unknown[]) => void;
 
-const createMockAppApi = (
-  appApi: Partial<AppApi> = {},
-  settings: Settings
-): [AppApi, EventEmitter] => {
+interface CreateMockAppApiOptions {
+  appApi?: Partial<AppApi>;
+  serviceConfigs?: Record<string, ServiceConfigActions<any>>;
+  settings: Settings;
+}
+
+const createMockAppApi = ({
+  appApi = {},
+  serviceConfigs = {},
+  settings,
+}: CreateMockAppApiOptions): [AppApi, EventEmitter] => {
   const listenersMap = new Map<string, CallbackFunction[]>();
 
   const addListener = (event: string, callback: CallbackFunction) => {
@@ -75,7 +82,9 @@ const createMockAppApi = (
     registerServiceConfig: vi.fn(
       appApi.registerServiceConfig ??
         ((serviceId, { defaults }) =>
-          Promise.resolve(mockRegisterServiceConfig(serviceId, defaults)))
+          Promise.resolve(
+            serviceConfigs[serviceId] ?? mockRegisterServiceConfig(serviceId, defaults)
+          ))
     ),
     resetSelect: vi.fn(),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),

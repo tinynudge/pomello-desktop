@@ -1,8 +1,8 @@
 import { selectIsTimerActive } from '@/app/appSlice';
-import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
 import useDialActions from '@/app/hooks/useDialActions';
 import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import useTasksCacheKey from '@/app/hooks/useTasksCacheKey';
 import Heading from '@/app/ui/Heading';
 import SelectField from '@/app/ui/SelectField';
 import assertNonNullish from '@/shared/helpers/assertNonNullish';
@@ -13,12 +13,13 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 const SelectTaskContents: FC = () => {
-  const { fetchTasks, getSelectTaskHeading, id, onTaskSelect, SelectTaskView } = useService();
+  const { fetchTasks, getSelectTaskHeading, onTaskSelect, SelectTaskView } = useService();
   const { t } = useTranslation();
 
   const { selectTask } = usePomelloActions();
 
-  const { data: tasks } = useQuery(getTasksCacheKey(id), fetchTasks, {
+  const tasksCacheKey = useTasksCacheKey();
+  const { data: tasks } = useQuery(tasksCacheKey, fetchTasks, {
     cacheTime: Infinity,
     suspense: true,
   });

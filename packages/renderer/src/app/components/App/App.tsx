@@ -83,7 +83,7 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
     });
   }, [dispatch]);
 
-  const { activeService, status } = useInitializeService({ logger, services, serviceId, settings });
+  const { activeService, status } = useInitializeService({ logger, services, serviceId });
 
   const service = usePomelloService();
 

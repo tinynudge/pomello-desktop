@@ -23,7 +23,10 @@ const mountAuth = (options: MountAuthOptions = {}) => {
   const settings = createMockSettings(options.settings);
   const mockServiceFactory = createMockServiceFactory({ service: options.service });
 
-  const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
+  const [appApi, emitAppApiEvent] = createMockAppApi({
+    appApi: options.appApi,
+    settings,
+  });
   window.app = appApi;
 
   const services: ServiceRegistry = {
@@ -34,12 +37,7 @@ const mountAuth = (options: MountAuthOptions = {}) => {
 
   const result = render(
     <TranslationsProvider commonTranslations={translations}>
-      <Auth
-        authWindow={authWindow}
-        logger={createMockLogger()}
-        services={services}
-        settings={settings}
-      />
+      <Auth authWindow={authWindow} logger={createMockLogger()} services={services} />
     </TranslationsProvider>
   );
 

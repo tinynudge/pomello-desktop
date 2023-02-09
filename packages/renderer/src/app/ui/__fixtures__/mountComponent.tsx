@@ -17,7 +17,10 @@ interface MountComponentOptions {
 const mountComponent = (ui: ReactElement, options: MountComponentOptions = {}) => {
   const settings = createMockSettings(options.settings);
 
-  const [appApi, emitAppApiEvent] = createMockAppApi(options.appApi, settings);
+  const [appApi, emitAppApiEvent] = createMockAppApi({
+    appApi: options.appApi,
+    settings,
+  });
   window.app = appApi;
 
   const result = render(ui, {

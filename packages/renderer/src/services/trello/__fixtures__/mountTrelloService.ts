@@ -1,10 +1,10 @@
-import mountApp from '@/app/__fixtures__/mountApp';
+import mountApp, { MountAppOptions } from '@/app/__fixtures__/mountApp';
 import createMockCache from '@/__fixtures__/createMockCache';
 import createMockServiceConfig from '@/__fixtures__/createMockServiceConfig';
 import createRestResolver from '@/__fixtures__/createRestResolver';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import mockServer from '@/__fixtures__/mockServer';
-import { Cache, Settings } from '@domain';
+import { Cache } from '@domain';
 import { ResponseResolver, rest, RestContext, RestRequest } from 'msw';
 import { vi } from 'vitest';
 import createTrelloService from '..';
@@ -40,10 +40,9 @@ interface TrelloApiResponses {
   updateComment: TrelloCardAction | ResponseResolver<RestRequest, RestContext, TrelloCardAction>;
 }
 
-interface MountTrelloServiceOptions {
-  appApi?: Partial<AppApi>;
+interface MountTrelloServiceOptions
+  extends Pick<MountAppOptions, 'appApi' | 'pomelloApi' | 'settings'> {
   config?: Partial<TrelloConfig>;
-  settings?: Partial<Settings>;
   trelloApi?: Partial<TrelloApiResponses>;
 }
 
@@ -56,8 +55,8 @@ vi.mock('@/shared/helpers/createCache', () => ({
 const mountTrelloService = async ({
   appApi,
   config: initialConfig,
-  settings,
   trelloApi,
+  ...remainingOptions
 }: MountTrelloServiceOptions = {}) => {
   cache = createMockCache<TrelloCache>();
 
@@ -108,15 +107,17 @@ const mountTrelloService = async ({
 
   const results = mountApp({
     appApi: {
-      registerServiceConfig: () => Promise.resolve(configActions) as any,
       getTranslations: () => Promise.resolve(translations),
       ...appApi,
     },
     createServiceRegistry: () => ({
       [createTrelloService.id]: createTrelloService,
     }),
+    serviceConfigs: {
+      trello: configActions,
+    },
     serviceId: createTrelloService.id,
-    settings,
+    ...remainingOptions,
   });
 
   return {
