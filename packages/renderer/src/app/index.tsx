@@ -27,7 +27,7 @@ const renderApp = async () => {
   const container = document.getElementById('root');
 
   if (!container) {
-    throw new Error('Unable to find container with id "root"');
+    throw new Error('Unable to find container with id "root"!');
   }
 
   const [hotkeys, themeCss, translations, pomelloConfig, serviceId, settings] = await Promise.all([
