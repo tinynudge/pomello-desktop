@@ -34,13 +34,13 @@ jobs:
   create-artifacts:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [macOS-12, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           registry-url: 'https://npm.pkg.github.com'
@@ -51,7 +51,7 @@ jobs:
           ref: ${{ inputs.COMMIT_HASH }}
 
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -68,7 +68,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -83,24 +83,23 @@ jobs:
 
       # Only install Snapcraft on Ubuntu
       - name: Install Snapcraft
-        uses: samuelmeuli/action-snapcraft@v1
+        uses: samuelmeuli/action-snapcraft@75db9a03f97072c02648bf8339bd4ac678fe2607
         if: startsWith(matrix.os, 'ubuntu')
         with:
           snapcraft_token: ${{ secrets.SNAPCRAFT_TOKEN }}
 
       - name: Compile
-        uses: samuelmeuli/action-electron-builder@v1
+        uses: brrian/action-electron-builder@v2.0
         env:
           APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER }}
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
-          S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET }}
           VITE_APP_ID: com.tinynudge.pomello
           VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL }}
         with:
           build_script_name: build
           args: --config .electron-builder.config.js
           github_token: ${{ secrets.github_token }}
-          release: true
+          release: false
           max_attempts: 3
 
           mac_certs: ${{ secrets.OSX_CODE_SIGN_CERT }}
