@@ -23,7 +23,7 @@ jobs:
 
       - name: Get Latest Commit Hash
         id: commit-hash
-        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+        run: echo "name=hash::$(git rev-parse HEAD) >> $GITHUB_OUTPUT"
 
   create-artifacts:
     needs: draft
@@ -32,14 +32,15 @@ jobs:
     with:
       COMMIT_HASH: ${{ needs.draft.outputs.commit-hash }}
     secrets:
-      APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID}}
-      APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER}}
-      APPLE_API_KEY: ${{ secrets.APPLE_API_KEY}}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+      APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+      APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER }}
+      APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
-      OSX_CODE_SIGN_CERT_PASSWORD: ${{ secrets.OSX_CODE_SIGN_CERT_PASSWORD}}
-      OSX_CODE_SIGN_CERT: ${{ secrets.OSX_CODE_SIGN_CERT}}
-      S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET}}
-      SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN}}
-      VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL}}
+      OSX_CODE_SIGN_CERT_PASSWORD: ${{ secrets.OSX_CODE_SIGN_CERT_PASSWORD }}
+      OSX_CODE_SIGN_CERT: ${{ secrets.OSX_CODE_SIGN_CERT }}
+      S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET }}
+      SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
+      VITE_APP_URL: ${{ vars.APP_URL_PROD }}
+      VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL }}
