@@ -21,7 +21,7 @@ jobs:
 
       - name: Get Latest Commit Hash
         id: commit-hash
-        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+        run: echo "name=hash::$(git rev-parse HEAD) >> $GITHUB_OUTPUT"
 
   create-artifacts:
     needs: draft
@@ -40,4 +40,5 @@ jobs:
       GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
       S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET}}
       SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN}}
+      VITE_APP_URL: ${{ vars.APP_URL_QA }}
       VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL}}
