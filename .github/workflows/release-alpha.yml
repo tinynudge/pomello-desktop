@@ -21,7 +21,7 @@ jobs:
 
       - name: Get Latest Commit Hash
         id: commit-hash
-        run: echo "name=hash::$(git rev-parse HEAD) >> $GITHUB_OUTPUT"
+        run: echo "hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   create-artifacts:
     needs: draft
