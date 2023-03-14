@@ -9,6 +9,7 @@ export interface TrelloCache {
   boards: Map<string, TrelloBoard>;
   currentBoard: TrelloBoard;
   currentList: TrelloList;
+  didSwitchList?: boolean;
   lists: Map<string, TrelloList>;
   log?: TrelloLogBuilder;
   preferences: TrelloListPreferences;

@@ -7,6 +7,7 @@ import { RootState } from './createStore';
 type OverlayView = 'create-task' | NoteType;
 
 interface AppState {
+  isQuickTaskSelectEnabled: boolean;
   overlayView: OverlayView | null;
   pomelloState: PomelloState;
   serviceId?: string;
@@ -14,6 +15,7 @@ interface AppState {
 }
 
 const initialState: AppState = {
+  isQuickTaskSelectEnabled: false,
   overlayView: null,
   pomelloState: null as unknown as PomelloState,
   settings: null as unknown as Settings,
@@ -25,6 +27,12 @@ export const appSlice = createSlice({
   reducers: {
     pomelloStateUpdate: (state, { payload }: PayloadAction<PomelloState>) => {
       state.pomelloState = payload;
+    },
+    quickTaskSelectDisabled: state => {
+      state.isQuickTaskSelectEnabled = false;
+    },
+    quickTaskSelectEnabled: state => {
+      state.isQuickTaskSelectEnabled = true;
     },
     serviceChange: (state, { payload }: PayloadAction<string | undefined>) => {
       state.serviceId = payload;
@@ -43,6 +51,8 @@ export const appSlice = createSlice({
 
 export const {
   pomelloStateUpdate,
+  quickTaskSelectDisabled,
+  quickTaskSelectEnabled,
   serviceChange,
   settingsChange,
   setOverlayView,
@@ -54,12 +64,15 @@ export const selectAppMode = ({ app }: RootState) =>
 
 export const selectCurrentTaskId = ({ app }: RootState) => app.pomelloState.currentTaskId;
 
-export const selectIsTimerVisible = ({ app }: RootState) => Boolean(app.pomelloState.timer);
-
 export const selectIsOvertimeVisible = ({ app }: RootState) => Boolean(app.pomelloState.overtime);
+
+export const selectIsQuickTaskSelectEnabled = ({ app }: RootState) =>
+  Boolean(app.isQuickTaskSelectEnabled);
 
 export const selectIsTimerActive = ({ app }: RootState) =>
   Boolean(app.pomelloState.timer?.isActive);
+
+export const selectIsTimerVisible = ({ app }: RootState) => Boolean(app.pomelloState.timer);
 
 export const selectOverlayView = ({ app }: RootState) => app.overlayView;
 

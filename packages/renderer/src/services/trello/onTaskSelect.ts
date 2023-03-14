@@ -9,6 +9,7 @@ const onTaskSelect = (runtime: TrelloRuntime, optionId: string): false | void =>
 
   if (optionId === 'switch-lists') {
     cache.set(draft => {
+      draft.didSwitchList = true;
       draft.previousListId = config.get().currentList;
     });
 

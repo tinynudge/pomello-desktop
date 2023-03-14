@@ -1,3 +1,6 @@
+import { InitializingView } from '@domain';
+import { useEffect } from 'react';
+import { vi } from 'vitest';
 import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
 describe('App - Select task', () => {
@@ -51,6 +54,36 @@ describe('App - Select task', () => {
       expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
       expect(appApi.showSelect).toHaveBeenCalled();
     });
+  });
+
+  it('should automatically open the select window on initialization if enabled', async () => {
+    const mockShowSelect = vi.fn();
+
+    const MockInitializingView: InitializingView = ({ onReady }) => {
+      useEffect(() => {
+        onReady({ openTaskSelect: true });
+      }, [onReady]);
+
+      return null;
+    };
+
+    const { emitAppApiEvent, simulate } = mountApp({
+      appApi: {
+        showSelect: mockShowSelect,
+      },
+      mockService: {
+        service: {
+          InitializingView: MockInitializingView,
+          id: 'myMockService',
+        },
+      },
+      serviceId: 'myMockService',
+    });
+
+    await simulate.waitForSelectTaskView();
+    emitAppApiEvent('onSelectReady');
+
+    expect(mockShowSelect).toHaveBeenCalledTimes(1);
   });
 
   it('should not go to the task view if overridden', async () => {

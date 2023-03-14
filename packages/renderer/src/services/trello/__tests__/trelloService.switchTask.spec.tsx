@@ -1,7 +1,10 @@
 import { vi } from 'vitest';
 import updateCard from '../api/updateCard';
+import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
 import generateTrelloCard from '../__fixtures__/generateTrelloCard';
-import mountTrelloService from '../__fixtures__/mountTrelloService';
+import generateTrelloList from '../__fixtures__/generateTrelloList';
+import generateTrelloMember from '../__fixtures__/generateTrelloMember';
+import mountTrelloService, { screen } from '../__fixtures__/mountTrelloService';
 
 vi.mock('../api/updateCard');
 
@@ -61,5 +64,38 @@ describe('Trello service - Switch task', () => {
       id: 'GROCERIES',
       data: { name: '0.75 🍅 Buy groceries' },
     });
+  });
+
+  it('should open the tasks lists after switching lists', async () => {
+    const mockShowSelect = vi.fn();
+
+    const { emitAppApiEvent, simulate } = await mountTrelloService({
+      config: {
+        currentList: 'FIRST_LIST',
+      },
+      appApi: {
+        showSelect: mockShowSelect,
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              lists: [
+                generateTrelloList({ id: 'FIRST_LIST', name: 'First list' }),
+                generateTrelloList({ id: 'SECOND_LIST', name: 'Second list' }),
+              ],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await simulate.switchLists();
+    await screen.findByRole('button', { name: 'Pick a list' });
+    await simulate.selectOption('SECOND_LIST');
+    await simulate.waitForSelectTaskView();
+    emitAppApiEvent('onSelectReady');
+
+    expect(mockShowSelect).toHaveBeenCalled();
   });
 });
