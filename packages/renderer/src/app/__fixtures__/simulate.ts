@@ -133,6 +133,14 @@ const startTimer = async ({ userEvent }: MountAppResults) => {
   await userEvent.click(startTimerButton);
 };
 
+const switchLists = async (results: MountAppResults) => {
+  await waitForSelectTaskView();
+
+  await sleep(1);
+
+  await selectOption(results, 'switch-lists');
+};
+
 const waitForSelectTaskView = async () => {
   await screen.findByRole('button', { name: 'Pick a task' });
 };
@@ -149,6 +157,7 @@ const simulate = {
   selectTask,
   showDialActions,
   startTimer,
+  switchLists,
   waitForSelectTaskView,
 };
 

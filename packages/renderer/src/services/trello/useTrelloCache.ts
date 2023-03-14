@@ -11,6 +11,8 @@ export const useTrelloCacheUpdater = useCacheUpdater<TrelloCache>;
 
 export const selectBoards = (cache: TrelloCache) => cache.boards;
 
+export const selectDidSwitchList = (cache: TrelloCache) => cache.didSwitchList;
+
 export const selectLists = (cache: TrelloCache) => cache.lists;
 
 export const selectPreviousListId = (cache: TrelloCache) => cache.previousListId;

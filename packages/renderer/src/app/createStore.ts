@@ -22,6 +22,7 @@ const createStore = ({ pomelloState, serviceId, settings }: CreateStoreOptions) 
     },
     preloadedState: {
       app: {
+        isQuickTaskSelectEnabled: false,
         overlayView: null,
         pomelloState,
         serviceId,

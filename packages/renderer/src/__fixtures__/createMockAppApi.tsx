@@ -95,7 +95,7 @@ const createMockAppApi = ({
     showMessageBox: vi.fn(
       appApi.showMessageBox ?? (() => Promise.resolve({ checkboxChecked: false, response: 0 }))
     ),
-    showSelect: vi.fn(),
+    showSelect: vi.fn(appApi.showSelect ?? (() => Promise.resolve())),
     updateSetting: vi.fn(),
     writeClipboardText: vi.fn(),
   };

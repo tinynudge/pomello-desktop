@@ -6,8 +6,9 @@ import { useQuery } from 'react-query';
 import fetchBoardsAndLists from '../api/fetchBoardsAndLists';
 import {
   selectBoards,
-  selectPreviousListId,
+  selectDidSwitchList,
   selectLists,
+  selectPreviousListId,
   selectToken as selectCachedToken,
   useTrelloCacheSelector,
   useTrelloCacheUpdater,
@@ -34,6 +35,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const cachedBoards = useTrelloCacheSelector(selectBoards);
   const cachedLists = useTrelloCacheSelector(selectLists);
   const cachedToken = useTrelloCacheSelector(selectCachedToken);
+  const didSwitchList = useTrelloCacheSelector(selectDidSwitchList);
   const previousListId = useTrelloCacheSelector(selectPreviousListId);
 
   const [setConfig, unsetConfig] = useTrelloConfigUpdater();
@@ -119,13 +121,29 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
         draft.preferences = listPreferences;
       });
 
-      onReady();
+      onReady({ openTaskSelect: didSwitchList });
+
+      if (didSwitchList) {
+        setCache(draft => {
+          delete draft.didSwitchList;
+        });
+      }
     } else {
       new Notification(t('service:invalidListHeading'), { body: t('service:invalidListBody') });
 
       unsetConfig('currentList');
     }
-  }, [cachedBoards, cachedLists, currentListId, onReady, preferences, setCache, t, unsetConfig]);
+  }, [
+    cachedBoards,
+    cachedLists,
+    currentListId,
+    didSwitchList,
+    onReady,
+    preferences,
+    setCache,
+    t,
+    unsetConfig,
+  ]);
 
   const handleListSelect = (optionId: string) => {
     let listId = optionId;

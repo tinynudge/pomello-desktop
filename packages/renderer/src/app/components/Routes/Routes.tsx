@@ -1,4 +1,4 @@
-import { selectPomelloStatus } from '@/app/appSlice';
+import { quickTaskSelectEnabled, selectPomelloStatus } from '@/app/appSlice';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import BreakView from '@/app/views/BreakView';
 import CreatePomelloAccountView from '@/app/views/CreatePomelloAccountView';
@@ -9,24 +9,36 @@ import TaskView from '@/app/views/TaskView';
 import TaskVoidView from '@/app/views/TaskVoidView';
 import { usePomelloConfigSelector } from '@/shared/hooks/usePomelloConfig';
 import useService from '@/shared/hooks/useService';
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { FC, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import selectPromptCreatePomelloAccount from './selectPromptCreatePomelloAccount';
 
 const Routes: FC = () => {
+  const dispatch = useDispatch();
   const service = useService();
 
-  const actions = usePomelloActions();
+  const { setReady } = usePomelloActions();
 
   const promptCreatePomelloAccount = usePomelloConfigSelector(selectPromptCreatePomelloAccount);
 
   const status = useSelector(selectPomelloStatus);
 
+  const handleServiceReady = useCallback(
+    (options: { openTaskSelect?: boolean } = {}) => {
+      if (options.openTaskSelect) {
+        dispatch(quickTaskSelectEnabled());
+      }
+
+      setReady();
+    },
+    [dispatch, setReady]
+  );
+
   if (status === 'INITIALIZING') {
     if (service.InitializingView) {
-      return <service.InitializingView onReady={actions.setReady} />;
+      return <service.InitializingView onReady={handleServiceReady} />;
     } else {
-      actions.setReady();
+      setReady();
       return null;
     }
   }
