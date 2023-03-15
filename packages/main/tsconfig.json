@@ -5,6 +5,7 @@
     "isolatedModules": true,
     "module": "esnext",
     "moduleResolution": "Node",
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": false,
     "strict": true,
