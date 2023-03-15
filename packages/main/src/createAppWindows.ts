@@ -1,5 +1,6 @@
 import { join } from 'path';
 import { throttle } from 'throttle-debounce';
+import { version } from '../../../package.json';
 import handleAppWindowMove from './events/handleAppWindowMove';
 import handleAppWindowResize from './events/handleAppWindowResize';
 import getPomelloConfig from './getPomelloConfig';
@@ -8,8 +9,10 @@ import hideSelectWindow from './helpers/hideSelectWindow';
 import runtime from './runtime';
 
 const createAppWindows = async (): Promise<void> => {
-  const { x, y, width, height } = getPomelloConfig().all();
+  const { dev, x, y, width, height } = getPomelloConfig().all();
   const { alwaysOnTop, osxAllowMoveAnywhere } = getSettings().all();
+
+  const showDevTools = import.meta.env.DEV || (dev && /-alpha\.\d+$/.test(version));
 
   const selectWindow = await runtime.windowManager.findOrCreateWindow({
     alwaysOnTop,
@@ -33,7 +36,7 @@ const createAppWindows = async (): Promise<void> => {
     minHeight: 56,
     minWidth: 230,
     preloadPath: join(__dirname, '../../preload/dist/index.cjs'),
-    showDevTools: true,
+    showDevTools,
     titleBarStyle: osxAllowMoveAnywhere ? 'customButtonsOnHover' : 'default',
     transparent: true,
     width,

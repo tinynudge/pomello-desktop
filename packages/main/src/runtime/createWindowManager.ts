@@ -46,7 +46,7 @@ const createWindowManager = (): WindowManager => {
         browserWindow.show();
       }
 
-      if (import.meta.env.DEV && showDevTools) {
+      if (showDevTools) {
         browserWindow.webContents.openDevTools({ mode: 'undocked' });
       }
     });
