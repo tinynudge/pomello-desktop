@@ -23,7 +23,7 @@ const createAppWindows = async (): Promise<void> => {
     path: 'select.html',
     preloadPath: join(__dirname, '../../preload/dist/index.cjs'),
     resizable: false,
-    showDevTools: true,
+    showDevTools,
     showOnReady: false,
   });
 
