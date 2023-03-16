@@ -35,9 +35,9 @@ jobs:
       APPLE_API_KEY: ${{ secrets.APPLE_API_KEY}}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
       OSX_CODE_SIGN_CERT_PASSWORD: ${{ secrets.OSX_CODE_SIGN_CERT_PASSWORD}}
       OSX_CODE_SIGN_CERT: ${{ secrets.OSX_CODE_SIGN_CERT}}
-      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
       S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET}}
       SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN}}
       VITE_APP_URL: ${{ vars.APP_URL_QA }}

@@ -96,7 +96,7 @@ jobs:
           APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER }}
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
           S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET }}
-          VITE_APP_ID: com.tinynudge.pomello
+          VITE_APP_ID: ${{ vars.APP_ID }}
           VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
           VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL }}
         with:
