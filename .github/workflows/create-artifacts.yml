@@ -7,11 +7,15 @@ on:
         required: true
         type: string
     secrets:
+      APP_URL:
+        required: true
       APPLE_API_KEY_ID:
         required: true
       APPLE_API_KEY_ISSUER:
         required: true
       APPLE_API_KEY:
+        required: true
+      AUTO_UPDATE_URL:
         required: true
       AWS_ACCESS_KEY_ID:
         required: true
@@ -26,10 +30,6 @@ on:
       S3_RELEASE_BUCKET:
         required: true
       SNAPCRAFT_TOKEN:
-        required: true
-      VITE_APP_URL:
-        required: true
-      VITE_AUTO_UPDATE_URL:
         required: true
 
 jobs:
@@ -97,8 +97,8 @@ jobs:
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
           S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET }}
           VITE_APP_ID: ${{ vars.APP_ID }}
-          VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
-          VITE_AUTO_UPDATE_URL: ${{ secrets.VITE_AUTO_UPDATE_URL }}
+          VITE_APP_URL: ${{ secrets.APP_URL }}
+          VITE_AUTO_UPDATE_URL: ${{ secrets.AUTO_UPDATE_URL }}
         with:
           build_script_name: build
           args: --config .electron-builder.config.js
