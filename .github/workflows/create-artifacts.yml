@@ -3,12 +3,13 @@ name: Create artifacts
 on:
   workflow_call:
     inputs:
+      APP_URL:
+        required: true
+        type: string
       COMMIT_HASH:
         required: true
         type: string
     secrets:
-      APP_URL:
-        required: true
       APPLE_API_KEY_ID:
         required: true
       APPLE_API_KEY_ISSUER:
@@ -97,7 +98,7 @@ jobs:
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
           S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET }}
           VITE_APP_ID: ${{ vars.APP_ID }}
-          VITE_APP_URL: ${{ secrets.APP_URL }}
+          VITE_APP_URL: ${{ inputs.APP_URL }}
           VITE_AUTO_UPDATE_URL: ${{ secrets.AUTO_UPDATE_URL }}
         with:
           build_script_name: build
