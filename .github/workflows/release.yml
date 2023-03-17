@@ -30,9 +30,9 @@ jobs:
 
     uses: ./.github/workflows/create-artifacts.yml
     with:
+      APP_URL: ${{ vars.APP_URL_PROD }}
       COMMIT_HASH: ${{ needs.draft.outputs.commit-hash }}
     secrets:
-      APP_URL: ${{ vars.APP_URL_PROD }}
       APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
       APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER }}
       APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
