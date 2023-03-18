@@ -51,10 +51,6 @@ const createAppWindows = async (): Promise<void> => {
   selectWindow.excludedFromShownWindowsMenu = true;
   selectWindow.on('blur', hideSelectWindow);
 
-  // This seems to avoid the visual flash between when the select window changes
-  // from hidden to visible and the subsequent browser paint.
-  selectWindow.webContents.incrementCapturerCount();
-
   if (appWindow.isMinimized()) {
     appWindow.restore();
   }
