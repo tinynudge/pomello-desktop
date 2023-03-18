@@ -1,6 +1,6 @@
-import { ResponseResolver, RestContext, RestRequest } from 'msw';
+import { DefaultBodyType, ResponseResolver, RestContext, RestRequest } from 'msw';
 
-const createRestResolver = <TBody = unknown>(
+const createRestResolver = <TBody extends DefaultBodyType = DefaultBodyType>(
   defaults: TBody,
   resolver?: TBody | ResponseResolver<RestRequest, RestContext, TBody>
 ): ResponseResolver<RestRequest, RestContext, TBody> => {

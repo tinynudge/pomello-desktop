@@ -7,7 +7,7 @@ const validator = new Ajv({
   allowUnionTypes: true,
 });
 
-const createStore = <TContents = StoreContents>({
+const createStore = <TContents extends StoreContents = StoreContents>({
   defaults,
   emitChangeEvents = false,
   path,
@@ -59,7 +59,7 @@ const createStoreManager = (): StoreManager => {
     return store as unknown as Store<TContents>;
   };
 
-  const registerStore = <TContents = StoreContents>(
+  const registerStore = <TContents extends StoreContents = StoreContents>(
     options: RegisterStoreOptions<TContents>
   ): Store<TContents> => {
     const cachedStore = stores.get(options.path);
