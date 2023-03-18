@@ -1,7 +1,9 @@
 import { selectSettings } from '@/app/appSlice';
 import usePomelloApi from '@/shared/hooks/usePomelloApi';
 import { usePomelloConfigSelector, usePomelloConfigUpdater } from '@/shared/hooks/usePomelloConfig';
+import usePrevious from '@/shared/hooks/usePrevious';
 import useTranslation from '@/shared/hooks/useTranslation';
+import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -10,11 +12,13 @@ const useCheckPomelloAccount = () => {
   const pomelloApi = usePomelloApi();
 
   const token = usePomelloConfigSelector(config => config.token);
+  const previousToken = usePrevious(token);
+
   const [setPomelloConfig, unsetPomelloConfig] = usePomelloConfigUpdater();
 
   const settings = useSelector(selectSettings);
 
-  useQuery(
+  const { refetch } = useQuery(
     'pomelloUser',
     async () => {
       if (!token) {
@@ -77,6 +81,12 @@ const useCheckPomelloAccount = () => {
       useErrorBoundary: false,
     }
   );
+
+  useEffect(() => {
+    if (token && !previousToken) {
+      refetch();
+    }
+  }, [previousToken, refetch, token]);
 };
 
 export default useCheckPomelloAccount;
