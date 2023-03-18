@@ -6,6 +6,10 @@ body {
   background-color: var(--menu-background);
 }
 
+button {
+  -webkit-app-region: no-drag;
+}
+
 .container {
   position: relative;
   display: flex;
