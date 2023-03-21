@@ -27,6 +27,10 @@ const getPomelloConfig = (): Store<PomelloConfig> =>
           type: 'number',
           nullable: true,
         },
+        debug: {
+          type: 'boolean',
+          nullable: true,
+        },
         dev: {
           type: 'boolean',
           nullable: true,

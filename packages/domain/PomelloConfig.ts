@@ -1,12 +1,13 @@
 export interface PomelloConfig {
-  x?: number;
-  y?: number;
-  width: number;
-  height: number;
+  dashboardHeight: number;
+  dashboardWidth: number;
   dashboardX?: number;
   dashboardY?: number;
-  dashboardWidth: number;
-  dashboardHeight: number;
+  debug?: boolean;
   dev?: boolean;
+  height: number;
   releaseChannel?: 'alpha';
+  width: number;
+  x?: number;
+  y?: number;
 }

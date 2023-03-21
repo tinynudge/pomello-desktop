@@ -69,11 +69,15 @@ const AddNoteView: FC<AddNoteViewProps> = ({ noteType }) => {
       return;
     }
 
-    service.onNoteCreate?.(currentTask.id, {
-      label: t(`${noteType}Label`),
-      text: note,
-      type: noteType,
-    });
+    if (service.onNoteCreate) {
+      window.app.logMessage('debug', 'Will create note');
+
+      service.onNoteCreate(currentTask.id, {
+        label: t(`${noteType}Label`),
+        text: note,
+        type: noteType,
+      });
+    }
 
     dispatch(unsetOverlayView());
   };

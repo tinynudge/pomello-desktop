@@ -7,7 +7,7 @@ import createCommentLog from './createCommentLog';
 import parseCommentLog from './parseCommentLog';
 
 const createLogBuilder = (
-  { cache, config, translate }: TrelloRuntime,
+  { cache, config, logger, translate }: TrelloRuntime,
   card: TrelloCard
 ): TrelloLogBuilder => {
   const { userId } = cache.get();
@@ -67,6 +67,8 @@ const createLogBuilder = (
     const text = compile();
 
     try {
+      logger.debug('Will update Trello comment log');
+
       if (log.id) {
         await updateComment(log.id, text);
       } else {
@@ -74,7 +76,14 @@ const createLogBuilder = (
 
         log.id = id;
       }
+
+      logger.debug('Did update Trello comment log');
     } catch (error) {
+      logger.debug({
+        message: 'Failed to update Trello comment log',
+        error,
+      });
+
       if (error instanceof Error && error.message === 'no commenting permissions') {
         const notification = new Notification(translate('updateLogErrorHeading'), {
           body: translate('updateLogErrorMessage'),

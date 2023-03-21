@@ -27,6 +27,7 @@ import Layout from '../Layout';
 import Routes from '../Routes';
 import styles from './App.module.scss';
 import useCheckPomelloAccount from './useCheckPomelloAccount';
+import useLogPomelloEvents from './useLogPomelloEvents';
 
 interface AppProps {
   hotkeys: LabeledHotkeys;
@@ -38,6 +39,8 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const settings = useSelector(selectSettings);
+
+  useLogPomelloEvents();
 
   useEffect(() => {
     const handleWindowClose = async (event: BeforeUnloadEvent) => {

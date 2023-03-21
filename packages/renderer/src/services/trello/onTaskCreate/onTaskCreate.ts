@@ -5,7 +5,7 @@ import findTargetList from './findTargetList';
 import parseCreateTaskInput from './parseCreateTaskInput';
 
 const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
-  const { config, translate } = runtime;
+  const { config, logger, translate } = runtime;
 
   const params = parseCreateTaskInput(input);
 
@@ -22,6 +22,8 @@ const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
   }
 
   findLabelIds(list, params.labels).then(async ({ labelIds, unknownLabels }) => {
+    logger.debug('Will create Trello card');
+
     await createCard({
       description: params.desc,
       labelIds,
@@ -29,6 +31,8 @@ const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
       position: config.get().createdTaskPosition ?? 'top',
       title: params.title,
     });
+
+    logger.debug('Did create Trello card');
 
     const message = unknownLabels.length
       ? translate('createTaskSuccessWithoutLabelsMessage', { labels: unknownLabels.join(', ') })

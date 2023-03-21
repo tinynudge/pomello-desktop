@@ -3,7 +3,7 @@ import { TrelloCheckItem } from '../domain';
 import { TrelloRuntime } from '../TrelloRuntime';
 
 const completeCheckItem = (
-  { cache, translate }: TrelloRuntime,
+  { cache, logger, translate }: TrelloRuntime,
   checkItem: TrelloCheckItem
 ): void => {
   const { log, preferences } = cache.get();
@@ -12,7 +12,11 @@ const completeCheckItem = (
     log.addEntry(translate('commentLogCheckItemComplete')).save();
   }
 
+  logger.debug('Will complete Trello check item');
+
   markCheckItemComplete(checkItem);
+
+  logger.debug('Did complete Trello check item');
 };
 
 export default completeCheckItem;
