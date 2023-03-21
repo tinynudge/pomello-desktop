@@ -41,7 +41,13 @@ const CreateTaskView: FC = () => {
       return;
     }
 
-    const response = service.onTaskCreate?.(text);
+    let response: false | void | undefined;
+
+    if (service.onTaskCreate) {
+      window.app.logMessage('debug', 'Will create task');
+
+      response = service.onTaskCreate(text);
+    }
 
     if (response !== false) {
       dispatch(unsetOverlayView());

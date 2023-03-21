@@ -10,6 +10,7 @@ const fetchTasks = async ({
   config,
   getSettings,
   getUser,
+  logger,
   translate,
 }: TrelloRuntime): Promise<SelectItem[]> => {
   const { currentList } = config.get();
@@ -18,7 +19,11 @@ const fetchTasks = async ({
 
   assertNonNullish(currentList, 'Unable to get current list');
 
+  logger.debug('Will fetch Trello cards');
+
   const cards = await fetchCardsByListId(currentList);
+
+  logger.debug('Did fetch Trello cards');
 
   const tasksById = new Map<string, TrelloCard | TrelloCheckItem>();
 

@@ -1,3 +1,4 @@
 import { LogLevel } from './LogLevel';
+import { LogMessage } from './LogMessage';
 
-export type Logger = Record<LogLevel, (message: string) => void>;
+export type Logger = Record<LogLevel, (message: LogMessage) => void>;

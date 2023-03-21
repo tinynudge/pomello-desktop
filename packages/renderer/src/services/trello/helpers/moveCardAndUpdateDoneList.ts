@@ -2,11 +2,11 @@ import moveCardToList from '../api/moveCardToList';
 import { TrelloCard } from '../domain';
 import { TrelloRuntime } from '../TrelloRuntime';
 
-const moveCardAndUpdateDoneList = (
-  { config, cache, translate }: TrelloRuntime,
+const moveCardAndUpdateDoneList = async (
+  { config, cache, logger, translate }: TrelloRuntime,
   task: TrelloCard,
   listId: string
-): void => {
+): Promise<void> => {
   const { currentList, lists, log, preferences } = cache.get();
   const position = config.get().completedTaskPosition ?? 'top';
 
@@ -33,12 +33,16 @@ const moveCardAndUpdateDoneList = (
 
   config.set('preferences', updatedPreferences);
 
-  moveCardToList({
+  logger.debug('Will move Trello card');
+
+  await moveCardToList({
     card: task,
     closed: preferences.archiveCards,
     listId,
     position,
   });
+
+  logger.debug('Did move Trello card');
 };
 
 export default moveCardAndUpdateDoneList;

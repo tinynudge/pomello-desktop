@@ -27,6 +27,8 @@ app.whenReady().then(() => {
   createMenu();
 
   createAppWindows();
+
+  logger.debug('Did start application');
 });
 
 if (import.meta.env.DEV) {
