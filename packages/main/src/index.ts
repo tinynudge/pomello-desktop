@@ -1,8 +1,10 @@
-import { app } from 'electron';
+import { app, dialog } from 'electron';
+import winston from 'winston';
 import createAppWindows from './createAppWindows';
 import createMenu from './createMenu';
 import getPomelloConfig from './getPomelloConfig';
 import initializeListeners from './helpers/initializeListeners';
+import translate from './helpers/translate';
 import logger from './logger';
 
 const isSingleInstance = app.requestSingleInstanceLock();
@@ -21,7 +23,32 @@ app.on('second-instance', createAppWindows);
 
 app.on('window-all-closed', () => app.quit());
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  const pomelloConfig = getPomelloConfig();
+  const isDebugMode = pomelloConfig.get('debug');
+
+  if (isDebugMode) {
+    const { response } = await dialog.showMessageBox({
+      buttons: [translate('debugModeConfirm'), translate('debugModeCancel')],
+      defaultId: 0,
+      message: translate('debugModeMessage'),
+      title: translate('debugModeHeading'),
+      type: 'info',
+    });
+
+    if (response === 0) {
+      pomelloConfig.delete('debug');
+    } else {
+      logger.add(
+        new winston.transports.File({
+          filename: `${app.getPath('userData')}/debug.log`,
+          handleExceptions: true,
+          level: 'debug',
+        })
+      );
+    }
+  }
+
   initializeListeners();
 
   createMenu();
