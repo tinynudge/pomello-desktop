@@ -40,6 +40,7 @@ const createStore = <TContents extends StoreContents = StoreContents>({
 
   return {
     all: () => store.store,
+    delete: store.delete.bind(store),
     get: store.get.bind(store),
     set: store.set.bind(store),
     unset: store.delete.bind(store),
