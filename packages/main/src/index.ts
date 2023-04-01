@@ -1,4 +1,5 @@
 import { app, dialog } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import winston from 'winston';
 import createAppWindows from './createAppWindows';
 import createMenu from './createMenu';
@@ -70,8 +71,7 @@ if (import.meta.env.DEV) {
 if (import.meta.env.PROD) {
   app
     .whenReady()
-    .then(() => import('electron-updater'))
-    .then(({ autoUpdater }) => {
+    .then(() => {
       const pomelloConfig = getPomelloConfig();
       const releaseChannel = pomelloConfig.get('releaseChannel') ?? 'latest';
 
