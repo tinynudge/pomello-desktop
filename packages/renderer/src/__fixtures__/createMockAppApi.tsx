@@ -54,7 +54,7 @@ const createMockAppApi = ({
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),
     logMessage: vi.fn(),
     notifySelectReady: vi.fn(),
-    onThemeCssChange: vi.fn(),
+    onPowerMonitorChange: vi.fn(),
     onSelectChange: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectChange', callback))
     ),
@@ -77,6 +77,7 @@ const createMockAppApi = ({
       appApi.onSettingsChange ?? (callback => addListener('onSettingsChange', callback))
     ),
     onShowSelect: vi.fn(appApi.onShowSelect ?? (callback => addListener('onShowSelect', callback))),
+    onThemeCssChange: vi.fn(),
     openUrl: vi.fn(),
     quitApp: vi.fn(),
     registerServiceConfig: vi.fn(

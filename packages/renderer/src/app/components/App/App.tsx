@@ -28,6 +28,7 @@ import Routes from '../Routes';
 import styles from './App.module.scss';
 import useCheckPomelloAccount from './useCheckPomelloAccount';
 import useLogPomelloEvents from './useLogPomelloEvents';
+import useMonitorPowerChange from './useMonitorPowerChange';
 
 interface AppProps {
   hotkeys: LabeledHotkeys;
@@ -89,6 +90,8 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   const { activeService, status } = useInitializeService({ logger, services, serviceId });
 
   const service = usePomelloService();
+
+  useMonitorPowerChange({ logger, service });
 
   useEffect(() => {
     const onPomelloEvent = activeService?.service.onPomelloEvent;
