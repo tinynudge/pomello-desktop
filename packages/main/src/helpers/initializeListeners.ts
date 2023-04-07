@@ -10,6 +10,7 @@ import handleGetTranslations from '@/events/handleGetTranslations';
 import handleLogMessage from '@/events/handleLogMessage';
 import handleOpenUrl from '@/events/handleOpenUrl';
 import handleOptionSelect from '@/events/handleOptionSelect';
+import handlePowerMonitorChange from '@/events/handlePowerMonitorChange';
 import handleRegisterServiceConfig from '@/events/handleRegisterServiceConfig';
 import handleResetSelect from '@/events/handleResetSelect';
 import handleSelectHide from '@/events/handleSelectHide';
@@ -24,7 +25,7 @@ import handleThemeUpdate from '@/events/handleThemeUpdate';
 import handleUnsetStoreItem from '@/events/handleUnsetStoreItem';
 import handleUpdateSetting from '@/events/handleUpdateSetting';
 import { AppEvent, AppProtocol } from '@domain';
-import { ipcMain, nativeTheme, protocol } from 'electron';
+import { ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 
 const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.GetActiveServiceId, handleGetActiveServiceId);
@@ -53,6 +54,9 @@ const initializeListeners = (): void => {
   ipcMain.on(AppEvent.EncryptValue, handleEncryptValue);
 
   nativeTheme.on('updated', handleThemeUpdate);
+
+  powerMonitor.on('resume', () => handlePowerMonitorChange('resume'));
+  powerMonitor.on('suspend', () => handlePowerMonitorChange('suspend'));
 
   protocol.registerFileProtocol(AppProtocol.Audio.replace('://', ''), handleAudioFileProtocol);
 };

@@ -9,6 +9,7 @@ export enum AppEvent {
   HideSelect = 'hide-select',
   LogMessage = 'log-message',
   OpenUrl = 'open-url',
+  PowerMonitorChange = 'power-monitor-change',
   QuitApp = 'quit-app',
   RegisterServiceConfig = 'register-service-config',
   ResetSelect = 'reset-select',

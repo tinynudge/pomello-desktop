@@ -9,6 +9,7 @@ import getTranslations from './getTranslations';
 import hideSelect from './hideSelect';
 import logMessage from './logMessage';
 import notifySelectReady from './notifySelectReady';
+import onPowerMonitorChange from './onPowerMonitorChange';
 import onSelectChange from './onSelectChange';
 import onSelectHide from './onSelectHide';
 import onSelectReady from './onSelectReady';
@@ -43,6 +44,7 @@ export const api = {
   hideSelect,
   logMessage,
   notifySelectReady,
+  onPowerMonitorChange,
   onSelectChange,
   onSelectHide,
   onSelectReady,
