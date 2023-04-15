@@ -1,15 +1,16 @@
+import useTasksCacheKey from '@/app/hooks/useTasksCacheKey';
 import LoadingText from '@/app/ui/LoadingText';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { InitializingView, SelectItem } from '@domain';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import fetchBoardsAndLists from '../api/fetchBoardsAndLists';
 import {
   selectBoards,
+  selectToken as selectCachedToken,
   selectDidSwitchList,
   selectLists,
   selectPreviousListId,
-  selectToken as selectCachedToken,
   useTrelloCacheSelector,
   useTrelloCacheUpdater,
 } from '../useTrelloCache';
@@ -23,10 +24,10 @@ import {
   useTrelloConfigSelector,
   useTrelloConfigUpdater,
 } from '../useTrelloConfig';
-import getPreferences from './helpers/getPreferences';
-import parseBoardsAndLists from './helpers/parseBoardsAndLists';
 import LoginView from './LoginView';
 import SelectListView from './SelectListView';
+import getPreferences from './helpers/getPreferences';
+import parseBoardsAndLists from './helpers/parseBoardsAndLists';
 
 const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const { t } = useTranslation();
@@ -145,6 +146,9 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     unsetConfig,
   ]);
 
+  const queryClient = useQueryClient();
+  const tasksCacheKey = useTasksCacheKey();
+
   const handleListSelect = (optionId: string) => {
     let listId = optionId;
 
@@ -154,6 +158,8 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
       setCache(draft => {
         delete draft.previousListId;
       });
+    } else {
+      queryClient.removeQueries(tasksCacheKey);
     }
 
     const updatedRecentLists = new Set(recentLists ?? []);
