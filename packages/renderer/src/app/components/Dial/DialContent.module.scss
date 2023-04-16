@@ -131,6 +131,7 @@ $action-size: 36px;
   transition: opacity 60ms ease-out;
 
   &.isVisible {
+    -webkit-app-region: no-drag;
     opacity: 1;
     pointer-events: auto;
   }
