@@ -16,7 +16,10 @@ const TrelloContainer: TrelloContainerProps = ({ cache, children }) => {
 
   useEffect(() => {
     if (!currentListId) {
-      reset({ reinitialize: true });
+      reset({
+        preserveActiveTimer: true,
+        reinitialize: true,
+      });
     }
   }, [currentListId, reset]);
 
