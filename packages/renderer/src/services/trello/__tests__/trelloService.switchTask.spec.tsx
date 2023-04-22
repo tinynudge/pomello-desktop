@@ -98,4 +98,21 @@ describe('Trello service - Switch task', () => {
 
     expect(mockShowSelect).toHaveBeenCalled();
   });
+
+  it('should not destroy the active timer when switching lists', async () => {
+    const { simulate } = await mountTrelloService({
+      settings: {
+        taskTime: 30,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer(5);
+    await simulate.hotkey('switchTask');
+    await simulate.switchLists();
+    await screen.findByRole('button', { name: 'Pick a list' });
+
+    expect(screen.getByTestId('dial')).toHaveTextContent('25');
+  });
 });
