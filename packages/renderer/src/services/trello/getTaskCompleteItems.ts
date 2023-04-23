@@ -1,11 +1,14 @@
-import { TaskCompleteItems } from '@domain';
+import { GetTaskCompleteItemsParams, GetTaskCompleteItemsResponse } from '@domain';
+import { TrelloRuntime } from './TrelloRuntime';
 import completeCheckItem from './helpers/completeCheckItem';
 import createMoveCardList from './helpers/createMoveCardList';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
-import { TrelloRuntime } from './TrelloRuntime';
 
-const getTaskCompleteItems = (runtime: TrelloRuntime, taskId: string): TaskCompleteItems => {
+const getTaskCompleteItems = (
+  runtime: TrelloRuntime,
+  { taskId }: GetTaskCompleteItemsParams
+): GetTaskCompleteItemsResponse => {
   const { cache, translate } = runtime;
 
   const task = findOrFailTask(cache, taskId);

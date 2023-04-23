@@ -1,12 +1,12 @@
+import { TaskCompletePromptHandledEvent } from '@domain';
+import { TrelloRuntime } from './TrelloRuntime';
 import findOrFailTask from './helpers/findOrFailTask';
 import isCheckItem from './helpers/isCheckItem';
 import moveCardAndUpdateDoneList from './helpers/moveCardAndUpdateDoneList';
-import { TrelloRuntime } from './TrelloRuntime';
 
 const onTaskCompletePromptHandled = (
   runtime: TrelloRuntime,
-  taskId: string,
-  optionId: string
+  { optionId, taskId }: TaskCompletePromptHandledEvent
 ): void => {
   const task = findOrFailTask(runtime.cache, taskId);
 

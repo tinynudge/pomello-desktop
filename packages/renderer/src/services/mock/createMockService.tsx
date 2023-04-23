@@ -42,11 +42,11 @@ const createMockService: ServiceFactory = () => {
     onTaskCreate: text => {
       new Notification(text);
     },
-    onTaskCompletePromptHandled(taskId, action) {
-      new Notification(taskId, { body: action });
+    onTaskCompletePromptHandled({ optionId, taskId }) {
+      new Notification(taskId, { body: optionId });
     },
-    onTaskTimerEndPromptHandled(taskId, action) {
-      console.log(taskId, action);
+    onTaskTimerEndPromptHandled({ optionId, taskId }) {
+      console.log(taskId, optionId);
     },
   };
 };
