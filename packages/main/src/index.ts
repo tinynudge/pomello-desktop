@@ -63,7 +63,14 @@ if (import.meta.env.DEV) {
   app
     .whenReady()
     .then(() => import('electron-devtools-installer'))
-    .then(({ default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS }) => {
+    .then(devToolsInstaller => {
+      const {
+        default: installExtension,
+        REACT_DEVELOPER_TOOLS,
+        REDUX_DEVTOOLS,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } = devToolsInstaller.default as any;
+
       installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS]);
     });
 }
