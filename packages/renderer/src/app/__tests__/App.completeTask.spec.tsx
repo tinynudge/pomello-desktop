@@ -81,7 +81,12 @@ describe('App - Complete Task', () => {
     await simulate.selectOption('bar');
 
     await waitFor(() => {
-      expect(handleTaskComplete).toHaveBeenCalledWith('hello', 'bar');
+      expect(handleTaskComplete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          optionId: 'bar',
+          taskId: 'hello',
+        })
+      );
       expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
     });
   });

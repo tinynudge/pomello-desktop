@@ -1,4 +1,4 @@
-import { TaskTimerEndPromptHandledAction } from '@tinynudge/pomello-service';
+import { TaskTimerEndPromptHandledResponse } from '@domain';
 import { vi } from 'vitest';
 import mountApp, { screen } from '../__fixtures__/mountApp';
 
@@ -232,8 +232,8 @@ describe('App - Task Timer End', () => {
 
   it('should handle the move task hotkey for a customized item', async () => {
     const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledAction>()
-      .mockReturnValue('continueTask');
+      .fn<never, TaskTimerEndPromptHandledResponse>()
+      .mockReturnValue({ action: 'continueTask' });
 
     const { simulate } = mountApp({
       mockService: {
@@ -342,13 +342,18 @@ describe('App - Task Timer End', () => {
     await simulate.advanceTimer();
     await simulate.selectOption('foo');
 
-    expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith('hello', 'foo');
+    expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        optionId: 'foo',
+        taskId: 'hello',
+      })
+    );
   });
 
   it('should handle a custom continue task option', async () => {
     const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledAction>()
-      .mockReturnValue('continueTask');
+      .fn<never, TaskTimerEndPromptHandledResponse>()
+      .mockReturnValue({ action: 'continueTask' });
 
     const { simulate } = mountApp({
       settings: {
@@ -375,8 +380,8 @@ describe('App - Task Timer End', () => {
 
   it('should handle a custom switch task option', async () => {
     const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledAction>()
-      .mockReturnValue('switchTask');
+      .fn<never, TaskTimerEndPromptHandledResponse>()
+      .mockReturnValue({ action: 'switchTask' });
 
     const { simulate } = mountApp({
       settings: {
@@ -402,8 +407,8 @@ describe('App - Task Timer End', () => {
 
   it('should handle a custom void task option', async () => {
     const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledAction>()
-      .mockReturnValue('voidTask');
+      .fn<never, TaskTimerEndPromptHandledResponse>()
+      .mockReturnValue({ action: 'voidTask' });
 
     const { simulate } = mountApp({
       settings: {

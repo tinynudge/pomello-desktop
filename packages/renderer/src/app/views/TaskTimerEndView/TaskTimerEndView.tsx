@@ -1,6 +1,8 @@
 import useCurrentTask from '@/app/hooks/useCurrentTask';
 import useHotkeys from '@/app/hooks/useHotkeys';
+import useInvalidateTasksCache from '@/app/hooks/useInvalidateTasksCache';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
+import useRemoveTaskFromCache from '@/app/hooks/useRemoveTaskFromCache/useRemoveTaskFromCache';
 import useShowAddNoteView from '@/app/hooks/useShowAddNoteView';
 import Heading from '@/app/ui/Heading';
 import SelectField from '@/app/ui/SelectField';
@@ -21,6 +23,9 @@ const TaskTimerEndView: FC = () => {
 
   const customMoveTaskItemId = useRef<string>();
 
+  const invalidateTasksCache = useInvalidateTasksCache();
+  const removeTaskFromCache = useRemoveTaskFromCache();
+
   const handleActionSelect = useCallback(
     (id: string) => {
       if (id === 'continueTask' || id === 'switchTask' || id === 'voidTask') {
@@ -28,14 +33,29 @@ const TaskTimerEndView: FC = () => {
       } else if (id === 'addNote') {
         showAddNoteView('generalNote');
       } else {
-        const response = onTaskTimerEndPromptHandled?.(currentTask.id, id);
+        const response = onTaskTimerEndPromptHandled?.({
+          invalidateTasksCache,
+          optionId: id,
+          taskId: currentTask.id,
+        });
 
-        if (response) {
-          taskTimerEndPromptHandled(response);
+        if (response?.action) {
+          taskTimerEndPromptHandled(response.action);
+        }
+
+        if (response?.shouldRemoveTaskFromCache) {
+          removeTaskFromCache(currentTask.id);
         }
       }
     },
-    [currentTask.id, onTaskTimerEndPromptHandled, showAddNoteView, taskTimerEndPromptHandled]
+    [
+      currentTask.id,
+      invalidateTasksCache,
+      onTaskTimerEndPromptHandled,
+      removeTaskFromCache,
+      showAddNoteView,
+      taskTimerEndPromptHandled,
+    ]
   );
 
   const handleTaskMove = useCallback(() => {

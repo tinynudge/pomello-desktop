@@ -1,7 +1,18 @@
 import { vi } from 'vitest';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import mountApp, { act, screen, waitFor } from '../__fixtures__/mountApp';
 
 describe('App - Task', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({
+      shouldAdvanceTime: true,
+    });
+  });
+
+  afterEach(() => {
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+  });
+
   it('should be able to select nested tasks', async () => {
     const { simulate } = mountApp({
       mockService: {
@@ -167,7 +178,9 @@ describe('App - Task', () => {
     await simulate.showDialActions();
     await userEvent.click(screen.getByRole('button', { name: 'Complete task' }));
 
-    expect(screen.getByRole('button', { name: "Nice! What's next?" })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: "Nice! What's next?" })).toBeInTheDocument();
+    });
   });
 
   it('should complete tasks via hotkeys', async () => {
@@ -226,5 +239,267 @@ describe('App - Task', () => {
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
 
     mockedConsole.mockRestore();
+  });
+
+  it('should be able to optimistically remove a task after the timer ends', async () => {
+    const { appApi, simulate } = mountApp({
+      settings: {
+        pomodoroSet: ['task', 'shortBreak'],
+        shortBreakTime: 3,
+        taskTime: 5,
+      },
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              { id: 'TASK_ONE', label: 'Task one' },
+              {
+                id: 'GROUP_A',
+                label: 'Group A',
+                type: 'group',
+                items: [
+                  {
+                    id: 'GROUP_B',
+                    label: 'Group B',
+                    type: 'group',
+                    items: [
+                      {
+                        id: 'GROUP_C',
+                        label: 'Group C',
+                        type: 'group',
+                        items: [{ id: 'TASK_TWO', label: 'Task two' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+              { id: 'TASK_THREE', label: 'Task three' },
+            ]),
+          getTaskTimerEndItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          onTaskTimerEndPromptHandled: () => ({
+            action: 'switchTask',
+            shouldRemoveTaskFromCache: true,
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('TASK_TWO');
+    await simulate.startTimer();
+    await simulate.advanceTimer();
+    await simulate.selectOption('NEXT');
+    await simulate.advanceTimer(3);
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            { id: 'TASK_ONE', label: 'Task one' },
+            { id: 'TASK_THREE', label: 'Task three' },
+          ],
+        })
+      );
+    });
+  });
+
+  it('should be able to optimistically remove a task after being completed early', async () => {
+    const { appApi, simulate } = mountApp({
+      settings: {
+        taskTime: 5,
+      },
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              { id: 'TASK_ONE', label: 'Task one' },
+              {
+                id: 'GROUP_A',
+                label: 'Group A',
+                type: 'group',
+                items: [
+                  {
+                    id: 'GROUP_B',
+                    label: 'Group B',
+                    type: 'group',
+                    items: [
+                      {
+                        id: 'GROUP_C',
+                        label: 'Group C',
+                        type: 'group',
+                        items: [{ id: 'TASK_TWO', label: 'Task two' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+              { id: 'TASK_THREE', label: 'Task three' },
+            ]),
+          getTaskCompleteItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          onTaskCompletePromptHandled: () => ({
+            shouldRemoveTaskFromCache: true,
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('TASK_TWO');
+    await simulate.startTimer();
+    await simulate.advanceTimer(2);
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.selectOption('NEXT');
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            { id: 'TASK_ONE', label: 'Task one' },
+            { id: 'TASK_THREE', label: 'Task three' },
+          ],
+        })
+      );
+    });
+  });
+
+  it('should be able to optimistically remove a task after being completed early without handling the prompt', async () => {
+    const { appApi, simulate } = mountApp({
+      settings: {
+        taskTime: 5,
+      },
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              { id: 'TASK_ONE', label: 'Task one' },
+              {
+                id: 'GROUP_A',
+                label: 'Group A',
+                type: 'group',
+                items: [
+                  {
+                    id: 'GROUP_B',
+                    label: 'Group B',
+                    type: 'group',
+                    items: [
+                      {
+                        id: 'GROUP_C',
+                        label: 'Group C',
+                        type: 'group',
+                        items: [{ id: 'TASK_TWO', label: 'Task two' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+              { id: 'TASK_THREE', label: 'Task three' },
+            ]),
+          getTaskCompleteItems: () => ({ shouldRemoveTaskFromCache: true }),
+        },
+      },
+    });
+
+    await simulate.selectTask('TASK_TWO');
+    await simulate.startTimer();
+    await simulate.advanceTimer(2);
+    await simulate.hotkey('completeTaskEarly');
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            { id: 'TASK_ONE', label: 'Task one' },
+            { id: 'TASK_THREE', label: 'Task three' },
+          ],
+        })
+      );
+    });
+  });
+
+  it('should be able to invalidate the tasks cache when handling the task timer end prompt', async () => {
+    const fetchTasks = vi.fn().mockResolvedValue([{ id: 'TASK_ONE', label: 'Task one' }]);
+
+    const { simulate } = mountApp({
+      settings: {
+        pomodoroSet: ['task', 'shortBreak'],
+        shortBreakTime: 3,
+        taskTime: 5,
+      },
+      mockService: {
+        service: {
+          fetchTasks,
+          getTaskTimerEndItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          onTaskTimerEndPromptHandled: ({ invalidateTasksCache }) => {
+            invalidateTasksCache();
+
+            return { action: 'switchTask' };
+          },
+        },
+      },
+    });
+
+    await simulate.selectTask('TASK_ONE');
+    await simulate.startTimer();
+    await simulate.advanceTimer();
+    await simulate.selectOption('NEXT');
+    await simulate.advanceTimer();
+
+    expect(fetchTasks).toHaveBeenCalledTimes(2);
+  });
+
+  it('should be able to invalidate the tasks cache when handling the task completed prompt', async () => {
+    const fetchTasks = vi.fn().mockResolvedValue([{ id: 'TASK_ONE', label: 'Task one' }]);
+
+    const { simulate } = mountApp({
+      settings: {
+        pomodoroSet: ['task', 'shortBreak'],
+        taskTime: 5,
+      },
+      mockService: {
+        service: {
+          fetchTasks,
+          getTaskCompleteItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          onTaskCompletePromptHandled: ({ invalidateTasksCache }) => {
+            invalidateTasksCache();
+          },
+        },
+      },
+    });
+
+    await simulate.selectTask('TASK_ONE');
+    await simulate.startTimer();
+    await simulate.advanceTimer(2);
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.selectOption('NEXT');
+
+    expect(fetchTasks).toHaveBeenCalledTimes(2);
+  });
+
+  it('should be able to invalidate the tasks cache after being completed early without handling the prompt', async () => {
+    const fetchTasks = vi.fn().mockResolvedValue([{ id: 'TASK_ONE', label: 'Task one' }]);
+
+    const { simulate } = mountApp({
+      settings: {
+        pomodoroSet: ['task', 'shortBreak'],
+        taskTime: 5,
+      },
+      mockService: {
+        service: {
+          fetchTasks,
+          getTaskCompleteItems: ({ invalidateTasksCache }) => {
+            invalidateTasksCache();
+          },
+        },
+      },
+    });
+
+    await simulate.selectTask('TASK_ONE');
+    await simulate.startTimer();
+    await simulate.advanceTimer(2);
+    await simulate.hotkey('completeTaskEarly');
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(fetchTasks).toHaveBeenCalledTimes(2);
   });
 });
