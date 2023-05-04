@@ -18,6 +18,10 @@ const getTaskCompleteItems = (
   }
 
   completeCheckItem(runtime, task);
+
+  return {
+    shouldRemoveTaskFromCache: true,
+  };
 };
 
 export default getTaskCompleteItems;
