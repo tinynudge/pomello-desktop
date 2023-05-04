@@ -10,15 +10,17 @@ const onTaskTimerEndPromptHandled = (
   { optionId, taskId }: TaskTimerEndPromptHandledEvent
 ): TaskTimerEndPromptHandledResponse => {
   const task = findOrFailTask(runtime.cache, taskId);
+  const isCurrentList = runtime.cache.get().currentList.id === optionId;
 
   if (isCheckItem(task)) {
     completeCheckItem(runtime, task);
-  } else {
+  } else if (!isCurrentList) {
     moveCardAndUpdateDoneList(runtime, task, optionId);
   }
 
   return {
     action: 'switchTask',
+    shouldRemoveTaskFromCache: !isCurrentList,
   };
 };
 

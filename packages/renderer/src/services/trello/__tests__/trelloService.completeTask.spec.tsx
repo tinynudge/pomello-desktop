@@ -13,10 +13,17 @@ describe('Trello service - Complete task', () => {
   beforeEach(() => {
     vi.mock('../api/markCheckItemComplete');
     vi.mock('../api/moveCardToList');
+
+    vi.useFakeTimers({
+      shouldAdvanceTime: true,
+    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+
+    vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   it('should show Trello lists for cards', async () => {
@@ -251,5 +258,181 @@ describe('Trello service - Complete task', () => {
 
     const mockedMarkCheckItemComplete = vi.mocked(markCheckItemComplete);
     expect(mockedMarkCheckItemComplete).toHaveBeenCalled();
+  });
+
+  it('should optimistically remove a card when completing early and moving to another list', async () => {
+    const { appApi, simulate } = await mountTrelloService({
+      config: {
+        currentList: 'MY_FIRST_LIST_ID',
+      },
+      settings: {
+        taskTime: 5,
+        shortBreakTime: 3,
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              lists: [
+                generateTrelloList({ id: 'MY_FIRST_LIST_ID', name: 'My first list' }),
+                generateTrelloList({ id: 'MY_SECOND_LIST_ID', name: 'My second list' }),
+              ],
+            }),
+          ],
+        }),
+        fetchCardsByListId: [
+          generateTrelloCard({ id: 'MY_FIRST_TASK', name: 'My first task', checklists: [] }),
+          generateTrelloCard({ id: 'MY_SECOND_TASK', name: 'My second task', checklists: [] }),
+        ],
+      },
+    });
+
+    await simulate.selectTask('MY_FIRST_TASK');
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.selectOption('MY_SECOND_LIST_ID');
+    await simulate.advanceTimer(2);
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.waitForSelectTaskView();
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: [
+          {
+            id: 'MY_SECOND_TASK',
+            label: 'My second task',
+          },
+          {
+            id: 'switch-lists',
+            label: 'Switch to a different list',
+            type: 'customOption',
+          },
+        ],
+      })
+    );
+  });
+
+  it('should not optimistically remove the card when completing early and moving to the same list', async () => {
+    const { appApi, simulate } = await mountTrelloService({
+      config: {
+        currentList: 'MY_FIRST_LIST_ID',
+      },
+      settings: {
+        taskTime: 5,
+        shortBreakTime: 3,
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              lists: [
+                generateTrelloList({ id: 'MY_FIRST_LIST_ID', name: 'My first list' }),
+                generateTrelloList({ id: 'MY_SECOND_LIST_ID', name: 'My second list' }),
+              ],
+            }),
+          ],
+        }),
+        fetchCardsByListId: [
+          generateTrelloCard({ id: 'MY_FIRST_TASK', name: 'My first task', checklists: [] }),
+          generateTrelloCard({ id: 'MY_SECOND_TASK', name: 'My second task', checklists: [] }),
+        ],
+      },
+    });
+
+    await simulate.selectTask('MY_FIRST_TASK');
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.selectOption('MY_FIRST_LIST_ID');
+    await simulate.advanceTimer(2);
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.waitForSelectTaskView();
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: [
+          {
+            id: 'MY_FIRST_TASK',
+            label: 'My first task',
+          },
+          {
+            id: 'MY_SECOND_TASK',
+            label: 'My second task',
+          },
+          {
+            id: 'switch-lists',
+            label: 'Switch to a different list',
+            type: 'customOption',
+          },
+        ],
+      })
+    );
+  });
+
+  it('should optimistically remove a checklist item when completing early', async () => {
+    const { appApi, simulate } = await mountTrelloService({
+      settings: {
+        taskTime: 5,
+        shortBreakTime: 3,
+      },
+      trelloApi: {
+        fetchCardsByListId: [
+          generateTrelloCard({
+            id: 'MY_FIRST_TASK',
+            name: 'My first task',
+            checklists: [
+              generateTrelloChecklist({
+                id: 'MY_FIRST_CHECKLIST',
+                name: 'My first checklist',
+                checkItems: [
+                  generateTrelloCheckItem({
+                    id: 'MY_FIRST_CHECK_ITEM',
+                    name: 'My first check item',
+                  }),
+                  generateTrelloCheckItem({
+                    id: 'MY_SECOND_CHECK_ITEM',
+                    name: 'My second check item',
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      },
+    });
+
+    await simulate.selectTask('MY_FIRST_CHECK_ITEM');
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.advanceTimer(2);
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.waitForSelectTaskView();
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: [
+          {
+            id: 'MY_FIRST_TASK',
+            label: 'My first task',
+          },
+          {
+            id: 'MY_FIRST_CHECKLIST',
+            label: 'My first checklist',
+            items: [{ id: 'MY_SECOND_CHECK_ITEM', label: 'My second check item' }],
+            type: 'group',
+          },
+          {
+            id: 'switch-lists',
+            label: 'Switch to a different list',
+            type: 'customOption',
+          },
+        ],
+      })
+    );
   });
 });
