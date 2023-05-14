@@ -8,6 +8,7 @@ import { GetTaskCompleteItemsResponse } from './GetTaskCompleteItemsResponse';
 import { InitializingView } from './InitializingView';
 import { OnNoteCreate } from './OnNoteCreate';
 import { OnTaskCreate } from './OnTaskCreate';
+import { OnTaskOpenEvent } from './OnTaskOpenEvent';
 import { PomelloEventType } from './PomelloEventType';
 import { SelectItem } from './SelectItem';
 import { SelectTaskView } from './SelectTaskView';
@@ -40,6 +41,7 @@ export interface Service {
     event: TaskCompletePromptHandledEvent
   ): TaskCompletePromptHandledResponse;
   onTaskCreate?: OnTaskCreate;
+  onTaskOpen?(event: OnTaskOpenEvent): void;
   onTaskSelect?(taskId: string): boolean | void;
   onTaskTimerEndPromptHandled?(
     event: TaskTimerEndPromptHandledEvent

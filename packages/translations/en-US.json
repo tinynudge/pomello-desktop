@@ -54,6 +54,7 @@
   "noTasksFound": "No tasks found",
   "notesDisabledHeading": "Unable to add note",
   "openMenuLabel": "Open menu",
+  "openTaskDisabledHeading": "Unable to open task in browser",
   "pauseTimerLabel": "Pause timer",
   "pomelloAccountUnconnectedDialogCancel": "Close",
   "pomelloAccountUnconnectedDialogConfirm": "Log in",

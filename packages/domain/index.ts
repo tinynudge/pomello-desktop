@@ -23,6 +23,7 @@ export type { Note } from './Note';
 export type { NoteType } from './NoteType';
 export type { OnNoteCreate } from './OnNoteCreate';
 export type { OnTaskCreate } from './OnTaskCreate';
+export type { OnTaskOpenEvent } from './OnTaskOpenEvent';
 export type { PomelloApi } from './PomelloApi';
 export type { PomelloApiResponse } from './PomelloApiResponse';
 export type { PomelloConfig } from './PomelloConfig';

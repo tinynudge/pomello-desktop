@@ -7,7 +7,6 @@ import {
   settingsChange,
 } from '@/app/appSlice';
 import { DialActionsProvider } from '@/app/context/DialActionsContext';
-import { HotkeysProvider } from '@/app/context/HotkeysContext';
 import usePomelloService from '@/app/hooks/usePomelloService';
 import useTimerSounds from '@/app/hooks/useTimerSounds';
 import Content from '@/app/ui/Content';
@@ -18,7 +17,7 @@ import SelectServiceView from '@/app/views/SelectServiceView';
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { LabeledHotkeys, Logger, PomelloEventType, ServiceRegistry } from '@domain';
+import { Logger, PomelloEventType, ServiceRegistry } from '@domain';
 import { PomelloEvent } from '@tinynudge/pomello-service';
 import cc from 'classcat';
 import { FC, Fragment, useEffect } from 'react';
@@ -29,19 +28,17 @@ import styles from './App.module.scss';
 import useCheckPomelloAccount from './useCheckPomelloAccount';
 import useLogPomelloEvents from './useLogPomelloEvents';
 import useMonitorPowerChange from './useMonitorPowerChange';
+import useOpenTask from './useOpenTask';
 
 interface AppProps {
-  hotkeys: LabeledHotkeys;
   logger: Logger;
   services: ServiceRegistry;
 }
 
-const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
+const App: FC<AppProps> = ({ logger, services }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const settings = useSelector(selectSettings);
-
-  useLogPomelloEvents();
 
   useEffect(() => {
     const handleWindowClose = async (event: BeforeUnloadEvent) => {
@@ -71,8 +68,6 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
     };
   }, [settings.warnBeforeAppQuit, t]);
 
-  useTimerSounds();
-
   const serviceId = useSelector(selectServiceId);
 
   useEffect(() => {
@@ -88,6 +83,10 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   }, [dispatch]);
 
   const { activeService, status } = useInitializeService({ logger, services, serviceId });
+
+  useLogPomelloEvents();
+  useTimerSounds();
+  useOpenTask(activeService?.service);
 
   const service = usePomelloService();
 
@@ -140,32 +139,30 @@ const App: FC<AppProps> = ({ hotkeys, logger, services }) => {
   const ServiceContainer = activeService?.service.Container ?? Fragment;
 
   return (
-    <HotkeysProvider hotkeys={hotkeys}>
-      <DialActionsProvider>
-        <Layout activeService={activeService} logger={logger} onTaskCreate={handleTaskCreate}>
-          {status === 'READY' ? (
-            <ServiceProvider service={activeService}>
-              {overlayView === 'create-task' ? (
-                <CreateTaskView />
-              ) : overlayView ? (
-                <AddNoteView noteType={overlayView} />
-              ) : null}
-              <Content className={cc({ [styles.contentHidden]: Boolean(overlayView) })}>
-                <ServiceContainer>
-                  <Routes />
-                </ServiceContainer>
-              </Content>
-            </ServiceProvider>
-          ) : status === 'INITIALIZING' ? (
-            <Content>
-              <LoadingText />
+    <DialActionsProvider>
+      <Layout activeService={activeService} logger={logger} onTaskCreate={handleTaskCreate}>
+        {status === 'READY' ? (
+          <ServiceProvider service={activeService}>
+            {overlayView === 'create-task' ? (
+              <CreateTaskView />
+            ) : overlayView ? (
+              <AddNoteView noteType={overlayView} />
+            ) : null}
+            <Content className={cc({ [styles.contentHidden]: Boolean(overlayView) })}>
+              <ServiceContainer>
+                <Routes />
+              </ServiceContainer>
             </Content>
-          ) : (
-            <SelectServiceView services={services} />
-          )}
-        </Layout>
-      </DialActionsProvider>
-    </HotkeysProvider>
+          </ServiceProvider>
+        ) : status === 'INITIALIZING' ? (
+          <Content>
+            <LoadingText />
+          </Content>
+        ) : (
+          <SelectServiceView services={services} />
+        )}
+      </Layout>
+    </DialActionsProvider>
   );
 };
 

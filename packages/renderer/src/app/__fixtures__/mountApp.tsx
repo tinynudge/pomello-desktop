@@ -1,8 +1,3 @@
-import { PomelloApiProvider } from '@/shared/context/PomelloApiContext';
-import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
-import { TranslationsProvider } from '@/shared/context/TranslationsContext';
-import bindContext from '@/shared/helpers/bindContext';
-import createPomelloApi from '@/shared/helpers/createPomelloApi';
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockLogger from '@/__fixtures__/createMockLogger';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
@@ -12,6 +7,11 @@ import createRestResolver from '@/__fixtures__/createRestResolver';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import mockServer from '@/__fixtures__/mockServer';
+import { PomelloApiProvider } from '@/shared/context/PomelloApiContext';
+import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
+import { TranslationsProvider } from '@/shared/context/TranslationsContext';
+import bindContext from '@/shared/helpers/bindContext';
+import createPomelloApi from '@/shared/helpers/createPomelloApi';
 import {
   LabeledHotkeys,
   PomelloApiResponse,
@@ -26,11 +26,12 @@ import {
 } from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ResponseResolver, rest, RestContext, RestRequest } from 'msw';
+import { ResponseResolver, RestContext, RestRequest, rest } from 'msw';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import translations from '../../../../translations/en-US.json';
 import App from '../components/App';
+import { HotkeysProvider } from '../context/HotkeysContext';
 import { PomelloProvider } from '../context/PomelloContext';
 import createStore from '../createStore';
 import createMockPomelloService from './createMockPomelloService';
@@ -139,11 +140,9 @@ const mountApp = (options: MountAppOptions = {}) => {
           <PomelloConfigProvider config={pomelloConfig}>
             <PomelloApiProvider pomelloApi={createPomelloApi(pomelloConfig)}>
               <TranslationsProvider commonTranslations={translations}>
-                <App
-                  hotkeys={hotkeys}
-                  logger={createMockLogger()}
-                  services={services as ServiceRegistry}
-                />
+                <HotkeysProvider hotkeys={hotkeys}>
+                  <App logger={createMockLogger()} services={services as ServiceRegistry} />
+                </HotkeysProvider>
               </TranslationsProvider>
             </PomelloApiProvider>
           </PomelloConfigProvider>

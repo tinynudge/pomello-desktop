@@ -1,3 +1,6 @@
+import createLogger from '@/__bootstrap__/createLogger';
+import createPomelloService from '@/__bootstrap__/createPomelloService';
+import setTheme from '@/__bootstrap__/setTheme';
 import { PomelloProvider } from '@/app/context/PomelloContext';
 import createStore from '@/app/createStore';
 import services from '@/services';
@@ -6,14 +9,12 @@ import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import createPomelloApi from '@/shared/helpers/createPomelloApi';
 import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
-import createLogger from '@/__bootstrap__/createLogger';
-import createPomelloService from '@/__bootstrap__/createPomelloService';
-import setTheme from '@/__bootstrap__/setTheme';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import App from './components/App';
+import { HotkeysProvider } from './context/HotkeysContext';
 
 const renderApp = async () => {
   const queryClient = new QueryClient({
@@ -57,7 +58,9 @@ const renderApp = async () => {
             <PomelloConfigProvider config={pomelloConfig}>
               <PomelloApiProvider pomelloApi={createPomelloApi(pomelloConfig)}>
                 <TranslationsProvider commonTranslations={translations}>
-                  <App hotkeys={hotkeys} logger={createLogger()} services={services} />
+                  <HotkeysProvider hotkeys={hotkeys}>
+                    <App logger={createLogger()} services={services} />
+                  </HotkeysProvider>
                 </TranslationsProvider>
               </PomelloApiProvider>
             </PomelloConfigProvider>
