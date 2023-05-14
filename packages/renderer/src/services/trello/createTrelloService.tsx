@@ -1,5 +1,10 @@
 import createCache from '@/shared/helpers/createCache';
 import { ServiceFactory } from '@domain';
+import TrelloAuthView from './TrelloAuthView';
+import TrelloContainer from './TrelloContainer';
+import TrelloInitializingView from './TrelloInitializingView';
+import { TrelloRuntime } from './TrelloRuntime';
+import TrelloSelectOption from './TrelloSelectOption';
 import { TrelloCache, TrelloConfig } from './domain';
 import handleError from './errors/handleError';
 import fetchTasks from './fetchTasks';
@@ -11,14 +16,10 @@ import onNoteCreate from './onNoteCreate';
 import onPomelloEvent from './onPomelloEvent';
 import onTaskCompletePromptHandled from './onTaskCompletePromptHandled';
 import onTaskCreate from './onTaskCreate';
+import onTaskOpen from './onTaskOpen';
 import onTaskSelect from './onTaskSelect';
 import onTaskTimerEndPromptHandled from './onTaskTimerEndPromptHandled';
-import TrelloAuthView from './TrelloAuthView';
 import trelloClient from './trelloClient';
-import TrelloContainer from './TrelloContainer';
-import TrelloInitializingView from './TrelloInitializingView';
-import { TrelloRuntime } from './TrelloRuntime';
-import TrelloSelectOption from './TrelloSelectOption';
 
 const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
   const trelloRuntime: TrelloRuntime = {
@@ -61,6 +62,7 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
     onPomelloEvent: onPomelloEvent.bind(null, trelloRuntime),
     onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, trelloRuntime),
     onTaskCreate: onTaskCreate.bind(null, trelloRuntime),
+    onTaskOpen: onTaskOpen.bind(null, trelloRuntime),
     onTaskSelect: onTaskSelect.bind(null, trelloRuntime),
     onTaskTimerEndPromptHandled: onTaskTimerEndPromptHandled.bind(null, trelloRuntime),
   };
