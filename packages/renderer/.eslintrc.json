@@ -1,0 +1,21 @@
+{
+  "extends": ["plugin:svelte/recommended", "plugin:svelte/prettier"],
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jest": true
+  },
+  "overrides": [
+    {
+      "files": ["*.svelte"],
+      "parser": "svelte-eslint-parser",
+      "parserOptions": {
+        "parser": "@typescript-eslint/parser"
+      }
+    }
+  ],
+  "parserOptions": {
+    "project": "./packages/renderer/tsconfig.json",
+    "extraFileExtensions": [".svelte"]
+  }
+}

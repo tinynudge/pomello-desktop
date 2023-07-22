@@ -1,0 +1,9 @@
+.DS_Store
+*error.log
+coverage
+dist
+node_modules
+
+.eslintcache
+.env
+.npmrc

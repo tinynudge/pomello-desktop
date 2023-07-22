@@ -1,0 +1,21 @@
+{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    "checkJs": true,
+    "module": "ESNext",
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@domain": ["../domain"]
+    },
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "target": "ESNext",
+    "types": ["node"],
+    "useDefineForClassFields": true
+  },
+  "include": ["**/*.js", "**/*.ts", "**/*.svelte", "../preload/contracts.d.ts"]
+}
