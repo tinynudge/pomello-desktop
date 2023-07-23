@@ -21,12 +21,13 @@
     "release": "standard-version",
     "start": "node scripts/start.js",
     "test:renderer": "vitest --root packages/renderer",
-    "test": "run-p test:renderer",
+    "test": "run-p 'test:renderer run'",
     "check:main": "tsc --noEmit --project packages/main",
     "check:preload": "tsc --noEmit --project packages/preload",
     "check:renderer": "svelte-check",
     "check": "run-p --continue-on-error check:main check:preload check:renderer",
-    "update:vendors": "node scripts/update-electron-vendors.js"
+    "update:vendors": "node scripts/update-electron-vendors.js",
+    "verify": "run-s format:check lint check test"
   },
   "dependencies": {
     "@tinynudge/pomello-service": "^0.1.19",
@@ -40,6 +41,7 @@
     "@sveltejs/vite-plugin-svelte": "^2.4.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/svelte": "^4.0.3",
+    "@testing-library/user-event": "^14.4.3",
     "@tsconfig/svelte": "^5.0.0",
     "@types/throttle-debounce": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
@@ -59,7 +61,7 @@
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.1",
     "standard-version": "^9.5.0",
-    "stylelint": "^15.10.2",
+    "stylelint": "^14.16.1",
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-idiomatic-order": "^9.0.0",
     "stylelint-config-prettier": "^9.0.5",

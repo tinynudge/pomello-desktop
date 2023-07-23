@@ -1,9 +1,9 @@
+import { getTranslationsContext } from '@/shared/contexts/translationsContext';
 import type { Translate } from '@domain';
 import { derived, type Readable } from 'svelte/store';
-import { getTranslationsContext } from './translationsContext';
 
 const getTranslator = (): Readable<Translate> => {
-  const { translations } = getTranslationsContext();
+  const translations = getTranslationsContext();
 
   return derived(translations, $translations => {
     return (namespacedKey: string, mappings?: Record<string, string>) => {

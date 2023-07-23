@@ -1,4 +1,4 @@
-import { PomelloConfig, Store } from '@domain';
+import type { PomelloConfig, Store } from '@domain';
 import storeManager from './storeManager';
 
 const getPomelloConfig = (): Store<PomelloConfig> =>

@@ -1,5 +1,5 @@
-import { StoreContents } from '@domain';
-import { JSONSchemaType } from 'ajv';
+import type { StoreContents } from '@domain';
+import type { JSONSchemaType } from 'ajv';
 
 export interface RegisterStoreOptions<TContents = StoreContents> {
   defaults: Readonly<TContents>;

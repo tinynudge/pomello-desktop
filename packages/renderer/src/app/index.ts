@@ -1,3 +1,6 @@
+import services from '@/services';
+import createLogger from '@/shared/helpers/createLogger';
+import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
 import setTheme from '../setTheme';
 import App from './App.svelte';
 import createPomelloService from './createPomelloService';
@@ -9,7 +12,8 @@ const renderApp = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [settings, themeCss, translations] = await Promise.all([
+  const [pomelloServiceConfig, settings, themeCss, translations] = await Promise.all([
+    getPomelloServiceConfig(),
     window.app.getSettings(),
     window.app.getThemeCss(),
     window.app.getTranslations(),
@@ -22,7 +26,12 @@ const renderApp = async () => {
   new App({
     target,
     props: {
+      initialServiceId: 'mock',
+      logger: createLogger(),
       pomelloService,
+      pomelloServiceConfig,
+      services,
+      settings,
       translations,
     },
   });

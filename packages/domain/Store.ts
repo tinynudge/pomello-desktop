@@ -1,4 +1,4 @@
-import { StoreContents } from './StoreContents';
+import type { StoreContents } from './StoreContents';
 
 export interface Store<TContents = StoreContents> {
   all(): TContents;

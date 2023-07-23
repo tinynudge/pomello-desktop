@@ -1,5 +1,5 @@
-import { SetItem } from '@tinynudge/pomello-service';
-import { CustomSound } from './CustomSound';
+import type { SetItem } from '@tinynudge/pomello-service';
+import type { CustomSound } from './CustomSound';
 
 export interface Settings {
   alwaysOnTop: boolean;
