@@ -1,6 +1,7 @@
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockLogger from '@/__fixtures__/createMockLogger';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
+import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import type {
   PomelloServiceConfig,
@@ -14,7 +15,6 @@ import userEvent from '@testing-library/user-event';
 import translations from '../../../../translations/en-US.json';
 import App from '../App.svelte';
 import createMockPomelloService from './createMockPomelloService';
-import createMockSettings from './createMockSettings';
 
 export * from '@testing-library/svelte';
 

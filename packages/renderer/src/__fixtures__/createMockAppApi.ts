@@ -45,13 +45,20 @@ const createMockAppApi = ({
     getThemeCss: vi.fn(() => Promise.resolve({ css: '', theme: 'light' })),
     getTranslations: vi.fn(() => Promise.resolve({})),
     logMessage: vi.fn(),
+    onSelectChange: vi.fn(callback => addListener('onSelectChange', callback)),
+    onSelectReset: vi.fn(callback => addListener('onSelectReset', callback)),
     onServicesChange: vi.fn(callback => addListener('onServicesChange', callback)),
+    onSetSelectItems: vi.fn(callback => addListener('onSetSelectItems', callback)),
     onSettingsChange: vi.fn(callback => addListener('onSettingsChange', callback)),
+    onShowSelect: vi.fn(callback => addListener('onShowSelect', callback)),
     onThemeCssChange: vi.fn(),
     registerServiceConfig: vi.fn((serviceId, { defaults }) =>
       Promise.resolve(serviceConfigs[serviceId] ?? mockRegisterServiceConfig(serviceId, defaults))
     ),
+    resetSelect: vi.fn(),
+    setSelectItems: vi.fn(() => Promise.resolve()),
     showMessageBox: vi.fn(() => Promise.resolve({ checkboxChecked: false, response: 0 })),
+    showSelect: vi.fn(() => Promise.resolve()),
   };
 
   Object.entries(appApi).forEach(([key, value]) => {

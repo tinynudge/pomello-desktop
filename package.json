@@ -60,6 +60,7 @@
     "postcss-html": "^1.5.0",
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.1",
+    "sass": "^1.64.1",
     "standard-version": "^9.5.0",
     "stylelint": "^14.16.1",
     "stylelint-config-html": "^1.1.0",
