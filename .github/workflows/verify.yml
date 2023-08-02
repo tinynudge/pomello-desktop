@@ -40,7 +40,7 @@ jobs:
         run: yarn lint
 
       - name: Scripts
-        run: yarn check
+        run: yarn analyze
 
       - name: Test
         run: yarn test

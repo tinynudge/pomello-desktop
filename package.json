@@ -8,6 +8,10 @@
   "main": "packages/main/dist/index.cjs",
   "type": "module",
   "scripts": {
+    "analyze:main": "tsc --noEmit --project packages/main",
+    "analyze:preload": "tsc --noEmit --project packages/preload",
+    "analyze:renderer": "svelte-check",
+    "analyze": "run-p --continue-on-error analyze:main analyze:preload analyze:renderer",
     "build:main": "vite build --config packages/main/vite.config.js",
     "build:preload": "vite build --config packages/preload/vite.config.js",
     "build:renderer": "vite build --config packages/renderer/vite.config.js",
@@ -22,12 +26,8 @@
     "start": "node scripts/start.js",
     "test:renderer": "vitest --root packages/renderer",
     "test": "run-p 'test:renderer run'",
-    "check:main": "tsc --noEmit --project packages/main",
-    "check:preload": "tsc --noEmit --project packages/preload",
-    "check:renderer": "svelte-check",
-    "check": "run-p --continue-on-error check:main check:preload check:renderer",
     "update:vendors": "node scripts/update-electron-vendors.js",
-    "verify": "run-s format:check lint check test"
+    "verify": "run-s format:check lint analyze test"
   },
   "dependencies": {
     "@tinynudge/pomello-service": "^0.1.19",
