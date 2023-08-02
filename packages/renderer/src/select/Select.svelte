@@ -4,15 +4,22 @@
   import selectOptions from '@/select/helpers/selectOptions';
   import { setTranslationsContext } from '@/shared/contexts/translationsContext';
   import initializeService from '@/shared/helpers/initializeService';
-  import type { Logger, ServiceRegistry, TranslationsDictionary } from '@domain';
+  import type {
+    Logger,
+    SelectItem,
+    ServiceRegistry,
+    Settings,
+    TranslationsDictionary,
+  } from '@domain';
   import { onMount } from 'svelte';
   import DropdownList from './components/DropdownList.svelte';
-  import DropdownRow from './components/DropdownRow.svelte';
   import FilterInput from './components/FilterInput.svelte';
+  import updateWindowDimensions from './updateWindowDimensions';
 
   export let initialServiceId: string | undefined;
   export let logger: Logger;
   export let services: ServiceRegistry;
+  export let settings: Settings;
   export let translations: TranslationsDictionary;
 
   setTranslationsContext(translations);
@@ -21,19 +28,42 @@
   const listboxId = 'select-listbox';
   const translate = getTranslator();
 
-  let activeOptionId: string | undefined = undefined;
-  let inputElement: HTMLInputElement | null = null;
-  let listElement: HTMLDivElement | undefined = undefined;
+  let activeOptionId: string | undefined;
+  let filteredItems: SelectItem[] = [];
+  let inputElement: HTMLInputElement | undefined;
+  let listElement: HTMLDivElement | undefined;
+  let orientation: 'bottom' | 'top' | undefined;
   let query = '';
+  let shouldUpdateWidth = false;
 
   $: ({ activeService, status } = $initializeServiceResult);
 
   $: ({ items, noResultsMessage, placeholder } = $selectOptions);
 
-  $: filteredItems = status === 'INITIALIZING' ? [] : filterItems(items, query);
+  $: if (status === 'READY') {
+    filteredItems = filterItems(items, query);
+
+    updateWindowDimensions({
+      container: listElement,
+      maxRows: settings.selectMaxRows,
+      orientation,
+      shouldUpdateWidth,
+    });
+
+    shouldUpdateWidth = false;
+  }
+
+  $: noItemsMessage = query
+    ? $translate('selectNoMatchesFound')
+    : $translate(noResultsMessage ?? 'selectNoResults');
+
+  selectOptions.subscribe(() => {
+    shouldUpdateWidth = true;
+  });
 
   onMount(() => {
-    return window.app.onShowSelect(() => {
+    return window.app.onShowSelect(options => {
+      orientation = options.orientation;
       inputElement?.focus();
     });
   });
@@ -85,6 +115,7 @@
 />
 <DropdownList
   {activeOptionId}
+  {noItemsMessage}
   bind:listElement
   depth={0}
   id={listboxId}
@@ -93,20 +124,16 @@
   on:select={handleOptionSelect}
   role="listbox"
   service={activeService?.service}
->
-  {#if filteredItems.length === 0}
-    <DropdownRow isDisabled role="alert">
-      {query
-        ? $translate('selectNoMatchesFound')
-        : $translate(noResultsMessage ?? 'selectNoResults')}
-    </DropdownRow>
-  {/if}
-</DropdownList>
+/>
 
 <style lang="scss">
   :global(body) {
     background-color: var(--select-background-default);
     color: var(--select-content-default);
     user-select: none;
+  }
+
+  :global(.actual-width) {
+    display: inline-block;
   }
 </style>

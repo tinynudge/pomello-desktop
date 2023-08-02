@@ -17,6 +17,7 @@ export type { ServiceFactory } from './ServiceFactory';
 export type { ServiceRegistry } from './ServiceRegistry';
 export type { ServiceRuntime } from './ServiceRuntime';
 export type { Services } from './Services';
+export type { SetSelectBoundsParams } from './SetSelectBoundsParams';
 export type { SetSelectItemsOptions } from './SetSelectItemsOptions';
 export type { Settings } from './Settings';
 export type { ShowSelectMainOptions } from './ShowSelectMainOptions';

@@ -7,6 +7,7 @@ export enum AppEvent {
   RegisterServiceConfig = 'register-service-config',
   ResetSelect = 'reset-select',
   SelectChange = 'select-change',
+  SetSelectBounds = 'set-select-bounds',
   SetSelectItems = 'set-select-items',
   SetStoreItem = 'set-store-item',
   ShowMessageBox = 'show-message-box',
