@@ -11,7 +11,8 @@ const renderSelect = async () => {
     throw new Error('Unable to find target with id "root"');
   }
 
-  const [themeCss, translations] = await Promise.all([
+  const [settings, themeCss, translations] = await Promise.all([
+    window.app.getSettings(),
     window.app.getThemeCss(),
     window.app.getTranslations(),
   ]);
@@ -26,6 +27,7 @@ const renderSelect = async () => {
       initialServiceId: undefined,
       logger: createLogger(),
       services,
+      settings,
       translations,
     },
   });

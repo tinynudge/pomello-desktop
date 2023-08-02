@@ -12,6 +12,7 @@ import onShowSelect from './onShowSelect';
 import onThemeCssChange from './onThemeCssChange';
 import registerServiceConfig from './registerServiceConfig';
 import resetSelect from './resetSelect';
+import setSelectBounds from './setSelectBounds';
 import setSelectItems from './setSelectItems';
 import showMessageBox from './showMessageBox';
 import showSelect from './showSelect';
@@ -21,15 +22,16 @@ export const api = {
   getThemeCss,
   getTranslations,
   logMessage,
-  onShowSelect,
   onSelectChange,
   onSelectReset,
   onServicesChange,
   onSetSelectItems,
   onSettingsChange,
+  onShowSelect,
   onThemeCssChange,
   registerServiceConfig,
   resetSelect,
+  setSelectBounds,
   setSelectItems,
   showMessageBox,
   showSelect,
