@@ -49,7 +49,7 @@ const createAppWindows = async (): Promise<void> => {
 
   selectWindow.setParentWindow(appWindow);
   selectWindow.excludedFromShownWindowsMenu = true;
-  selectWindow.on('blur', hideSelectWindow);
+  selectWindow.on('blur', () => hideSelectWindow());
 
   if (appWindow.isMinimized()) {
     appWindow.restore();
