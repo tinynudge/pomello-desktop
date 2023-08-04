@@ -1,10 +1,7 @@
-import windowManager from '@/helpers/windowManager';
-import { AppEvent } from '@domain';
+import hideSelectWindow from '@/helpers/hideSelectWindow';
 
 const handleResetSelect = async (): Promise<void> => {
-  const select = windowManager.findOrFailWindow('select');
-
-  select.webContents.send(AppEvent.ResetSelect);
+  hideSelectWindow(true);
 };
 
 export default handleResetSelect;
