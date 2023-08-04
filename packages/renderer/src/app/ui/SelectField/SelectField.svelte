@@ -3,7 +3,7 @@
   import type { SelectItem } from '@domain';
   import { createEventDispatcher, onMount } from 'svelte';
 
-  // TODO: Implement default open
+  export let defaultOpen = false;
   export let items: SelectItem[];
   export let noResultsMessage: string | undefined = undefined;
   export let placeholder: string | undefined = undefined;
@@ -12,10 +12,21 @@
   const translate = getTranslator();
 
   let buttonElement: HTMLButtonElement | null = null;
+  let shouldOpenOnUpdate = defaultOpen;
 
   $: buttonPlaceholder = $translate('selectPlaceholder');
 
-  $: window.app.setSelectItems({ items, noResultsMessage, placeholder });
+  $: {
+    window.app.setSelectItems({ items, noResultsMessage, placeholder });
+
+    // This is much simpler than doing a lot of message passing to figure out if
+    // the select window has updated.
+    if (shouldOpenOnUpdate) {
+      setTimeout(showSelectWindow, 5);
+    }
+
+    shouldOpenOnUpdate = false;
+  }
 
   onMount(() => {
     const onSelectChangeUnsubscribe = window.app.onSelectChange(optionId => {

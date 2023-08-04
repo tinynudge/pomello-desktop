@@ -62,10 +62,24 @@
   });
 
   onMount(() => {
-    return window.app.onShowSelect(options => {
+    const onSelectShowUnsubscribe = window.app.onSelectShow(options => {
       orientation = options.orientation;
+
+      document.documentElement.classList.remove('visibly-hidden');
       inputElement?.focus();
     });
+
+    const onHideSelectUnsubscribe = window.app.onSelectHide(async () => {
+      document.documentElement.classList.add('visibly-hidden');
+
+      activeOptionId = undefined;
+      query = '';
+    });
+
+    return () => {
+      onSelectShowUnsubscribe();
+      onHideSelectUnsubscribe();
+    };
   });
 
   const handleInputEnter = () => {
@@ -73,7 +87,7 @@
   };
 
   const handleInputEscape = () => {
-    console.log('inputEscape');
+    window.app.hideSelect();
   };
 
   const handleFirstOptionSelect = () => {
@@ -131,6 +145,10 @@
     background-color: var(--select-background-default);
     color: var(--select-content-default);
     user-select: none;
+  }
+
+  :global(html.visibly-hidden) {
+    visibility: hidden;
   }
 
   :global(.actual-width) {
