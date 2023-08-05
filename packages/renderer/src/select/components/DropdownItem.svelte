@@ -21,8 +21,6 @@
   const handleOptionSelect = () => {
     dispatch('select', item.id);
   };
-
-  // TODO: Custom groups and custom options
 </script>
 
 {#if item.type === 'group' || item.type === 'customGroup'}
@@ -37,9 +35,17 @@
     role="group"
   >
     <DropdownRow id={item.id} role="presentation" type="group">
-      <span class="label">{item.label}</span>
-      {#if item.hint}
-        <span class="hint">{item.hint}</span>
+      {#if item.type === 'customGroup' && service?.CustomSelectGroup}
+        <svelte:component
+          this={service.CustomSelectGroup.component}
+          {...service.CustomSelectGroup.additionalProps}
+          group={item}
+        />
+      {:else}
+        <span class="label">{item.label}</span>
+        {#if item.hint}
+          <span class="hint">{item.hint}</span>
+        {/if}
       {/if}
     </DropdownRow>
   </DropdownList>
@@ -51,9 +57,17 @@
     on:mouseenter={handleOptionHover}
     role="option"
   >
-    <span class="label">{item.label}</span>
-    {#if item.hint}
-      <span class="hint">{item.hint}</span>
+    {#if item.type === 'customOption' && service?.CustomSelectOption}
+      <svelte:component
+        this={service.CustomSelectOption.component}
+        {...service.CustomSelectOption.additionalProps}
+        option={item}
+      />
+    {:else}
+      <span class="label">{item.label}</span>
+      {#if item.hint}
+        <span class="hint">{item.hint}</span>
+      {/if}
     {/if}
   </DropdownRow>
 {/if}
