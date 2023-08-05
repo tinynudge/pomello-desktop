@@ -1,5 +1,7 @@
 export type { ActiveService } from './ActiveService';
 export { AppEvent } from './AppEvent';
+export type { CustomSelectGroupProps } from './CustomSelectGroupProps';
+export type { CustomSelectOptionProps } from './CustomSelectOptionProps';
 export type { InitializingViewProps } from './InitializingViewProps';
 export type { LogLevel } from './LogLevel';
 export type { LogMessage } from './LogMessage';
