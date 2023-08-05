@@ -14,6 +14,7 @@ import onSettingsChange from './onSettingsChange';
 import onThemeCssChange from './onThemeCssChange';
 import registerServiceConfig from './registerServiceConfig';
 import resetSelect from './resetSelect';
+import selectChange from './selectChange';
 import setSelectBounds from './setSelectBounds';
 import setSelectItems from './setSelectItems';
 import showMessageBox from './showMessageBox';
@@ -35,6 +36,7 @@ export const api = {
   onThemeCssChange,
   registerServiceConfig,
   resetSelect,
+  selectChange,
   setSelectBounds,
   setSelectItems,
   showMessageBox,

@@ -3,7 +3,7 @@ import windowManager from '@/helpers/windowManager';
 import { AppEvent } from '@domain';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleOptionSelect = async (_event: IpcMainInvokeEvent, optionId: string): Promise<void> => {
+const handleSelectChange = async (_event: IpcMainInvokeEvent, optionId: string): Promise<void> => {
   const appWindow = windowManager.findOrFailWindow('app');
 
   appWindow.webContents.send(AppEvent.SelectChange, optionId);
@@ -14,4 +14,4 @@ const handleOptionSelect = async (_event: IpcMainInvokeEvent, optionId: string):
   setTimeout(hideSelectWindow, 5);
 };
 
-export default handleOptionSelect;
+export default handleSelectChange;
