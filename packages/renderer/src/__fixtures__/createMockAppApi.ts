@@ -58,6 +58,7 @@ const createMockAppApi = ({
       Promise.resolve(serviceConfigs[serviceId] ?? mockRegisterServiceConfig(serviceId, defaults))
     ),
     resetSelect: vi.fn(),
+    selectChange: vi.fn(),
     setSelectBounds: vi.fn(),
     setSelectItems: vi.fn(() => Promise.resolve()),
     showMessageBox: vi.fn(() => Promise.resolve({ checkboxChecked: false, response: 0 })),

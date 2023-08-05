@@ -3,18 +3,19 @@
   import type { SelectItem } from '@domain';
   import { createEventDispatcher, onMount } from 'svelte';
 
+  let customPlaceholder: string | undefined = undefined;
   export let defaultOpen = false;
   export let items: SelectItem[];
   export let noResultsMessage: string | undefined = undefined;
-  export let placeholder: string | undefined = undefined;
+  export { customPlaceholder as placeholder };
 
   const dispatch = createEventDispatcher<{ change: string }>();
   const translate = getTranslator();
 
-  let buttonElement: HTMLButtonElement | null = null;
+  let buttonElement: HTMLButtonElement | undefined = undefined;
   let shouldOpenOnUpdate = defaultOpen;
 
-  $: buttonPlaceholder = $translate('selectPlaceholder');
+  $: placeholder = customPlaceholder ?? $translate('selectPlaceholder');
 
   $: {
     window.app.setSelectItems({ items, noResultsMessage, placeholder });
@@ -68,7 +69,7 @@
 <svelte:document on:keydown={handleDocumentKeyDown} />
 
 <button bind:this={buttonElement} class="button" on:click={handleButtonClick}>
-  {buttonPlaceholder}
+  {placeholder}
 </button>
 
 <style lang="scss">
