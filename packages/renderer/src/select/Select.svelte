@@ -14,6 +14,9 @@
   import { onMount } from 'svelte';
   import DropdownList from './components/DropdownList.svelte';
   import FilterInput from './components/FilterInput.svelte';
+  import findFirstOption from './helpers/findFirstOption';
+  import findLastOption from './helpers/findLastOption';
+  import findNearestOption from './helpers/findNearestOption';
   import updateWindowDimensions from './updateWindowDimensions';
 
   export let initialServiceId: string | undefined;
@@ -83,7 +86,7 @@
   });
 
   const handleInputEnter = () => {
-    console.log('inputEnter', listElement);
+    selectActiveOption();
   };
 
   const handleInputEscape = () => {
@@ -91,19 +94,27 @@
   };
 
   const handleFirstOptionSelect = () => {
-    console.log('firstOptionSelect');
+    const option = findFirstOption(listElement);
+
+    if (option) {
+      activeOptionId = option.id;
+    }
   };
 
   const handleLastOptionSelect = () => {
-    console.log('lastOptionSelect');
+    const option = findLastOption(listElement);
+
+    if (option) {
+      activeOptionId = option.id;
+    }
   };
 
   const handleNextOptionSelect = () => {
-    console.log('nextOptionSelect');
+    highlightAdjacentOption('next');
   };
 
   const handlePreviousOptionSelect = () => {
-    console.log('previousOptionSelect');
+    highlightAdjacentOption('previous');
   };
 
   const handleOptionHover = (event: CustomEvent<string>) => {
@@ -111,7 +122,27 @@
   };
 
   const handleOptionSelect = (event: CustomEvent<string>) => {
-    console.log('select', event.detail);
+    activeOptionId = event.detail;
+
+    selectActiveOption();
+  };
+
+  const highlightAdjacentOption = (direction: 'next' | 'previous') => {
+    const option = findNearestOption({
+      activeOptionId,
+      container: listElement,
+      direction,
+    });
+
+    if (option) {
+      activeOptionId = option.id;
+    }
+  };
+
+  const selectActiveOption = () => {
+    if (activeOptionId) {
+      window.app.selectChange(activeOptionId);
+    }
   };
 </script>
 
