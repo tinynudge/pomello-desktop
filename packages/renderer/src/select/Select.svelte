@@ -1,7 +1,7 @@
 <script lang="ts">
   import getTranslator from '@/app/getTranslator';
   import filterItems from '@/select/helpers/filterItems';
-  import selectOptions from '@/select/helpers/selectOptions';
+  import getSelectOptions from '@/select/helpers/getSelectOptions';
   import { setTranslationsContext } from '@/shared/contexts/translationsContext';
   import initializeService from '@/shared/helpers/initializeService';
   import type {
@@ -30,6 +30,7 @@
 
   const initializeServiceResult = initializeService({ initialServiceId, logger, services });
   const listboxId = 'select-listbox';
+  const selectOptions = getSelectOptions();
   const translate = getTranslator();
 
   let activeOptionId: string | undefined;
@@ -159,6 +160,7 @@
 </script>
 
 <FilterInput
+  {activeOptionId}
   {listboxId}
   bind:inputElement
   bind:query
