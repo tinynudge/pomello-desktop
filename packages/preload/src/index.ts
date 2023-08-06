@@ -1,4 +1,5 @@
 import { contextBridge } from 'electron';
+import getActiveServiceId from './getActiveServiceId';
 import getSettings from './getSettings';
 import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
@@ -15,12 +16,14 @@ import onThemeCssChange from './onThemeCssChange';
 import registerServiceConfig from './registerServiceConfig';
 import resetSelect from './resetSelect';
 import selectChange from './selectChange';
+import setActiveServiceId from './setActiveServiceId';
 import setSelectBounds from './setSelectBounds';
 import setSelectItems from './setSelectItems';
 import showMessageBox from './showMessageBox';
 import showSelect from './showSelect';
 
 export const api = {
+  getActiveServiceId,
   getSettings,
   getThemeCss,
   getTranslations,
@@ -37,6 +40,7 @@ export const api = {
   registerServiceConfig,
   resetSelect,
   selectChange,
+  setActiveServiceId,
   setSelectBounds,
   setSelectItems,
   showMessageBox,

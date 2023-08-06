@@ -12,12 +12,14 @@ const renderApp = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [pomelloServiceConfig, settings, themeCss, translations] = await Promise.all([
-    getPomelloServiceConfig(),
-    window.app.getSettings(),
-    window.app.getThemeCss(),
-    window.app.getTranslations(),
-  ]);
+  const [pomelloServiceConfig, initialServiceId, settings, themeCss, translations] =
+    await Promise.all([
+      getPomelloServiceConfig(),
+      window.app.getActiveServiceId(),
+      window.app.getSettings(),
+      window.app.getThemeCss(),
+      window.app.getTranslations(),
+    ]);
 
   setTheme(themeCss);
 
@@ -26,7 +28,7 @@ const renderApp = async () => {
   new App({
     target,
     props: {
-      initialServiceId: 'mock',
+      initialServiceId,
       logger: createLogger(),
       pomelloService,
       pomelloServiceConfig,
