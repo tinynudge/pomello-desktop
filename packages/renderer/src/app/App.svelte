@@ -12,6 +12,7 @@
     TranslationsDictionary,
   } from '@domain';
   import type { PomelloService } from '@tinynudge/pomello-service';
+  import SelectServiceView from './views/SelectServiceView.svelte';
 
   export let initialServiceId: string | undefined;
   export let logger: Logger;
@@ -44,15 +45,14 @@
     <svelte:component
       this={activeService.service.InitializingView?.component}
       onReady={() => {
+        pomelloService.setReady();
         // TODO: Add onReady
       }}
       {...activeService.service.InitializingView?.additionalProps}
     />
   {:else}
-    <p>Select a service</p>
+    <SelectServiceView {services} />
   {/if}
 {:else if status === 'INITIALIZING'}
   <p>Initializing...</p>
 {/if}
-
-<pre>{JSON.stringify(pomelloService.getState())}</pre>

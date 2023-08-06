@@ -41,6 +41,7 @@ const createMockAppApi = ({
   };
 
   const api: AppApi = {
+    getActiveServiceId: vi.fn(() => Promise.resolve('mock')),
     getSettings: vi.fn(() => Promise.resolve(settings)),
     getThemeCss: vi.fn(() => Promise.resolve({ css: '', theme: 'light' })),
     getTranslations: vi.fn(() => Promise.resolve({})),
@@ -59,6 +60,7 @@ const createMockAppApi = ({
     ),
     resetSelect: vi.fn(),
     selectChange: vi.fn(),
+    setActiveServiceId: vi.fn(),
     setSelectBounds: vi.fn(),
     setSelectItems: vi.fn(() => Promise.resolve()),
     showMessageBox: vi.fn(() => Promise.resolve({ checkboxChecked: false, response: 0 })),
