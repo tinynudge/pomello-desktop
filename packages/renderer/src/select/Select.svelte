@@ -11,9 +11,10 @@
     Settings,
     TranslationsDictionary,
   } from '@domain';
-  import { onMount } from 'svelte';
+  import { afterUpdate, onMount } from 'svelte';
   import DropdownList from './components/DropdownList.svelte';
   import FilterInput from './components/FilterInput.svelte';
+  import ensureActiveOptionVisible from './helpers/ensureActiveOptionVisible';
   import findFirstOption from './helpers/findFirstOption';
   import findLastOption from './helpers/findLastOption';
   import findNearestOption from './helpers/findNearestOption';
@@ -83,6 +84,17 @@
       onSelectShowUnsubscribe();
       onHideSelectUnsubscribe();
     };
+  });
+
+  afterUpdate(() => {
+    ensureActiveOptionVisible({
+      activeOptionId,
+      listElement,
+      inputHeight: inputElement?.offsetHeight ?? 0,
+      updateActiveOption: id => {
+        activeOptionId = id;
+      },
+    });
   });
 
   const handleInputEnter = () => {
