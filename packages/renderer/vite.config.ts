@@ -2,6 +2,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { builtinModules } from 'module';
 import { join } from 'path';
 import { defineConfig } from 'vite';
+import svelteSvg from 'vite-plugin-svelte-svg';
 import { chrome } from '../../.electron-vendors.cache.json';
 
 const PACKAGE_ROOT = __dirname;
@@ -19,6 +20,10 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     svelte({
       hot: mode !== 'test',
+    }),
+    svelteSvg({
+      svgoConfig: {},
+      requireSuffix: false,
     }),
   ],
   base: '',

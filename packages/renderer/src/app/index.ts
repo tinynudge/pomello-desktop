@@ -1,6 +1,7 @@
 import services from '@/services';
 import createLogger from '@/shared/helpers/createLogger';
 import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
+import '@/shared/styles/global.scss';
 import setTheme from '../setTheme';
 import App from './App.svelte';
 import createPomelloService from './createPomelloService';

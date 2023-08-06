@@ -12,6 +12,8 @@
     TranslationsDictionary,
   } from '@domain';
   import type { PomelloService } from '@tinynudge/pomello-service';
+  import Layout from './components/Layout/Layout.svelte';
+  import { setPomelloStateContext } from './contexts/pomelloStateContext';
   import SelectServiceView from './views/SelectServiceView.svelte';
 
   export let initialServiceId: string | undefined;
@@ -23,6 +25,7 @@
   export let translations: TranslationsDictionary;
 
   setPomelloServiceConfigContext(pomelloServiceConfig);
+  setPomelloStateContext(pomelloService);
   setSettingsContext(settings);
   setTranslationsContext(translations);
 
@@ -39,20 +42,22 @@
   // TODO: Add task creation
 </script>
 
-{#if status === 'READY'}
-  {#if activeService}
-    <p>Active service: {activeService.service.id}</p>
-    <svelte:component
-      this={activeService.service.InitializingView?.component}
-      onReady={() => {
-        pomelloService.setReady();
-        // TODO: Add onReady
-      }}
-      {...activeService.service.InitializingView?.additionalProps}
-    />
-  {:else}
-    <SelectServiceView {services} />
+<Layout>
+  {#if status === 'READY'}
+    {#if activeService}
+      <p>Active service: {activeService.service.id}</p>
+      <svelte:component
+        this={activeService.service.InitializingView?.component}
+        onReady={() => {
+          pomelloService.setReady();
+          // TODO: Add onReady
+        }}
+        {...activeService.service.InitializingView?.additionalProps}
+      />
+    {:else}
+      <SelectServiceView {services} />
+    {/if}
+  {:else if status === 'INITIALIZING'}
+    <p>Initializing...</p>
   {/if}
-{:else if status === 'INITIALIZING'}
-  <p>Initializing...</p>
-{/if}
+</Layout>
