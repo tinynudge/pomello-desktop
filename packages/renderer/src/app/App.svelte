@@ -4,6 +4,7 @@
   import { setTranslationsContext } from '@/shared/contexts/translationsContext';
   import initializeService from '@/shared/helpers/initializeService/initializeService';
   import type {
+    LabeledHotkeys,
     Logger,
     PomelloServiceConfig,
     ServiceConfig,
@@ -13,9 +14,11 @@
   } from '@domain';
   import type { PomelloService } from '@tinynudge/pomello-service';
   import Layout from './components/Layout/Layout.svelte';
+  import { setHotkeysContext } from './contexts/hotkeysContext';
   import { setPomelloStateContext } from './contexts/pomelloStateContext';
   import SelectServiceView from './views/SelectServiceView.svelte';
 
+  export let hotkeys: LabeledHotkeys;
   export let initialServiceId: string | undefined;
   export let logger: Logger;
   export let pomelloService: PomelloService;
@@ -24,6 +27,7 @@
   export let settings: Settings;
   export let translations: TranslationsDictionary;
 
+  setHotkeysContext(hotkeys);
   setPomelloServiceConfigContext(pomelloServiceConfig);
   setPomelloStateContext(pomelloService);
   setSettingsContext(settings);
