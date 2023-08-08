@@ -2,8 +2,10 @@ import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockLogger from '@/__fixtures__/createMockLogger';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
+import mockHotkeys from '@/__fixtures__/mockHotkeys';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import type {
+  LabeledHotkeys,
   PomelloServiceConfig,
   Service,
   ServiceConfigStore,
@@ -23,6 +25,7 @@ export type MountAppResults = ReturnType<typeof mountApp>;
 export interface MountAppOptions {
   appApi?: Partial<AppApi>;
   createServiceRegistry?(defaultRegistry: ServiceRegistry): ServiceRegistry;
+  hotkeys?: Partial<LabeledHotkeys>;
   initialServiceId?: string | null;
   mockService?: {
     config?: ServiceConfigStore;
@@ -75,7 +78,13 @@ const mountApp = (options: MountAppOptions = {}) => {
 
   const services = options.createServiceRegistry?.(defaultServices) ?? defaultServices;
 
+  const hotkeys: LabeledHotkeys = {
+    ...mockHotkeys,
+    ...options.hotkeys,
+  };
+
   render(App, {
+    hotkeys,
     initialServiceId,
     logger,
     pomelloService,

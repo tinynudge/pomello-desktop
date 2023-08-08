@@ -1,5 +1,6 @@
 import type { ServiceConfig, Settings } from '@domain';
 import { vi } from 'vitest';
+import mockHotkeys from './mockHotkeys';
 import mockRegisterServiceConfig from './mockRegisterServiceConfig';
 
 type CallbackFunction = (...args: unknown[]) => void;
@@ -42,6 +43,7 @@ const createMockAppApi = ({
 
   const api: AppApi = {
     getActiveServiceId: vi.fn(() => Promise.resolve('mock')),
+    getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(() => Promise.resolve(settings)),
     getThemeCss: vi.fn(() => Promise.resolve({ css: '', theme: 'light' })),
     getTranslations: vi.fn(() => Promise.resolve({})),

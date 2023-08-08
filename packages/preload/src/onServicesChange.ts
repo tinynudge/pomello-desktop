@@ -1,5 +1,5 @@
-import { AppEvent, Services, UnsubscribeHandler } from '@domain';
-import { IpcRendererEvent, ipcRenderer } from 'electron';
+import { AppEvent, type Services, type UnsubscribeHandler } from '@domain';
+import { ipcRenderer, type IpcRendererEvent } from 'electron';
 
 type ServicesChangeListener = (services: Services) => void;
 

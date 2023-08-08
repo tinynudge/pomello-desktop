@@ -1,4 +1,4 @@
-import { AppEvent, UnsubscribeHandler } from '@domain';
+import { AppEvent, type UnsubscribeHandler } from '@domain';
 import { ipcRenderer } from 'electron';
 
 type SelectResetListener = () => void;

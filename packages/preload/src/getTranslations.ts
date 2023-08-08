@@ -1,4 +1,4 @@
-import { AppEvent, TranslationsDictionary } from '@domain';
+import { AppEvent, type TranslationsDictionary } from '@domain';
 import { ipcRenderer } from 'electron';
 
 const getTranslations = (serviceId?: string): Promise<TranslationsDictionary> =>

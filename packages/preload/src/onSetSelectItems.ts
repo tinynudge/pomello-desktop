@@ -1,5 +1,5 @@
-import { AppEvent, SetSelectItemsOptions, UnsubscribeHandler } from '@domain';
-import { IpcRendererEvent, ipcRenderer } from 'electron';
+import { AppEvent, type SetSelectItemsOptions, type UnsubscribeHandler } from '@domain';
+import { ipcRenderer, type IpcRendererEvent } from 'electron';
 
 type SetSelectItemsListener = (options: SetSelectItemsOptions) => void;
 

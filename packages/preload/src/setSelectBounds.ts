@@ -1,4 +1,4 @@
-import { AppEvent, SetSelectBoundsParams } from '@domain';
+import { AppEvent, type SetSelectBoundsParams } from '@domain';
 import { ipcRenderer } from 'electron';
 
 const setSelectBounds = (options: SetSelectBoundsParams): Promise<void> =>
