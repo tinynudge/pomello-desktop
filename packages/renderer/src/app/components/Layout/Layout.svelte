@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getPomelloStateContext } from '@/app/contexts/pomelloStateContext';
   import getTranslator from '@/app/getTranslator';
+  import registerHotkeys from '@/app/helpers/registerHotkeys';
   import { derived } from 'svelte/store';
   import Menu from './Menu.svelte';
   import MenuIcon from './assets/menu.svg?component';
@@ -34,6 +35,10 @@
 
     isMenuOpen = !isMenuOpen;
   };
+
+  registerHotkeys({
+    toggleMenu,
+  });
 </script>
 
 <Menu

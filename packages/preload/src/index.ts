@@ -1,5 +1,6 @@
 import { contextBridge } from 'electron';
 import getActiveServiceId from './getActiveServiceId';
+import getHotkeys from './getHotkeys';
 import getSettings from './getSettings';
 import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
@@ -24,6 +25,7 @@ import showSelect from './showSelect';
 
 export const api = {
   getActiveServiceId,
+  getHotkeys,
   getSettings,
   getThemeCss,
   getTranslations,

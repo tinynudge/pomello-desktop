@@ -34,6 +34,7 @@
     "ajv": "^8.12.0",
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.1",
+    "mousetrap": "^1.6.5",
     "throttle-debounce": "^5.0.0",
     "winston": "^3.10.0"
   },
@@ -43,6 +44,7 @@
     "@testing-library/svelte": "^4.0.3",
     "@testing-library/user-event": "^14.4.3",
     "@tsconfig/svelte": "^5.0.0",
+    "@types/mousetrap": "^1.6.11",
     "@types/throttle-debounce": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",

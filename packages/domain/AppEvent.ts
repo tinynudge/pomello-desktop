@@ -1,5 +1,6 @@
 export enum AppEvent {
   GetActiveServiceId = 'get-active-service-id',
+  GetHotkeys = 'get-hotkeys',
   GetSettings = 'get-settings',
   GetThemeCss = 'get-theme-css',
   GetTranslations = 'get-translations',
