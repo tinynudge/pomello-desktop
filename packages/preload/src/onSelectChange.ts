@@ -1,5 +1,5 @@
 import { AppEvent, type UnsubscribeHandler } from '@domain';
-import { IpcRendererEvent, ipcRenderer } from 'electron';
+import { ipcRenderer, type IpcRendererEvent } from 'electron';
 
 type SelectOptionListener = (optionId: string) => void;
 

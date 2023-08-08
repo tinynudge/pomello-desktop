@@ -1,11 +1,11 @@
 import {
   AppEvent,
-  ServiceConfig,
-  ServiceConfigChangeCallback,
-  ServiceConfigStore,
-  StoreContents,
+  type ServiceConfig,
+  type ServiceConfigChangeCallback,
+  type ServiceConfigStore,
+  type StoreContents,
 } from '@domain';
-import { IpcRendererEvent, ipcRenderer } from 'electron';
+import { ipcRenderer, type IpcRendererEvent } from 'electron';
 
 const registerServiceConfig = async <TConfig = StoreContents>(
   serviceId: string,

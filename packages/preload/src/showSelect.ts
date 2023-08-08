@@ -1,4 +1,4 @@
-import { AppEvent, ShowSelectMainOptions } from '@domain';
+import { AppEvent, type ShowSelectMainOptions } from '@domain';
 import { ipcRenderer } from 'electron';
 
 const showSelect = (options: ShowSelectMainOptions): Promise<void> =>

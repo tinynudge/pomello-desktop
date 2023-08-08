@@ -1,4 +1,4 @@
-import { CustomSelectGroup } from './CustomSelectGroup';
+import { type CustomSelectGroup } from './CustomSelectGroup';
 
 export type CustomSelectGroupProps = {
   group: CustomSelectGroup;

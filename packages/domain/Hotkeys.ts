@@ -1,3 +1,3 @@
-import { HotkeyCommand } from './HotkeyCommand';
+import { type HotkeyCommand } from './HotkeyCommand';
 
 export type Hotkeys = Record<HotkeyCommand, string | false>;

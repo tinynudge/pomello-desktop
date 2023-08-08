@@ -10,7 +10,7 @@
   "scripts": {
     "analyze:main": "tsc --noEmit --project packages/main",
     "analyze:preload": "tsc --noEmit --project packages/preload",
-    "analyze:renderer": "svelte-check",
+    "analyze:renderer": "svelte-check && tsc --noEmit --project packages/renderer",
     "analyze": "run-p --continue-on-error analyze:main analyze:preload analyze:renderer",
     "build:main": "vite build --config packages/main/vite.config.js",
     "build:preload": "vite build --config packages/preload/vite.config.js",

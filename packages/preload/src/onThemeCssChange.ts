@@ -1,5 +1,5 @@
-import { AppEvent, ThemeCss } from '@domain';
-import { ipcRenderer, IpcRendererEvent } from 'electron';
+import { AppEvent, type ThemeCss } from '@domain';
+import { ipcRenderer, type IpcRendererEvent } from 'electron';
 
 type ThemeCssChangeListener = (themeCss: ThemeCss) => void;
 

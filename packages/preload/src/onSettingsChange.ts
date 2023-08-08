@@ -1,5 +1,5 @@
-import { AppEvent, Settings, UnsubscribeHandler } from '@domain';
-import { IpcRendererEvent, ipcRenderer } from 'electron';
+import { AppEvent, type Settings, type UnsubscribeHandler } from '@domain';
+import { ipcRenderer, type IpcRendererEvent } from 'electron';
 
 type SettingsChangeListener = (settings: Settings) => void;
 
