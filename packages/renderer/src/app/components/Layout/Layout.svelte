@@ -1,16 +1,20 @@
 <script lang="ts">
+  import { getPomelloActionsContext } from '@/app/contexts/pomelloActionsContext';
   import { getPomelloStateContext } from '@/app/contexts/pomelloStateContext';
   import getCommandFormatter from '@/app/helpers/getCommandFormatter';
   import getTranslator from '@/app/helpers/getTranslator';
   import registerHotkeys from '@/app/helpers/registerHotkeys';
+  import { getSettingsContext } from '@/shared/contexts/settingsContext';
   import { derived } from 'svelte/store';
   import Menu from './Menu.svelte';
   import MenuIcon from './assets/menu.svg?component';
 
-  const translate = getTranslator();
+  const { reset } = getPomelloActionsContext();
   const pomelloState = getPomelloStateContext();
-  const appMode = derived(pomelloState, $pomelloState => $pomelloState.status);
+  const settings = getSettingsContext();
+  const translate = getTranslator();
 
+  const appMode = derived(pomelloState, $pomelloState => $pomelloState.status);
   const formatCommand = getCommandFormatter($translate);
 
   let isMenuOpen = false;
@@ -28,7 +32,34 @@
   };
 
   const handleHomeButtonClick = () => {
-    // TODO: Add home button
+    routeHome();
+  };
+
+  const routeHome = async () => {
+    const showCancelTaskDialog =
+      $settings.warnBeforeTaskCancel &&
+      $pomelloState.timer?.isActive &&
+      $pomelloState.timer.type === 'TASK';
+
+    if (showCancelTaskDialog) {
+      const { response } = await window.app.showMessageBox({
+        buttons: [$translate('cancelTaskDialogConfirm'), $translate('cancelTaskDialogCancel')],
+        cancelId: 1,
+        defaultId: 0,
+        detail: $translate('cancelTaskDialogMessage'),
+        message: $translate('cancelTaskDialogHeading'),
+        title: 'Pomello',
+        type: 'warning',
+      });
+
+      if (response === 1) {
+        return;
+      }
+    }
+
+    reset();
+
+    isMenuOpen = false;
   };
 
   const toggleMenu = () => {
@@ -41,6 +72,7 @@
 
   registerHotkeys({
     toggleMenu,
+    routeHome,
   });
 </script>
 
