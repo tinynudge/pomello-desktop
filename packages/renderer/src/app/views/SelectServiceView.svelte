@@ -1,5 +1,5 @@
 <script lang="ts">
-  import getTranslator from '@/app/getTranslator';
+  import getTranslator from '@/app/helpers/getTranslator';
   import Content from '@/app/ui/Content';
   import Heading from '@/app/ui/Heading';
   import SelectField from '@/app/ui/SelectField';

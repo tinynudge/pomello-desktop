@@ -1,5 +1,5 @@
 <script lang="ts">
-  import getTranslator from '@/app/getTranslator';
+  import getTranslator from '@/app/helpers/getTranslator';
   import type { SelectItem } from '@domain';
   import { createEventDispatcher, onMount } from 'svelte';
 

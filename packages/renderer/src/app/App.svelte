@@ -13,7 +13,8 @@
     TranslationsDictionary,
   } from '@domain';
   import type { PomelloService } from '@tinynudge/pomello-service';
-  import Layout from './components/Layout/Layout.svelte';
+  import Layout from './components/Layout';
+  import Routes from './components/Routes.svelte';
   import ServiceContainer from './components/ServiceContainer.svelte';
   import ServiceProvider from './components/ServiceProvider.svelte';
   import { setHotkeysContext } from './contexts/hotkeysContext';
@@ -21,6 +22,7 @@
   import Content from './ui/Content';
   import LoadingText from './ui/LoadingText';
   import SelectServiceView from './views/SelectServiceView.svelte';
+  import { setPomelloActionsContext } from './contexts/pomelloActionsContext';
 
   export let hotkeys: LabeledHotkeys;
   export let initialServiceId: string | undefined;
@@ -32,6 +34,7 @@
   export let translations: TranslationsDictionary;
 
   setHotkeysContext(hotkeys);
+  setPomelloActionsContext(pomelloService);
   setPomelloServiceConfigContext(pomelloServiceConfig);
   setPomelloStateContext(pomelloService);
   setSettingsContext(settings);
@@ -55,11 +58,7 @@
       <ServiceProvider service={activeService.service}>
         <Content>
           <ServiceContainer>
-            <svelte:component
-              this={activeService.service.InitializingView?.component}
-              {...activeService.service.InitializingView?.additionalProps}
-              onReady={pomelloService.setReady}
-            />
+            <Routes />
           </ServiceContainer>
         </Content>
       </ServiceProvider>
