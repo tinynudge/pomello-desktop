@@ -4,6 +4,7 @@ import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockSettings from '@/__fixtures__/createMockSettings';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
+import bindContext from '@/shared/helpers/bindContext';
 import type {
   LabeledHotkeys,
   PomelloServiceConfig,
@@ -14,13 +15,15 @@ import type {
 } from '@domain';
 import { render } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import translations from '../../../../translations/en-US.json';
 import App from '../App.svelte';
 import createMockPomelloService from './createMockPomelloService';
+import simulate from './simulate';
 
 export * from '@testing-library/svelte';
 
-export type MountAppResults = ReturnType<typeof mountApp>;
+export type MountAppResults = ReturnType<typeof mountAppBase>;
 
 export interface MountAppOptions {
   appApi?: Partial<AppApi>;
@@ -47,7 +50,19 @@ const defaultPomelloServiceConfig: PomelloServiceConfig = {
   },
 };
 
-const mountApp = (options: MountAppOptions = {}) => {
+const mountAppBase = (options: MountAppOptions = {}) => {
+  // Since tests are running in a Node environment, it uses the "node" exports
+  // from Svelte which point to the SSR import path. For SSR, life cycle methods
+  // do not run and are exported as a noop.
+  // https://github.com/testing-library/svelte-testing-library/issues/222#issuecomment-1588987135
+  vi.mock('svelte', async () => {
+    const actual = (await vi.importActual('svelte')) as object;
+    return {
+      ...actual,
+      onMount: (await import('svelte/internal')).onMount,
+    };
+  });
+
   const initialServiceId = options.initialServiceId ?? 'mock';
 
   const logger = createMockLogger();
@@ -85,7 +100,7 @@ const mountApp = (options: MountAppOptions = {}) => {
 
   render(App, {
     hotkeys,
-    initialServiceId,
+    initialServiceId: options.initialServiceId === null ? undefined : initialServiceId,
     logger,
     pomelloService,
     pomelloServiceConfig,
@@ -98,6 +113,15 @@ const mountApp = (options: MountAppOptions = {}) => {
     appApi,
     emitAppApiEvent,
     userEvent: userEvent.setup(),
+  };
+};
+
+const mountApp = (options?: MountAppOptions) => {
+  const results = mountAppBase(options);
+
+  return {
+    ...results,
+    simulate: bindContext(simulate, results),
   };
 };
 

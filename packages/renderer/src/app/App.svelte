@@ -14,8 +14,12 @@
   } from '@domain';
   import type { PomelloService } from '@tinynudge/pomello-service';
   import Layout from './components/Layout/Layout.svelte';
+  import ServiceContainer from './components/ServiceContainer.svelte';
+  import ServiceProvider from './components/ServiceProvider.svelte';
   import { setHotkeysContext } from './contexts/hotkeysContext';
   import { setPomelloStateContext } from './contexts/pomelloStateContext';
+  import Content from './ui/Content';
+  import LoadingText from './ui/LoadingText';
   import SelectServiceView from './views/SelectServiceView.svelte';
 
   export let hotkeys: LabeledHotkeys;
@@ -37,7 +41,6 @@
   $: ({ activeService, status } = $initializeServiceResult);
 
   // TODO: Warn before app quit
-  // TODO: Add active service
   // TODO: Add useLogPomelloEvents
   // TODO: Add useTimerSounds
   // TODO: Add open task in browser
@@ -49,19 +52,23 @@
 <Layout>
   {#if status === 'READY'}
     {#if activeService}
-      <p>Active service: {activeService.service.id}</p>
-      <svelte:component
-        this={activeService.service.InitializingView?.component}
-        onReady={() => {
-          pomelloService.setReady();
-          // TODO: Add onReady
-        }}
-        {...activeService.service.InitializingView?.additionalProps}
-      />
+      <ServiceProvider service={activeService.service}>
+        <Content>
+          <ServiceContainer>
+            <svelte:component
+              this={activeService.service.InitializingView?.component}
+              {...activeService.service.InitializingView?.additionalProps}
+              onReady={pomelloService.setReady}
+            />
+          </ServiceContainer>
+        </Content>
+      </ServiceProvider>
     {:else}
       <SelectServiceView {services} />
     {/if}
   {:else if status === 'INITIALIZING'}
-    <p>Initializing...</p>
+    <Content>
+      <LoadingText />
+    </Content>
   {/if}
 </Layout>
