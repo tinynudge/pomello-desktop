@@ -1,5 +1,5 @@
 <script lang="ts">
-  import getTranslator from '@/app/getTranslator';
+  import getTranslator from '@/app/helpers/getTranslator';
   import { createEventDispatcher } from 'svelte';
   import AddIcon from './assets/add.svg?component';
   import CogIcon from './assets/cog.svg?component';

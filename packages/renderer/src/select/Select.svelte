@@ -1,5 +1,5 @@
 <script lang="ts">
-  import getTranslator from '@/app/getTranslator';
+  import getTranslator from '@/app/helpers/getTranslator';
   import filterItems from '@/select/helpers/filterItems';
   import getSelectOptions from '@/select/helpers/getSelectOptions';
   import { setTranslationsContext } from '@/shared/contexts/translationsContext';

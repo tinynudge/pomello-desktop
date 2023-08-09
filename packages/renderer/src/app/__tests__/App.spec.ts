@@ -41,19 +41,16 @@ describe('App', () => {
     expect(screen.queryByRole('button', { name: 'Close menu' })).not.toBeInTheDocument();
   });
 
-  it.todo(
-    'should reset to the select task state when the home button.todo is clicked',
-    async () => {
-      const { simulate } = mountApp();
+  it.todo('should reset to the select task state when the home button is clicked', async () => {
+    const { simulate } = mountApp();
 
-      await simulate.selectTask();
-      await simulate.openMenu();
-      await simulate.clickMenuButton('home');
+    await simulate.selectTask();
+    await simulate.openMenu();
+    await simulate.clickMenuButton('home');
 
-      expect(screen.getByText('Pick a task')).toBeInTheDocument();
-      expect(screen.queryByTestId('dial')).not.toBeInTheDocument();
-    }
-  );
+    expect(screen.getByText('Pick a task')).toBeInTheDocument();
+    expect(screen.queryByTestId('dial')).not.toBeInTheDocument();
+  });
 
   it.todo(
     'should prompt the user for confirmation if resetting during an active task (if enabled)',
