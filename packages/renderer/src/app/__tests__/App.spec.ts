@@ -28,7 +28,7 @@ describe('App', () => {
     }
   );
 
-  it.todo('should not toggle the menu if the hotkey is not set', async () => {
+  it('should not toggle the menu if the hotkey is not set', async () => {
     const { simulate } = mountApp({
       hotkeys: {
         toggleMenu: undefined,

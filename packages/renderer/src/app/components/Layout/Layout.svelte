@@ -1,14 +1,17 @@
 <script lang="ts">
   import { getPomelloStateContext } from '@/app/contexts/pomelloStateContext';
+  import getCommandFormatter from '@/app/helpers/getCommandFormatter';
   import getTranslator from '@/app/helpers/getTranslator';
   import registerHotkeys from '@/app/helpers/registerHotkeys';
   import { derived } from 'svelte/store';
   import Menu from './Menu.svelte';
   import MenuIcon from './assets/menu.svg?component';
 
-  const pomelloState = getPomelloStateContext();
   const translate = getTranslator();
+  const pomelloState = getPomelloStateContext();
   const appMode = derived(pomelloState, $pomelloState => $pomelloState.status);
+
+  const formatCommand = getCommandFormatter($translate);
 
   let isMenuOpen = false;
   let menuElement: HTMLElement | undefined = undefined;
@@ -52,8 +55,12 @@
   data-mode={$appMode}
   style:transform={isMenuOpen && menuOffset ? `translate(${menuOffset}px)` : undefined}
 >
-  <!-- TODO: Add title attribute for menu -->
-  <button class="menuButton" aria-label={$translate(menuTranslationKey)} on:click={handleMenuClick}>
+  <button
+    aria-label={$translate(menuTranslationKey)}
+    class="menuButton"
+    on:click={handleMenuClick}
+    title={formatCommand('openMenuLabel', 'toggleMenu')}
+  >
     <MenuIcon aria-hidden width={4} />
   </button>
   <div class="content">
