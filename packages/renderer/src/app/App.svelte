@@ -18,11 +18,11 @@
   import ServiceContainer from './components/ServiceContainer.svelte';
   import ServiceProvider from './components/ServiceProvider.svelte';
   import { setHotkeysContext } from './contexts/hotkeysContext';
-  import { setPomelloStateContext } from './contexts/pomelloStateContext';
-  import Content from './ui/Content';
-  import LoadingText from './ui/LoadingText';
-  import SelectServiceView from './views/SelectServiceView.svelte';
   import { setPomelloActionsContext } from './contexts/pomelloActionsContext';
+  import { setPomelloStateContext } from './contexts/pomelloStateContext';
+  import Content from './ui/Content.svelte';
+  import LoadingText from './ui/LoadingText.svelte';
+  import SelectServiceView from './views/SelectServiceView.svelte';
 
   export let hotkeys: LabeledHotkeys;
   export let initialServiceId: string | undefined;

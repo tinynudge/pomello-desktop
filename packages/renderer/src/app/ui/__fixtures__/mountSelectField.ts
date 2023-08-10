@@ -1,9 +1,9 @@
+import MockSelectField from '@/app/ui/__fixtures__/MockSelectField.svelte';
+import mountComponent, { type MountComponentOptions } from '@/app/ui/__fixtures__/mountComponent';
 import type { ComponentProps } from 'svelte';
 import html from 'svelte-htm';
-import mountComponent, { type MountComponentOptions } from '../../__fixtures__/mountComponent';
-import MockSelectField from './MockSelectField.svelte';
 
-export * from '../../__fixtures__/mountComponent';
+export * from '@/app/ui/__fixtures__/mountComponent';
 
 const mountSelectField = (
   props: ComponentProps<MockSelectField> = {},

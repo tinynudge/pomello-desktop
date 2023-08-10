@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Content from '@/app/ui/Content';
+  import Content from '@/app/ui/Content.svelte';
 </script>
 
 <div class="buttonsOverlay">

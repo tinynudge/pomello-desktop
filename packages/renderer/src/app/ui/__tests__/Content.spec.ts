@@ -1,6 +1,6 @@
+import Content from '@/app/ui/Content.svelte';
+import mountComponent, { screen } from '@/app/ui/__fixtures__/mountComponent';
 import html from 'svelte-htm';
-import mountComponent, { screen } from '../__fixtures__/mountComponent';
-import Content from './Content.svelte';
 
 describe('UI - Content', () => {
   it('should display children content', () => {

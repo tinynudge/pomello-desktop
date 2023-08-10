@@ -1,6 +1,6 @@
+import LoadingText from '@/app/ui/LoadingText.svelte';
+import mountComponent, { screen } from '@/app/ui/__fixtures__/mountComponent';
 import html from 'svelte-htm';
-import mountComponent, { screen } from '../__fixtures__/mountComponent';
-import LoadingText from './LoadingText.svelte';
 
 describe('UI - Loading Text', () => {
   it('should render properly', () => {

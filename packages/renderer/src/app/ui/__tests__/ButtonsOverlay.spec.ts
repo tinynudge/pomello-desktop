@@ -1,6 +1,6 @@
+import ButtonsOverlay from '@/app/ui/ButtonsOverlay.svelte';
+import mountComponent, { screen } from '@/app/ui/__fixtures__/mountComponent';
 import html from 'svelte-htm';
-import mountComponent, { screen } from '../__fixtures__/mountComponent';
-import ButtonsOverlay from './ButtonsOverlay.svelte';
 
 describe('UI - Buttons Overlay', () => {
   it('should render properly', () => {

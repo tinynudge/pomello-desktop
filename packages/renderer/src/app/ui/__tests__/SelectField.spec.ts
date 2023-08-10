@@ -1,6 +1,6 @@
+import mountSelectField from '@/app/ui/__fixtures__/mountSelectField';
 import { screen, waitFor } from '@testing-library/svelte';
 import { vi } from 'vitest';
-import mountSelectField from './__fixtures__/mountSelectField';
 
 describe('UI - Select Field', () => {
   it('should render the placeholder', async () => {

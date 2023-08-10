@@ -1,8 +1,8 @@
 <script lang="ts">
   import getTranslator from '@/app/helpers/getTranslator';
-  import Content from '@/app/ui/Content';
-  import Heading from '@/app/ui/Heading';
-  import SelectField from '@/app/ui/SelectField';
+  import Content from '@/app/ui/Content.svelte';
+  import Heading from '@/app/ui/Heading.svelte';
+  import SelectField from '@/app/ui/SelectField.svelte';
   import type { SelectItem, ServiceRegistry } from '@domain';
 
   export let services: ServiceRegistry;
