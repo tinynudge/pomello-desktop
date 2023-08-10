@@ -1,7 +1,7 @@
 <script lang="ts">
+  import SelectField from '@/app/ui/SelectField.svelte';
   import type { SelectItem } from '@domain';
   import { vi } from 'vitest';
-  import SelectField from '../SelectField.svelte';
 
   export let defaultOpen = false;
   export let items: SelectItem[] = [];

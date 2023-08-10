@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getServiceContext } from '../contexts/serviceContext';
+  import { getServiceContext } from '@/app/contexts/serviceContext';
 
   const service = getServiceContext();
 </script>
