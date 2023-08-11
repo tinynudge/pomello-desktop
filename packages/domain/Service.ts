@@ -1,5 +1,6 @@
 import type { CustomSelectGroupProps } from './CustomSelectGroupProps';
 import type { CustomSelectOptionProps } from './CustomSelectOptionProps';
+import type { ErrorHandler } from './ErrorHandler';
 import type { InitializingViewProps } from './InitializingViewProps';
 import type { View } from './View';
 
@@ -8,6 +9,7 @@ export interface Service {
   CustomSelectGroup?: View<CustomSelectGroupProps>;
   CustomSelectOption?: View<CustomSelectOptionProps>;
   displayName: string;
+  handleError?: ErrorHandler;
   id: string;
   InitializingView?: View<InitializingViewProps>;
   onMount?(): void;

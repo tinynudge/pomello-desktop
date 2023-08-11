@@ -1,4 +1,5 @@
 export enum AppEvent {
+  ClipboardTextWrite = 'clipboard-text-write',
   GetActiveServiceId = 'get-active-service-id',
   GetHotkeys = 'get-hotkeys',
   GetSettings = 'get-settings',

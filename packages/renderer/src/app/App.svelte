@@ -52,7 +52,7 @@
   // TODO: Add task creation
 </script>
 
-<Layout>
+<Layout service={activeService?.service} {logger}>
   {#if status === 'READY'}
     {#if activeService}
       <ServiceProvider service={activeService.service}>

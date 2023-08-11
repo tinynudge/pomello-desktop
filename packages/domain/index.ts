@@ -2,6 +2,7 @@ export type { ActiveService } from './ActiveService';
 export { AppEvent } from './AppEvent';
 export type { CustomSelectGroupProps } from './CustomSelectGroupProps';
 export type { CustomSelectOptionProps } from './CustomSelectOptionProps';
+export type { ErrorHandlerProps } from './ErrorHandlerProps';
 export type { Hotkeys } from './Hotkeys';
 export type { InitializingViewProps } from './InitializingViewProps';
 export type { LabeledHotkeys } from './LabeledHotkeys';
