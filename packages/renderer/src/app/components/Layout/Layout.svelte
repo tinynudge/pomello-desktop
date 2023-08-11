@@ -5,9 +5,14 @@
   import getTranslator from '@/app/helpers/getTranslator';
   import registerHotkeys from '@/app/helpers/registerHotkeys';
   import { getSettingsContext } from '@/shared/contexts/settingsContext';
+  import type { Logger, Service } from '@domain';
   import { derived } from 'svelte/store';
+  import ErrorBoundary from './ErrorBoundary.svelte';
   import Menu from './Menu.svelte';
   import MenuIcon from './assets/menu.svg?component';
+
+  export let service: Service | undefined;
+  export let logger: Logger;
 
   const { reset } = getPomelloActionsContext();
   const pomelloState = getPomelloStateContext();
@@ -95,9 +100,11 @@
   >
     <MenuIcon aria-hidden width={4} />
   </button>
-  <div class="content">
-    <slot />
-  </div>
+  <ErrorBoundary {service} {logger}>
+    <div class="content">
+      <slot />
+    </div>
+  </ErrorBoundary>
 </main>
 
 <style lang="scss">

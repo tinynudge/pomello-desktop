@@ -22,6 +22,7 @@ import setSelectBounds from './setSelectBounds';
 import setSelectItems from './setSelectItems';
 import showMessageBox from './showMessageBox';
 import showSelect from './showSelect';
+import writeClipboardText from './writeClipboardText';
 
 export const api = {
   getActiveServiceId,
@@ -47,6 +48,7 @@ export const api = {
   setSelectItems,
   showMessageBox,
   showSelect,
+  writeClipboardText,
 };
 
 contextBridge.exposeInMainWorld('app', api);

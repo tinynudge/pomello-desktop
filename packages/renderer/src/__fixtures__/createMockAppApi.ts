@@ -67,6 +67,7 @@ const createMockAppApi = ({
     setSelectItems: vi.fn(() => Promise.resolve()),
     showMessageBox: vi.fn(() => Promise.resolve({ checkboxChecked: false, response: 0 })),
     showSelect: vi.fn(() => Promise.resolve()),
+    writeClipboardText: vi.fn(),
   };
 
   Object.entries(appApi).forEach(([key, value]) => {
