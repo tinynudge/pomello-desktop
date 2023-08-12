@@ -1,11 +1,10 @@
 <script lang="ts">
   import ErrorOverlay from '@/app/components/ErrorOverlay.svelte';
+  import { setErrorOverlayContext } from '@/app/contexts/errorOverlayContext';
   import { getPomelloActionsContext } from '@/app/contexts/pomelloActionsContext';
   import getTranslator from '@/app/helpers/getTranslator';
-  import type { Logger, Service } from '@domain';
+  import type { ErrorOverlayProps, Logger, Service } from '@domain';
   import { writable } from 'svelte/store';
-  import ServiceContainer from '../ServiceContainer.svelte';
-  import ServiceProvider from '../ServiceProvider.svelte';
 
   export let service: Service | undefined;
   export let logger: Logger;
@@ -13,12 +12,20 @@
   const { reset } = getPomelloActionsContext();
   const translate = getTranslator();
 
-  const error = writable<Error | undefined>();
+  const errorOverlay = writable<ErrorOverlayProps | undefined>();
 
-  $: if ($error instanceof Error) {
+  const setErrorOverlay = (errorOverlayProps: ErrorOverlayProps) => {
+    const customErrorOverlay = service?.handleError?.(errorOverlayProps.error);
+
+    $errorOverlay = customErrorOverlay ?? errorOverlayProps;
+  };
+
+  setErrorOverlayContext(setErrorOverlay);
+
+  $: if ($errorOverlay?.error instanceof Error) {
     const message = {
-      message: $error.message,
-      stack: $error.stack,
+      message: $errorOverlay.error.message,
+      stack: $errorOverlay.error.stack,
     };
 
     logger.error(JSON.stringify(message));
@@ -26,40 +33,39 @@
 
   const handleUnhandledError = (event: Event) => {
     if (event instanceof ErrorEvent) {
-      error.set(event.error);
+      setErrorOverlay({
+        ...defaultErrorOverlayProps,
+        error: event.error,
+      });
     }
   };
 
   const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-    error.set(event.reason);
-  };
-
-  const handleResetClick = () => {
-    reset();
-    resetErrorBoundary();
+    setErrorOverlay({
+      ...defaultErrorOverlayProps,
+      error: event.reason,
+    });
   };
 
   const resetErrorBoundary = () => {
-    error.set(undefined);
+    errorOverlay.set(undefined);
+  };
+
+  const defaultErrorOverlayProps = {
+    heading: $translate('errorHeading'),
+    message: $translate('errorMessage'),
+    retryAction: {
+      label: $translate('errorReset'),
+      onClick: reset,
+    },
   };
 </script>
 
 <svelte:window on:error={handleUnhandledError} on:unhandledrejection={handleUnhandledRejection} />
 
-{#if $error}
-  {@const customErrorView = service?.handleError?.({ error: $error, resetErrorBoundary })}
+{#if $errorOverlay}
   <div class="content">
-    {#if customErrorView && service}
-      <ServiceProvider {service}>
-        <ServiceContainer>
-          <svelte:component this={customErrorView.component} {...customErrorView.additionalProps} />
-        </ServiceContainer>
-      </ServiceProvider>
-    {:else}
-      <ErrorOverlay error={$error}>
-        <button slot="action" on:click={handleResetClick}>{$translate('errorReset')}</button>
-      </ErrorOverlay>
-    {/if}
+    <ErrorOverlay {...$errorOverlay} {resetErrorBoundary} />
   </div>
 {:else}
   <slot />

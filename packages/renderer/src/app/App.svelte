@@ -12,6 +12,7 @@
     Settings,
     TranslationsDictionary,
   } from '@domain';
+  import { QueryClientProvider, type QueryClient } from '@tanstack/svelte-query';
   import type { PomelloService } from '@tinynudge/pomello-service';
   import Layout from './components/Layout';
   import Routes from './components/Routes.svelte';
@@ -32,6 +33,7 @@
   export let services: ServiceRegistry;
   export let settings: Settings;
   export let translations: TranslationsDictionary;
+  export let queryClient: QueryClient;
 
   setHotkeysContext(hotkeys);
   setPomelloActionsContext(pomelloService);
@@ -52,22 +54,24 @@
   // TODO: Add task creation
 </script>
 
-<Layout service={activeService?.service} {logger}>
-  {#if status === 'READY'}
-    {#if activeService}
-      <ServiceProvider service={activeService.service}>
-        <Content>
-          <ServiceContainer>
-            <Routes />
-          </ServiceContainer>
-        </Content>
-      </ServiceProvider>
-    {:else}
-      <SelectServiceView {services} />
+<QueryClientProvider client={queryClient}>
+  <Layout service={activeService?.service} {logger}>
+    {#if status === 'READY'}
+      {#if activeService}
+        <ServiceProvider service={activeService.service}>
+          <Content>
+            <ServiceContainer>
+              <Routes />
+            </ServiceContainer>
+          </Content>
+        </ServiceProvider>
+      {:else}
+        <SelectServiceView {services} />
+      {/if}
+    {:else if status === 'INITIALIZING'}
+      <Content>
+        <LoadingText />
+      </Content>
     {/if}
-  {:else if status === 'INITIALIZING'}
-    <Content>
-      <LoadingText />
-    </Content>
-  {/if}
-</Layout>
+  </Layout>
+</QueryClientProvider>
