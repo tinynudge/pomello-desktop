@@ -1,9 +1,22 @@
-import type { ServiceFactory } from '@domain';
+import type { SelectItem, ServiceFactory } from '@domain';
 
 const createMockService: ServiceFactory = () => {
+  const fetchTasks = () => {
+    return new Promise<SelectItem[]>(resolve => {
+      setTimeout(() => {
+        resolve([
+          { id: 'one', label: 'One' },
+          { id: 'two', label: 'Two' },
+          { id: 'three', label: 'Three' },
+        ]);
+      }, 1_000);
+    });
+  };
+
   return {
-    id: createMockService.id,
     displayName: createMockService.displayName,
+    fetchTasks,
+    id: createMockService.id,
   };
 };
 

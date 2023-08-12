@@ -2,11 +2,14 @@ import services from '@/services';
 import createLogger from '@/shared/helpers/createLogger';
 import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
 import '@/shared/styles/global.scss';
+import { QueryClient } from '@tanstack/svelte-query';
 import setTheme from '../setTheme';
 import App from './App.svelte';
 import createPomelloService from './createPomelloService';
 
 const renderApp = async () => {
+  const queryClient = new QueryClient();
+
   const target = document.getElementById('root');
 
   if (!target) {
@@ -35,6 +38,7 @@ const renderApp = async () => {
       logger: createLogger(),
       pomelloService,
       pomelloServiceConfig,
+      queryClient,
       services,
       settings,
       translations,

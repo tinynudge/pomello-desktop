@@ -30,6 +30,7 @@
     "verify": "run-s format:check lint analyze test"
   },
   "dependencies": {
+    "@tanstack/svelte-query": "^4.32.6",
     "@tinynudge/pomello-service": "^0.1.19",
     "ajv": "^8.12.0",
     "electron-store": "^8.1.0",

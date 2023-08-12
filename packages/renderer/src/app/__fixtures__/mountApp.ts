@@ -13,6 +13,7 @@ import type {
   ServiceRegistry,
   Settings,
 } from '@domain';
+import { QueryClient } from '@tanstack/svelte-query';
 import { render } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import translations from '../../../../translations/en-US.json';
@@ -80,6 +81,14 @@ const mountAppBase = (options: MountAppOptions = {}) => {
 
   const services = options.createServiceRegistry?.(defaultServices) ?? defaultServices;
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 0,
+      },
+    },
+  });
+
   const hotkeys: LabeledHotkeys = {
     ...mockHotkeys,
     ...options.hotkeys,
@@ -91,6 +100,7 @@ const mountAppBase = (options: MountAppOptions = {}) => {
     logger,
     pomelloService,
     pomelloServiceConfig,
+    queryClient,
     services,
     settings,
     translations,

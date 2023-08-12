@@ -8,9 +8,14 @@ beforeAll(() => {
   // https://github.com/testing-library/svelte-testing-library/issues/222#issuecomment-1588987135
   vi.mock('svelte', async () => {
     const actual = (await vi.importActual('svelte')) as object;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { afterUpdate, beforeUpdate, onMount } = (await import('svelte/internal')) as any;
+
     return {
       ...actual,
-      onMount: (await import('svelte/internal')).onMount,
+      afterUpdate,
+      beforeUpdate,
+      onMount,
     };
   });
 });
