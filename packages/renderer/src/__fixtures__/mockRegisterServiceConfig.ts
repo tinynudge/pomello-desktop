@@ -1,4 +1,4 @@
-import type { ServiceConfig, ServiceConfigChangeCallback, StoreContents } from '@domain';
+import type { ServiceConfig, StoreContents, StoreSubscription } from '@domain';
 import { vi } from 'vitest';
 
 const mockRegisterServiceConfig = <TConfig = StoreContents>(
@@ -7,21 +7,13 @@ const mockRegisterServiceConfig = <TConfig = StoreContents>(
 ): ServiceConfig<TConfig> => {
   let contents = JSON.parse(JSON.stringify(initialConfig));
 
-  const listeners = new Set<ServiceConfigChangeCallback<TConfig>>();
+  const subscriptions = new Set<StoreSubscription<TConfig>>();
 
   const emitChangeEvent = () => {
-    listeners.forEach(callback => callback(contents));
+    subscriptions.forEach(callback => callback(contents));
   };
 
   const get = () => contents;
-
-  const onChange = vi.fn((callback: ServiceConfigChangeCallback<TConfig>) => {
-    listeners.add(callback);
-
-    return () => {
-      listeners.delete(callback);
-    };
-  });
 
   const set = vi.fn(<TKey extends keyof TConfig>(key: TKey, value: TConfig[TKey]) => {
     contents = { ...contents, [key]: value };
@@ -29,9 +21,17 @@ const mockRegisterServiceConfig = <TConfig = StoreContents>(
     emitChangeEvent();
   });
 
-  const unregister = onChange(updatedContents => {
-    contents = updatedContents;
+  const subscribe = vi.fn((subscription: StoreSubscription<TConfig>) => {
+    subscription(contents);
+
+    subscriptions.add(subscription);
+
+    return () => {
+      subscriptions.delete(subscription);
+    };
   });
+
+  const unregister = vi.fn();
 
   const unset = vi.fn((key: keyof TConfig) => {
     contents = { ...contents };
@@ -42,7 +42,7 @@ const mockRegisterServiceConfig = <TConfig = StoreContents>(
 
   return {
     get,
-    onChange,
+    subscribe,
     set,
     unregister,
     unset,
