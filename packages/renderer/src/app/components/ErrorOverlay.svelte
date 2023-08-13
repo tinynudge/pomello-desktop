@@ -16,10 +16,10 @@
     const message = error instanceof Error ? error.message : `${error}`;
 
     const { response } = await window.app.showMessageBox({
-      message: $translate('unexpectedErrorTitle', { message }),
+      message: translate('unexpectedErrorTitle', { message }),
       cancelId: 1,
       defaultId: 0,
-      buttons: [$translate('errorDialogCopyError'), $translate('errorDialogCancel')],
+      buttons: [translate('errorDialogCopyError'), translate('errorDialogCancel')],
       type: 'error',
     });
 
@@ -43,12 +43,12 @@
   {#if heading}
     <Heading>{heading}</Heading>
   {/if}
-  {message ?? $translate('genericErrorMessage')}
+  {message ?? translate('genericErrorMessage')}
 
   <svelte:fragment slot="buttons">
     {#if retryAction}
       <button on:click={handleResetClick}>{retryAction.label}</button>
     {/if}
-    <button on:click={handleDetailsClick}>{$translate('errorDetails')}</button>
+    <button on:click={handleDetailsClick}>{translate('errorDetails')}</button>
   </svelte:fragment>
 </ButtonsOverlay>

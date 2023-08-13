@@ -52,10 +52,10 @@
   };
 
   const defaultErrorOverlayProps = {
-    heading: $translate('errorHeading'),
-    message: $translate('errorMessage'),
+    heading: translate('errorHeading'),
+    message: translate('errorMessage'),
     retryAction: {
-      label: $translate('errorReset'),
+      label: translate('errorReset'),
       onClick: reset,
     },
   };

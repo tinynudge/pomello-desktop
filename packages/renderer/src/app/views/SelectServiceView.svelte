@@ -20,10 +20,10 @@
 </script>
 
 <Content>
-  <Heading>{$translate('selectServiceHeading')}</Heading>
+  <Heading>{translate('selectServiceHeading')}</Heading>
   <SelectField
     {items}
     on:change={handleServiceChange}
-    placeholder={$translate('selectServiceLabel')}
+    placeholder={translate('selectServiceLabel')}
   />
 </Content>
