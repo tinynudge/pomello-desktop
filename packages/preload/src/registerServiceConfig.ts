@@ -1,9 +1,9 @@
 import {
   AppEvent,
   type ServiceConfig,
-  type ServiceConfigChangeCallback,
   type ServiceConfigStore,
   type StoreContents,
+  type StoreSubscription,
 } from '@domain';
 import { ipcRenderer, type IpcRendererEvent } from 'electron';
 
@@ -12,17 +12,14 @@ const registerServiceConfig = async <TConfig = StoreContents>(
   configStore: ServiceConfigStore<TConfig>
 ): Promise<ServiceConfig<TConfig>> => {
   const storePath = `services/${serviceId}`;
+  const subscriptions = new Set<StoreSubscription<TConfig>>();
 
   let contents = await ipcRenderer.invoke(AppEvent.RegisterServiceConfig, storePath, configStore);
 
-  const onChange = (callback: ServiceConfigChangeCallback<TConfig>) => {
-    const handler = (_event: IpcRendererEvent, config: TConfig) => callback(config);
+  const handleStoreChange = (_event: IpcRendererEvent, updatedContents: TConfig) => {
+    contents = updatedContents;
 
-    ipcRenderer.on(`${AppEvent.StoreChange}:${storePath}`, handler);
-
-    return () => {
-      ipcRenderer.off(`${AppEvent.StoreChange}:${storePath}`, handler);
-    };
+    subscriptions.forEach(subscription => subscription(updatedContents));
   };
 
   const get = () => contents;
@@ -31,18 +28,30 @@ const registerServiceConfig = async <TConfig = StoreContents>(
     return ipcRenderer.invoke(AppEvent.SetStoreItem, storePath, key, value);
   };
 
+  const subscribe = (subscription: StoreSubscription<TConfig>) => {
+    subscription(contents);
+
+    subscriptions.add(subscription);
+
+    return () => {
+      subscriptions.delete(subscription);
+    };
+  };
+
+  const unregister = () => {
+    ipcRenderer.off(`${AppEvent.StoreChange}:${storePath}`, handleStoreChange);
+  };
+
   const unset = (key: keyof TConfig) => {
     return ipcRenderer.invoke(AppEvent.UnsetStoreItem, storePath, key);
   };
 
-  const unregister = onChange(updatedContents => {
-    contents = updatedContents;
-  });
+  ipcRenderer.on(`${AppEvent.StoreChange}:${storePath}`, handleStoreChange);
 
   return {
     get,
-    onChange,
     set,
+    subscribe,
     unregister,
     unset,
   };
