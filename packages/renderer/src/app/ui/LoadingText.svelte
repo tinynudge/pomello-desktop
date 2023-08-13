@@ -4,4 +4,4 @@
   const translate = getTranslator();
 </script>
 
-{$translate('waitMessage')}
+{translate('waitMessage')}

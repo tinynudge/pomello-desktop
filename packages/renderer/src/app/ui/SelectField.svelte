@@ -15,7 +15,7 @@
   let buttonElement: HTMLButtonElement | undefined = undefined;
   let shouldOpenOnUpdate = defaultOpen;
 
-  $: placeholder = customPlaceholder ?? $translate('selectPlaceholder');
+  $: placeholder = customPlaceholder ?? translate('selectPlaceholder');
 
   $: {
     window.app.setSelectItems({ items, noResultsMessage, placeholder });

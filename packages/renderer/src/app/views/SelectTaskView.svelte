@@ -21,11 +21,11 @@
     cacheTime: Infinity,
     onError: error => {
       setErrorOverlay({
-        heading: $translate('errorHeading'),
-        message: $translate('fetchTasksErrorMessage'),
+        heading: translate('errorHeading'),
+        message: translate('fetchTasksErrorMessage'),
         error,
         retryAction: {
-          label: $translate('errorRetry'),
+          label: translate('errorRetry'),
           onClick: $tasks.refetch,
         },
       });
@@ -69,9 +69,9 @@
   <SelectField
     defaultOpen={initialQuickTaskMode}
     items={$tasks.data}
-    noResultsMessage={$translate('noTasksFound')}
+    noResultsMessage={translate('noTasksFound')}
     on:change={handleTaskSelect}
-    placeholder={$translate('selectTaskPlaceholder')}
+    placeholder={translate('selectTaskPlaceholder')}
   />
 {:else if $tasks.isFetching}
   <LoadingText />

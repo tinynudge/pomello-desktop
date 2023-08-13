@@ -20,7 +20,7 @@
   const translate = getTranslator();
 
   const appMode = derived(pomelloState, $pomelloState => $pomelloState.status);
-  const formatCommand = getCommandFormatter($translate);
+  const formatCommand = getCommandFormatter(translate);
 
   let isMenuOpen = false;
   let menuElement: HTMLElement | undefined = undefined;
@@ -48,11 +48,11 @@
 
     if (showCancelTaskDialog) {
       const { response } = await window.app.showMessageBox({
-        buttons: [$translate('cancelTaskDialogConfirm'), $translate('cancelTaskDialogCancel')],
+        buttons: [translate('cancelTaskDialogConfirm'), translate('cancelTaskDialogCancel')],
         cancelId: 1,
         defaultId: 0,
-        detail: $translate('cancelTaskDialogMessage'),
-        message: $translate('cancelTaskDialogHeading'),
+        detail: translate('cancelTaskDialogMessage'),
+        message: translate('cancelTaskDialogHeading'),
         title: 'Pomello',
         type: 'warning',
       });
@@ -93,7 +93,7 @@
   style:transform={isMenuOpen && menuOffset ? `translate(${menuOffset}px)` : undefined}
 >
   <button
-    aria-label={$translate(menuTranslationKey)}
+    aria-label={translate(menuTranslationKey)}
     class="menuButton"
     on:click={handleMenuClick}
     title={formatCommand('openMenuLabel', 'toggleMenu')}

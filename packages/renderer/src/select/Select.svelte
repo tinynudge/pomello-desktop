@@ -59,8 +59,8 @@
   }
 
   $: noItemsMessage = query
-    ? $translate('selectNoMatchesFound')
-    : $translate(noResultsMessage ?? 'selectNoResults');
+    ? translate('selectNoMatchesFound')
+    : translate(noResultsMessage ?? 'selectNoResults');
 
   selectOptions.subscribe(() => {
     shouldUpdateWidth = true;
@@ -170,7 +170,7 @@
   on:lastOptionSelect={handleLastOptionSelect}
   on:nextOptionSelect={handleNextOptionSelect}
   on:previousOptionSelect={handlePreviousOptionSelect}
-  placeholder={placeholder ?? $translate('selectPlaceholder')}
+  placeholder={placeholder ?? translate('selectPlaceholder')}
 />
 <DropdownList
   {activeOptionId}

@@ -24,10 +24,10 @@
   };
 </script>
 
-<nav aria-label={$translate('menuLabel')} bind:this={menuElement} class="menu">
+<nav aria-label={translate('menuLabel')} bind:this={menuElement} class="menu">
   <button
     aria-hidden={!isOpen}
-    aria-label={$translate('homeButtonLabel')}
+    aria-label={translate('homeButtonLabel')}
     class="button"
     on:click={handleHomeClick}
     tabIndex={isOpen ? 0 : -1}
@@ -35,7 +35,7 @@
     <HomeIcon aria-hidden />
   </button>
   <button
-    aria-label={$translate('dashboardButtonLabel')}
+    aria-label={translate('dashboardButtonLabel')}
     aria-hidden={!isOpen}
     class="button"
     tabIndex={isOpen ? 0 : -1}
@@ -44,7 +44,7 @@
   </button>
   <button
     aria-hidden={!isOpen}
-    aria-label={$translate('createTaskButtonLabel')}
+    aria-label={translate('createTaskButtonLabel')}
     class="button"
     on:click={handleCreateTaskClick}
     tabIndex={isOpen ? 0 : -1}
