@@ -13,6 +13,8 @@ export interface Service {
   displayName: string;
   fetchTasks(): Promise<SelectItem[]>;
   getSelectTaskHeading?(): string;
+  getTaskHeading?(): string;
+  getTaskLabel?(taskId: string): string;
   handleError?: CustomErrorHandler;
   id: string;
   InitializingView?: View<InitializingViewProps>;
