@@ -2,6 +2,7 @@
   import { getErrorOverlayContext } from '@/app/contexts/errorOverlayContext';
   import { getPomelloActionsContext } from '@/app/contexts/pomelloActionsContext';
   import { getServiceContext } from '@/app/contexts/serviceContext';
+  import getTasksCacheKey from '@/app/helpers/getTasksCacheKey';
   import getTranslator from '@/app/helpers/getTranslator';
   import Heading from '@/app/ui/Heading.svelte';
   import LoadingText from '@/app/ui/LoadingText.svelte';
@@ -15,9 +16,10 @@
   const { fetchTasks, getSelectTaskHeading, onTaskSelect, SelectTaskView } = getServiceContext();
   const pomelloActions = getPomelloActionsContext();
   const setErrorOverlay = getErrorOverlayContext();
+  const tasksCacheKey = getTasksCacheKey();
   const translate = getTranslator();
 
-  const tasks = createQuery({
+  $: tasks = createQuery({
     cacheTime: Infinity,
     onError: error => {
       setErrorOverlay({
@@ -31,7 +33,7 @@
       });
     },
     queryFn: fetchTasks,
-    queryKey: ['todo', 'replace', 'me'],
+    queryKey: $tasksCacheKey,
   });
 
   const initialQuickTaskMode = quickTaskMode;

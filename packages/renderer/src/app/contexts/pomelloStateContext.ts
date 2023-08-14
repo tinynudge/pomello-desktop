@@ -1,11 +1,15 @@
 import type { PomelloService, PomelloState } from '@tinynudge/pomello-service';
 import { getContext, setContext } from 'svelte';
-import { writable, type Writable } from 'svelte/store';
+import { derived, readable, type Readable } from 'svelte/store';
+
+interface PomelloStateStore extends Readable<PomelloState> {
+  getCurrentTaskId(): Readable<string | null>;
+}
 
 const pomelloStateContext = 'pomelloState';
 
 const setPomelloStateContext = (pomelloService: PomelloService) => {
-  const pomelloState = writable<PomelloState>(pomelloService.getState(), set => {
+  const pomelloState = readable<PomelloState>(pomelloService.getState(), set => {
     const updatePomelloState = (state: PomelloState) => {
       set(state);
     };
@@ -17,10 +21,16 @@ const setPomelloStateContext = (pomelloService: PomelloService) => {
     };
   });
 
-  setContext(pomelloStateContext, pomelloState);
+  const getCurrentTaskId = () =>
+    derived(pomelloState, $pomelloState => $pomelloState.currentTaskId);
+
+  setContext<PomelloStateStore>(pomelloStateContext, {
+    ...pomelloState,
+    getCurrentTaskId,
+  });
 };
 
-const getPomelloStateContext = (): Writable<PomelloState> => {
+const getPomelloStateContext = (): PomelloStateStore => {
   return getContext(pomelloStateContext);
 };
 

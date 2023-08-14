@@ -14,6 +14,7 @@ export type { PomelloServiceConfig } from './PomelloServiceConfig';
 export type { PomelloUser } from './PomelloUser';
 export type { RegisterStoreOptions } from './RegisterStoreOptions';
 export type { SelectItem } from './SelectItem';
+export type { SelectOptionType } from './SelectOptionType';
 export type { Service } from './Service';
 export type { ServiceConfig } from './ServiceConfig';
 export type { ServiceConfigStore } from './ServiceConfigStore';

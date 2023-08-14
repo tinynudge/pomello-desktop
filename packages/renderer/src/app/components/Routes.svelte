@@ -3,6 +3,7 @@
   import { getPomelloStateContext } from '@/app/contexts/pomelloStateContext';
   import { getServiceContext } from '@/app/contexts/serviceContext';
   import SelectTaskView from '@/app/views/SelectTaskView.svelte';
+  import TaskView from '@/app/views/TaskView.svelte';
   import { derived } from 'svelte/store';
 
   const { setReady } = getPomelloActionsContext();
@@ -37,4 +38,6 @@
   {/if}
 {:else if $status === 'SELECT_TASK'}
   <SelectTaskView {quickTaskMode} {resetQuickTaskMode} />
+{:else if $status === 'TASK'}
+  <TaskView />
 {/if}
