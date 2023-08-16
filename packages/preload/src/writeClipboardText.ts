@@ -1,7 +1,8 @@
-import { clipboard } from 'electron';
+import { AppEvent } from '@domain';
+import { ipcRenderer } from 'electron';
 
 const writeClipboardText = (text: string): void => {
-  clipboard.writeText(text);
+  ipcRenderer.invoke(AppEvent.ClipboardTextWrite, text);
 };
 
 export default writeClipboardText;

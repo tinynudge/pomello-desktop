@@ -1,4 +1,5 @@
 export enum AppEvent {
+  ClipboardTextWrite = 'clipboard-text-write',
   DecryptValue = 'decrypt-value',
   EncryptValue = 'encrypt-value',
   GetActiveServiceId = 'get-active-service-id',

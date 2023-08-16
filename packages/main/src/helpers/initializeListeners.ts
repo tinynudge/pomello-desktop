@@ -1,5 +1,6 @@
 import handleAppQuit from '@/events/handleAppQuit';
 import handleAudioFileProtocol from '@/events/handleAudioFileProtocol';
+import handleClipboardTextWrite from '@/events/handleClipboardTextWrite';
 import handleDecryptValue from '@/events/handleDecryptValue';
 import handleEncryptValue from '@/events/handleEncryptValue';
 import handleGetActiveServiceId from '@/events/handleGetActiveServiceId';
@@ -28,6 +29,7 @@ import { AppEvent, AppProtocol } from '@domain';
 import { ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 
 const initializeListeners = (): void => {
+  ipcMain.handle(AppEvent.ClipboardTextWrite, handleClipboardTextWrite);
   ipcMain.handle(AppEvent.GetActiveServiceId, handleGetActiveServiceId);
   ipcMain.handle(AppEvent.GetHotkeys, handleGetHotkeys);
   ipcMain.handle(AppEvent.GetSettings, handleGetSettings);
