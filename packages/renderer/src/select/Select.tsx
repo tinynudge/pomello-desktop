@@ -2,6 +2,7 @@ import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { Logger, SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import styles from './Select.module.scss';
 import DropdownList from './components/DropdownList';
 import DropdownRow from './components/DropdownRow';
 import FilterInput from './components/FilterInput';
@@ -11,7 +12,6 @@ import findNearestOption from './helpers/findNearestOption';
 import useEnsureVisibleActiveOption from './hooks/useEnsureVisibleActiveOption';
 import useFilterItems from './hooks/useFilterItems';
 import useUpdateWindowDimensions from './hooks/useUpdateWindowDimensions';
-import styles from './Select.module.scss';
 
 interface SelectProps {
   initialServiceId?: string;
@@ -106,8 +106,6 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     }
 
     isReady.current = true;
-
-    window.app.notifySelectReady();
   }, []);
 
   useUpdateWindowDimensions({

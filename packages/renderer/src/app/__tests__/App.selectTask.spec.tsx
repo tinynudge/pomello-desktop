@@ -67,7 +67,7 @@ describe('App - Select task', () => {
       return null;
     };
 
-    const { emitAppApiEvent, simulate } = mountApp({
+    const { simulate } = mountApp({
       appApi: {
         showSelect: mockShowSelect,
       },
@@ -81,9 +81,10 @@ describe('App - Select task', () => {
     });
 
     await simulate.waitForSelectTaskView();
-    emitAppApiEvent('onSelectReady');
 
-    expect(mockShowSelect).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockShowSelect).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('should not go to the task view if overridden', async () => {

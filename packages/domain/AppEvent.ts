@@ -16,7 +16,6 @@ export enum AppEvent {
   ResetSelect = 'reset-select',
   SelectChange = 'select-change',
   SelectOption = 'select-option',
-  SelectReady = 'select-ready',
   SetSelectBounds = 'set-select-bounds',
   SetSelectItems = 'set-select-items',
   SetStoreItem = 'set-store-item',
