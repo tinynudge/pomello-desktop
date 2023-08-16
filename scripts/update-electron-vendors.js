@@ -20,7 +20,7 @@ const getVendors = () => {
   return JSON.parse(output);
 };
 
-const updateVendors = () => {
+const updateVendors = async () => {
   const electronRelease = getVendors();
 
   const nodeMajorVersion = electronRelease.node.split('.')[0];
@@ -28,7 +28,7 @@ const updateVendors = () => {
 
   const browserslistrcPath = path.resolve(process.cwd(), '.browserslistrc');
 
-  return Promise.all([
+  await Promise.all([
     writeFile(
       './.electron-vendors.cache.json',
       JSON.stringify(
@@ -43,6 +43,10 @@ const updateVendors = () => {
 
     writeFile(browserslistrcPath, `Chrome ${chromeMajorVersion}\n`, 'utf8'),
   ]);
+
+  execSync(`npx browserslist --update-db`, {
+    encoding: 'utf-8',
+  });
 };
 
 updateVendors().catch(error => {
