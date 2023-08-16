@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { vi } from 'vitest';
 import SelectField from '.';
-import mountComponent, { screen } from '../__fixtures__/mountComponent';
+import mountComponent, { screen, waitFor } from '../__fixtures__/mountComponent';
 
 describe('UI - Select Field', () => {
   it('should render the placeholder', () => {
@@ -31,14 +31,14 @@ describe('UI - Select Field', () => {
     });
   });
 
-  it('should open the select automatically if specified', () => {
-    const { appApi, emitAppApiEvent } = mountComponent(
+  it('should open the select automatically if specified', async () => {
+    const { appApi } = mountComponent(
       <SelectField defaultOpen items={[]} onChange={vi.fn()} placeholder="Pick a Pokemon" />
     );
 
-    emitAppApiEvent('onSelectReady');
-
-    expect(appApi.showSelect).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(appApi.showSelect).toHaveBeenCalled();
+    });
   });
 
   it('should open the select when clicked', async () => {

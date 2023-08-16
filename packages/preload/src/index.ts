@@ -8,11 +8,9 @@ import getThemeCss from './getThemeCss';
 import getTranslations from './getTranslations';
 import hideSelect from './hideSelect';
 import logMessage from './logMessage';
-import notifySelectReady from './notifySelectReady';
 import onPowerMonitorChange from './onPowerMonitorChange';
 import onSelectChange from './onSelectChange';
 import onSelectHide from './onSelectHide';
-import onSelectReady from './onSelectReady';
 import onSelectReset from './onSelectReset';
 import onServicesChange from './onServicesChange';
 import onSetSelectItems from './onSetSelectItems';
@@ -43,11 +41,9 @@ export const api = {
   getTranslations,
   hideSelect,
   logMessage,
-  notifySelectReady,
   onPowerMonitorChange,
   onSelectChange,
   onSelectHide,
-  onSelectReady,
   onSelectReset,
   onServicesChange,
   onSetSelectItems,

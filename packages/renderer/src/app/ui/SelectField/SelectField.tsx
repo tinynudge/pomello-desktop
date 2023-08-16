@@ -3,7 +3,6 @@ import { SelectItem } from '@domain';
 import { FC, useCallback, useEffect, useRef } from 'react';
 import styles from './SelectField.module.scss';
 import useHideSelectOnUnmount from './useHideSelectOnUnmount';
-import useShowSelectOnMount from './useShowSelectOnMount';
 
 interface SelectFieldProps {
   defaultOpen?: boolean;
@@ -23,6 +22,7 @@ const SelectField: FC<SelectFieldProps> = ({
   const { t } = useTranslation();
 
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const shouldOpenOnUpdate = useRef(defaultOpen);
 
   const placeholder = customPlaceholder ?? t('selectPlaceholder');
 
@@ -42,8 +42,6 @@ const SelectField: FC<SelectFieldProps> = ({
   }, []);
 
   useHideSelectOnUnmount();
-
-  useShowSelectOnMount(defaultOpen, showSelectWindow);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -65,7 +63,15 @@ const SelectField: FC<SelectFieldProps> = ({
 
   useEffect(() => {
     window.app.setSelectItems({ items, noResultsMessage, placeholder });
-  }, [items, noResultsMessage, placeholder]);
+
+    // This is much simpler than doing a lot of message passing to figure out if
+    // the select window has updated.
+    if (shouldOpenOnUpdate.current) {
+      setTimeout(showSelectWindow, 5);
+    }
+
+    shouldOpenOnUpdate.current = false;
+  }, [items, noResultsMessage, placeholder, showSelectWindow]);
 
   const handleButtonClick = () => {
     showSelectWindow();

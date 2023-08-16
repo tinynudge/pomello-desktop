@@ -15,7 +15,6 @@ import handlePowerMonitorChange from '@/events/handlePowerMonitorChange';
 import handleRegisterServiceConfig from '@/events/handleRegisterServiceConfig';
 import handleResetSelect from '@/events/handleResetSelect';
 import handleSelectHide from '@/events/handleSelectHide';
-import handleSelectReady from '@/events/handleSelectReady';
 import handleSetSelectBounds from '@/events/handleSetSelectBounds';
 import handleSetSelectItems from '@/events/handleSetSelectItems';
 import handleSetStoreItem from '@/events/handleSetStoreItem';
@@ -42,7 +41,6 @@ const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.RegisterServiceConfig, handleRegisterServiceConfig);
   ipcMain.handle(AppEvent.ResetSelect, handleResetSelect);
   ipcMain.handle(AppEvent.SelectOption, handleOptionSelect);
-  ipcMain.handle(AppEvent.SelectReady, handleSelectReady);
   ipcMain.handle(AppEvent.SetSelectBounds, handleSetSelectBounds);
   ipcMain.handle(AppEvent.SetSelectItems, handleSetSelectItems);
   ipcMain.handle(AppEvent.SetStoreItem, handleSetStoreItem);
