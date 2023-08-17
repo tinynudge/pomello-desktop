@@ -1,7 +1,7 @@
 import createServiceConfig from '@/shared/helpers/createServiceConfig';
 import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
 import { ActiveService, Logger, ServiceConfig, ServiceRegistry } from '@domain';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useTranslation from '../useTranslation';
 import createTranslator from './createTranslator';
 
@@ -40,13 +40,19 @@ const useInitializeService = ({
 
   const [activeService, setActiveService] = useState<ActiveService | undefined>(undefined);
 
+  // This is mainly used to short-circuit the initializeService call inside the
+  // useEffect when running in strict mode. Since initializeService is an async
+  // function, the clean up function could be called before any of the clean up
+  // handlers inside initializeService have been added.
+  const previousServiceId = useRef<string>();
+
   useEffect(() => {
     const unsubscribeHandlers: UnsubscribeHandlers[] = [];
 
     let config: ServiceConfig<void> | null = null;
 
     const initializeService = async () => {
-      if (!serviceId || activeService?.service.id === serviceId) {
+      if (!serviceId || serviceId === previousServiceId.current) {
         return;
       }
 
@@ -97,13 +103,13 @@ const useInitializeService = ({
     initializeService();
 
     return () => {
-      if (activeService?.service.id === serviceId) {
-        unsubscribeHandlers.forEach(handler => handler());
+      unsubscribeHandlers.forEach(handler => handler());
 
-        removeNamespace('service');
-      }
+      removeNamespace('service');
+
+      previousServiceId.current = serviceId;
     };
-  }, [activeService?.service.id, addNamespace, logger, removeNamespace, serviceId, services]);
+  }, [addNamespace, logger, removeNamespace, serviceId, services]);
 
   useEffect(() => {
     activeService?.service.onMount?.();
