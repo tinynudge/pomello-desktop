@@ -1,10 +1,10 @@
 import {
+  dialActionsSet,
+  dialActionsUnset,
   quickTaskSelectDisabled,
   selectIsQuickTaskSelectEnabled,
   selectIsTimerActive,
 } from '@/app/appSlice';
-import useDialActions from '@/app/hooks/useDialActions';
-import usePauseDialAction from '@/app/hooks/usePauseDialAction';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTasksCacheKey from '@/app/hooks/useTasksCacheKey';
 import Heading from '@/app/ui/Heading';
@@ -17,10 +17,10 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 const SelectTaskContents: FC = () => {
-  const dispatch = useDispatch();
-  const { fetchTasks, getSelectTaskHeading, onTaskSelect, SelectTaskView } = useService();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
+  const { fetchTasks, getSelectTaskHeading, onTaskSelect, SelectTaskView } = useService();
   const { selectTask } = usePomelloActions();
 
   const tasksCacheKey = useTasksCacheKey();
@@ -30,8 +30,6 @@ const SelectTaskContents: FC = () => {
   });
 
   const isTimerActive = useSelector(selectIsTimerActive);
-  const { registerDialActions } = useDialActions();
-  const pauseDialAction = usePauseDialAction();
 
   const isQuickTaskSelectEnabled = useSelector(selectIsQuickTaskSelectEnabled);
   const isQuickTaskSelectEnabledRef = useRef(isQuickTaskSelectEnabled);
@@ -44,9 +42,13 @@ const SelectTaskContents: FC = () => {
 
   useEffect(() => {
     if (isTimerActive) {
-      return registerDialActions([pauseDialAction]);
+      dispatch(dialActionsSet(['pauseTimer']));
     }
-  }, [isTimerActive, pauseDialAction, registerDialActions]);
+
+    return () => {
+      dispatch(dialActionsUnset());
+    };
+  }, [dispatch, isTimerActive]);
 
   assertNonNullish(tasks, 'Unable to get tasks');
 

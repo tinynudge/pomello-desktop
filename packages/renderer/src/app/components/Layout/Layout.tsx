@@ -3,26 +3,25 @@ import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import createHintTitle from '@/shared/helpers/createHintTitle';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { ActiveService, Logger } from '@domain';
+import { Logger } from '@domain';
 import cc from 'classcat';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Dial from '../Dial';
 import Overtime from '../Overtime';
-import { ReactComponent as MenuIcon } from './assets/menu.svg';
 import ErrorBoundary from './ErrorBoundary';
-import selectShowCancelTaskDialog from './helpers/selectShowCancelTaskDialog';
 import styles from './Layout.module.scss';
 import Menu from './Menu';
+import { ReactComponent as MenuIcon } from './assets/menu.svg';
+import selectShowCancelTaskDialog from './helpers/selectShowCancelTaskDialog';
 
 interface LayoutProps {
-  activeService?: ActiveService;
   children: ReactNode;
   logger: Logger;
   onTaskCreate(): void;
 }
 
-const Layout: FC<LayoutProps> = ({ activeService, children, logger, onTaskCreate }) => {
+const Layout: FC<LayoutProps> = ({ children, logger, onTaskCreate }) => {
   const { t } = useTranslation();
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
 
@@ -121,7 +120,6 @@ const Layout: FC<LayoutProps> = ({ activeService, children, logger, onTaskCreate
           <MenuIcon aria-hidden width={4} />
         </button>
         <ErrorBoundary
-          activeService={activeService}
           logger={logger}
           renderError={children => <div className={styles.content}>{children}</div>}
         >

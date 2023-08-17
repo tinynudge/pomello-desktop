@@ -6,7 +6,6 @@ import {
   setOverlayView,
   settingsChange,
 } from '@/app/appSlice';
-import { DialActionsProvider } from '@/app/context/DialActionsContext';
 import usePomelloService from '@/app/hooks/usePomelloService';
 import useTimerSounds from '@/app/hooks/useTimerSounds';
 import Content from '@/app/ui/Content';
@@ -139,10 +138,10 @@ const App: FC<AppProps> = ({ logger, services }) => {
   const ServiceContainer = activeService?.service.Container ?? Fragment;
 
   return (
-    <DialActionsProvider>
-      <Layout activeService={activeService} logger={logger} onTaskCreate={handleTaskCreate}>
+    <ServiceProvider service={activeService}>
+      <Layout logger={logger} onTaskCreate={handleTaskCreate}>
         {status === 'READY' ? (
-          <ServiceProvider service={activeService}>
+          <>
             {overlayView === 'create-task' ? (
               <CreateTaskView />
             ) : overlayView ? (
@@ -153,7 +152,7 @@ const App: FC<AppProps> = ({ logger, services }) => {
                 <Routes />
               </ServiceContainer>
             </Content>
-          </ServiceProvider>
+          </>
         ) : status === 'INITIALIZING' ? (
           <Content>
             <LoadingText />
@@ -162,7 +161,7 @@ const App: FC<AppProps> = ({ logger, services }) => {
           <SelectServiceView services={services} />
         )}
       </Layout>
-    </DialActionsProvider>
+    </ServiceProvider>
   );
 };
 

@@ -1,10 +1,7 @@
-import { ReactNode } from 'react';
-import { DialActionClickHandler } from './DialActionClickHandler';
-
-export interface DialAction {
-  Content: ReactNode;
-  id: string;
-  label: string;
-  onClick: DialActionClickHandler;
-  title: string;
-}
+export type DialAction =
+  | 'addNote'
+  | 'completeTask'
+  | 'pauseTimer'
+  | 'skipTimer'
+  | 'switchTask'
+  | 'voidTask';

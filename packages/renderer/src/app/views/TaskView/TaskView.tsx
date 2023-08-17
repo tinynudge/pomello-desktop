@@ -1,22 +1,24 @@
+import { dialActionsSet, dialActionsUnset } from '@/app/appSlice';
 import useCurrentTask from '@/app/hooks/useCurrentTask';
-import useShowAddNoteView from '@/app/hooks/useShowAddNoteView';
 import Heading from '@/app/ui/Heading';
 import Text from '@/app/ui/Text';
 import useService from '@/shared/hooks/useService';
-import { FC } from 'react';
-import useTaskDialActions from './useTaskDialActions';
-import useTaskHotkeys from './useTaskHotkeys';
+import { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 const TaskView: FC = () => {
+  const dispatch = useDispatch();
   const { getTaskHeading } = useService();
 
-  const showAddNoteView = useShowAddNoteView();
-
-  useTaskHotkeys({ showAddNoteView });
-
-  useTaskDialActions({ showAddNoteView });
-
   const { currentTaskLabel } = useCurrentTask();
+
+  useEffect(() => {
+    dispatch(dialActionsSet(['pauseTimer', 'addNote', 'switchTask', 'voidTask', 'completeTask']));
+
+    return () => {
+      dispatch(dialActionsUnset());
+    };
+  }, [dispatch]);
 
   return (
     <>

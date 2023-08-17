@@ -20,12 +20,13 @@
     "release": "standard-version",
     "start": "node scripts/start.js",
     "test:renderer": "vitest --root packages/renderer",
-    "test": "run-p test:renderer",
+    "test": "run-p \"test:renderer run\"",
     "typecheck:main": "tsc --noEmit --project packages/main",
     "typecheck:preload": "tsc --noEmit --project packages/preload",
     "typecheck:renderer": "tsc --noEmit --project packages/renderer",
     "typecheck": "run-p --continue-on-error typecheck:main typecheck:preload typecheck:renderer",
-    "update:vendors": "node scripts/update-electron-vendors.js"
+    "update:vendors": "node scripts/update-electron-vendors.js",
+    "verify": "run-s format:check lint typecheck test"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.3",
