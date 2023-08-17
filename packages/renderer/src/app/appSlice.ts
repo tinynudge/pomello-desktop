@@ -1,12 +1,13 @@
-import { NoteType, Settings } from '@domain';
+import { DialAction, NoteType, Settings } from '@domain';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { PomelloState } from '@tinynudge/pomello-service';
 import { RootState } from './createStore';
 
 type OverlayView = 'create-task' | NoteType;
 
 interface AppState {
+  dialActions: DialAction[];
   isQuickTaskSelectEnabled: boolean;
   overlayView: OverlayView | null;
   pomelloState: PomelloState;
@@ -15,6 +16,7 @@ interface AppState {
 }
 
 const initialState: AppState = {
+  dialActions: [],
   isQuickTaskSelectEnabled: false,
   overlayView: null,
   pomelloState: null as unknown as PomelloState,
@@ -25,6 +27,12 @@ export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
+    dialActionsSet: (state, { payload }: PayloadAction<DialAction[]>) => {
+      state.dialActions = payload;
+    },
+    dialActionsUnset: state => {
+      state.dialActions = [];
+    },
     pomelloStateUpdate: (state, { payload }: PayloadAction<PomelloState>) => {
       state.pomelloState = payload;
     },
@@ -50,19 +58,25 @@ export const appSlice = createSlice({
 });
 
 export const {
+  dialActionsSet,
+  dialActionsUnset,
   pomelloStateUpdate,
   quickTaskSelectDisabled,
   quickTaskSelectEnabled,
   serviceChange,
-  settingsChange,
   setOverlayView,
+  settingsChange,
   unsetOverlayView,
 } = appSlice.actions;
+
+const selectAppState = (state: RootState): AppState => state.app;
 
 export const selectAppMode = ({ app }: RootState) =>
   app.pomelloState.timer?.isActive ? app.pomelloState.timer.type : undefined;
 
 export const selectCurrentTaskId = ({ app }: RootState) => app.pomelloState.currentTaskId;
+
+export const selectDialActions = createSelector(selectAppState, app => app.dialActions);
 
 export const selectIsOvertimeVisible = ({ app }: RootState) => Boolean(app.pomelloState.overtime);
 

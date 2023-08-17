@@ -3,7 +3,7 @@ import { createContext, FC, ReactNode } from 'react';
 
 interface ServiceProviderProps {
   children: ReactNode;
-  service: ActiveService;
+  service?: ActiveService;
 }
 
 export const ServiceContext = createContext<ActiveService | undefined>(undefined);

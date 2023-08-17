@@ -1,13 +1,8 @@
-import { selectCurrentTaskId } from '@/app/appSlice';
-import useDialActions from '@/app/hooks/useDialActions';
-import useHotkeys from '@/app/hooks/useHotkeys';
-import usePomelloActions from '@/app/hooks/usePomelloActions';
+import { dialActionsSet, dialActionsUnset, selectCurrentTaskId } from '@/app/appSlice';
 import Heading from '@/app/ui/Heading';
-import createHintTitle from '@/shared/helpers/createHintTitle';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { ReactComponent as SkipIcon } from './assets/skip.svg';
+import { useDispatch, useSelector } from 'react-redux';
 import NextTaskHeading from './NextTaskHeading';
 
 interface BreakViewProps {
@@ -16,29 +11,17 @@ interface BreakViewProps {
 
 const BreakView: FC<BreakViewProps> = ({ type }) => {
   const { t } = useTranslation();
-  const { skipTimer } = usePomelloActions();
-  const { getHotkeyLabel, registerHotkeys } = useHotkeys();
+  const dispatch = useDispatch();
 
   const currentTaskId = useSelector(selectCurrentTaskId);
 
   useEffect(() => {
-    return registerHotkeys({
-      skipBreak: skipTimer,
-    });
-  }, [registerHotkeys, skipTimer]);
+    dispatch(dialActionsSet(['skipTimer']));
 
-  const { registerDialActions } = useDialActions();
-  useEffect(() => {
-    return registerDialActions([
-      {
-        Content: <SkipIcon width={9} />,
-        id: 'skipBreak',
-        label: t('skipBreakLabel'),
-        onClick: skipTimer,
-        title: createHintTitle(t, 'skipBreakLabel', getHotkeyLabel('skipBreak')),
-      },
-    ]);
-  }, [getHotkeyLabel, registerDialActions, skipTimer, t]);
+    return () => {
+      dispatch(dialActionsUnset());
+    };
+  }, [dispatch]);
 
   const breakMessageKey = type === 'SHORT_BREAK' ? 'shortBreakMessage' : 'longBreakMessage';
 

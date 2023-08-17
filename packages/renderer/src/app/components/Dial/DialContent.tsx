@@ -1,25 +1,42 @@
-import useDialActions from '@/app/hooks/useDialActions';
+import { selectDialActions } from '@/app/appSlice';
 import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { DialActionClickHandler } from '@domain';
+import { DialAction } from '@domain';
 import { Timer } from '@tinynudge/pomello-service';
 import cc from 'classcat';
-import { FC, MouseEvent, useCallback, useEffect, useState } from 'react';
-import { ReactComponent as MoreIcon } from './assets/more.svg';
+import { FC, MouseEvent, createElement, useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import AddNoteDialAction from './AddNoteDialAction';
+import CompleteTaskDialAction from './CompleteTaskDialAction';
 import Counter from './Counter';
+import { DialActionProps } from './DialActionProps';
 import styles from './DialContent.module.scss';
+import PauseTimerDialAction from './PauseTimerDialAction';
+import SkipTimerDialAction from './SkipTimerDialAction';
+import SwitchTaskDialAction from './SwitchTaskDialAction';
+import VoidTaskDialAction from './VoidTaskDialAction';
+import { ReactComponent as MoreIcon } from './assets/more.svg';
 
 interface DialContentProps {
   timer: Timer;
 }
 
-const DialContent: FC<DialContentProps> = ({ timer }) => {
-  const { t } = useTranslation();
-  const { registerHotkeys } = useHotkeys();
+const DialActionsMap: Record<DialAction, FC<DialActionProps>> = {
+  addNote: AddNoteDialAction,
+  completeTask: CompleteTaskDialAction,
+  pauseTimer: PauseTimerDialAction,
+  skipTimer: SkipTimerDialAction,
+  switchTask: SwitchTaskDialAction,
+  voidTask: VoidTaskDialAction,
+};
 
-  const { dialActions } = useDialActions();
+const DialContent: FC<DialContentProps> = ({ timer }) => {
+  const { registerHotkeys } = useHotkeys();
   const { startTimer: startPomelloTimer } = usePomelloActions();
+  const { t } = useTranslation();
+
+  const dialActions = useSelector(selectDialActions);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHoverable, setIsHoverable] = useState(false);
@@ -77,12 +94,8 @@ const DialContent: FC<DialContentProps> = ({ timer }) => {
     };
   }
 
-  const handleActionClick = (callback: DialActionClickHandler) => {
-    return (event: MouseEvent<HTMLButtonElement>) => {
-      event.currentTarget.blur();
-      setIsExpanded(false);
-      callback();
-    };
+  const handleActionClick = () => {
+    setIsExpanded(false);
   };
 
   const handleOverlayClick = () => {
@@ -140,19 +153,14 @@ const DialContent: FC<DialContentProps> = ({ timer }) => {
           </div>
         </button>
         <div className={styles.actions}>
-          {dialActions.map(action => (
-            <button
-              aria-hidden={!isExpanded}
-              aria-label={action.label}
-              className={styles.action}
-              key={action.id}
-              onClick={handleActionClick(action.onClick)}
-              tabIndex={isExpanded ? 0 : -1}
-              title={action.title}
-            >
-              {action.Content}
-            </button>
-          ))}
+          {dialActions.map(action =>
+            createElement(DialActionsMap[action], {
+              className: styles.action,
+              isVisible: isExpanded,
+              key: action,
+              onClick: handleActionClick,
+            })
+          )}
         </div>
       </div>
       <div
