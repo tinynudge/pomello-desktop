@@ -1,6 +1,6 @@
 import { DialAction, NoteType, Settings } from '@domain';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { PomelloState } from '@tinynudge/pomello-service';
 import { RootState } from './createStore';
 
@@ -69,14 +69,18 @@ export const {
   unsetOverlayView,
 } = appSlice.actions;
 
-const selectAppState = (state: RootState): AppState => state.app;
-
 export const selectAppMode = ({ app }: RootState) =>
   app.pomelloState.timer?.isActive ? app.pomelloState.timer.type : undefined;
 
 export const selectCurrentTaskId = ({ app }: RootState) => app.pomelloState.currentTaskId;
 
-export const selectDialActions = createSelector(selectAppState, app => app.dialActions);
+export const selectDial = ({ app }: RootState) => ({
+  isActive: Boolean(app.pomelloState.timer?.isActive),
+  isPaused: Boolean(app.pomelloState.timer?.isPaused),
+  type: app.pomelloState.timer?.type,
+});
+
+export const selectDialActions = ({ app }: RootState) => app.dialActions;
 
 export const selectIsOvertimeVisible = ({ app }: RootState) => Boolean(app.pomelloState.overtime);
 
@@ -98,6 +102,6 @@ export const selectServiceId = ({ app }: RootState) => app.serviceId;
 
 export const selectSettings = ({ app }: RootState) => app.settings;
 
-export const selectTimer = ({ app }: RootState) => app.pomelloState.timer;
+export const selectTimerTime = ({ app }: RootState) => app.pomelloState.timer?.time ?? 0;
 
 export default appSlice.reducer;

@@ -1,12 +1,12 @@
-import { FC } from 'react';
+import { selectTimerTime } from '@/app/appSlice';
 import cc from 'classcat';
+import { FC } from 'react';
+import { useSelector } from 'react-redux';
 import styles from './Counter.module.scss';
 
-interface CounterProps {
-  time: number;
-}
+const Counter: FC = () => {
+  const time = useSelector(selectTimerTime);
 
-const Counter: FC<CounterProps> = ({ time }) => {
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
 

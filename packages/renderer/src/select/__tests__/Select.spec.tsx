@@ -291,9 +291,11 @@ describe('Select', () => {
 
     emitAppApiEvent('onSelectHide');
 
-    expect(screen.getByRole('combobox')).toHaveValue('');
-    expect(screen.getAllByRole('option')).toHaveLength(4);
-    expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'charmander');
+    await waitFor(() => {
+      expect(screen.getByRole('combobox')).toHaveValue('');
+      expect(screen.getAllByRole('option')).toHaveLength(4);
+      expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'charmander');
+    });
   });
 
   it('should select the first available option if the previous active option was filtered out', async () => {

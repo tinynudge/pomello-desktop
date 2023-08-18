@@ -3,7 +3,6 @@ import useHotkeys from '@/app/hooks/useHotkeys';
 import usePomelloActions from '@/app/hooks/usePomelloActions';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { DialAction } from '@domain';
-import { Timer } from '@tinynudge/pomello-service';
 import cc from 'classcat';
 import { FC, MouseEvent, createElement, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -19,7 +18,8 @@ import VoidTaskDialAction from './VoidTaskDialAction';
 import { ReactComponent as MoreIcon } from './assets/more.svg';
 
 interface DialContentProps {
-  timer: Timer;
+  isActive: boolean;
+  isPaused: boolean;
 }
 
 const DialActionsMap: Record<DialAction, FC<DialActionProps>> = {
@@ -31,7 +31,7 @@ const DialActionsMap: Record<DialAction, FC<DialActionProps>> = {
   voidTask: VoidTaskDialAction,
 };
 
-const DialContent: FC<DialContentProps> = ({ timer }) => {
+const DialContent: FC<DialContentProps> = ({ isActive, isPaused }) => {
   const { registerHotkeys } = useHotkeys();
   const { startTimer: startPomelloTimer } = usePomelloActions();
   const { t } = useTranslation();
@@ -42,18 +42,18 @@ const DialContent: FC<DialContentProps> = ({ timer }) => {
   const [isHoverable, setIsHoverable] = useState(false);
 
   const startTimer = useCallback(() => {
-    if (!timer.isActive || timer.isPaused) {
+    if (!isActive || isPaused) {
       startPomelloTimer();
     }
-  }, [startPomelloTimer, timer.isActive, timer.isPaused]);
+  }, [startPomelloTimer, isActive, isPaused]);
 
   useEffect(() => {
-    if (timer.isActive && !timer.isPaused) {
+    if (isActive && !isPaused) {
       setHoverTimeout();
-    } else if (!timer.isActive) {
+    } else if (!isActive) {
       setIsHoverable(false);
     }
-  }, [timer.isActive, timer.isPaused]);
+  }, [isActive, isPaused]);
 
   useEffect(() => {
     return registerHotkeys({
@@ -72,14 +72,14 @@ const DialContent: FC<DialContentProps> = ({ timer }) => {
       event.currentTarget.blur();
       setIsExpanded(false);
     };
-  } else if (timer.isPaused) {
+  } else if (isPaused) {
     dialLabel = t('resumeTimerLabel');
 
     handleDialClick = event => {
       event.currentTarget.blur();
       startTimer();
     };
-  } else if (timer.isActive) {
+  } else if (isActive) {
     dialLabel = t('showActionsLabel');
 
     handleDialClick = () => {
@@ -130,25 +130,25 @@ const DialContent: FC<DialContentProps> = ({ timer }) => {
           aria-label={dialLabel}
           className={cc({
             [styles.dial]: true,
-            [styles.isActive]: timer.isActive,
+            [styles.isActive]: isActive,
             [styles.isHoverable]: isHoverable,
           })}
           onClick={handleDialClick}
         >
-          <div aria-hidden={timer.isActive} className={styles.panel}>
+          <div aria-hidden={isActive} className={styles.panel}>
             {t('startTimer')}
           </div>
           <div
-            aria-hidden={!timer.isActive}
+            aria-hidden={!isActive}
             className={cc({
               [styles.panel]: true,
-              [styles.isPaused]: timer.isPaused,
+              [styles.isPaused]: isPaused,
             })}
           >
-            <Counter time={timer.time} />
+            <Counter />
           </div>
-          {timer.isPaused && <div className={styles.panel}>{t('resumeTimer')}</div>}
-          <div aria-hidden={!timer.isActive} className={styles.panel}>
+          {isPaused && <div className={styles.panel}>{t('resumeTimer')}</div>}
+          <div aria-hidden={!isActive} className={styles.panel}>
             <MoreIcon width={18} />
           </div>
         </button>

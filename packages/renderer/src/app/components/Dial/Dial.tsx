@@ -1,12 +1,16 @@
-import { selectTimer } from '@/app/appSlice';
+import { selectDial } from '@/app/appSlice';
 import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import DialContent from './DialContent';
 
 const Dial: FC = () => {
-  const timer = useSelector(selectTimer);
+  const { isActive, isPaused, type } = useSelector(selectDial, shallowEqual);
 
-  return timer ? <DialContent key={timer.type} timer={timer} /> : null;
+  if (!type) {
+    return null;
+  }
+
+  return <DialContent key={type} isActive={isActive} isPaused={isPaused} />;
 };
 
 export default Dial;
