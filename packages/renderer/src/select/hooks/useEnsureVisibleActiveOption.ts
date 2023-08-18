@@ -1,13 +1,13 @@
+import { Store } from '@/shared/helpers/createStore';
 import { SelectItem } from '@domain';
 import { MutableRefObject, RefObject, useCallback, useEffect } from 'react';
 import findFirstOption from '../helpers/findFirstOption';
 
 interface UseEnsureVisibleActiveOptionOptions {
-  activeOptionId?: string;
+  activeOptionId: Store<string | undefined>;
   inputHeight: MutableRefObject<number>;
   items: SelectItem[];
   listRef: RefObject<HTMLUListElement>;
-  setActiveOptionId(activeOptionId?: string): void;
 }
 
 const scrollBy = (top: number) => {
@@ -25,7 +25,6 @@ const useEnsureVisibleActiveOption = ({
   inputHeight,
   items,
   listRef,
-  setActiveOptionId,
 }: UseEnsureVisibleActiveOptionOptions): void => {
   const ensureVisibleOption = useCallback(
     (optionId?: string) => {
@@ -40,7 +39,7 @@ const useEnsureVisibleActiveOption = ({
       if (!option) {
         const firstOption = findFirstOption(listRef.current);
 
-        setActiveOptionId(firstOption?.id ?? undefined);
+        activeOptionId.set(firstOption?.id ?? undefined);
 
         option = firstOption;
       }
@@ -55,12 +54,13 @@ const useEnsureVisibleActiveOption = ({
         }
       }
     },
-    [inputHeight, listRef, setActiveOptionId]
+    [activeOptionId, inputHeight, listRef]
   );
 
-  useEffect(() => {
-    ensureVisibleOption(activeOptionId);
-  }, [activeOptionId, ensureVisibleOption, items]);
+  useEffect(
+    () => activeOptionId.subscribe(ensureVisibleOption),
+    [activeOptionId, ensureVisibleOption, items]
+  );
 };
 
 export default useEnsureVisibleActiveOption;

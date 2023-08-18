@@ -1,7 +1,8 @@
+import createStore from '@/shared/helpers/createStore';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { Logger, SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './Select.module.scss';
 import DropdownList from './components/DropdownList';
 import DropdownRow from './components/DropdownRow';
@@ -35,7 +36,7 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
   }, []);
 
   const isReady = useRef(false);
-  const [activeOptionId, setActiveOptionId] = useState<string>();
+  const activeOptionId = useMemo(() => createStore<string>(), []);
 
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<SelectItem[]>([]);
@@ -60,7 +61,6 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     inputHeight,
     items: filteredItems,
     listRef,
-    setActiveOptionId,
   });
 
   useEffect(() => {
@@ -70,22 +70,27 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
   }, []);
 
   useEffect(() => {
-    return window.app.onSelectHide(() => {
+    const tick = () => new Promise<void>(resolve => resolve());
+
+    return window.app.onSelectHide(async () => {
       setQuery('');
-      setActiveOptionId(undefined);
+
+      await tick();
+
+      activeOptionId.set(undefined);
     });
-  }, []);
+  }, [activeOptionId]);
 
   useEffect(() => {
     return window.app.onSelectReset(() => {
       isReady.current = false;
+      activeOptionId.set(undefined);
 
       setQuery('');
-      setActiveOptionId(undefined);
       setPlaceholder(undefined);
       setNoResultsMessage(undefined);
     });
-  }, []);
+  }, [activeOptionId]);
 
   useEffect(() => {
     return window.app.onSetSelectItems(({ items, noResultsMessage, placeholder }) => {
@@ -100,6 +105,14 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     });
   }, []);
 
+  const selectActiveOption = useCallback(() => {
+    const currentActiveOptionId = activeOptionId.get();
+
+    if (currentActiveOptionId) {
+      window.app.selectOption(currentActiveOptionId);
+    }
+  }, [activeOptionId]);
+
   const handleDimensionsUpdate = useCallback(() => {
     if (isReady.current) {
       return;
@@ -107,6 +120,17 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
 
     isReady.current = true;
   }, []);
+
+  const handleOptionHover = useCallback(
+    (option: SelectOptionType) => {
+      activeOptionId.set(option.id);
+    },
+    [activeOptionId]
+  );
+
+  const handleOptionSelect = useCallback(() => {
+    selectActiveOption();
+  }, [selectActiveOption]);
 
   useUpdateWindowDimensions({
     container: listRef.current,
@@ -123,19 +147,11 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     window.app.hideSelect();
   };
 
-  const handleOptionHover = (option: SelectOptionType) => {
-    setActiveOptionId(option.id);
-  };
-
-  const handleOptionSelect = () => {
-    selectActiveOption();
-  };
-
   const handleFirstOptionSelect = () => {
     const option = findFirstOption(listRef.current);
 
     if (option) {
-      setActiveOptionId(option.id);
+      activeOptionId.set(option.id);
     }
   };
 
@@ -143,7 +159,7 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     const option = findLastOption(listRef.current);
 
     if (option) {
-      setActiveOptionId(option.id);
+      activeOptionId.set(option.id);
     }
   };
 
@@ -156,16 +172,14 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
   };
 
   const highlightAdjacentOption = (direction: 'next' | 'previous') => {
-    const option = findNearestOption({ activeOptionId, container: listRef.current, direction });
+    const option = findNearestOption({
+      activeOptionId: activeOptionId.get(),
+      container: listRef.current,
+      direction,
+    });
 
     if (option) {
-      setActiveOptionId(option.id);
-    }
-  };
-
-  const selectActiveOption = () => {
-    if (activeOptionId) {
-      window.app.selectOption(activeOptionId);
+      activeOptionId.set(option.id);
     }
   };
 

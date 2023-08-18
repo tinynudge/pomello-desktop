@@ -1,12 +1,13 @@
+import { Store } from '@/shared/helpers/createStore';
 import { SelectItem, SelectOptionType, Service } from '@domain';
 import cc from 'classcat';
-import { FC } from 'react';
+import { FC, useSyncExternalStore } from 'react';
 import DropdownList from '../DropdownList';
 import DropdownRow from '../DropdownRow';
 import styles from './DropdownItem.module.scss';
 
 interface DropdownItemProps {
-  activeOptionId?: string;
+  activeOptionId: Store<string | undefined>;
   depth: number;
   item: SelectItem;
   onOptionHover(option: SelectOptionType): void;
@@ -22,6 +23,11 @@ const DropdownItem: FC<DropdownItemProps> = ({
   onOptionSelect,
   service,
 }) => {
+  const isSelected = useSyncExternalStore(
+    activeOptionId.subscribe,
+    () => activeOptionId.get() === item.id
+  );
+
   const isGroupType = item.type === 'group' || item.type === 'customGroup';
 
   if (isGroupType) {
@@ -58,7 +64,7 @@ const DropdownItem: FC<DropdownItemProps> = ({
     <DropdownRow
       className={cc({
         [styles.item]: true,
-        [styles.selected]: activeOptionId === item.id,
+        [styles.selected]: isSelected,
       })}
       id={item.id}
       onClick={onOptionSelect}

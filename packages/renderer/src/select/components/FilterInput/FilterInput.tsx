@@ -1,8 +1,9 @@
-import { ChangeEvent, forwardRef, KeyboardEvent } from 'react';
+import { Store } from '@/shared/helpers/createStore';
+import { ChangeEvent, forwardRef, KeyboardEvent, useSyncExternalStore } from 'react';
 import styles from './FilterInput.module.scss';
 
 interface FilterInputProps {
-  activeOptionId?: string;
+  activeOptionId: Store<string | undefined>;
   listboxId: string;
   onChange(query: string): void;
   onEnter(): void;
@@ -32,6 +33,8 @@ const FilterInput = forwardRef<HTMLInputElement, FilterInputProps>(
     },
     ref
   ) => {
+    const currentOptionId = useSyncExternalStore(activeOptionId.subscribe, activeOptionId.get);
+
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
       onChange(event.currentTarget.value);
     };
@@ -60,7 +63,7 @@ const FilterInput = forwardRef<HTMLInputElement, FilterInputProps>(
 
     return (
       <input
-        aria-activedescendant={activeOptionId}
+        aria-activedescendant={currentOptionId}
         aria-autocomplete="list"
         aria-controls={listboxId}
         aria-expanded
