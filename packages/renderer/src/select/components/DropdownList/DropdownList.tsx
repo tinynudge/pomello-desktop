@@ -1,11 +1,10 @@
-import { Store } from '@/shared/helpers/createStore';
-import { SelectItem, SelectOptionType, Service } from '@domain';
+import { SelectItem, SelectOptionType, Service, Signal } from '@domain';
 import { CSSProperties, HTMLAttributes, ReactNode, forwardRef } from 'react';
 import DropdownItem from '../DropdownItem';
 import styles from './DropdownList.module.scss';
 
 interface DropdownListProps extends HTMLAttributes<HTMLUListElement> {
-  activeOptionId: Store<string | undefined>;
+  activeOptionId: Signal<string | undefined>;
   children?: ReactNode;
   depth: number;
   items: SelectItem[];

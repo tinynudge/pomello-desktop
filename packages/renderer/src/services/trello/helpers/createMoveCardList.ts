@@ -1,4 +1,4 @@
-import { Cache, SelectItem, Translate } from '@domain';
+import { SelectItem, Signal, Translate } from '@domain';
 import { TrelloCache } from '../domain';
 
 interface MoveCardList {
@@ -6,7 +6,7 @@ interface MoveCardList {
   moveTaskItemId?: string;
 }
 
-const createMoveCardList = (translate: Translate, cache: Cache<TrelloCache>): MoveCardList => {
+const createMoveCardList = (translate: Translate, cache: Signal<TrelloCache>): MoveCardList => {
   const { currentBoard, preferences } = cache.get();
 
   return {

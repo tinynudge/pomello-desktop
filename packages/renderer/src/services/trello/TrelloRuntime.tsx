@@ -1,6 +1,6 @@
-import { Cache, ServiceRuntime } from '@domain';
+import { ServiceRuntime, Signal } from '@domain';
 import { TrelloCache, TrelloConfig } from './domain';
 
 export interface TrelloRuntime extends ServiceRuntime<TrelloConfig> {
-  cache: Cache<TrelloCache>;
+  cache: Signal<TrelloCache>;
 }

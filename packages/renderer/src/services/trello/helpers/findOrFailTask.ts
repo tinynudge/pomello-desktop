@@ -1,9 +1,9 @@
 import assertNonNullish from '@/shared/helpers/assertNonNullish';
-import { Cache } from '@domain';
+import { Signal } from '@domain';
 import { TrelloCache, TrelloCard, TrelloCheckItem } from '../domain';
 
 const findOrFailTask = (
-  cache: Cache<TrelloCache>,
+  cache: Signal<TrelloCache>,
   taskId: string
 ): TrelloCard | TrelloCheckItem => {
   const { tasks } = cache.get();

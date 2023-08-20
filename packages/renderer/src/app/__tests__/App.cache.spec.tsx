@@ -1,6 +1,7 @@
 import { CacheProvider } from '@/shared/context/CacheContext';
-import createCache from '@/shared/helpers/createCache';
-import { useCacheSelector, useCacheUpdater } from '@/shared/hooks/useCache';
+import createSignal from '@/shared/helpers/createSignal';
+import useCache from '@/shared/hooks/useCache';
+import useStore from '@/shared/hooks/useStore';
 import { InitializingView, ServiceFactory } from '@domain';
 import { vi } from 'vitest';
 import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
@@ -12,7 +13,10 @@ interface MockCache {
 describe('App - Cache', async () => {
   it('should reflect cache changes from the service in the UI', async () => {
     const InitializingView: InitializingView<{ onNameChange: () => void }> = ({ onNameChange }) => {
-      const name = useCacheSelector((cache: MockCache) => cache.name);
+      const cache = useCache<MockCache>();
+      const cacheStore = useStore(cache.get, cache.subscribe);
+
+      const name = cacheStore(cache => cache.name);
 
       return (
         <div>
@@ -23,7 +27,7 @@ describe('App - Cache', async () => {
     };
 
     const serviceWithCache: ServiceFactory = () => {
-      const cache = createCache<MockCache>();
+      const cache = createSignal<MockCache>({});
 
       cache.set(draft => {
         draft.name = 'Brian';
@@ -67,13 +71,15 @@ describe('App - Cache', async () => {
     const handleCacheChange = vi.fn();
 
     const InitializingView: InitializingView = () => {
-      const setCache = useCacheUpdater<MockCache>();
-      const name = useCacheSelector((cache: MockCache) => cache.name);
+      const cache = useCache<MockCache>();
+      const cacheStore = useStore(cache.get, cache.subscribe, {
+        nameChanged: name => cache.set({ name }),
+      });
+
+      const name = cacheStore(cache => cache.name);
 
       const handleNameChange = () => {
-        setCache(draft => {
-          draft.name = 'Harry';
-        });
+        cacheStore.nameChanged('Harry');
       };
 
       return (
@@ -85,13 +91,9 @@ describe('App - Cache', async () => {
     };
 
     const serviceWithCache: ServiceFactory = () => {
-      const cache = createCache<MockCache>();
+      const cache = createSignal<MockCache>({ name: 'Brian' });
 
-      cache.set(draft => {
-        draft.name = 'Brian';
-      });
-
-      const removeCacheChangeHandler = cache.onChange(handleCacheChange);
+      const removeCacheChangeHandler = cache.subscribe(handleCacheChange);
 
       const onUnmount = () => {
         removeCacheChangeHandler();
@@ -123,7 +125,7 @@ describe('App - Cache', async () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Change name' }));
 
-    expect(handleCacheChange).toHaveBeenCalledTimes(1);
-    expect(handleCacheChange).toHaveBeenCalledWith({ name: 'Harry' });
+    expect(handleCacheChange).toHaveBeenCalledTimes(2);
+    expect(handleCacheChange).toHaveBeenLastCalledWith({ name: 'Harry' });
   });
 });

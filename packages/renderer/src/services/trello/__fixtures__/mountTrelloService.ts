@@ -1,11 +1,11 @@
-import mountApp, { MountAppOptions } from '@/app/__fixtures__/mountApp';
-import createMockCache from '@/__fixtures__/createMockCache';
 import createMockServiceConfig from '@/__fixtures__/createMockServiceConfig';
 import createRestResolver from '@/__fixtures__/createRestResolver';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
 import mockServer from '@/__fixtures__/mockServer';
-import { Cache } from '@domain';
-import { ResponseResolver, rest, RestContext, RestRequest } from 'msw';
+import mountApp, { MountAppOptions } from '@/app/__fixtures__/mountApp';
+import createSignal from '@/shared/helpers/createSignal';
+import { Signal } from '@domain';
+import { ResponseResolver, RestContext, RestRequest, rest } from 'msw';
 import { vi } from 'vitest';
 import createTrelloService from '..';
 import { TRELLO_API_URL } from '../constants';
@@ -46,9 +46,9 @@ interface MountTrelloServiceOptions
   trelloApi?: Partial<TrelloApiResponses>;
 }
 
-let cache: Cache<TrelloCache>;
+let cache: Signal<TrelloCache>;
 
-vi.mock('@/shared/helpers/createCache', () => ({
+vi.mock('@/services/trello/createTrelloCache', () => ({
   default: () => cache,
 }));
 
@@ -58,7 +58,7 @@ const mountTrelloService = async ({
   trelloApi,
   ...remainingOptions
 }: MountTrelloServiceOptions = {}) => {
-  cache = createMockCache<TrelloCache>();
+  cache = createSignal<TrelloCache>({} as TrelloCache);
 
   mockServer.use(
     rest.get(

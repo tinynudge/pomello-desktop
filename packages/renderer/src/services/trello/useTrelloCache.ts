@@ -1,13 +1,51 @@
-import { useCacheSelector, useCacheUpdater } from '@/shared/hooks/useCache';
-import { TrelloCache } from './domain';
+import useCache from '@/shared/hooks/useCache';
+import useStore from '@/shared/hooks/useStore';
+import { TrelloBoard, TrelloCache, TrelloList, TrelloListPreferences } from './domain';
 
-type Selector<TValue> = (cache: TrelloCache) => TValue;
+export const useTrelloCache = () => {
+  const cache = useCache<TrelloCache>();
 
-export const useTrelloCacheSelector = <TValue>(selector: Selector<TValue>): TValue => {
-  return useCacheSelector(selector);
+  return useStore(cache.get, cache.subscribe, {
+    boardsAndListsFetched: (
+      boards: Map<string, TrelloBoard>,
+      lists: Map<string, TrelloList>,
+      userId: string
+    ) => {
+      cache.set(draft => {
+        draft.boards = boards;
+        draft.lists = lists;
+        draft.userId = userId;
+      });
+    },
+    currentListSet: (board: TrelloBoard, list: TrelloList, preferences: TrelloListPreferences) => {
+      cache.set(draft => {
+        draft.currentBoard = board;
+        draft.currentList = list;
+        draft.preferences = preferences;
+      });
+    },
+    didSwitchListUnset: () => {
+      cache.set(draft => {
+        delete draft.didSwitchList;
+      });
+    },
+    previousListIdUnset: () => {
+      cache.set(draft => {
+        delete draft.previousListId;
+      });
+    },
+    tokenSet: (token: string) => {
+      cache.set(draft => {
+        draft.token = token;
+      });
+    },
+    tokenUnset: () => {
+      cache.set(draft => {
+        delete draft.token;
+      });
+    },
+  });
 };
-
-export const useTrelloCacheUpdater = useCacheUpdater<TrelloCache>;
 
 export const selectBoards = (cache: TrelloCache) => cache.boards;
 

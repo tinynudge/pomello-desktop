@@ -11,8 +11,7 @@ import {
   selectDidSwitchList,
   selectLists,
   selectPreviousListId,
-  useTrelloCacheSelector,
-  useTrelloCacheUpdater,
+  useTrelloCache,
 } from '../useTrelloCache';
 import {
   selectCurrentListId,
@@ -21,8 +20,7 @@ import {
   selectPreferences,
   selectRecentLists,
   selectToken,
-  useTrelloConfigSelector,
-  useTrelloConfigUpdater,
+  useTrelloConfig,
 } from '../useTrelloConfig';
 import LoginView from './LoginView';
 import SelectListView from './SelectListView';
@@ -32,20 +30,21 @@ import parseBoardsAndLists from './helpers/parseBoardsAndLists';
 const TrelloInitializingView: InitializingView = ({ onReady }) => {
   const { t } = useTranslation();
 
-  const setCache = useTrelloCacheUpdater();
-  const cachedBoards = useTrelloCacheSelector(selectBoards);
-  const cachedLists = useTrelloCacheSelector(selectLists);
-  const cachedToken = useTrelloCacheSelector(selectCachedToken);
-  const didSwitchList = useTrelloCacheSelector(selectDidSwitchList);
-  const previousListId = useTrelloCacheSelector(selectPreviousListId);
+  const trelloCache = useTrelloCache();
+  const trelloConfig = useTrelloConfig();
 
-  const [setConfig, unsetConfig] = useTrelloConfigUpdater();
-  const currentListId = useTrelloConfigSelector(selectCurrentListId);
-  const listFilter = useTrelloConfigSelector(selectListFilter);
-  const listFilterCaseSensitive = useTrelloConfigSelector(selectListFilterCaseSensitive);
-  const preferences = useTrelloConfigSelector(selectPreferences);
-  const recentLists = useTrelloConfigSelector(selectRecentLists);
-  const token = useTrelloConfigSelector(selectToken);
+  const cachedBoards = trelloCache(selectBoards);
+  const cachedLists = trelloCache(selectLists);
+  const cachedToken = trelloCache(selectCachedToken);
+  const didSwitchList = trelloCache(selectDidSwitchList);
+  const previousListId = trelloCache(selectPreviousListId);
+
+  const currentListId = trelloConfig(selectCurrentListId);
+  const listFilter = trelloConfig(selectListFilter);
+  const listFilterCaseSensitive = trelloConfig(selectListFilterCaseSensitive);
+  const preferences = trelloConfig(selectPreferences);
+  const recentLists = trelloConfig(selectRecentLists);
+  const token = trelloConfig(selectToken);
 
   const [lists, setLists] = useState<SelectItem[]>();
 
@@ -60,18 +59,14 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
       const decryptedToken = window.app.decryptValue(token);
 
       if (decryptedToken) {
-        setCache(draft => {
-          draft.token = decryptedToken;
-        });
+        trelloCache.tokenSet(decryptedToken);
       } else {
-        unsetConfig('token');
+        trelloConfig.tokenUnset();
       }
     } else {
-      setCache(draft => {
-        delete draft.token;
-      });
+      trelloCache.tokenUnset();
     }
-  }, [setCache, token, unsetConfig]);
+  }, [token, trelloCache, trelloConfig]);
 
   useEffect(() => {
     if (!boardsAndLists) {
@@ -89,11 +84,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
 
     setLists(selectItems);
 
-    setCache(draft => {
-      draft.boards = boards;
-      draft.lists = lists;
-      draft.userId = boardsAndLists.id;
-    });
+    trelloCache.boardsAndListsFetched(boards, lists, boardsAndLists.id);
   }, [
     boardsAndLists,
     currentListId,
@@ -101,8 +92,8 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     listFilterCaseSensitive,
     previousListId,
     recentLists,
-    setCache,
     t,
+    trelloCache,
   ]);
 
   useEffect(() => {
@@ -116,23 +107,17 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     if (currentBoard && currentList) {
       const listPreferences = getPreferences(currentList, preferences);
 
-      setCache(draft => {
-        draft.currentBoard = currentBoard;
-        draft.currentList = currentList;
-        draft.preferences = listPreferences;
-      });
+      trelloCache.currentListSet(currentBoard, currentList, listPreferences);
 
       onReady({ openTaskSelect: didSwitchList });
 
       if (didSwitchList) {
-        setCache(draft => {
-          delete draft.didSwitchList;
-        });
+        trelloCache.didSwitchListUnset();
       }
     } else {
       new Notification(t('service:invalidListHeading'), { body: t('service:invalidListBody') });
 
-      unsetConfig('currentList');
+      trelloConfig.currentListUnset();
     }
   }, [
     cachedBoards,
@@ -141,9 +126,9 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     didSwitchList,
     onReady,
     preferences,
-    setCache,
     t,
-    unsetConfig,
+    trelloCache,
+    trelloConfig,
   ]);
 
   const queryClient = useQueryClient();
@@ -155,9 +140,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     if (optionId === 'previous-list' && previousListId) {
       listId = previousListId;
 
-      setCache(draft => {
-        delete draft.previousListId;
-      });
+      trelloCache.previousListIdUnset();
     } else {
       queryClient.removeQueries(tasksCacheKey);
     }
@@ -165,8 +148,7 @@ const TrelloInitializingView: InitializingView = ({ onReady }) => {
     const updatedRecentLists = new Set(recentLists ?? []);
     updatedRecentLists.delete(listId);
 
-    setConfig('recentLists', [listId, ...updatedRecentLists]);
-    setConfig('currentList', listId);
+    trelloConfig.listSelected(listId, updatedRecentLists);
   };
 
   if (!cachedToken && !token) {
