@@ -1,13 +1,26 @@
-import { useServiceConfigSelector, useServiceConfigUpdater } from '@/shared/hooks/useServiceConfig';
+import useServiceConfig from '@/shared/hooks/useServiceConfig';
+import useStore from '@/shared/hooks/useStore';
 import { TrelloConfig } from './domain';
 
-type Selector<TValue> = (config: TrelloConfig) => TValue;
+export const useTrelloConfig = () => {
+  const config = useServiceConfig<TrelloConfig>();
 
-export const useTrelloConfigSelector = <TValue>(selector: Selector<TValue>): TValue => {
-  return useServiceConfigSelector(selector);
+  return useStore(config.get, config.onChange, {
+    currentListUnset: () => {
+      config.unset('currentList');
+    },
+    listSelected: (listId: string, recentLists: Set<string>) => {
+      config.set('recentLists', [listId, ...recentLists]);
+      config.set('currentList', listId);
+    },
+    tokenSet: (token: string) => {
+      config.set('token', token);
+    },
+    tokenUnset: () => {
+      config.unset('token');
+    },
+  });
 };
-
-export const useTrelloConfigUpdater = useServiceConfigUpdater<TrelloConfig>;
 
 export const selectCurrentListId = (config: TrelloConfig) => config.currentList;
 

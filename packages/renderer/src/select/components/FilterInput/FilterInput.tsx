@@ -1,9 +1,9 @@
-import { Store } from '@/shared/helpers/createStore';
+import { Signal } from '@domain';
 import { ChangeEvent, forwardRef, KeyboardEvent, useSyncExternalStore } from 'react';
 import styles from './FilterInput.module.scss';
 
 interface FilterInputProps {
-  activeOptionId: Store<string | undefined>;
+  activeOptionId: Signal<string | undefined>;
   listboxId: string;
   onChange(query: string): void;
   onEnter(): void;

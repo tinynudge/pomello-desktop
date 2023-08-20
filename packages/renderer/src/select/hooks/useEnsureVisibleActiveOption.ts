@@ -1,10 +1,9 @@
-import { Store } from '@/shared/helpers/createStore';
-import { SelectItem } from '@domain';
+import { SelectItem, Signal } from '@domain';
 import { MutableRefObject, RefObject, useCallback, useEffect } from 'react';
 import findFirstOption from '../helpers/findFirstOption';
 
 interface UseEnsureVisibleActiveOptionOptions {
-  activeOptionId: Store<string | undefined>;
+  activeOptionId: Signal<string | undefined>;
   inputHeight: MutableRefObject<number>;
   items: SelectItem[];
   listRef: RefObject<HTMLUListElement>;

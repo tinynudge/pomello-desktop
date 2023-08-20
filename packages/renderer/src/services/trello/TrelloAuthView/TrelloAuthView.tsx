@@ -3,14 +3,14 @@ import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { FC } from 'react';
 import { TRELLO_KEY } from '../constants';
-import { useTrelloConfigUpdater } from '../useTrelloConfig';
+import { useTrelloConfig } from '../useTrelloConfig';
 import trelloLogo from './assets/trello.png';
 
 const TrelloAuthView: FC = () => {
   const { t } = useTranslation();
 
   const { displayName } = useService();
-  const [setConfig] = useTrelloConfigUpdater();
+  const trelloConfig = useTrelloConfig();
 
   const authParams = new URLSearchParams({
     key: TRELLO_KEY,
@@ -21,7 +21,7 @@ const TrelloAuthView: FC = () => {
   });
 
   const handleTokenSubmit = (token: string) => {
-    setConfig('token', window.app.encryptValue(token));
+    trelloConfig.tokenSet(window.app.encryptValue(token));
   };
 
   return (

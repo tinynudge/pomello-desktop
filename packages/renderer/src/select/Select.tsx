@@ -1,4 +1,4 @@
-import createStore from '@/shared/helpers/createStore';
+import createSignal from '@/shared/helpers/createSignal';
 import useInitializeService from '@/shared/hooks/useInitializeService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { Logger, SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
@@ -36,7 +36,7 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
   }, []);
 
   const isReady = useRef(false);
-  const activeOptionId = useMemo(() => createStore<string>(), []);
+  const activeOptionId = useMemo(() => createSignal<string>(), []);
 
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<SelectItem[]>([]);

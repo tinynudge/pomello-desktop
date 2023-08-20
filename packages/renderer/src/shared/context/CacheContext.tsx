@@ -1,12 +1,12 @@
-import { Cache } from '@domain';
-import { createContext, FC, ReactNode } from 'react';
+import { Signal } from '@domain';
+import { FC, ReactNode, createContext } from 'react';
 
 interface CacheProviderProps {
-  cache: Cache<any>;
+  cache: Signal<any>;
   children: ReactNode;
 }
 
-export const CacheContext = createContext<Cache | undefined>(undefined);
+export const CacheContext = createContext<Signal | undefined>(undefined);
 
 export const CacheProvider: FC<CacheProviderProps> = ({ cache, children }) => {
   return <CacheContext.Provider value={cache}>{children}</CacheContext.Provider>;

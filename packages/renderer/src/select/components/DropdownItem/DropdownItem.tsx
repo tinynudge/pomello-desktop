@@ -1,5 +1,4 @@
-import { Store } from '@/shared/helpers/createStore';
-import { SelectItem, SelectOptionType, Service } from '@domain';
+import { SelectItem, SelectOptionType, Service, Signal } from '@domain';
 import cc from 'classcat';
 import { FC, useSyncExternalStore } from 'react';
 import DropdownList from '../DropdownList';
@@ -7,7 +6,7 @@ import DropdownRow from '../DropdownRow';
 import styles from './DropdownItem.module.scss';
 
 interface DropdownItemProps {
-  activeOptionId: Store<string | undefined>;
+  activeOptionId: Signal<string | undefined>;
   depth: number;
   item: SelectItem;
   onOptionHover(option: SelectOptionType): void;

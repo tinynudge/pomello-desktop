@@ -3,8 +3,8 @@ import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
 import { AxiosError } from 'axios';
 import { FC, useEffect, useRef } from 'react';
-import { selectToken, useTrelloConfigSelector, useTrelloConfigUpdater } from '../useTrelloConfig';
 import sanitizeTrelloError from '../helpers/sanitizeTrelloError';
+import { selectToken, useTrelloConfig } from '../useTrelloConfig';
 
 interface TrelloAuthErrorProps {
   error: AxiosError;
@@ -15,8 +15,8 @@ const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
   const { t } = useTranslation();
   const { displayName, id } = useService();
 
-  const [, unsetConfig] = useTrelloConfigUpdater();
-  const token = useTrelloConfigSelector(selectToken);
+  const trelloConfig = useTrelloConfig();
+  const token = trelloConfig(selectToken);
 
   const didUnsetToken = useRef(false);
 
@@ -49,7 +49,7 @@ const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
   };
 
   const openAuthWindow = () => {
-    unsetConfig('token');
+    trelloConfig.tokenUnset();
 
     window.app.showAuthWindow({ type: 'service', serviceId: id });
   };

@@ -1,11 +1,11 @@
-import createCache from '@/shared/helpers/createCache';
 import { ServiceFactory } from '@domain';
 import TrelloAuthView from './TrelloAuthView';
 import TrelloContainer from './TrelloContainer';
 import TrelloInitializingView from './TrelloInitializingView';
 import { TrelloRuntime } from './TrelloRuntime';
 import TrelloSelectOption from './TrelloSelectOption';
-import { TrelloCache, TrelloConfig } from './domain';
+import createTrelloCache from './createTrelloCache';
+import { TrelloConfig } from './domain';
 import handleError from './errors/handleError';
 import fetchTasks from './fetchTasks';
 import getDefaultTrelloHeading from './getDefaultTrelloHeading';
@@ -24,7 +24,7 @@ import trelloClient from './trelloClient';
 const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
   const trelloRuntime: TrelloRuntime = {
     ...runtime,
-    cache: createCache<TrelloCache>(),
+    cache: createTrelloCache(),
   };
 
   trelloClient.interceptors.request.use(requestConfig => {
