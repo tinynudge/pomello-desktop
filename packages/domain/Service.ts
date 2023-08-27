@@ -18,6 +18,7 @@ import { TaskCompletePromptHandledResponse } from './TaskCompletePromptHandledRe
 import { TaskTimerEndItems } from './TaskTimerEndItems';
 import { TaskTimerEndPromptHandledEvent } from './TaskTimerEndPromptHandledEvent';
 import { TaskTimerEndPromptHandledResponse } from './TaskTimerEndPromptHandledResponse';
+import { Unsubscribe } from './Unsubscribe';
 
 export interface Service {
   AuthView?: FC;
@@ -34,7 +35,7 @@ export interface Service {
   handleError?: ErrorHandler;
   id: string;
   InitializingView?: InitializingView;
-  onMount?(): void;
+  onMount?(): Unsubscribe | void;
   onNoteCreate?: OnNoteCreate;
   onPomelloEvent?(type: PomelloEventType, event: PomelloEvent): void;
   onTaskCompletePromptHandled?(

@@ -1,13 +1,12 @@
 import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
+import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
 import useService from '@/shared/hooks/useService';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { AxiosError } from 'axios';
 import { FC, useEffect, useRef } from 'react';
-import sanitizeTrelloError from '../helpers/sanitizeTrelloError';
 import { selectToken, useTrelloConfig } from '../useTrelloConfig';
 
 interface TrelloAuthErrorProps {
-  error: AxiosError;
+  error: SerializableHttpError;
   onTokenSet(): void;
 }
 
@@ -44,7 +43,7 @@ const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
     if (response === 0) {
       openAuthWindow();
     } else if (response === 1) {
-      window.app.writeClipboardText(JSON.stringify(sanitizeTrelloError(error), null, 2));
+      window.app.writeClipboardText(error.toString());
     }
   };
 

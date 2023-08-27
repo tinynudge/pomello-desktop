@@ -1,6 +1,6 @@
+import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
 import useMaybeService from '@/shared/hooks/useMaybeService';
 import { Logger } from '@domain';
-import { AxiosError } from 'axios';
 import { FC, Fragment, ReactNode } from 'react';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import { QueryErrorResetBoundary } from 'react-query';
@@ -32,11 +32,11 @@ const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, logger, renderError }
           }}
           onError={error => {
             const message =
-              error instanceof AxiosError
-                ? error.toJSON()
-                : { message: error.message, stack: error.stack };
+              error instanceof SerializableHttpError
+                ? error.toJson()
+                : JSON.stringify({ message: error.message, stack: error.stack });
 
-            logger.error(JSON.stringify(message));
+            logger.error(message);
           }}
           onReset={reset}
         >

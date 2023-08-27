@@ -1,17 +1,17 @@
 import { TrelloMember } from '../domain';
-import trelloClient from '../trelloClient';
+import getTrelloClient from '../getTrelloClient';
 
-const fetchBoardsAndLists = (): Promise<TrelloMember> => {
-  return trelloClient
-    .get<TrelloMember>('members/me', {
-      params: {
+const fetchBoardsAndLists = async (): Promise<TrelloMember> => {
+  return getTrelloClient()
+    .get('members/me', {
+      searchParams: {
         fields: 'none',
         boards: 'open',
         board_lists: 'open',
         board_fields: 'name,prefs',
       },
     })
-    .then(({ data }) => data);
+    .json<TrelloMember>();
 };
 
 export default fetchBoardsAndLists;

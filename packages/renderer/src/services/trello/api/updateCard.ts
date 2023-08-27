@@ -1,5 +1,5 @@
 import { TrelloCard } from '../domain';
-import trelloClient from '../trelloClient';
+import getTrelloClient from '../getTrelloClient';
 
 interface UpdateCardOptions {
   id: string;
@@ -9,7 +9,7 @@ interface UpdateCardOptions {
 type CardData = Partial<Omit<TrelloCard, 'actions' | 'checklists' | 'id'>>;
 
 const updateCard = async (options: UpdateCardOptions): Promise<void> => {
-  await trelloClient.put<TrelloCard>(`cards/${options.id}`, options.data);
+  await getTrelloClient().put(`cards/${options.id}`, { json: options.data });
 };
 
 export default updateCard;

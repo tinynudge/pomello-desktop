@@ -1,9 +1,11 @@
 import { PomelloApi, PomelloServiceConfig, ServiceConfig } from '@domain';
+import ky from 'ky';
+import SerializableHttpError from '../SerializableHttpError';
 import bindContext from '../bindContext';
 import fetchUser from './fetchUser';
 
 export interface PomelloApiContext {
-  getToken(): string | null;
+  client: typeof ky;
 }
 
 const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): PomelloApi => {
@@ -23,9 +25,29 @@ const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): PomelloA
     token = encryptedToken ? window.app.decryptValue(encryptedToken) : null;
   });
 
-  const getToken = () => token;
+  const client = ky.create({
+    hooks: {
+      beforeError: [
+        async error => {
+          const message = await error.response.text();
+          error.message = message;
 
-  return bindContext({ fetchUser }, { getToken });
+          return new SerializableHttpError({ error, message });
+        },
+      ],
+      beforeRequest: [
+        request => {
+          if (token) {
+            request.headers.set('Authorization', `Bearer ${token}`);
+          }
+        },
+      ],
+    },
+    prefixUrl: `${import.meta.env.VITE_APP_URL}/api`,
+    retry: 0,
+  });
+
+  return bindContext({ fetchUser }, { client });
 };
 
 export default createPomelloApi;

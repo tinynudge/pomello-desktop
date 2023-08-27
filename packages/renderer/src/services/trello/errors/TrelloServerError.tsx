@@ -1,11 +1,10 @@
 import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
+import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
 import useTranslation from '@/shared/hooks/useTranslation';
-import { AxiosError } from 'axios';
 import { FC } from 'react';
-import sanitizeTrelloError from '../helpers/sanitizeTrelloError';
 
 interface TrelloServerErrorProps {
-  error: AxiosError;
+  error: SerializableHttpError;
   onRetry(): void;
 }
 
@@ -22,7 +21,7 @@ const TrelloServerError: FC<TrelloServerErrorProps> = ({ error, onRetry }) => {
     });
 
     if (response === 0) {
-      window.app.writeClipboardText(JSON.stringify(sanitizeTrelloError(error), null, 2));
+      window.app.writeClipboardText(error.toString());
     }
   };
 
