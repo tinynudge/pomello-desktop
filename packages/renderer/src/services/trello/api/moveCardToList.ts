@@ -1,5 +1,5 @@
 import { TrelloCard } from '../domain';
-import trelloClient from '../trelloClient';
+import getTrelloClient from '../getTrelloClient';
 
 interface MoveCardToListOptions {
   card: TrelloCard;
@@ -14,10 +14,12 @@ const moveCardToList = async ({
   listId,
   position,
 }: MoveCardToListOptions): Promise<void> => {
-  await trelloClient.put(`/cards/${card.id}`, {
-    closed: closed ?? null,
-    idList: listId,
-    pos: position,
+  await getTrelloClient().put(`cards/${card.id}`, {
+    json: {
+      closed: closed ?? null,
+      idList: listId,
+      pos: position,
+    },
   });
 };
 

@@ -1,5 +1,5 @@
 import { TrelloCard } from '../domain';
-import trelloClient from '../trelloClient';
+import getTrelloClient from '../getTrelloClient';
 
 const limit = 300;
 
@@ -11,15 +11,20 @@ const fetchCardsByListId = async (
 ): Promise<TrelloCard[]> => {
   const lastCard = previousCards.at(-1);
 
-  const { data } = await trelloClient.get(`lists/${listId}/cards`, {
-    params: {
-      actions: 'commentCard',
-      before: lastCard?.id,
-      checklists: 'all',
-      limit,
-      sort: '-id',
-    },
-  });
+  const searchParams: Record<string, string> = {
+    actions: 'commentCard',
+    checklists: 'all',
+    limit: `${limit}`,
+    sort: '-id',
+  };
+
+  if (lastCard) {
+    searchParams.before = lastCard.id;
+  }
+
+  const data = await getTrelloClient()
+    .get(`lists/${listId}/cards`, { searchParams })
+    .json<TrelloCard[]>();
 
   const cards: TrelloCard[] = [...previousCards, ...data];
 

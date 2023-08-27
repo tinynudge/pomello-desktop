@@ -1,10 +1,7 @@
 import { TrelloLabel } from '../domain';
-import trelloClient from '../trelloClient';
+import getTrelloClient from '../getTrelloClient';
 
-const fetchLabelsByBoardId = async (boardId: string): Promise<TrelloLabel[]> => {
-  const { data } = await trelloClient.get<TrelloLabel[]>(`boards/${boardId}/labels`);
-
-  return data;
-};
+const fetchLabelsByBoardId = async (boardId: string): Promise<TrelloLabel[]> =>
+  getTrelloClient().get(`boards/${boardId}/labels`).json<TrelloLabel[]>();
 
 export default fetchLabelsByBoardId;

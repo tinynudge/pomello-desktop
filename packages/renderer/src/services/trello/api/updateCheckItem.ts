@@ -1,5 +1,5 @@
 import { TrelloCheckItem } from '../domain';
-import trelloClient from '../trelloClient';
+import getTrelloClient from '../getTrelloClient';
 
 interface UpdateCheckItemOptions {
   id: string;
@@ -10,10 +10,9 @@ interface UpdateCheckItemOptions {
 type CheckItemData = Partial<Omit<TrelloCheckItem, 'id' | 'idCard'>>;
 
 const updateCheckItem = async (options: UpdateCheckItemOptions): Promise<void> => {
-  await trelloClient.put<TrelloCheckItem>(
-    `cards/${options.cardId}/checkItem/${options.id}`,
-    options.data
-  );
+  await getTrelloClient().put(`cards/${options.cardId}/checkItem/${options.id}`, {
+    json: options.data,
+  });
 };
 
 export default updateCheckItem;

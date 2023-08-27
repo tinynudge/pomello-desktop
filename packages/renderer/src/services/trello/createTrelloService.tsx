@@ -11,7 +11,6 @@ import fetchTasks from './fetchTasks';
 import getDefaultTrelloHeading from './getDefaultTrelloHeading';
 import getTaskCompleteItems from './getTaskCompleteItems';
 import getTaskTimerEndItems from './getTaskTimerEndItems';
-import sanitizeTrelloError from './helpers/sanitizeTrelloError';
 import onNoteCreate from './onNoteCreate';
 import onPomelloEvent from './onPomelloEvent';
 import onTaskCompletePromptHandled from './onTaskCompletePromptHandled';
@@ -19,29 +18,13 @@ import onTaskCreate from './onTaskCreate';
 import onTaskOpen from './onTaskOpen';
 import onTaskSelect from './onTaskSelect';
 import onTaskTimerEndPromptHandled from './onTaskTimerEndPromptHandled';
-import trelloClient from './trelloClient';
+import onTrelloServiceMount from './onTrelloServiceMount';
 
 const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
   const trelloRuntime: TrelloRuntime = {
     ...runtime,
     cache: createTrelloCache(),
   };
-
-  trelloClient.interceptors.request.use(requestConfig => {
-    const { token } = trelloRuntime.cache.get();
-
-    if (token) {
-      requestConfig.params.token = token;
-    }
-
-    return requestConfig;
-  });
-
-  trelloClient.interceptors.response.use(undefined, error => {
-    trelloRuntime.logger.error(JSON.stringify(sanitizeTrelloError(error)));
-
-    throw error;
-  });
 
   return {
     AuthView: TrelloAuthView,
@@ -58,6 +41,7 @@ const createTrelloService: ServiceFactory<TrelloConfig> = runtime => {
     handleError,
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,
+    onMount: onTrelloServiceMount.bind(null, trelloRuntime),
     onNoteCreate: onNoteCreate.bind(null, trelloRuntime),
     onPomelloEvent: onPomelloEvent.bind(null, trelloRuntime),
     onTaskCompletePromptHandled: onTaskCompletePromptHandled.bind(null, trelloRuntime),

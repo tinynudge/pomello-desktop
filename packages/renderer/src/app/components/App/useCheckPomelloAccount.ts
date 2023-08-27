@@ -1,4 +1,5 @@
 import { selectSettings } from '@/app/appSlice';
+import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
 import usePomelloApi from '@/shared/hooks/usePomelloApi';
 import { usePomelloConfigSelector, usePomelloConfigUpdater } from '@/shared/hooks/usePomelloConfig';
 import usePrevious from '@/shared/hooks/usePrevious';
@@ -30,12 +31,16 @@ const useCheckPomelloAccount = () => {
     {
       cacheTime: Infinity,
       onError: async error => {
-        if (error === 500) {
+        if (error instanceof SerializableHttpError && error.response.status === 500) {
           new Notification(t('pomelloApiUnresponsiveTitle'));
           return;
         }
 
-        if (error !== 'NO_TOKEN' && error !== 401) {
+        if (
+          error !== 'NO_TOKEN' &&
+          error instanceof SerializableHttpError &&
+          error.response.status !== 401
+        ) {
           return;
         }
 

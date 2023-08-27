@@ -112,9 +112,10 @@ const useInitializeService = ({
   }, [addNamespace, logger, removeNamespace, serviceId, services]);
 
   useEffect(() => {
-    activeService?.service.onMount?.();
+    const unmountService = activeService?.service.onMount?.();
 
     return () => {
+      unmountService?.();
       activeService?.service.onUnmount?.();
     };
   }, [activeService]);

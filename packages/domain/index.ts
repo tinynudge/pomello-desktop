@@ -69,4 +69,5 @@ export { TimerType } from './TimerType';
 export type { Translate } from './Translate';
 export type { Translations } from './Translations';
 export type { TranslationsDictionary } from './TranslationsDictionary';
+export type { Unsubscribe } from './Unsubscribe';
 export type { WindowManager } from './WindowManager';
