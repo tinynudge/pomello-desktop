@@ -1,6 +1,7 @@
 import { Hotkeys } from '@domain';
 import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
+import { tickTimer } from './mockPomelloServiceTicker';
 import { fireEvent, MountAppResults, screen } from './mountApp';
 
 const sleep = (timeout: number) =>
@@ -8,32 +9,24 @@ const sleep = (timeout: number) =>
     setTimeout(resolve, timeout);
   });
 
-const advanceTimer = async (_results: MountAppResults, time?: number) => {
-  if (time) {
-    act(() => {
-      vi.advanceTimersByTime(time * 1000);
-    });
-  } else {
-    const hasDial = () => Boolean(screen.queryByTestId('dial'));
+const advanceTimer = async (_results: MountAppResults, time: number) => {
+  let count = 0;
 
-    let count = 0;
+  const isFakeTimers = vi.isFakeTimers();
 
-    while (hasDial()) {
-      if (count === 60) {
-        throw new Error(
-          'Dial still exists after 60 iterations. Please specify a "time" value for delays over 60 seconds.'
-        );
-      }
+  while (time > count) {
+    tickTimer();
 
+    if (isFakeTimers) {
       act(() => {
-        vi.runOnlyPendingTimers();
+        vi.advanceTimersByTime(1000);
       });
-
-      count += 1;
     }
 
-    await act(() => sleep(1));
+    count += 1;
   }
+
+  await act(() => sleep(1));
 };
 
 const clickMenuButton = async (

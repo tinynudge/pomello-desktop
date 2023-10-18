@@ -3,17 +3,6 @@ import { vi } from 'vitest';
 import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App - Task Timer End', () => {
-  beforeEach(() => {
-    vi.useFakeTimers({
-      shouldAdvanceTime: true,
-    });
-  });
-
-  afterEach(() => {
-    vi.runOnlyPendingTimers();
-    vi.useRealTimers();
-  });
-
   it('should show the view when the task timer ends', async () => {
     const { simulate } = mountApp({
       settings: {
@@ -28,7 +17,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
 
     expect(screen.getByRole('heading', { name: 'Foo' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "Time's up! How'd you do?" })).toBeInTheDocument();
@@ -43,7 +32,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -71,7 +60,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -97,7 +86,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -136,7 +125,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -170,7 +159,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('continueTask');
 
     expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
@@ -191,7 +180,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.hotkey('continueTask');
 
     expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
@@ -207,7 +196,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('switchTask');
 
     expect(screen.getByRole('heading', { name: 'Next: New task' })).toBeInTheDocument();
@@ -223,7 +212,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.hotkey('moveTask');
 
     expect(screen.getByRole('heading', { name: 'Next: New task' })).toBeInTheDocument();
@@ -252,7 +241,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.hotkey('moveTask');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
@@ -268,7 +257,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('addNote');
 
     expect(screen.getByRole('heading', { name: 'Add note' })).toBeInTheDocument();
@@ -283,7 +272,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.hotkey('addNote');
 
     expect(screen.getByRole('heading', { name: 'Add note' })).toBeInTheDocument();
@@ -298,7 +287,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('voidTask');
 
     expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
@@ -314,7 +303,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.hotkey('voidTask');
 
     expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
@@ -339,7 +328,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('hello');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith(
@@ -370,7 +359,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask('hello');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
@@ -397,7 +386,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
@@ -424,7 +413,7 @@ describe('App - Task Timer End', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('foo');
 
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();

@@ -1,6 +1,4 @@
 import { vi } from 'vitest';
-import addComment from '../api/addComment';
-import updateComment from '../api/updateComment';
 import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
 import generateTrelloCard from '../__fixtures__/generateTrelloCard';
 import generateTrelloCardAction from '../__fixtures__/generateTrelloCardAction';
@@ -9,6 +7,8 @@ import generateTrelloChecklist from '../__fixtures__/generateTrelloChecklist';
 import generateTrelloList from '../__fixtures__/generateTrelloList';
 import generateTrelloMember from '../__fixtures__/generateTrelloMember';
 import mountTrelloService, { waitFor } from '../__fixtures__/mountTrelloService';
+import addComment from '../api/addComment';
+import updateComment from '../api/updateComment';
 
 vi.mock('../api/addComment', () => ({ default: vi.fn() }));
 vi.mock('../api/updateComment', () => ({ default: vi.fn() }));
