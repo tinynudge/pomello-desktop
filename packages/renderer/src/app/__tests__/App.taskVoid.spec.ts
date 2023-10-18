@@ -27,7 +27,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('voidTask');
 
     await waitFor(() => {
@@ -71,7 +71,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('voidTask');
 
     await waitFor(() => {
@@ -89,7 +89,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.hotkey('voidTask');
 
     await waitFor(() => {
@@ -115,7 +115,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask('MY_TASK');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('voidTask');
     await simulate.enterNote('foo{Enter}');
 
@@ -138,7 +138,7 @@ describe('App - Task void', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('voidTask');
     await simulate.enterNote('{Escape}');
 

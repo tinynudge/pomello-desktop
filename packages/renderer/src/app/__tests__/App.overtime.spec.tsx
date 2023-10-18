@@ -1,18 +1,6 @@
-import { vi } from 'vitest';
 import mountApp, { screen } from '../__fixtures__/mountApp';
 
 describe('App - Overtime', () => {
-  beforeEach(() => {
-    vi.useFakeTimers({
-      shouldAdvanceTime: true,
-    });
-  });
-
-  afterEach(() => {
-    vi.runOnlyPendingTimers();
-    vi.useRealTimers();
-  });
-
   it('should show overtime after the delay', async () => {
     const { simulate } = mountApp({
       settings: {

@@ -27,7 +27,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('continueTask');
 
     expect(screen.getByRole('heading', { name: 'Next: Foo' })).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('switchTask');
 
     expect(screen.getByRole('heading', { name: 'Next: New task' })).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('continueTask');
     await simulate.showDialActions();
 
@@ -81,7 +81,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('switchTask');
     await simulate.showDialActions();
     await userEvent.click(screen.getByRole('button', { name: 'Skip break' }));
@@ -103,7 +103,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask('foo');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('continueTask');
     await simulate.hotkey('skipBreak');
 
@@ -120,7 +120,7 @@ describe('App - Break', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('continueTask');
     await simulate.showDialActions();
 

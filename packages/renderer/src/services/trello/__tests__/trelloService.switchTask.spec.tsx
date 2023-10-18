@@ -53,7 +53,7 @@ describe('Trello service - Switch task', () => {
     await simulate.advanceTimer(5);
     await simulate.hotkey('switchTask');
     await simulate.selectTask('GROCERIES');
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(15);
 
     expect(mockUpdateCard).toHaveBeenNthCalledWith(1, {
       id: 'BILLIONAIRE',

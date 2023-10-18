@@ -140,7 +140,7 @@ describe('App', () => {
 
     await simulate.selectTask();
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
     await simulate.selectOption('continueTask');
     await simulate.openMenu();
     await simulate.clickMenuButton('home');

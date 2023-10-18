@@ -545,9 +545,9 @@ describe('Trello service - Task timer end', () => {
 
     await simulate.selectTask('MY_FIRST_TASK');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.selectOption('MY_SECOND_LIST_ID');
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.waitForSelectTaskView();
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
@@ -596,9 +596,9 @@ describe('Trello service - Task timer end', () => {
 
     await simulate.selectTask('MY_FIRST_TASK');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.selectOption('MY_FIRST_LIST_ID');
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.waitForSelectTaskView();
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
@@ -656,9 +656,9 @@ describe('Trello service - Task timer end', () => {
 
     await simulate.selectTask('MY_FIRST_CHECK_ITEM');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.selectOption('check-item-complete');
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.waitForSelectTaskView();
 
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(

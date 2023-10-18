@@ -286,7 +286,7 @@ describe('App - Task', () => {
 
     await simulate.selectTask('TASK_TWO');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.selectOption('NEXT');
     await simulate.advanceTimer(3);
 
@@ -438,9 +438,9 @@ describe('App - Task', () => {
 
     await simulate.selectTask('TASK_ONE');
     await simulate.startTimer();
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(5);
     await simulate.selectOption('NEXT');
-    await simulate.advanceTimer();
+    await simulate.advanceTimer(3);
 
     expect(fetchTasks).toHaveBeenCalledTimes(2);
   });
@@ -495,10 +495,7 @@ describe('App - Task', () => {
     await simulate.startTimer();
     await simulate.advanceTimer(2);
     await simulate.hotkey('completeTaskEarly');
-
-    act(() => {
-      vi.advanceTimersByTime(1);
-    });
+    await simulate.advanceTimer(1);
 
     expect(fetchTasks).toHaveBeenCalledTimes(2);
   });

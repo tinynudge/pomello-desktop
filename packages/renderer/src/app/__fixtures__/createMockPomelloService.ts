@@ -1,9 +1,6 @@
 import { Settings } from '@domain';
-import createPomelloService, {
-  PomelloService,
-  PomelloSettings,
-  Ticker,
-} from '@tinynudge/pomello-service';
+import createPomelloService, { PomelloService, PomelloSettings } from '@tinynudge/pomello-service';
+import { createTicker } from './mockPomelloServiceTicker';
 
 const defaultSettings: PomelloSettings = {
   betweenTasksGracePeriod: 0,
@@ -12,31 +9,6 @@ const defaultSettings: PomelloSettings = {
   set: ['task', 'shortBreak', 'task', 'shortBreak', 'task', 'shortBreak', 'task', 'longBreak'],
   shortBreakTime: 5,
   taskTime: 30,
-};
-
-const createTicker = (): Ticker => {
-  let tickId: NodeJS.Timeout | undefined;
-  let waitId: NodeJS.Timeout | undefined;
-
-  return {
-    start(tick) {
-      tickId = setInterval(tick, 1000);
-    },
-    stop() {
-      if (tickId) {
-        clearInterval(tickId);
-      }
-    },
-    wait(callback, delay) {
-      waitId = setTimeout(callback, delay * 1000);
-
-      return () => {
-        if (waitId) {
-          clearTimeout(waitId);
-        }
-      };
-    },
-  };
 };
 
 const createMockPomelloService = (settings: Settings): PomelloService => {
