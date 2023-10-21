@@ -12,10 +12,13 @@ import useService from '@/shared/hooks/useService';
 import { FC, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import selectPromptCreatePomelloAccount from './selectPromptCreatePomelloAccount';
+import useTrackStats from './useTrackStats';
 
 const Routes: FC = () => {
   const dispatch = useDispatch();
   const service = useService();
+
+  useTrackStats();
 
   const { setReady } = usePomelloActions();
 

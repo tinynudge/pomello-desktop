@@ -3,6 +3,7 @@ import ky from 'ky';
 import SerializableHttpError from '../SerializableHttpError';
 import bindContext from '../bindContext';
 import fetchUser from './fetchUser';
+import logEvent from './logEvent';
 
 export interface PomelloApiContext {
   client: typeof ky;
@@ -47,7 +48,7 @@ const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): PomelloA
     retry: 0,
   });
 
-  return bindContext({ fetchUser }, { client });
+  return bindContext({ fetchUser, logEvent }, { client });
 };
 
 export default createPomelloApi;
