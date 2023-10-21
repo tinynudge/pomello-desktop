@@ -3,7 +3,7 @@ import getTrelloClient from '../getTrelloClient';
 
 const addComment = async (taskId: string, text: string): Promise<TrelloCardAction> => {
   return await getTrelloClient()
-    .post(`/cards/${taskId}/actions/comments`, {
+    .post(`cards/${taskId}/actions/comments`, {
       json: { text },
     })
     .json<TrelloCardAction>()

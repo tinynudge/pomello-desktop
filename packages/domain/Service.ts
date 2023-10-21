@@ -1,5 +1,6 @@
 import { PomelloEvent } from '@tinynudge/pomello-service';
 import { FC } from 'react';
+import { AdditionalTrackingData } from './AdditionalTrackingData';
 import { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 import { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
 import { ErrorHandler } from './ErrorHandler';
@@ -27,11 +28,13 @@ export interface Service {
   CustomSelectOption?: CustomSelectOptionComponent;
   displayName: string;
   fetchTasks(): Promise<SelectItem[]>;
+  getAdditionalTrackingData?(event: PomelloEvent): AdditionalTrackingData | void;
   getSelectTaskHeading?(): string;
   getTaskCompleteItems?(params: GetTaskCompleteItemsParams): GetTaskCompleteItemsResponse;
   getTaskHeading?(): string;
   getTaskLabel?(taskId: string): string;
   getTaskTimerEndItems?(currentTaskId: string): TaskTimerEndItems;
+  getTrackingStatus?(): boolean;
   handleError?: ErrorHandler;
   id: string;
   InitializingView?: InitializingView;

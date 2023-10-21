@@ -1,22 +1,19 @@
 import createMockAppApi from '@/__fixtures__/createMockAppApi';
 import createMockLogger from '@/__fixtures__/createMockLogger';
+import createMockPomelloApi from '@/__fixtures__/createMockPomelloApi';
 import createMockServiceFactory from '@/__fixtures__/createMockService';
 import createMockServiceConfig from '@/__fixtures__/createMockServiceConfig';
 import createMockSettings from '@/__fixtures__/createMockSettings';
-import createRestResolver from '@/__fixtures__/createRestResolver';
 import mockHotkeys from '@/__fixtures__/mockHotkeys';
 import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
-import mockServer from '@/__fixtures__/mockServer';
 import { PomelloApiProvider } from '@/shared/context/PomelloApiContext';
 import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
 import { TranslationsProvider } from '@/shared/context/TranslationsContext';
 import bindContext from '@/shared/helpers/bindContext';
-import createPomelloApi from '@/shared/helpers/createPomelloApi';
 import {
   LabeledHotkeys,
-  PomelloApiResponse,
+  PomelloApiResponses,
   PomelloServiceConfig,
-  PomelloUser,
   Service,
   ServiceConfigActions,
   ServiceConfigStore,
@@ -26,7 +23,6 @@ import {
 } from '@domain';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ResponseResolver, RestContext, RestRequest, rest } from 'msw';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import translations from '../../../../translations/en-US.json';
@@ -35,7 +31,6 @@ import { HotkeysProvider } from '../context/HotkeysContext';
 import { PomelloProvider } from '../context/PomelloContext';
 import createStore from '../createStore';
 import createMockPomelloService from './createMockPomelloService';
-import generatePomelloUser from './generatePomelloUser';
 import simulate from './simulate';
 
 export * from '@testing-library/react';
@@ -57,12 +52,6 @@ export interface MountAppOptions {
   serviceConfigs?: Record<string, ServiceConfigActions<any>>;
   serviceId?: string | null;
   settings?: Partial<Settings>;
-}
-
-interface PomelloApiResponses {
-  fetchUser:
-    | PomelloApiResponse<PomelloUser>
-    | ResponseResolver<RestRequest, RestContext, PomelloApiResponse<PomelloUser>>;
 }
 
 const mountApp = (options: MountAppOptions = {}) => {
@@ -123,22 +112,14 @@ const mountApp = (options: MountAppOptions = {}) => {
     ...options.hotkeys,
   };
 
-  mockServer.use(
-    rest.get(
-      `${import.meta.env.VITE_APP_URL}/api/users`,
-      createRestResolver<PomelloApiResponse<PomelloUser>>(
-        generatePomelloUser(),
-        options.pomelloApi?.fetchUser
-      )
-    )
-  );
+  const pomelloApi = createMockPomelloApi(pomelloConfig, options.pomelloApi);
 
   render(
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <PomelloProvider service={pomelloService}>
           <PomelloConfigProvider config={pomelloConfig}>
-            <PomelloApiProvider pomelloApi={createPomelloApi(pomelloConfig)}>
+            <PomelloApiProvider pomelloApi={pomelloApi}>
               <TranslationsProvider commonTranslations={translations}>
                 <HotkeysProvider hotkeys={hotkeys}>
                   <App logger={createMockLogger()} services={services as ServiceRegistry} />
@@ -154,6 +135,7 @@ const mountApp = (options: MountAppOptions = {}) => {
   return {
     appApi,
     emitAppApiEvent,
+    pomelloApi,
     userEvent: userEvent.setup(),
   };
 };

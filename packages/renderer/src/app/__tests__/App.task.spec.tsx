@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import mountApp, { act, screen, waitFor } from '../__fixtures__/mountApp';
+import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
 
 describe('App - Task', () => {
   beforeEach(() => {
