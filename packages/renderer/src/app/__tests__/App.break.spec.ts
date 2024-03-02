@@ -38,7 +38,7 @@ describe('App - Break', () => {
     const { simulate } = mountApp({
       settings: {
         taskTime: 3,
-        set: ['task', 'longBreak'],
+        pomodoroSet: ['task', 'longBreak'],
       },
     });
 

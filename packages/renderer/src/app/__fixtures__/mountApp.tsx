@@ -136,6 +136,7 @@ const mountApp = (options: MountAppOptions = {}) => {
     appApi,
     emitAppApiEvent,
     pomelloApi,
+    store,
     userEvent: userEvent.setup(),
   };
 };

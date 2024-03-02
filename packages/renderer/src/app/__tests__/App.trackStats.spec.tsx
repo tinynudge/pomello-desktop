@@ -157,4 +157,83 @@ describe('App - Track Stats', () => {
       type: 'break',
     });
   });
+
+  it('should track a long break timer end event when the timer ends', async () => {
+    const { pomelloApi, simulate } = mountApp({
+      mockService: {
+        service: {
+          getTrackingStatus: () => true,
+          fetchTasks: () =>
+            Promise.resolve([
+              {
+                id: 'MY_TASK_ID',
+                label: 'My very first task',
+              },
+            ]),
+        },
+      },
+      settings: {
+        longBreakTime: 10,
+        pomodoroSet: ['task', 'longBreak'],
+        taskTime: 1,
+      },
+    });
+
+    await simulate.selectTask('MY_TASK_ID');
+    await simulate.startTimer();
+    await simulate.advanceTimer(1);
+    await simulate.selectOption('continueTask');
+    await simulate.advanceTimer(10);
+
+    expect(pomelloApi.logEvent).toHaveBeenLastCalledWith({
+      allotted_time: 10,
+      duration: 10,
+      service_id: 'MY_TASK_ID',
+      start_time: expect.any(Number),
+      meta: {
+        type: 'long',
+      },
+      type: 'break',
+    });
+  });
+
+  it('should track a long break timer end event when the timer is skipped', async () => {
+    const { pomelloApi, simulate } = mountApp({
+      mockService: {
+        service: {
+          getTrackingStatus: () => true,
+          fetchTasks: () =>
+            Promise.resolve([
+              {
+                id: 'MY_TASK_ID',
+                label: 'My very first task',
+              },
+            ]),
+        },
+      },
+      settings: {
+        longBreakTime: 10,
+        pomodoroSet: ['task', 'longBreak'],
+        taskTime: 1,
+      },
+    });
+
+    await simulate.selectTask('MY_TASK_ID');
+    await simulate.startTimer();
+    await simulate.advanceTimer(1);
+    await simulate.selectOption('continueTask');
+    await simulate.advanceTimer(5);
+    await simulate.hotkey('skipBreak');
+
+    expect(pomelloApi.logEvent).toHaveBeenLastCalledWith({
+      allotted_time: 10,
+      duration: 5,
+      service_id: 'MY_TASK_ID',
+      start_time: expect.any(Number),
+      meta: {
+        type: 'long',
+      },
+      type: 'break',
+    });
+  });
 });

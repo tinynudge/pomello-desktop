@@ -1,5 +1,9 @@
 import { Settings } from '@domain';
-import createPomelloService, { PomelloService, PomelloSettings } from '@tinynudge/pomello-service';
+import createPomelloService, {
+  PomelloService,
+  PomelloSettings,
+  SetItem,
+} from '@tinynudge/pomello-service';
 import { createTicker } from './mockPomelloServiceTicker';
 
 const defaultSettings: PomelloSettings = {
@@ -12,9 +16,21 @@ const defaultSettings: PomelloSettings = {
 };
 
 const createMockPomelloService = (settings: Settings): PomelloService => {
+  const { pomodoroSet } = settings;
+
+  const set = Array.isArray(pomodoroSet)
+    ? pomodoroSet
+    : [...Array(pomodoroSet - 1)]
+        .flatMap<SetItem>(() => ['task', 'shortBreak'])
+        .concat(['task', 'longBreak']);
+
   return createPomelloService({
     createTicker,
-    settings: { ...defaultSettings, ...settings },
+    settings: {
+      ...defaultSettings,
+      ...settings,
+      set,
+    },
   });
 };
 
