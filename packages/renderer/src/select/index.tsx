@@ -1,10 +1,11 @@
-import Select from '@/select/Select';
-import services from '@/services';
-import { TranslationsProvider } from '@/shared/context/TranslationsContext';
-import createLogger from '@/__bootstrap__/createLogger';
-import setTheme from '@/__bootstrap__/setTheme';
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createLogger } from '@/__bootstrap__/createLogger';
+import { setTheme } from '@/__bootstrap__/setTheme';
+import { Select } from '@/select/Select';
+import { services } from '@/services';
+import { RuntimeProvider } from '@/shared/context/RuntimeContext';
+import { ServiceProvider } from '@/shared/context/ServiceContext';
+import { getPomelloServiceConfig } from '@/shared/helpers/getPomelloServiceConfig';
+import { render } from 'solid-js/web';
 
 const renderSelect = async () => {
   const container = document.getElementById('root');
@@ -13,26 +14,33 @@ const renderSelect = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [settings, themeCss, translations, serviceId] = await Promise.all([
+  const [pomelloConfig, serviceId, settings, themeCss, translations] = await Promise.all([
+    getPomelloServiceConfig(),
+    window.app.getActiveServiceId(),
     window.app.getSettings(),
     window.app.getThemeCss(),
     window.app.getTranslations(),
-    window.app.getActiveServiceId(),
   ]);
+
+  const logger = createLogger();
 
   setTheme(themeCss);
 
-  createRoot(container).render(
-    <StrictMode>
-      <TranslationsProvider commonTranslations={translations}>
-        <Select
-          initialServiceId={serviceId}
-          logger={createLogger()}
-          services={services}
-          settings={settings}
-        />
-      </TranslationsProvider>
-    </StrictMode>
+  render(
+    () => (
+      <RuntimeProvider
+        initialLogger={logger}
+        initialPomelloConfig={pomelloConfig}
+        initialServices={services}
+        initialSettings={settings}
+        initialTranslations={translations}
+      >
+        <ServiceProvider initialServiceId={serviceId}>
+          <Select />
+        </ServiceProvider>
+      </RuntimeProvider>
+    ),
+    container
   );
 };
 

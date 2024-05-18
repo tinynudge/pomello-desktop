@@ -1,12 +1,10 @@
-import mockRegisterServiceConfig from '@/__fixtures__/mockRegisterServiceConfig';
-import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
-import AuthView from '../ui/AuthView';
-import mountAuth, { screen, waitFor } from '../__fixtures__/mountAuth';
+import { renderAuth, screen, waitFor } from '../__fixtures__/renderAuth';
+import { AuthView } from '../ui/AuthView';
 
 describe('Auth', () => {
   it('should show the Pomello authorize view', () => {
-    mountAuth({
+    renderAuth({
       authWindow: { type: 'pomello', action: 'authorize' },
     });
 
@@ -18,7 +16,7 @@ describe('Auth', () => {
   });
 
   it('should show the Pomello register view', () => {
-    mountAuth({
+    renderAuth({
       authWindow: { type: 'pomello', action: 'register' },
     });
 
@@ -30,7 +28,7 @@ describe('Auth', () => {
   });
 
   it('should require a token to submit the form', async () => {
-    const { userEvent } = mountAuth({
+    const { userEvent } = renderAuth({
       authWindow: { type: 'pomello', action: 'authorize' },
     });
 
@@ -44,12 +42,7 @@ describe('Auth', () => {
   });
 
   it('should store the Pomello token when a valid token is entered', async () => {
-    const pomelloServiceConfig = mockRegisterServiceConfig('pomello', {});
-
-    const { userEvent } = mountAuth({
-      appApi: {
-        registerServiceConfig: () => Promise.resolve(pomelloServiceConfig as any),
-      },
+    const { pomelloConfig, userEvent } = renderAuth({
       authWindow: { type: 'pomello', action: 'authorize' },
     });
 
@@ -59,7 +52,7 @@ describe('Auth', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
 
     await waitFor(() => {
-      expect(pomelloServiceConfig.set).toHaveBeenCalledWith('token', 'MY_SECRET_TOKEN');
+      expect(pomelloConfig.set).toHaveBeenCalledWith('token', 'MY_SECRET_TOKEN');
 
       expect(
         screen.getByText('Success! You may now close your browser window.')
@@ -74,7 +67,7 @@ describe('Auth', () => {
     const mockWindowClose = vi.fn();
     window.close = mockWindowClose;
 
-    const { userEvent } = mountAuth({
+    const { userEvent } = renderAuth({
       authWindow: { type: 'pomello', action: 'authorize' },
     });
 
@@ -87,9 +80,7 @@ describe('Auth', () => {
 
     let count = 0;
     while (count < 10) {
-      act(() => {
-        vi.runOnlyPendingTimers();
-      });
+      vi.runOnlyPendingTimers();
       count += 1;
     }
 
@@ -113,7 +104,7 @@ describe('Auth', () => {
       );
     };
 
-    mountAuth({
+    renderAuth({
       service: {
         AuthView: MockAuthView,
       },
@@ -122,7 +113,7 @@ describe('Auth', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'My heading' })).toBeInTheDocument();
-      expect(screen.getByRole('img')).toHaveAttribute('src', 'my-logo.png');
+      expect(screen.getByRole('presentation')).toHaveAttribute('src', 'my-logo.png');
       expect(screen.getByRole('link', { name: 'https://my-service.com' })).toBeInTheDocument();
     });
   });
@@ -136,7 +127,7 @@ describe('Auth', () => {
       );
     };
 
-    const { appApi, userEvent } = mountAuth({
+    const { appApi, userEvent } = renderAuth({
       service: {
         AuthView: MockAuthView,
       },
@@ -161,7 +152,7 @@ describe('Auth', () => {
       );
     };
 
-    const { userEvent } = mountAuth({
+    const { userEvent } = renderAuth({
       service: {
         AuthView: MockAuthView,
       },

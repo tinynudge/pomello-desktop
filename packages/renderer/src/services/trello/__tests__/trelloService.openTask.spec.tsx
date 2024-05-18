@@ -1,11 +1,11 @@
-import generateTrelloCard from '../__fixtures__/generateTrelloCard';
-import generateTrelloCheckItem from '../__fixtures__/generateTrelloCheckItem';
-import generateTrelloChecklist from '../__fixtures__/generateTrelloChecklist';
-import mountTrelloService from '../__fixtures__/mountTrelloService';
+import { generateTrelloCard } from '../__fixtures__/generateTrelloCard';
+import { generateTrelloCheckItem } from '../__fixtures__/generateTrelloCheckItem';
+import { generateTrelloChecklist } from '../__fixtures__/generateTrelloChecklist';
+import { renderTrelloService } from '../__fixtures__/renderTrelloService';
 
 describe('Trello service - Open Task', () => {
   it('should open a card in Trello', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       trelloApi: {
         fetchCardsByListId: [
           generateTrelloCard({
@@ -22,7 +22,7 @@ describe('Trello service - Open Task', () => {
   });
 
   it('should open a check item in Trello', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       trelloApi: {
         fetchCardsByListId: [
           generateTrelloCard({

@@ -1,4 +1,4 @@
-import { ThemeConfig, ThemeCss } from '@domain';
+import { ThemeConfig, ThemeCss } from '@pomello-desktop/domain';
 import { nativeTheme } from 'electron';
 
 const colors = {

@@ -1,1 +1,1 @@
-export { default } from './DropdownRow';
+export * from './DropdownRow';

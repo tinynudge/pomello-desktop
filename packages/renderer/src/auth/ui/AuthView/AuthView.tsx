@@ -1,17 +1,15 @@
-import { FC, ReactNode } from 'react';
-import AuthViewForm from './AuthViewForm';
-import AuthViewInstructions from './AuthViewInstructions';
+import { ParentComponent } from 'solid-js';
+import { AuthViewForm } from './AuthViewForm';
+import { AuthViewInstructions } from './AuthViewInstructions';
 
-interface AuthViewComponent extends FC<{ children?: ReactNode }> {
+interface AuthViewComponent extends ParentComponent {
   Instructions: typeof AuthViewInstructions;
   Form: typeof AuthViewForm;
 }
 
-const AuthView: AuthViewComponent = ({ children }) => {
-  return <>{children}</>;
+export const AuthView: AuthViewComponent = props => {
+  return <>{props.children}</>;
 };
 
 AuthView.Instructions = AuthViewInstructions;
 AuthView.Form = AuthViewForm;
-
-export default AuthView;

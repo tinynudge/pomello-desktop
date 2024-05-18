@@ -1,1 +1,1 @@
-export { default } from './Dial';
+export * from './Dial';

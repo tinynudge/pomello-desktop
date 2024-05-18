@@ -1,8 +1,8 @@
-import mountZenService, { screen, waitFor } from '../__fixtures__/mountZenService';
+import { renderZenService, screen, waitFor } from '../__fixtures__/renderZenService';
 
 describe('Zen mode service', () => {
   it('should show an input as the select task view', async () => {
-    mountZenService();
+    renderZenService();
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Enter task')).toBeInTheDocument();
@@ -10,7 +10,7 @@ describe('Zen mode service', () => {
   });
 
   it('should set the entered task as the current task', async () => {
-    const results = mountZenService();
+    const results = renderZenService();
 
     await results.simulate.enterNote('Buy milk{Enter}');
 

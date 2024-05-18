@@ -1,10 +1,15 @@
-import { Note } from '@domain';
-import addComment from './api/addComment';
-import { TrelloRuntime } from './TrelloRuntime';
+import { Note } from '@pomello-desktop/domain';
+import { addComment } from './api/addComment';
+import { TrelloRuntime } from './domain';
 
-const onNoteCreate = async (runtime: TrelloRuntime, taskId: string, note: Note): Promise<void> => {
+export const onNoteCreate = async (
+  runtime: TrelloRuntime,
+  taskId: string,
+  note: Note
+): Promise<void> => {
   const { cache, logger, translate } = runtime;
-  const { log, preferences } = cache.get();
+  const log = cache.store.log;
+  const preferences = cache.store.preferences;
 
   const formattedNote = translate('noteEntry', { label: note.label, text: note.text });
 
@@ -25,5 +30,3 @@ const onNoteCreate = async (runtime: TrelloRuntime, taskId: string, note: Note):
     }
   }
 };
-
-export default onNoteCreate;

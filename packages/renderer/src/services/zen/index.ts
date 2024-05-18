@@ -1,1 +1,1 @@
-export { default } from './createZenService';
+export * from './createZenService';

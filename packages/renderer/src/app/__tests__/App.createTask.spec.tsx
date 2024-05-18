@@ -1,12 +1,13 @@
 import { vi } from 'vitest';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
+import { TranslationsDictionary } from '@pomello-desktop/domain';
 
 describe('App - Create task', () => {
   it('should show a message if there is no active service', async () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       serviceId: null,
     });
 
@@ -22,9 +23,9 @@ describe('App - Create task', () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: {
-        getTranslations: () => new Promise(() => {}),
+        getTranslations: () => new Promise<TranslationsDictionary>(() => {}),
       },
     });
 
@@ -40,7 +41,7 @@ describe('App - Create task', () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           onTaskCreate: undefined,
@@ -58,7 +59,7 @@ describe('App - Create task', () => {
   });
 
   it('should show the create task view when the menu button is clicked', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.openMenu();
     await simulate.clickMenuButton('createTask');
@@ -70,7 +71,7 @@ describe('App - Create task', () => {
   });
 
   it('should show the create note view via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.waitForSelectTaskView();
     await simulate.hotkey('createTask');
@@ -84,7 +85,7 @@ describe('App - Create task', () => {
   it('should handle when a task is created', async () => {
     const handleTaskCreate = vi.fn();
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           onTaskCreate: handleTaskCreate,
@@ -103,7 +104,7 @@ describe('App - Create task', () => {
   it('should not do anything if the input is blank', async () => {
     const handleTaskCreate = vi.fn();
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           onTaskCreate: handleTaskCreate,
@@ -120,7 +121,7 @@ describe('App - Create task', () => {
   });
 
   it('should hide the create task view when escape pressed', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.waitForSelectTaskView();
     await simulate.hotkey('createTask');
@@ -130,7 +131,7 @@ describe('App - Create task', () => {
   });
 
   it('should trigger the help page when /? is entered', async () => {
-    const { appApi, simulate, userEvent } = mountApp();
+    const { appApi, simulate, userEvent } = renderApp();
 
     await simulate.waitForSelectTaskView();
     await simulate.hotkey('createTask');

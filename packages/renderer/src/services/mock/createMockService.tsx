@@ -1,18 +1,23 @@
-import { SelectItem, SelectOptionType, ServiceFactory } from '@domain';
-import MockCustomSelectGroup from './MockCustomSelectGroup';
-import MockCustomSelectOption from './MockCustomSelectOption';
-import MockInitializingView from './MockInitializingView';
+import {
+  SelectItem,
+  ServiceFactory,
+  TaskCompleteItems,
+  TaskTimerEndItems,
+} from '@pomello-desktop/domain';
+import { MockCustomSelectGroup } from './MockCustomSelectGroup';
+import { MockCustomSelectOption } from './MockCustomSelectOption';
+import { MockInitializingView } from './MockInitializingView';
 
-const createMockService: ServiceFactory = () => {
+export const createMockService: ServiceFactory = () => {
   const getTaskHeading = (): string => 'Task';
 
-  const getTaskCompleteItems = (): SelectOptionType[] => [
-    { id: 'do-something', label: 'Do something' },
-  ];
+  const getTaskCompleteItems = (): TaskCompleteItems => ({
+    items: [{ id: 'do-something', label: 'Do something' }],
+  });
 
-  const getTaskTimerEndOptions = (): SelectOptionType[] => [
-    { id: 'custom-one', label: 'Custom 1' },
-  ];
+  const getTaskTimerEndItems = (): TaskTimerEndItems => ({
+    items: [{ id: 'custom-one', label: 'Custom 1' }],
+  });
 
   const fetchTasks = () => {
     return new Promise<SelectItem[]>(resolve => {
@@ -22,7 +27,7 @@ const createMockService: ServiceFactory = () => {
           { id: 'two', label: 'Two' },
           { id: 'three', label: 'Three' },
         ]);
-      }, 1000);
+      }, 800);
     });
   };
 
@@ -34,7 +39,7 @@ const createMockService: ServiceFactory = () => {
     fetchTasks,
     getTaskCompleteItems,
     getTaskHeading,
-    getTaskTimerEndOptions,
+    getTaskTimerEndItems,
     InitializingView: MockInitializingView,
     onNoteCreate: (_taskId, { type, text }) => {
       new Notification(type, { body: text });
@@ -53,5 +58,3 @@ const createMockService: ServiceFactory = () => {
 
 createMockService.displayName = 'Mock service';
 createMockService.id = 'mock';
-
-export default createMockService;

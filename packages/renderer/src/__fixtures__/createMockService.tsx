@@ -1,4 +1,4 @@
-import { Service, ServiceConfigStore, ServiceFactory } from '@domain';
+import { Service, ServiceConfigStore, ServiceFactory } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 
 interface MockService {
@@ -6,7 +6,10 @@ interface MockService {
   service?: Partial<Service>;
 }
 
-const createMockServiceFactory = ({ config, service = {} }: MockService = {}): ServiceFactory => {
+export const createMockServiceFactory = ({
+  config,
+  service = {},
+}: MockService = {}): ServiceFactory => {
   const createMockService: ServiceFactory = () => {
     const fetchTasks = async () => [
       { id: 'one', label: 'Task one' },
@@ -32,5 +35,3 @@ const createMockServiceFactory = ({ config, service = {} }: MockService = {}): S
 
   return createMockService;
 };
-
-export default createMockServiceFactory;

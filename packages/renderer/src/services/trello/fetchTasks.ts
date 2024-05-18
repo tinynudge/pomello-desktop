@@ -1,27 +1,28 @@
-import assertNonNullish from '@/shared/helpers/assertNonNullish';
-import parseTaskName from '@/shared/helpers/parseTaskName';
-import { SelectItem } from '@domain';
-import fetchCardsByListId from './api/fetchCardsByListId';
-import { TrelloCard, TrelloCheckItem } from './domain';
-import { TrelloRuntime } from './TrelloRuntime';
+import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
+import { parseTaskName } from '@/shared/helpers/parseTaskName';
+import { SelectItem } from '@pomello-desktop/domain';
+import { fetchCardsByListId } from './api/fetchCardsByListId';
+import { TrelloCard, TrelloCheckItem, TrelloRuntime } from './domain';
 
-const fetchTasks = async ({
+export const fetchTasks = async ({
   cache,
   config,
-  getSettings,
-  getUser,
   logger,
+  settings,
   translate,
+  user,
 }: TrelloRuntime): Promise<SelectItem[]> => {
-  const { currentList } = config.get();
-  const { titleMarker } = getSettings();
-  const user = getUser();
+  const currentList = config.store.currentList;
 
   assertNonNullish(currentList, 'Unable to get current list');
 
   logger.debug('Will fetch Trello cards');
 
-  const cards = await fetchCardsByListId(currentList);
+  const cards = await fetchCardsByListId(currentList).catch(error => {
+    logger.error('Failed to fetch Trello cards', error);
+
+    throw error;
+  });
 
   logger.debug('Did fetch Trello cards');
 
@@ -35,7 +36,7 @@ const fetchTasks = async ({
       const items: SelectItem[] = [
         {
           id: card.id,
-          label: parseTaskName(card.name, titleMarker).name,
+          label: parseTaskName(card.name, settings.titleMarker).name,
         },
       ];
 
@@ -59,7 +60,7 @@ const fetchTasks = async ({
 
               checklistItems.push({
                 id: checkItem.id,
-                label: parseTaskName(checkItem.name, titleMarker).name,
+                label: parseTaskName(checkItem.name, settings.titleMarker).name,
               });
             });
 
@@ -79,9 +80,7 @@ const fetchTasks = async ({
       return items;
     });
 
-  cache.set(draft => {
-    draft.tasks = tasksById;
-  });
+  cache.actions.tasksSet(tasksById);
 
   tasks.push({
     id: 'switch-lists',
@@ -91,5 +90,3 @@ const fetchTasks = async ({
 
   return tasks;
 };
-
-export default fetchTasks;

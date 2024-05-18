@@ -1,7 +1,7 @@
 import { TrelloCardAction } from '../domain';
-import getTrelloClient from '../getTrelloClient';
+import { getTrelloClient } from '../getTrelloClient';
 
-const addComment = async (taskId: string, text: string): Promise<TrelloCardAction> => {
+export const addComment = async (taskId: string, text: string): Promise<TrelloCardAction> => {
   return await getTrelloClient()
     .post(`cards/${taskId}/actions/comments`, {
       json: { text },
@@ -15,5 +15,3 @@ const addComment = async (taskId: string, text: string): Promise<TrelloCardActio
       throw error;
     });
 };
-
-export default addComment;

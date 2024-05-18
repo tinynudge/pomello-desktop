@@ -1,5 +1,5 @@
 import logger from '@/logger';
-import { LogLevel, LogMessage } from '@domain';
+import { LogLevel, LogMessage } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleLogMessage = (

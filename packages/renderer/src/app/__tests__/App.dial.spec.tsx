@@ -1,8 +1,8 @@
-import mountApp, { screen } from '../__fixtures__/mountApp';
+import { renderApp, screen } from '../__fixtures__/renderApp';
 
 describe('App - Dial', () => {
   it('should start the timer when the dial is clicked', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 14 * 60,
       },
@@ -16,7 +16,7 @@ describe('App - Dial', () => {
   });
 
   it('should start the timer via hotkey', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 25 * 60,
       },
@@ -30,7 +30,7 @@ describe('App - Dial', () => {
   });
 
   it('should show the seconds remaining on the dial when less than a minute remains', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 30,
       },
@@ -43,7 +43,7 @@ describe('App - Dial', () => {
   });
 
   it('should show the leading 0 if the time is less than a minute', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 4,
       },
@@ -56,7 +56,7 @@ describe('App - Dial', () => {
   });
 
   it('should show/hide actions when an active dial is clicked', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -70,7 +70,7 @@ describe('App - Dial', () => {
   });
 
   it('should hide the actions when the overlay is clicked', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();

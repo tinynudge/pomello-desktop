@@ -1,4 +1,4 @@
-import { TranslationsDictionary } from '@domain';
+import { TranslationsDictionary } from '@pomello-desktop/domain';
 import { app } from 'electron';
 import fs from 'fs';
 import { join, resolve } from 'path';
@@ -7,13 +7,11 @@ const cachedTranslations: Record<string, TranslationsDictionary> = {};
 
 const defaultLocale = 'en-US';
 
-const basePath = import.meta.env.DEV
-  ? join(__dirname, '../..')
-  : join(process.resourcesPath, 'packages');
+const basePath = import.meta.env.DEV ? join(__dirname, '../../..') : process.resourcesPath;
 
 const loadTranslations = (locale: string, serviceId?: string) => {
   const translationsDirectory = serviceId
-    ? `renderer/src/services/${serviceId}/translations`
+    ? `packages/renderer/src/services/${serviceId}/translations`
     : 'translations';
 
   const filePath = resolve(basePath, translationsDirectory, `${locale}.json`);

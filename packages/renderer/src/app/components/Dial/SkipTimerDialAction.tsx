@@ -1,28 +1,28 @@
-import useHotkeys from '@/app/hooks/useHotkeys';
-import usePomelloActions from '@/app/hooks/usePomelloActions';
-import createHintTitle from '@/shared/helpers/createHintTitle';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, useEffect } from 'react';
-import DialAction from './DialAction';
+import { useHotkeys } from '@/app/context/HotkeysContext';
+import { usePomelloActions } from '@/app/context/PomelloContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { createHintTitle } from '@/shared/helpers/createHintTitle';
+import { Component } from 'solid-js';
+import { DialAction } from './DialAction';
 import { DialActionProps } from './DialActionProps';
-import { ReactComponent as SkipIcon } from './assets/skip.svg';
+import SkipIcon from './assets/skip.svg';
 
-const SkipTimerDialAction: FC<DialActionProps> = ({ className, isVisible, onClick }) => {
+export const SkipTimerDialAction: Component<DialActionProps> = props => {
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
   const { skipTimer } = usePomelloActions();
-  const { t } = useTranslation();
-
-  useEffect(() => registerHotkeys({ skipBreak: skipTimer }), [registerHotkeys, skipTimer]);
+  const t = useTranslate();
 
   const handleActionClick = () => {
     skipTimer();
-    onClick();
+    props.onClick();
   };
+
+  registerHotkeys({ skipBreak: skipTimer });
 
   return (
     <DialAction
-      className={className}
-      isVisible={isVisible}
+      class={props.class}
+      isVisible={props.isVisible}
       label={t('skipBreakLabel')}
       onClick={handleActionClick}
       title={createHintTitle(t, 'skipBreakLabel', getHotkeyLabel('skipBreak'))}
@@ -31,5 +31,3 @@ const SkipTimerDialAction: FC<DialActionProps> = ({ className, isVisible, onClic
     </DialAction>
   );
 };
-
-export default SkipTimerDialAction;

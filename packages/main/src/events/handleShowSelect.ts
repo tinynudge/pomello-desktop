@@ -1,6 +1,6 @@
 import sanitizeBounds from '@/helpers/sanitizeBounds';
 import runtime from '@/runtime';
-import { AppEvent, ShowSelectMainOptions } from '@domain';
+import { AppEvent, ShowSelectMainOptions } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent, Rectangle, screen } from 'electron';
 
 interface DisplayEdges {
@@ -40,7 +40,7 @@ const handleShowSelect = async (
     y: appBounds.y + options.buttonBounds.y - Y_OFFSET,
   };
 
-  if (selectBounds.width < appBounds.width) {
+  if (selectBounds.width <= appBounds.width) {
     bounds.width = appBounds.width;
   } else if (selectBounds.width > 500) {
     bounds.width = 500;

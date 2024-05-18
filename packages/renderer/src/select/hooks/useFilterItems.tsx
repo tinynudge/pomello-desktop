@@ -1,10 +1,15 @@
-import { SelectItem } from '@domain';
-import { useMemo } from 'react';
+import { SelectItem } from '@pomello-desktop/domain';
+import { Accessor, createMemo } from 'solid-js';
 
-const useFilterItems = (query: string, unfilteredItems: SelectItem[]) => {
-  return useMemo(() => {
+export const useFilterItems = (
+  getQuery: Accessor<string>,
+  getUnfilteredItems: Accessor<SelectItem[]>
+) => {
+  const filteredItems = createMemo(() => {
+    const query = getQuery();
+
     if (!query) {
-      return unfilteredItems;
+      return getUnfilteredItems();
     }
 
     const queryRegex = new RegExp(
@@ -33,8 +38,8 @@ const useFilterItems = (query: string, unfilteredItems: SelectItem[]) => {
       return filteredItems;
     };
 
-    return filterItems(unfilteredItems);
-  }, [query, unfilteredItems]);
-};
+    return filterItems(getUnfilteredItems());
+  });
 
-export default useFilterItems;
+  return filteredItems;
+};

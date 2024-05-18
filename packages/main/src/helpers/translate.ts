@@ -1,4 +1,4 @@
-import { Translate } from '@domain';
+import { Translate } from '@pomello-desktop/domain';
 import getTranslations from './getTranslations';
 
 const translate: Translate = (key, mappings) => {

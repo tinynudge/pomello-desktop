@@ -24,7 +24,7 @@ import handleShowSelect from '@/events/handleShowSelect';
 import handleThemeUpdate from '@/events/handleThemeUpdate';
 import handleUnsetStoreItem from '@/events/handleUnsetStoreItem';
 import handleUpdateSetting from '@/events/handleUpdateSetting';
-import { AppEvent, AppProtocol } from '@domain';
+import { AppEvent, AppProtocol } from '@pomello-desktop/domain';
 import { ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 
 const initializeListeners = (): void => {
@@ -58,7 +58,7 @@ const initializeListeners = (): void => {
   powerMonitor.on('resume', () => handlePowerMonitorChange('resume'));
   powerMonitor.on('suspend', () => handlePowerMonitorChange('suspend'));
 
-  protocol.registerFileProtocol(AppProtocol.Audio.replace('://', ''), handleAudioFileProtocol);
+  protocol.handle(AppProtocol.Audio.replace('://', ''), handleAudioFileProtocol);
 };
 
 export default initializeListeners;

@@ -1,31 +1,31 @@
-import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
-import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
-import useService from '@/shared/hooks/useService';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, useEffect, useRef } from 'react';
-import { selectToken, useTrelloConfig } from '../useTrelloConfig';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useService } from '@/shared/context/ServiceContext';
+import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
+import { ButtonsOverlay } from '@/ui/components/ButtonsOverlay';
+import { Component, createEffect } from 'solid-js';
+import { useTrelloConfig } from '../TrelloRuntimeContext';
 
-interface TrelloAuthErrorProps {
+type TrelloAuthErrorProps = {
   error: SerializableHttpError;
   onTokenSet(): void;
-}
+};
 
-const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
-  const { t } = useTranslation();
-  const { displayName, id } = useService();
+export const TrelloAuthError: Component<TrelloAuthErrorProps> = props => {
+  const config = useTrelloConfig();
+  const getService = useService();
+  const t = useTranslate();
 
-  const trelloConfig = useTrelloConfig();
-  const token = trelloConfig(selectToken);
+  let didUnsetToken = false;
 
-  const didUnsetToken = useRef(false);
+  createEffect(() => {
+    const token = config.store.token;
 
-  useEffect(() => {
-    if (!token && !didUnsetToken.current) {
-      didUnsetToken.current = true;
-    } else if (token && didUnsetToken.current) {
-      onTokenSet();
+    if (!token && !didUnsetToken) {
+      didUnsetToken = true;
+    } else if (token && didUnsetToken) {
+      props.onTokenSet();
     }
-  }, [onTokenSet, token]);
+  });
 
   const handleSignInClick = () => {
     openAuthWindow();
@@ -33,7 +33,7 @@ const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
 
   const handleDetailsClick = async () => {
     const { response } = await window.app.showMessageBox({
-      message: t('authErrorDialogMessage', { service: displayName }),
+      message: t('authErrorDialogMessage', { service: getService().displayName }),
       cancelId: 2,
       defaultId: 0,
       buttons: [t('errorDialogSignIn'), t('errorDialogCopyError'), t('errorDialogCancel')],
@@ -43,26 +43,23 @@ const TrelloAuthError: FC<TrelloAuthErrorProps> = ({ error, onTokenSet }) => {
     if (response === 0) {
       openAuthWindow();
     } else if (response === 1) {
-      window.app.writeClipboardText(error.toString());
+      window.app.writeClipboardText(props.error.toString());
     }
   };
 
   const openAuthWindow = () => {
-    trelloConfig.tokenUnset();
-
-    window.app.showAuthWindow({ type: 'service', serviceId: id });
+    config.actions.tokenUnset();
+    window.app.showAuthWindow({ type: 'service', serviceId: getService().id });
   };
 
   return (
     <ButtonsOverlay
       buttons={[
-        { id: 'signIn', content: t('authErrorSignIn'), onClick: handleSignInClick },
-        { id: 'details', content: t('errorDetails'), onClick: handleDetailsClick },
+        { content: t('authErrorSignIn'), onClick: handleSignInClick },
+        { content: t('errorDetails'), onClick: handleDetailsClick },
       ]}
     >
       {t('authErrorMessage')}
     </ButtonsOverlay>
   );
 };
-
-export default TrelloAuthError;

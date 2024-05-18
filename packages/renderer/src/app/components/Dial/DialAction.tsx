@@ -1,39 +1,29 @@
-import { FC, MouseEvent, ReactNode } from 'react';
+import { JSX, ParentComponent } from 'solid-js';
 
 interface DialActionProps {
-  children: ReactNode;
-  className: string;
+  class: string;
   isVisible: boolean;
   label: string;
   onClick(): void;
   title: string;
 }
 
-const DialAction: FC<DialActionProps> = ({
-  children,
-  className,
-  isVisible,
-  label,
-  onClick,
-  title,
-}) => {
-  const handleButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
+export const DialAction: ParentComponent<DialActionProps> = props => {
+  const handleButtonClick: JSX.EventHandler<HTMLButtonElement, MouseEvent> = event => {
     event.currentTarget.blur();
-    onClick();
+    props.onClick();
   };
 
   return (
     <button
-      aria-hidden={!isVisible}
-      aria-label={label}
-      className={className}
+      aria-hidden={!props.isVisible}
+      aria-label={props.label}
+      class={props.class}
       onClick={handleButtonClick}
-      tabIndex={isVisible ? 0 : -1}
-      title={title}
+      tabIndex={props.isVisible ? 0 : -1}
+      title={props.title}
     >
-      {children}
+      {props.children}
     </button>
   );
 };
-
-export default DialAction;

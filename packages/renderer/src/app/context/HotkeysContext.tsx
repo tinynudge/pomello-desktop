@@ -1,36 +1,55 @@
-import { Hotkeys, LabeledHotkeys } from '@domain';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
+import { HotkeyCommand, Hotkeys, LabeledHotkeys, Unsubscribe } from '@pomello-desktop/domain';
 import Mousetrap from 'mousetrap';
-import { createContext, FC, ReactNode, useMemo } from 'react';
+import { ParentComponent, createContext, onCleanup, onMount, useContext } from 'solid-js';
 
 interface HotkeysProviderProps {
-  children: ReactNode;
   hotkeys: LabeledHotkeys;
 }
 
 interface HotkeysContextValue {
-  getHotkeyLabel(command: keyof Hotkeys): string | undefined;
-  registerHotkeys(hotkeys: HotkeysRegistry): UnregisterHotkeys;
+  getHotkeyLabel(command: HotkeyCommand): string | undefined;
+  getTitleWithHotkey(titleKey: string, command: HotkeyCommand): string;
+  registerHotkeys(hotkeys: HotkeysRegistry): void;
 }
 
-type HotkeysRegistry = Partial<Record<keyof Hotkeys, HotkeyHandler>>;
+type HotkeysRegistry = Partial<Record<HotkeyCommand, HotkeyHandler>>;
 
 type HotkeyHandler = () => void;
 
-type UnregisterHotkeys = () => void;
+const HotkeysContext = createContext<HotkeysContextValue | undefined>(undefined);
 
-export const HotkeysContext = createContext<HotkeysContextValue | undefined>(undefined);
+export const useHotkeys = () => {
+  const context = useContext(HotkeysContext);
 
-export const HotkeysProvider: FC<HotkeysProviderProps> = ({ children, hotkeys }) => {
-  const value = useMemo(() => {
-    const getHotkeyLabel = (command: keyof Hotkeys) => {
-      return hotkeys[command]?.label;
-    };
+  assertNonNullish(context, 'useHotkeys must be used inside <HotkeysProvider>');
 
-    const registerHotkeys = (registry: HotkeysRegistry) => {
-      const unregisterHotkeys: UnregisterHotkeys[] = [];
+  return context;
+};
+
+export const HotkeysProvider: ParentComponent<HotkeysProviderProps> = props => {
+  const t = useTranslate();
+
+  const getHotkeyLabel = (command: keyof Hotkeys) => {
+    return props.hotkeys[command]?.label;
+  };
+
+  const getTitleWithHotkey = (titleKey: string, command: HotkeyCommand) => {
+    const hotkeyLabel = getHotkeyLabel(command);
+
+    return t('hintTitle', {
+      title: t(titleKey),
+      hotkey: hotkeyLabel ? t('hintTitleHotkey', { hotkey: hotkeyLabel }) : '',
+    });
+  };
+
+  const registerHotkeys = (registry: HotkeysRegistry) => {
+    onMount(() => {
+      const unregisterHotkeys: Unsubscribe[] = [];
 
       Object.entries(registry).forEach(([command, handler]) => {
-        const hotkey = hotkeys[command as keyof Hotkeys];
+        const hotkey = props.hotkeys[command as keyof Hotkeys];
 
         if (hotkey) {
           Mousetrap.bind(hotkey.binding, handler);
@@ -39,13 +58,15 @@ export const HotkeysProvider: FC<HotkeysProviderProps> = ({ children, hotkeys })
         }
       });
 
-      return () => {
+      onCleanup(() => {
         unregisterHotkeys.forEach(unregisterHotkey => unregisterHotkey());
-      };
-    };
+      });
+    });
+  };
 
-    return { getHotkeyLabel, registerHotkeys };
-  }, [hotkeys]);
-
-  return <HotkeysContext.Provider value={value}>{children}</HotkeysContext.Provider>;
+  return (
+    <HotkeysContext.Provider value={{ getHotkeyLabel, getTitleWithHotkey, registerHotkeys }}>
+      {props.children}
+    </HotkeysContext.Provider>
+  );
 };

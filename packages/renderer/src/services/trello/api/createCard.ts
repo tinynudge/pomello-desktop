@@ -1,5 +1,5 @@
 import { TrelloCard } from '../domain';
-import getTrelloClient from '../getTrelloClient';
+import { getTrelloClient } from '../getTrelloClient';
 
 interface CreateCardOptions {
   description?: string;
@@ -9,7 +9,7 @@ interface CreateCardOptions {
   title: string;
 }
 
-const createCard = async (options: CreateCardOptions): Promise<void> => {
+export const createCard = async (options: CreateCardOptions): Promise<void> => {
   await getTrelloClient()
     .post('cards', {
       json: {
@@ -23,5 +23,3 @@ const createCard = async (options: CreateCardOptions): Promise<void> => {
     })
     .json<TrelloCard>();
 };
-
-export default createCard;

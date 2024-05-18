@@ -1,15 +1,13 @@
-import { Logger } from '@domain';
-import { PomelloService } from '@tinynudge/pomello-service';
-import { useEffect } from 'react';
+import { usePomelloService } from '@/app/context/PomelloContext';
+import { useRuntime } from '@/shared/context/RuntimeContext';
+import { onCleanup, onMount } from 'solid-js';
 
-interface UseMonitorPowerChangeOptions {
-  logger: Logger;
-  service: PomelloService;
-}
+export const useMonitorPowerChange = () => {
+  const { logger } = useRuntime();
+  const service = usePomelloService();
 
-const useMonitorPowerChange = ({ logger, service }: UseMonitorPowerChangeOptions) => {
-  useEffect(() => {
-    return window.app.onPowerMonitorChange(status => {
+  onMount(() => {
+    const unsubscribe = window.app.onPowerMonitorChange(status => {
       if (status === 'suspend') {
         logger.debug('Will suspend Pomello service');
 
@@ -20,7 +18,7 @@ const useMonitorPowerChange = ({ logger, service }: UseMonitorPowerChangeOptions
         service.resumeService();
       }
     });
-  }, [logger, service]);
-};
 
-export default useMonitorPowerChange;
+    onCleanup(unsubscribe);
+  });
+};

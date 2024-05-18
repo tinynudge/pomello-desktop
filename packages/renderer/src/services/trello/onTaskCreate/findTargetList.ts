@@ -1,12 +1,13 @@
-import { TrelloBoard, TrelloList } from '../domain';
-import { TrelloRuntime } from '../TrelloRuntime';
-import createQueryRegex from './createQueryRegex';
+import { TrelloBoard, TrelloList, TrelloRuntime } from '../domain';
+import { createQueryRegex } from './createQueryRegex';
 
-const findTargetList = (
+export const findTargetList = (
   { cache, translate }: TrelloRuntime,
   input?: string
 ): TrelloList | undefined => {
-  const { boards, currentBoard, currentList } = cache.get();
+  const boards = cache.store.boards;
+  const currentBoard = cache.store.currentBoard;
+  const currentList = cache.store.currentList;
 
   if (!input) {
     return currentList;
@@ -47,5 +48,3 @@ const findTargetList = (
     }
   }
 };
-
-export default findTargetList;

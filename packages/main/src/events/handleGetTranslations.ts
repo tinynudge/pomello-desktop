@@ -1,5 +1,5 @@
 import getTranslations from '@/helpers/getTranslations';
-import { TranslationsDictionary } from '@domain';
+import { TranslationsDictionary } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleGetTranslations = async (

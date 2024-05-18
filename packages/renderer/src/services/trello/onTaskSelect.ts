@@ -1,34 +1,27 @@
-import { TrelloCard } from './domain';
-import createLogBuilder from './helpers/createLogBuilder';
-import findOrFailTask from './helpers/findOrFailTask';
-import isCheckItem from './helpers/isCheckItem';
-import { TrelloRuntime } from './TrelloRuntime';
+import { TrelloCard, TrelloRuntime } from './domain';
+import { createLogBuilder } from './helpers/createLogBuilder';
+import { findOrFailTask } from './helpers/findOrFailTask';
+import { isCheckItem } from './helpers/isCheckItem';
 
-const onTaskSelect = (runtime: TrelloRuntime, optionId: string): false | void => {
+export const onTaskSelect = (runtime: TrelloRuntime, optionId: string): false | void => {
   const { cache, config } = runtime;
+  const { currentList } = config.store;
+  const { preferences } = cache.store;
 
   if (optionId === 'switch-lists') {
-    cache.set(draft => {
-      draft.didSwitchList = true;
-      draft.previousListId = config.get().currentList;
-    });
-
-    config.unset('currentList');
+    cache.actions.currentListSwitched(currentList);
+    config.actions.currentListUnset();
 
     return false;
   }
 
-  if (cache.get().preferences.keepLogs) {
+  if (preferences.keepLogs) {
     let card = findOrFailTask(cache, optionId);
 
     if (isCheckItem(card)) {
       card = findOrFailTask(cache, card.idCard);
     }
 
-    cache.set(draft => {
-      draft.log = createLogBuilder(runtime, card as TrelloCard);
-    });
+    cache.actions.logSet(createLogBuilder(runtime, card as TrelloCard));
   }
 };
-
-export default onTaskSelect;

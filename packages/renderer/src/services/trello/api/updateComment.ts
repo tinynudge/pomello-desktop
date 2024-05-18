@@ -1,6 +1,6 @@
-import getTrelloClient from '../getTrelloClient';
+import { getTrelloClient } from '../getTrelloClient';
 
-const updateComment = async (logId: string, text: string): Promise<void> => {
+export const updateComment = async (logId: string, text: string): Promise<void> => {
   await getTrelloClient()
     .put(`actions/${logId}`, {
       json: { text },
@@ -11,5 +11,3 @@ const updateComment = async (logId: string, text: string): Promise<void> => {
       }
     });
 };
-
-export default updateComment;

@@ -1,29 +1,34 @@
-import { pomelloStateUpdate } from '@/app/appSlice';
-import { PomelloService, PomelloState } from '@tinynudge/pomello-service';
-import { createContext, FC, ReactNode, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
+import { PomelloService } from '@tinynudge/pomello-service';
+import { ParentComponent, createContext, useContext } from 'solid-js';
 
 interface PomelloProviderProps {
-  children: ReactNode;
-  service: PomelloService;
+  defaultService: PomelloService;
 }
 
-export const PomelloContext = createContext<PomelloService | undefined>(undefined);
+const PomelloContext = createContext<PomelloService | undefined>(undefined);
 
-export const PomelloProvider: FC<PomelloProviderProps> = ({ children, service }) => {
-  const dispatch = useDispatch();
+export const usePomelloService = (): PomelloService => {
+  const context = useContext(PomelloContext);
 
-  useEffect(() => {
-    const updatePomelloState = (state: PomelloState) => {
-      dispatch(pomelloStateUpdate(state));
-    };
+  assertNonNullish(context, 'usePomelloService must be used inside <PomelloProvider>');
 
-    service.on('update', updatePomelloState);
+  return context;
+};
 
-    return () => {
-      service.off('update', updatePomelloState);
-    };
-  }, [dispatch, service]);
+export const usePomelloActions = () => {
+  const context = useContext(PomelloContext);
 
-  return <PomelloContext.Provider value={service}>{children}</PomelloContext.Provider>;
+  assertNonNullish(context, 'usePomelloActions must be used inside <PomelloProvider>');
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { getState, on, off, ...actions } = context;
+
+  return actions;
+};
+
+export const PomelloProvider: ParentComponent<PomelloProviderProps> = props => {
+  return (
+    <PomelloContext.Provider value={props.defaultService}>{props.children}</PomelloContext.Provider>
+  );
 };

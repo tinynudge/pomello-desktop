@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const { writeFile } = require('fs/promises');
-const { execSync } = require('child_process');
-const electron = require('electron');
-const path = require('path');
+/*eslint-env node*/
+import { execSync } from 'child_process';
+import electron from 'electron';
+import { writeFile } from 'fs/promises';
+import path from 'path';
 
 /**
  * Returns versions of electron vendors

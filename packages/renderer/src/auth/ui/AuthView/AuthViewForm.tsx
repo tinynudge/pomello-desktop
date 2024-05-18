@@ -1,23 +1,23 @@
-import useAuthView from '@/auth/hooks/useAuthView';
-import useTranslation from '@/shared/hooks/useTranslation';
+import { useAuthView } from '@/auth/context/AuthViewProvider';
+import { useTranslate } from '@/shared/context/RuntimeContext';
 import cc from 'classcat';
-import { ChangeEvent, FC, useState } from 'react';
+import { Component, JSX, createSignal } from 'solid-js';
 import styles from './AuthViewForm.module.scss';
 
 interface AuthViewFormProps {
   onSubmit(token: string): Promise<void> | void;
 }
 
-const AuthViewForm: FC<AuthViewFormProps> = ({ onSubmit }) => {
-  const { t } = useTranslation();
+export const AuthViewForm: Component<AuthViewFormProps> = props => {
+  const t = useTranslate();
 
   const { onTokenSave } = useAuthView();
 
-  const [token, setToken] = useState('');
-  const [hasError, setHasError] = useState(false);
+  const [getToken, setToken] = createSignal('');
+  const [getHasError, setHasError] = createSignal(false);
 
-  const handleTokenChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    if (hasError) {
+  const handleTokenChange: JSX.EventHandler<HTMLTextAreaElement, InputEvent> = event => {
+    if (getHasError()) {
       setHasError(false);
     }
 
@@ -25,37 +25,35 @@ const AuthViewForm: FC<AuthViewFormProps> = ({ onSubmit }) => {
   };
 
   const handleTokenSubmit = async () => {
-    if (!token.length) {
+    if (!getToken().length) {
       setHasError(true);
 
       return;
     }
 
-    await onSubmit(token);
+    await props.onSubmit(getToken());
 
     onTokenSave();
   };
 
   return (
     <>
-      <div className={styles.tokenInput}>
+      <div class={styles.tokenInput}>
         <textarea
-          className={cc({ [styles.hasError]: hasError })}
-          onChange={handleTokenChange}
+          class={cc({ [styles.hasError]: getHasError() })}
+          onInput={handleTokenChange}
           placeholder={t('insertTokenPlaceholder')}
-          value={token}
+          value={getToken()}
         />
-        {hasError && (
-          <p className={styles.errorMessage} role="alert">
+        {getHasError() && (
+          <p class={styles.errorMessage} role="alert">
             {t('validAuthTokenRequired')}
           </p>
         )}
       </div>
-      <button className={styles.button} onClick={handleTokenSubmit}>
+      <button class={styles.button} onClick={handleTokenSubmit}>
         {t('submitToken')}
       </button>
     </>
   );
 };
-
-export default AuthViewForm;

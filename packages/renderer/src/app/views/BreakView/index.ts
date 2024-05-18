@@ -1,1 +1,1 @@
-export { default } from './BreakView';
+export * from './BreakView';

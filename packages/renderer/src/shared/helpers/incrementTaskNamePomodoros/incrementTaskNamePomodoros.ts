@@ -1,6 +1,6 @@
-import parseTaskName from '../parseTaskName';
-import getFraction from './getFraction';
-import roundToNearestEighth from './roundToNearestEighth';
+import { parseTaskName } from '../parseTaskName';
+import { getFraction } from './getFraction';
+import { roundToNearestEighth } from './roundToNearestEighth';
 
 interface IncrementTaskNamePomodorosOptions {
   marker: string;
@@ -13,7 +13,7 @@ interface IncrementTaskNamePomodorosOptions {
   };
 }
 
-const incrementTaskNamePomodoros = ({
+export const incrementTaskNamePomodoros = ({
   marker,
   mode,
   taskName,
@@ -36,5 +36,3 @@ const incrementTaskNamePomodoros = ({
 
   return `${updatedCount} ${marker} ${name}`;
 };
-
-export default incrementTaskNamePomodoros;

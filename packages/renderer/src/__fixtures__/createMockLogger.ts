@@ -1,7 +1,7 @@
-import { Logger } from '@domain';
+import { Logger } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 
-const createMockLogger = (): Logger => {
+export const createMockLogger = (): Logger => {
   return {
     debug: vi.fn(),
     error: vi.fn(),
@@ -9,5 +9,3 @@ const createMockLogger = (): Logger => {
     warn: vi.fn(),
   };
 };
-
-export default createMockLogger;

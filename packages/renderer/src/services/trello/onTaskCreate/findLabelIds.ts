@@ -1,13 +1,13 @@
-import fetchLabelsByBoardId from '../api/fetchLabelsByBoardId';
+import { fetchLabelsByBoardId } from '../api/fetchLabelsByBoardId';
 import { TrelloList } from '../domain';
-import createQueryRegex from './createQueryRegex';
+import { createQueryRegex } from './createQueryRegex';
 
-interface LabelIds {
+type LabelIds = {
   labelIds: string[];
   unknownLabels: string[];
-}
+};
 
-const findLabelIds = async (list: TrelloList, input?: string): Promise<LabelIds> => {
+export const findLabelIds = async (list: TrelloList, input?: string): Promise<LabelIds> => {
   const labelIds: string[] = [];
   const unknownLabels: string[] = [];
 
@@ -34,5 +34,3 @@ const findLabelIds = async (list: TrelloList, input?: string): Promise<LabelIds>
 
   return { labelIds, unknownLabels };
 };
-
-export default findLabelIds;

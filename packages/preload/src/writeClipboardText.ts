@@ -1,4 +1,4 @@
-import { AppEvent } from '@domain';
+import { AppEvent } from '@pomello-desktop/domain';
 import { ipcRenderer } from 'electron';
 
 const writeClipboardText = (text: string): void => {

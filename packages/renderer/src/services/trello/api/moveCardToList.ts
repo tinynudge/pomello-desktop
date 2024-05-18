@@ -1,14 +1,14 @@
 import { TrelloCard } from '../domain';
-import getTrelloClient from '../getTrelloClient';
+import { getTrelloClient } from '../getTrelloClient';
 
-interface MoveCardToListOptions {
+type MoveCardToListOptions = {
   card: TrelloCard;
   closed?: boolean;
   listId: string;
   position: 'top' | 'bottom';
-}
+};
 
-const moveCardToList = async ({
+export const moveCardToList = async ({
   card,
   closed,
   listId,
@@ -22,5 +22,3 @@ const moveCardToList = async ({
     },
   });
 };
-
-export default moveCardToList;

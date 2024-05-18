@@ -1,4 +1,4 @@
-import { Runtime } from '@domain';
+import { Runtime } from '@pomello-desktop/domain';
 import createStoreManager from './createStoreManager';
 import createWindowManager from './createWindowManager';
 

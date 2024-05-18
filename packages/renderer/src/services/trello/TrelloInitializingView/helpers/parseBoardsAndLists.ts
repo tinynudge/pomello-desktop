@@ -1,4 +1,4 @@
-import { SelectItem, SelectOptionType, Translate } from '@domain';
+import { SelectItem, SelectOptionType, Translate } from '@pomello-desktop/domain';
 import { TrelloBoard, TrelloList, TrelloMember } from '../../domain';
 
 interface ParseBoardsAndListsOptions {
@@ -10,7 +10,7 @@ interface ParseBoardsAndListsOptions {
   translate: Translate;
 }
 
-const parseBoardsAndLists = ({
+export const parseBoardsAndLists = ({
   boardsAndLists,
   listFilter,
   listFilterCaseSensitive,
@@ -66,10 +66,10 @@ const parseBoardsAndLists = ({
       return aIndex === -1 && bIndex === -1
         ? 0
         : aIndex === -1
-        ? 1
-        : bIndex === -1
-        ? -1
-        : aIndex - bIndex;
+          ? 1
+          : bIndex === -1
+            ? -1
+            : aIndex - bIndex;
     });
   }
 
@@ -79,5 +79,3 @@ const parseBoardsAndLists = ({
 
   return { boards, lists, selectItems };
 };
-
-export default parseBoardsAndLists;

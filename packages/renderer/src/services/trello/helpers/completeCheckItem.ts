@@ -1,12 +1,12 @@
-import markCheckItemComplete from '../api/markCheckItemComplete';
-import { TrelloCheckItem } from '../domain';
-import { TrelloRuntime } from '../TrelloRuntime';
+import { markCheckItemComplete } from '../api/markCheckItemComplete';
+import { TrelloCheckItem, TrelloRuntime } from '../domain';
 
-const completeCheckItem = (
+export const completeCheckItem = (
   { cache, logger, translate }: TrelloRuntime,
   checkItem: TrelloCheckItem
 ): void => {
-  const { log, preferences } = cache.get();
+  const log = cache.store.log;
+  const preferences = cache.store.preferences;
 
   if (preferences.keepLogs && log) {
     log.addEntry(translate('commentLogCheckItemComplete')).save();
@@ -18,5 +18,3 @@ const completeCheckItem = (
 
   logger.debug('Did complete Trello check item');
 };
-
-export default completeCheckItem;

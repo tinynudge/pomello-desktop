@@ -1,5 +1,3 @@
 import { setupServer } from 'msw/node';
 
-const mockServer = setupServer();
-
-export default mockServer;
+export const mockServer = setupServer();

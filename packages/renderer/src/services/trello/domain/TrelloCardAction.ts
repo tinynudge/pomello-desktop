@@ -1,4 +1,4 @@
-export interface TrelloCardAction {
+export type TrelloCardAction = {
   id: string;
   data: {
     text: string;
@@ -20,4 +20,4 @@ export interface TrelloCardAction {
   memberCreator: {
     id: string;
   };
-}
+};

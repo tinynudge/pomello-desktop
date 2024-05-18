@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
 describe('App - Add Note', () => {
   it('should show a message if unable to add a note', async () => {
@@ -8,7 +8,7 @@ describe('App - Add Note', () => {
 
     const errorMessage = ['Unable to add note', { body: 'Mock service does not support this' }];
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           onNoteCreate: undefined,
@@ -37,7 +37,7 @@ describe('App - Add Note', () => {
   });
 
   it('should show the add note view when the dial action is clicked', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -51,7 +51,7 @@ describe('App - Add Note', () => {
   });
 
   it('should show the add note view via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('addNote');
@@ -63,7 +63,7 @@ describe('App - Add Note', () => {
   });
 
   it('should show the external distraction view via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('externalDistraction');
@@ -75,7 +75,7 @@ describe('App - Add Note', () => {
   });
 
   it('should show the internal distraction view via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('internalDistraction');
@@ -89,7 +89,7 @@ describe('App - Add Note', () => {
   it('should handle when a general note is added', async () => {
     const onNoteCreate = vi.fn();
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'MY_TASK', label: 'My task' }]),
@@ -113,7 +113,7 @@ describe('App - Add Note', () => {
   it('should handle when an internal distraction is added', async () => {
     const handleNoteAdd = vi.fn();
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'MY_TASK', label: 'My task' }]),
@@ -137,7 +137,7 @@ describe('App - Add Note', () => {
   it('should handle when an external distraction is added', async () => {
     const handleNoteAdd = vi.fn();
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'MY_TASK', label: 'My task' }]),
@@ -161,7 +161,7 @@ describe('App - Add Note', () => {
   it('should not do anything if the input is blank', async () => {
     const onNoteCreate = vi.fn();
 
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           onNoteCreate,
@@ -178,7 +178,7 @@ describe('App - Add Note', () => {
   });
 
   it('should hide the add note view when escape pressed', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('addNote');
@@ -188,7 +188,7 @@ describe('App - Add Note', () => {
   });
 
   it('should be able to switch to a general note', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('internalDistraction');
@@ -198,7 +198,7 @@ describe('App - Add Note', () => {
   });
 
   it('should be able to switch to an internal distraction', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('addNote');
@@ -208,7 +208,7 @@ describe('App - Add Note', () => {
   });
 
   it('should be able to switch to an external distraction', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('addNote');
@@ -218,7 +218,7 @@ describe('App - Add Note', () => {
   });
 
   it('should trigger the help page when /? is entered', async () => {
-    const { appApi, simulate, userEvent } = mountApp();
+    const { appApi, simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('addNote');

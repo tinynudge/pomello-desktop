@@ -1,143 +1,125 @@
-import createSignal from '@/shared/helpers/createSignal';
-import useInitializeService from '@/shared/hooks/useInitializeService';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { Logger, SelectItem, SelectOptionType, ServiceRegistry, Settings } from '@domain';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import { useServiceResource } from '@/shared/context/ServiceContext';
+import { SelectItem, SelectOptionType } from '@pomello-desktop/domain';
+import { Show, batch, createSignal, onCleanup } from 'solid-js';
 import styles from './Select.module.scss';
-import DropdownList from './components/DropdownList';
-import DropdownRow from './components/DropdownRow';
-import FilterInput from './components/FilterInput';
-import findFirstOption from './helpers/findFirstOption';
-import findLastOption from './helpers/findLastOption';
-import findNearestOption from './helpers/findNearestOption';
-import useEnsureVisibleActiveOption from './hooks/useEnsureVisibleActiveOption';
-import useFilterItems from './hooks/useFilterItems';
-import useUpdateWindowDimensions from './hooks/useUpdateWindowDimensions';
+import { DropdownList } from './components/DropdownList';
+import { DropdownRow } from './components/DropdownRow';
+import { FilterInput } from './components/FilterInput';
+import { findFirstOption, findLastOption, findNearestOption } from './helpers/findOption';
+import { useEnsureVisibleActiveOption } from './hooks/useEnsureVisibleActiveOption';
+import { useFilterItems } from './hooks/useFilterItems';
+import { useUpdateWindowDimensions } from './hooks/useUpdateWindowDimensions';
 
-interface SelectProps {
-  initialServiceId?: string;
-  logger: Logger;
-  services: ServiceRegistry;
-  settings: Settings;
-}
+export const Select = () => {
+  const serviceResource = useServiceResource();
+  const settings = useSettings();
+  const t = useTranslate();
 
-const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings }) => {
-  const { t } = useTranslation();
+  const [getIsVisible, setIsVisible] = createSignal(false);
+  const [getActiveOptionId, setActiveOptionId] = createSignal<string>();
+  const [getQuery, setQuery] = createSignal('');
+  const [getItems, setItems] = createSignal<SelectItem[]>([]);
+  const [getPlaceholder, setPlaceholder] = createSignal<string>();
+  const [getNoResultsMessage, setNoResultsMessage] = createSignal<string>();
 
-  const listRef = useRef<HTMLUListElement>(null);
-
-  const [serviceId, setServiceId] = useState(initialServiceId);
-  const { activeService, status } = useInitializeService({ logger, services, serviceId });
-
-  useEffect(() => {
-    return window.app.onServicesChange(services => {
-      setServiceId(services.activeServiceId);
-    });
-  }, []);
-
-  const isReady = useRef(false);
-  const activeOptionId = useMemo(() => createSignal<string>(), []);
-
-  const [query, setQuery] = useState('');
-  const [items, setItems] = useState<SelectItem[]>([]);
-  const filteredItems = useFilterItems(query, items);
-
-  const [placeholder, setPlaceholder] = useState<string>();
-  const [noResultsMessage, setNoResultsMessage] = useState<string>();
-
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const inputHeight = useRef(0);
-  const inputCallbackRef = useCallback((inputElement: HTMLInputElement | null) => {
-    if (inputElement) {
-      const { height } = inputElement.getBoundingClientRect();
-
-      inputRef.current = inputElement;
-      inputHeight.current = height;
-    }
-  }, []);
+  const getFilteredItems = useFilterItems(getQuery, getItems);
 
   useEnsureVisibleActiveOption({
-    activeOptionId,
-    inputHeight,
-    items: filteredItems,
-    listRef,
+    getActiveOptionId,
+    getInputRef: () => inputRef,
+    getItems: getFilteredItems,
+    getListRef: () => listRef,
+    setActiveOptionId,
   });
 
-  useEffect(() => {
-    return window.app.onShowSelect(() => {
-      inputRef.current?.focus();
-    });
-  }, []);
+  useUpdateWindowDimensions({
+    getContainer: () => listRef,
+    getIsVisible,
+    getItems: getFilteredItems,
+    maxRows: settings.selectMaxRows,
+  });
 
-  useEffect(() => {
-    const tick = () => new Promise<void>(resolve => resolve());
-
-    return window.app.onSelectHide(async () => {
-      setQuery('');
-
-      await tick();
-
-      activeOptionId.set(undefined);
-    });
-  }, [activeOptionId]);
-
-  useEffect(() => {
-    return window.app.onSelectReset(() => {
-      isReady.current = false;
-      activeOptionId.set(undefined);
-
-      setQuery('');
-      setPlaceholder(undefined);
-      setNoResultsMessage(undefined);
-    });
-  }, [activeOptionId]);
-
-  useEffect(() => {
-    return window.app.onSetSelectItems(({ items, noResultsMessage, placeholder }) => {
-      setItems(items);
-      setNoResultsMessage(noResultsMessage);
-      setPlaceholder(placeholder);
+  const removeOnSetSelectItems = window.app.onSetSelectItems(
+    ({ items, noResultsMessage, placeholder }) => {
+      batch(() => {
+        setItems(items);
+        setNoResultsMessage(noResultsMessage);
+        setPlaceholder(placeholder);
+      });
 
       if (placeholder) {
         // Update the title so screen readers have more context.
         document.title = placeholder;
       }
-    });
-  }, []);
+    }
+  );
 
-  const selectActiveOption = useCallback(() => {
-    const currentActiveOptionId = activeOptionId.get();
+  const removeOnShowSelect = window.app.onShowSelect(() => {
+    setIsVisible(true);
+
+    inputRef.focus();
+  });
+
+  const removeOnSelectHide = window.app.onSelectHide(() => {
+    setIsVisible(false);
+
+    batch(() => {
+      setQuery('');
+      setActiveOptionId(undefined);
+    });
+  });
+
+  const removeOnSelectReset = window.app.onSelectReset(() => {
+    setIsVisible(false);
+
+    batch(() => {
+      setQuery('');
+      setItems([]);
+      setActiveOptionId(undefined);
+      setPlaceholder(undefined);
+      setNoResultsMessage(undefined);
+    });
+  });
+
+  onCleanup(() => {
+    removeOnSetSelectItems();
+    removeOnShowSelect();
+    removeOnSelectHide();
+    removeOnSelectReset();
+  });
+
+  const highlightAdjacentOption = (direction: 'next' | 'previous') => {
+    const option = findNearestOption({
+      activeOptionId: getActiveOptionId(),
+      container: listRef,
+      direction,
+    });
+
+    if (option) {
+      setActiveOptionId(option.id);
+    }
+  };
+
+  const selectActiveOption = () => {
+    const currentActiveOptionId = getActiveOptionId();
 
     if (currentActiveOptionId) {
       window.app.selectOption(currentActiveOptionId);
     }
-  }, [activeOptionId]);
+  };
 
-  const handleDimensionsUpdate = useCallback(() => {
-    if (isReady.current) {
-      return;
-    }
+  const handleOptionHover = (option: SelectOptionType) => {
+    setActiveOptionId(option.id);
+  };
 
-    isReady.current = true;
-  }, []);
-
-  const handleOptionHover = useCallback(
-    (option: SelectOptionType) => {
-      activeOptionId.set(option.id);
-    },
-    [activeOptionId]
-  );
-
-  const handleOptionSelect = useCallback(() => {
+  const handleOptionSelect = () => {
     selectActiveOption();
-  }, [selectActiveOption]);
+  };
 
-  useUpdateWindowDimensions({
-    container: listRef.current,
-    items: filteredItems,
-    maxRows: settings.selectMaxRows,
-    onUpdate: handleDimensionsUpdate,
-  });
+  const handleInputChange = (value: string) => {
+    setQuery(value);
+  };
 
   const handleInputEnter = () => {
     selectActiveOption();
@@ -148,18 +130,18 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
   };
 
   const handleFirstOptionSelect = () => {
-    const option = findFirstOption(listRef.current);
+    const option = findFirstOption(listRef);
 
     if (option) {
-      activeOptionId.set(option.id);
+      setActiveOptionId(option.id);
     }
   };
 
   const handleLastOptionSelect = () => {
-    const option = findLastOption(listRef.current);
+    const option = findLastOption(listRef);
 
     if (option) {
-      activeOptionId.set(option.id);
+      setActiveOptionId(option.id);
     }
   };
 
@@ -171,55 +153,44 @@ const Select: FC<SelectProps> = ({ initialServiceId, logger, services, settings 
     highlightAdjacentOption('previous');
   };
 
-  const highlightAdjacentOption = (direction: 'next' | 'previous') => {
-    const option = findNearestOption({
-      activeOptionId: activeOptionId.get(),
-      container: listRef.current,
-      direction,
-    });
-
-    if (option) {
-      activeOptionId.set(option.id);
-    }
-  };
+  let listRef: HTMLUListElement;
+  let inputRef: HTMLInputElement;
 
   const listboxId = 'select-listbox';
 
   return (
     <>
       <FilterInput
-        activeOptionId={activeOptionId}
+        activeOptionId={getActiveOptionId()}
         listboxId={listboxId}
-        onChange={setQuery}
+        onChange={handleInputChange}
         onEnter={handleInputEnter}
         onEscape={handleInputEscape}
         onFirstOptionSelect={handleFirstOptionSelect}
         onLastOptionSelect={handleLastOptionSelect}
         onNextOptionSelect={handleNextOptionSelect}
         onPreviousOptionSelect={handlePreviousOptionSelect}
-        placeholder={placeholder ?? t('selectPlaceholder')}
-        ref={inputCallbackRef}
-        query={query}
+        placeholder={getPlaceholder() ?? t('selectPlaceholder')}
+        query={getQuery()}
+        ref={inputRef!}
       />
       <DropdownList
-        activeOptionId={activeOptionId}
+        activeOptionId={getActiveOptionId()}
         depth={0}
         id={listboxId}
-        items={status === 'INITIALIZING' ? [] : filteredItems}
+        items={serviceResource.state !== 'ready' ? [] : getFilteredItems()}
         onOptionHover={handleOptionHover}
         onOptionSelect={handleOptionSelect}
-        ref={listRef}
+        ref={listRef!}
         role="listbox"
-        service={activeService?.service}
+        service={serviceResource.latest?.service}
       >
-        {filteredItems.length === 0 && (
-          <DropdownRow className={styles.noResults} role="alert">
-            {Boolean(query) ? t('selectNoMatchesFound') : t(noResultsMessage ?? 'selectNoResults')}
+        <Show when={getFilteredItems().length === 0}>
+          <DropdownRow class={styles.noResults} role="alert">
+            {getQuery() ? t('selectNoMatchesFound') : t(getNoResultsMessage() ?? 'selectNoResults')}
           </DropdownRow>
-        )}
+        </Show>
       </DropdownList>
     </>
   );
 };
-
-export default Select;

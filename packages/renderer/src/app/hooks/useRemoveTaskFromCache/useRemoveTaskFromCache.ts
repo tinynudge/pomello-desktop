@@ -1,29 +1,22 @@
-import { SelectItem } from '@domain';
-import produce from 'immer';
-import { useCallback } from 'react';
-import { useQueryClient } from 'react-query';
-import useTasksCacheKey from '../useTasksCacheKey';
-import removeTask from './removeTask';
+import { SelectItem } from '@pomello-desktop/domain';
+import { useQueryClient } from '@tanstack/solid-query';
+import { produce } from 'immer';
+import { useTasksCacheKey } from '../useTasksCacheKey';
+import { removeTask } from './removeTask';
 
-const useRemoveTaskFromCache = () => {
+export const useRemoveTaskFromCache = () => {
+  const getTasksCacheKey = useTasksCacheKey();
   const queryClient = useQueryClient();
 
-  const tasksCacheKey = useTasksCacheKey();
+  return (taskId: string) => {
+    queryClient.setQueryData<SelectItem[] | undefined>(getTasksCacheKey(), tasks => {
+      if (!tasks) {
+        return;
+      }
 
-  return useCallback(
-    (taskId: string) => {
-      queryClient.setQueryData<SelectItem[] | undefined>(tasksCacheKey, tasks => {
-        if (!tasks) {
-          return;
-        }
-
-        return produce(tasks, draft => {
-          removeTask(draft, taskId);
-        });
+      return produce(tasks, draft => {
+        removeTask(draft, taskId);
       });
-    },
-    [queryClient, tasksCacheKey]
-  );
+    });
+  };
 };
-
-export default useRemoveTaskFromCache;

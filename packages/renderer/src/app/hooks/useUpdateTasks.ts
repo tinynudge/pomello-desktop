@@ -1,22 +1,16 @@
-import { SelectOptionType } from '@domain';
-import { useCallback } from 'react';
-import { useQueryClient } from 'react-query';
-import useTasksCacheKey from './useTasksCacheKey';
+import { SelectOptionType } from '@pomello-desktop/domain';
+import { useQueryClient } from '@tanstack/solid-query';
+import { useTasksCacheKey } from './useTasksCacheKey';
 
 type UseUpdateTasks = (update: UpdateFunction) => void;
 
 type UpdateFunction = (previousTasks?: SelectOptionType[]) => SelectOptionType[];
 
-const useUpdateTasks = (): UseUpdateTasks => {
+export const useUpdateTasks = (): UseUpdateTasks => {
+  const getTasksCacheKey = useTasksCacheKey();
   const queryClient = useQueryClient();
-  const tasksCacheKey = useTasksCacheKey();
 
-  return useCallback(
-    (callback: UpdateFunction) => {
-      queryClient.setQueryData<SelectOptionType[]>(tasksCacheKey, callback);
-    },
-    [queryClient, tasksCacheKey]
-  );
+  return (callback: UpdateFunction) => {
+    queryClient.setQueryData<SelectOptionType[]>(getTasksCacheKey(), callback);
+  };
 };
-
-export default useUpdateTasks;

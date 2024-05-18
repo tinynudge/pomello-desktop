@@ -1,4 +1,4 @@
-import { Settings } from '@domain';
+import { Settings } from '@pomello-desktop/domain';
 import baseCreatePomelloService, {
   PomelloService,
   SetItem,
@@ -54,7 +54,7 @@ const createTicker = (): Ticker => {
   return { start, stop, wait };
 };
 
-const createPomelloService = (settings: Settings): PomelloService => {
+export const createPomelloService = (settings: Settings): PomelloService => {
   const {
     betweenTasksGracePeriod,
     longBreakTime,
@@ -82,5 +82,3 @@ const createPomelloService = (settings: Settings): PomelloService => {
     },
   });
 };
-
-export default createPomelloService;

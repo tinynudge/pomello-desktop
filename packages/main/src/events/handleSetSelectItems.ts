@@ -1,5 +1,5 @@
 import runtime from '@/runtime';
-import { AppEvent, SetSelectItemsOptions } from '@domain';
+import { AppEvent, SetSelectItemsOptions } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleSetSelectItems = async (

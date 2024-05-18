@@ -1,5 +1,5 @@
+/*eslint-env node*/
 import { builtinModules } from 'module';
-import { join } from 'path';
 import { defineConfig } from 'vite';
 import { chrome } from '../../.electron-vendors.cache.json';
 
@@ -9,11 +9,6 @@ export default defineConfig({
   mode: process.env.MODE,
   root: PACKAGE_ROOT,
   envDir: process.cwd(),
-  resolve: {
-    alias: {
-      '@domain': join(PACKAGE_ROOT, '../domain'),
-    },
-  },
   build: {
     sourcemap: 'inline',
     target: `chrome${chrome}`,

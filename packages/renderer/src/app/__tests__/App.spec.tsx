@@ -1,14 +1,14 @@
-import useTranslation from '@/shared/hooks/useTranslation';
-import { ServiceConfigStore, ServiceContainer, ServiceFactory } from '@domain';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { ServiceConfigStore, ServiceContainer, ServiceFactory } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
 describe('App', () => {
   it('should show the menu when toggled', async () => {
     const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect;
-    Element.prototype.getBoundingClientRect = () => ({ width: 100 } as DOMRect);
+    Element.prototype.getBoundingClientRect = () => ({ width: 100 }) as DOMRect;
 
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.openMenu();
 
@@ -21,9 +21,9 @@ describe('App', () => {
 
   it('should toggle the menu via hotkey', async () => {
     const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect;
-    Element.prototype.getBoundingClientRect = () => ({ width: 100 } as DOMRect);
+    Element.prototype.getBoundingClientRect = () => ({ width: 100 }) as DOMRect;
 
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.hotkey('toggleMenu');
 
@@ -33,7 +33,7 @@ describe('App', () => {
   });
 
   it('should not toggle the menu if the hotkey is not set', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       hotkeys: {
         toggleMenu: undefined,
       },
@@ -46,7 +46,7 @@ describe('App', () => {
   });
 
   it('should reset to the select task state when the home button is clicked', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.openMenu();
@@ -59,7 +59,7 @@ describe('App', () => {
   it('should prompt the user for confirmation if resetting during an active task (if enabled)', async () => {
     const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: {
         showMessageBox: mockShowMessageBox,
       },
@@ -86,7 +86,7 @@ describe('App', () => {
   it('should not reset the state if the cancel task dialog is cancelled', async () => {
     const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 1 });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: {
         showMessageBox: mockShowMessageBox,
       },
@@ -105,7 +105,7 @@ describe('App', () => {
   it('should not prompt the user for confirmation if resetting during an active task (if disabled)', async () => {
     const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: {
         showMessageBox: mockShowMessageBox,
       },
@@ -128,7 +128,7 @@ describe('App', () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 0 });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: {
         showMessageBox: mockShowMessageBox,
       },
@@ -154,7 +154,7 @@ describe('App', () => {
   });
 
   it('should reset to the select task state via hotkey', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('routeHome');
@@ -162,16 +162,18 @@ describe('App', () => {
     expect(screen.getByText('Pick a task')).toBeInTheDocument();
   });
 
-  it('should prompt the user to select a service if not set', () => {
-    mountApp({ serviceId: null });
+  it('should prompt the user to select a service if not set', async () => {
+    renderApp({ serviceId: null });
 
-    expect(screen.getByText(/select a service/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/select a service/i)).toBeInTheDocument();
+    });
   });
 
   it('should initialize the service when selected', async () => {
     const InitializingView = () => <>Loading service</>;
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           InitializingView,
@@ -186,7 +188,7 @@ describe('App', () => {
   });
 
   it('should register the service config if it exists', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       mockService: {
         config: {
           defaults: {
@@ -229,12 +231,12 @@ describe('App', () => {
     });
 
     const InitializingView = () => {
-      const { t } = useTranslation();
+      const t = useTranslate();
 
       return <>{t('service:helloWorld')}</>;
     };
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: { getTranslations },
       mockService: {
         service: {
@@ -265,7 +267,7 @@ describe('App', () => {
     fooService.displayName = 'Foo';
     fooService.id = 'foo';
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: {
         getTranslations,
       },
@@ -281,11 +283,11 @@ describe('App', () => {
   });
 
   it('should load a service container if provided', async () => {
-    const Container: ServiceContainer = ({ children }) => (
-      <div data-testid="container">{children}</div>
+    const Container: ServiceContainer = props => (
+      <div data-testid="container">{props.children}</div>
     );
 
-    mountApp({
+    renderApp({
       mockService: {
         service: {
           Container,
@@ -299,7 +301,7 @@ describe('App', () => {
   });
 
   it('should prompt the user to confirm before quitting the app', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         warnBeforeAppQuit: true,
       },
@@ -319,7 +321,7 @@ describe('App', () => {
   });
 
   it('should not prompt the user to confirm before quitting the app', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         warnBeforeAppQuit: false,
       },

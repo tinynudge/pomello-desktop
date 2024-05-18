@@ -1,12 +1,28 @@
-import { LogMessage, Logger } from '@domain';
+import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
+import { LogMessage, Logger } from '@pomello-desktop/domain';
 
-const createLogger = (): Logger => {
-  return {
-    debug: (message: LogMessage) => window.app.logMessage('debug', message),
-    error: (message: LogMessage) => window.app.logMessage('error', message),
-    info: (message: LogMessage) => window.app.logMessage('info', message),
-    warn: (message: LogMessage) => window.app.logMessage('warn', message),
-  };
+const logError = (message: LogMessage, error?: unknown) => {
+  const formattedError =
+    error instanceof SerializableHttpError
+      ? error.toJson()
+      : error instanceof Error
+        ? JSON.stringify({
+            message: error.message,
+            stack: error.stack,
+          })
+        : error;
+
+  window.app.logMessage('error', {
+    message,
+    error: formattedError,
+  });
 };
 
-export default createLogger;
+export const createLogger = (): Logger => {
+  return {
+    debug: window.app.logMessage.bind(null, 'debug'),
+    error: logError,
+    info: window.app.logMessage.bind(null, 'info'),
+    warn: window.app.logMessage.bind(null, 'warn'),
+  };
+};

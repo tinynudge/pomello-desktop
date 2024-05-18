@@ -1,5 +1,5 @@
 import runtime from '@/runtime';
-import { AppEvent } from '@domain';
+import { AppEvent } from '@pomello-desktop/domain';
 
 const hideSelectWindow = () => {
   const selectWindow = runtime.windowManager.findOrFailWindow('select');

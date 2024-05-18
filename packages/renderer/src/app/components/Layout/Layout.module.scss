@@ -54,7 +54,7 @@ button {
   color: var(--menu-toggle-content-default);
 
   &:hover,
-  &:focus {
+  &:focus-visible {
     background-color: var(--app-button-background-hover);
     color: var(--menu-toggle-content-hover);
   }

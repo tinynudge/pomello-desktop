@@ -2,7 +2,7 @@ import { TrelloCardAction } from '../domain';
 
 type DeepPartial<T> = Partial<{ [P in keyof T]: DeepPartial<T[P]> }>;
 
-const generateTrelloCardAction = (
+export const generateTrelloCardAction = (
   values: DeepPartial<TrelloCardAction> = {}
 ): TrelloCardAction => ({
   id: values.id ?? 'TRELLO_ACTION_ID',
@@ -32,5 +32,3 @@ const generateTrelloCardAction = (
     ...values.memberCreator,
   },
 });
-
-export default generateTrelloCardAction;

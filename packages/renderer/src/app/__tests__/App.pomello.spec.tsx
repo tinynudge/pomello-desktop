@@ -1,10 +1,11 @@
-import { ServiceFactory } from '@domain';
-import { SpyInstance, vi } from 'vitest';
-import generatePomelloUser from '../__fixtures__/generatePomelloUser';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import { ServiceFactory } from '@pomello-desktop/domain';
+import { HttpResponse, delay } from 'msw';
+import { MockInstance, vi } from 'vitest';
+import { generatePomelloUser } from '../__fixtures__/generatePomelloUser';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
 describe('App - Pomello', () => {
-  let mockedConsole: SpyInstance;
+  let mockedConsole: MockInstance;
 
   beforeAll(() => {
     mockedConsole = vi.spyOn(console, 'error');
@@ -16,7 +17,7 @@ describe('App - Pomello', () => {
   });
 
   it('should prompt the user to create an account for the first time', async () => {
-    mountApp({
+    renderApp({
       pomelloConfig: {
         didPromptRegistration: false,
         token: undefined,
@@ -31,7 +32,7 @@ describe('App - Pomello', () => {
   });
 
   it('should not prompt the user to create an account if they already have a token', async () => {
-    mountApp({
+    renderApp({
       pomelloConfig: {
         didPromptRegistration: false,
         token: 'MY_POMELLO_TOKEN',
@@ -44,7 +45,7 @@ describe('App - Pomello', () => {
   });
 
   it('should open the auth window if they want to create an account', async () => {
-    const { appApi, userEvent } = mountApp({
+    const { appApi, userEvent } = renderApp({
       pomelloConfig: {
         didPromptRegistration: false,
         token: undefined,
@@ -59,7 +60,7 @@ describe('App - Pomello', () => {
   });
 
   it('should navigate to the select task view if they decline to register an account', async () => {
-    const { appApi, userEvent } = mountApp({
+    const { appApi, userEvent } = renderApp({
       pomelloConfig: {
         didPromptRegistration: false,
         token: undefined,
@@ -77,7 +78,7 @@ describe('App - Pomello', () => {
   });
 
   it('should show a login prompt if they have no token and checkPomelloStatus is enabled', async () => {
-    const { appApi } = mountApp({
+    const { appApi } = renderApp({
       pomelloConfig: {
         token: undefined,
       },
@@ -100,9 +101,11 @@ describe('App - Pomello', () => {
   });
 
   it('should show a login prompt if they are logged out and checkPomelloStatus is enabled', async () => {
-    const { appApi } = mountApp({
+    const { appApi } = renderApp({
       pomelloApi: {
-        fetchUser: (_request, response, context) => response(context.status(401)),
+        fetchUser: function () {
+          throw new HttpResponse('', { status: 401 });
+        },
       },
       pomelloConfig: {
         token: undefined,
@@ -128,12 +131,14 @@ describe('App - Pomello', () => {
   it('should set checkPomelloStatus to false if disabled in the dialog', async () => {
     const mockShowMessageBox = vi.fn().mockResolvedValue({ response: 2 });
 
-    const { appApi } = mountApp({
+    const { appApi } = renderApp({
       appApi: {
         showMessageBox: mockShowMessageBox,
       },
       pomelloApi: {
-        fetchUser: (_request, response, context) => response(context.status(401)),
+        fetchUser: () => {
+          throw new HttpResponse('', { status: 401 });
+        },
       },
       pomelloConfig: {
         token: undefined,
@@ -152,9 +157,11 @@ describe('App - Pomello', () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);
 
-    mountApp({
+    renderApp({
       pomelloApi: {
-        fetchUser: (_request, response, context) => response(context.status(500)),
+        fetchUser: () => {
+          throw new HttpResponse('', { status: 500 });
+        },
       },
     });
 
@@ -164,11 +171,11 @@ describe('App - Pomello', () => {
   });
 
   it('should refetch the tasks if the user changes to premium account', async () => {
-    const fooService: ServiceFactory = ({ getUser }) => {
+    const fooService: ServiceFactory = ({ user }) => {
       return {
         displayName: fooService.displayName,
         fetchTasks: async () => {
-          const isPremium = getUser()?.type === 'premium';
+          const isPremium = user?.type === 'premium';
 
           return isPremium
             ? [{ id: 'premium', label: 'Premium item' }]
@@ -180,20 +187,20 @@ describe('App - Pomello', () => {
     fooService.displayName = 'Foo';
     fooService.id = 'foo';
 
-    const { appApi } = mountApp({
+    const { appApi } = renderApp({
       createServiceRegistry: () => ({
         [fooService.id]: fooService,
       }),
       pomelloApi: {
-        fetchUser: (_request, response, context) =>
-          response(
-            context.delay(50),
-            context.json(
-              generatePomelloUser({
-                type: 'premium',
-              })
-            )
-          ),
+        fetchUser: async () => {
+          await delay(50);
+
+          return HttpResponse.json(
+            generatePomelloUser({
+              type: 'premium',
+            })
+          );
+        },
       },
       pomelloConfig: {
         user: {
@@ -220,11 +227,11 @@ describe('App - Pomello', () => {
   });
 
   it('should refetch the tasks if the user changes to free account', async () => {
-    const fooService: ServiceFactory = ({ getUser }) => {
+    const fooService: ServiceFactory = ({ user }) => {
       return {
         displayName: fooService.displayName,
         fetchTasks: async () => {
-          const isPremium = getUser()?.type === 'premium';
+          const isPremium = user?.type === 'premium';
 
           return isPremium
             ? [{ id: 'premium', label: 'Premium item' }]
@@ -236,20 +243,20 @@ describe('App - Pomello', () => {
     fooService.displayName = 'Foo';
     fooService.id = 'foo';
 
-    const { appApi } = mountApp({
+    const { appApi } = renderApp({
       createServiceRegistry: () => ({
         [fooService.id]: fooService,
       }),
       pomelloApi: {
-        fetchUser: (_request, response, context) =>
-          response(
-            context.delay(50),
-            context.json(
-              generatePomelloUser({
-                type: 'free',
-              })
-            )
-          ),
+        fetchUser: async () => {
+          await delay(50);
+
+          return HttpResponse.json(
+            generatePomelloUser({
+              type: 'free',
+            })
+          );
+        },
       },
       pomelloConfig: {
         user: {

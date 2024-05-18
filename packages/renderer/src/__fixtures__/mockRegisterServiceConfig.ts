@@ -1,7 +1,11 @@
-import { ServiceConfigActions, ServiceConfigChangeCallback, StoreContents } from '@domain';
+import {
+  ServiceConfigActions,
+  ServiceConfigChangeCallback,
+  StoreContents,
+} from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 
-const mockRegisterServiceConfig = <TConfig = StoreContents>(
+export const mockRegisterServiceConfig = <TConfig = StoreContents>(
   _serviceId: string,
   initialConfig: TConfig
 ): ServiceConfigActions<TConfig> => {
@@ -41,5 +45,3 @@ const mockRegisterServiceConfig = <TConfig = StoreContents>(
     unset,
   };
 };
-
-export default mockRegisterServiceConfig;

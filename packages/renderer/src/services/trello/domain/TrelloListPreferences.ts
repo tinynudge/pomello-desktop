@@ -1,5 +1,5 @@
 import { TrelloPreferences } from './TrelloPreferences';
 
-export interface TrelloListPreferences extends TrelloPreferences {
+export type TrelloListPreferences = TrelloPreferences & {
   doneList?: string;
-}
+};

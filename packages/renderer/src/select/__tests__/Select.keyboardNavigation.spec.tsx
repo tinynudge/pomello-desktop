@@ -1,8 +1,8 @@
-import mountSelect, { screen } from '../__fixtures__/mountSelect';
+import { renderSelect, screen } from '../__fixtures__/renderSelect';
 
 describe('Select - Keyboard Navigation', () => {
   it('should select the next option on arrow down keys', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -50,7 +50,7 @@ describe('Select - Keyboard Navigation', () => {
   });
 
   it('should select the previous option on arrow up keys', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -88,7 +88,9 @@ describe('Select - Keyboard Navigation', () => {
       },
     });
 
-    await userEvent.hover(screen.getByRole('option', { name: 'Group Three - One' }));
+    const lastOption = await screen.findByRole('option', { name: 'Group Three - One' });
+
+    await userEvent.hover(lastOption);
 
     const optionIds = ['three', 'group-two-two', 'group-two-one', 'two', 'one'];
 
@@ -100,7 +102,7 @@ describe('Select - Keyboard Navigation', () => {
   });
 
   it('should select the next option on tab keys', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -120,7 +122,7 @@ describe('Select - Keyboard Navigation', () => {
   });
 
   it('should select the first open on the home key', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -130,14 +132,16 @@ describe('Select - Keyboard Navigation', () => {
       },
     });
 
-    await userEvent.hover(screen.getByRole('option', { name: 'Three' }));
+    const lastOption = await screen.findByRole('option', { name: 'Three' });
+
+    await userEvent.hover(lastOption);
     await userEvent.type(screen.getByRole('combobox'), '{Home}');
 
     expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'one');
   });
 
   it('should select the last open on the end key', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -153,7 +157,7 @@ describe('Select - Keyboard Navigation', () => {
   });
 
   it('should not throw an error on keyboard navigation when there are no options', async () => {
-    const { userEvent } = mountSelect({});
+    const { userEvent } = renderSelect({});
 
     await userEvent.type(screen.getByRole('combobox'), '{Home}');
 

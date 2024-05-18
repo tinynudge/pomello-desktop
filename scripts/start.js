@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const { createServer, build, createLogger } = require('vite');
-const { spawn } = require('child_process');
-const electron = require('electron');
+/*eslint-env node*/
+import { spawn } from 'child_process';
+import electron from 'electron';
+import { build, createLogger, createServer } from 'vite';
 
 const LOG_LEVEL = 'info';
 

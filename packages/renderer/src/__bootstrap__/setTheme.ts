@@ -1,6 +1,6 @@
-import { ThemeCss } from '@domain';
+import { ThemeCss } from '@pomello-desktop/domain';
 
-const setTheme = (themeCss: ThemeCss): void => {
+export const setTheme = (themeCss: ThemeCss): void => {
   document.documentElement.style.setProperty('color-scheme', themeCss.theme);
   document.body.style.cssText = themeCss.css;
 
@@ -9,5 +9,3 @@ const setTheme = (themeCss: ThemeCss): void => {
     document.body.style.cssText = css;
   });
 };
-
-export default setTheme;

@@ -1,6 +1,6 @@
 import { TrelloLogTime } from './TrelloLogTime';
 
-export interface TrelloLog {
+export type TrelloLog = {
   cardId: string;
   entries: string[];
   footer: string;
@@ -8,4 +8,4 @@ export interface TrelloLog {
   id?: string;
   time: TrelloLogTime;
   timeSpent: string;
-}
+};

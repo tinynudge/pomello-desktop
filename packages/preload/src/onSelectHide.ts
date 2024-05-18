@@ -1,9 +1,9 @@
-import { AppEvent, RemoveListenerFunction } from '@domain';
+import { AppEvent, Unsubscribe } from '@pomello-desktop/domain';
 import { ipcRenderer } from 'electron';
 
 type SelectHideListener = () => void;
 
-const onSelectHide = (callback: SelectHideListener): RemoveListenerFunction => {
+const onSelectHide = (callback: SelectHideListener): Unsubscribe => {
   const handler = () => callback();
 
   ipcRenderer.on(AppEvent.HideSelect, handler);

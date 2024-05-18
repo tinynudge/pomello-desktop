@@ -9,16 +9,15 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "types": ["node"],
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "types": ["node", "vitest/globals"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@domain": ["../domain"]
+      "@/*": ["./src/*"]
     },
     "lib": ["ESNext", "dom", "dom.iterable"]
   },
-
   "include": ["**/*.ts", "**/*.tsx", "../../types/**/*.d.ts", "../preload/contracts.d.ts"],
   "exclude": ["**/*.spec.ts", "**/*.test.ts"]
 }

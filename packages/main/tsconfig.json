@@ -12,8 +12,7 @@
     "target": "esnext",
     "types": ["node"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@domain": ["../domain"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["**/*.ts", "../../types/**/*.d.ts"],

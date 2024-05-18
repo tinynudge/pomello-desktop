@@ -1,5 +1,5 @@
 import runtime from '@/runtime';
-import { Settings, Store } from '@domain';
+import { Settings, Store } from '@pomello-desktop/domain';
 
 const getSettings = (): Store<Settings> =>
   runtime.storeManager.registerStore<Settings>({

@@ -1,22 +1,31 @@
-import generatePomelloUser from '@/app/__fixtures__/generatePomelloUser';
-import createPomelloApi from '@/shared/helpers/createPomelloApi';
+import { generatePomelloUser } from '@/app/__fixtures__/generatePomelloUser';
+import { createPomelloApi } from '@/shared/helpers/createPomelloApi';
 import {
   PomelloApi,
   PomelloApiResponse,
-  PomelloApiResponses,
   PomelloServiceConfig,
   PomelloTrackingEvent,
   PomelloUser,
   ServiceConfig,
-} from '@domain';
-import { rest } from 'msw';
+} from '@pomello-desktop/domain';
+import { DefaultBodyType, HttpResponse, HttpResponseResolver, PathParams, http } from 'msw';
 import { v4 as uuid } from 'uuid';
 import { Mocked, vi } from 'vitest';
-import { CreatedPomelloTrackingEvent } from '../../../domain/CreatedPomelloTrackingEvent';
-import createRestResolver from './createRestResolver';
-import mockServer from './mockServer';
+import { CreatedPomelloTrackingEvent } from '../../../domain/src/CreatedPomelloTrackingEvent';
+import { createHttpResponse } from './createHttpResponse';
+import { mockServer } from './mockServer';
 
-const createMockPomelloApi = (
+export type PomelloApiResponses = {
+  [K in keyof PomelloApi]:
+    | PomelloApiResponse<Awaited<ReturnType<PomelloApi[K]>>>
+    | HttpResponseResolver<
+        PathParams,
+        DefaultBodyType,
+        PomelloApiResponse<Awaited<ReturnType<PomelloApi[K]>>>
+      >;
+};
+
+export const createMockPomelloApi = (
   pomelloConfig: ServiceConfig<PomelloServiceConfig>,
   pomelloApiResponseOverrides?: Partial<PomelloApiResponses>
 ) => {
@@ -29,30 +38,30 @@ const createMockPomelloApi = (
   // Create a default logEvent response that adds a unique ID to the event that
   // was passed in to the request.
   const pomelloApiResponses: Partial<PomelloApiResponses> = {
-    logEvent: async (request, response, context) => {
-      const event = await request.json<PomelloTrackingEvent>();
+    logEvent: async ({ request }) => {
+      const event = (await request.json()) as PomelloTrackingEvent;
 
       const data = {
         ...event,
         id: uuid(),
       };
 
-      return response(context.json({ data }));
+      return HttpResponse.json({ data });
     },
     ...pomelloApiResponseOverrides,
   };
 
   mockServer.use(
-    rest.get(
+    http.get(
       `${import.meta.env.VITE_APP_URL}/api/users`,
-      createRestResolver<PomelloApiResponse<PomelloUser>>(
+      createHttpResponse<PomelloApiResponse<PomelloUser>>(
         generatePomelloUser(),
         pomelloApiResponses.fetchUser
       )
     ),
-    rest.post(
+    http.post(
       `${import.meta.env.VITE_APP_URL}/api/events`,
-      createRestResolver<PomelloApiResponse<CreatedPomelloTrackingEvent>>(
+      createHttpResponse<PomelloApiResponse<CreatedPomelloTrackingEvent>>(
         { data: {} as CreatedPomelloTrackingEvent },
         pomelloApiResponses.logEvent
       )
@@ -61,5 +70,3 @@ const createMockPomelloApi = (
 
   return pomelloApi;
 };
-
-export default createMockPomelloApi;

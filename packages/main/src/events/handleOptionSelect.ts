@@ -1,6 +1,6 @@
 import hideSelectWindow from '@/helpers/hideSelectWindow';
 import runtime from '@/runtime';
-import { AppEvent } from '@domain';
+import { AppEvent } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleOptionSelect = async (_event: IpcMainInvokeEvent, optionId: string): Promise<void> => {

@@ -1,1 +1,1 @@
-export { default } from './createLogBuilder';
+export * from './createLogBuilder';

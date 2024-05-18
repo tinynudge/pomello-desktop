@@ -1,34 +1,32 @@
-import useHotkeys from '@/app/hooks/useHotkeys';
-import useShowAddNoteView from '@/app/hooks/useShowAddNoteView';
-import createHintTitle from '@/shared/helpers/createHintTitle';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, useEffect } from 'react';
-import DialAction from './DialAction';
+import { useHotkeys } from '@/app/context/HotkeysContext';
+import { useShowAddNoteView } from '@/app/hooks/useShowAddNoteView';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { createHintTitle } from '@/shared/helpers/createHintTitle';
+import { Component } from 'solid-js';
+import { DialAction } from './DialAction';
 import { DialActionProps } from './DialActionProps';
-import { ReactComponent as PencilIcon } from './assets/pencil.svg';
+import PencilIcon from './assets/pencil.svg';
 
-const AddNoteDialAction: FC<DialActionProps> = ({ className, isVisible, onClick }) => {
+export const AddNoteDialAction: Component<DialActionProps> = props => {
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
   const showAddNoteView = useShowAddNoteView();
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    return registerHotkeys({
-      addNote: () => showAddNoteView('generalNote'),
-      externalDistraction: () => showAddNoteView('externalDistraction'),
-      internalDistraction: () => showAddNoteView('internalDistraction'),
-    });
-  }, [registerHotkeys, showAddNoteView]);
+  const t = useTranslate();
 
   const handleActionClick = () => {
     showAddNoteView('generalNote');
-    onClick();
+    props.onClick();
   };
+
+  registerHotkeys({
+    addNote: () => showAddNoteView('generalNote'),
+    externalDistraction: () => showAddNoteView('externalDistraction'),
+    internalDistraction: () => showAddNoteView('internalDistraction'),
+  });
 
   return (
     <DialAction
-      className={className}
-      isVisible={isVisible}
+      class={props.class}
+      isVisible={props.isVisible}
       label={t('addNoteLabel')}
       onClick={handleActionClick}
       title={createHintTitle(t, 'addNoteLabel', getHotkeyLabel('addNote'))}
@@ -37,5 +35,3 @@ const AddNoteDialAction: FC<DialActionProps> = ({ className, isVisible, onClick 
     </DialAction>
   );
 };
-
-export default AddNoteDialAction;

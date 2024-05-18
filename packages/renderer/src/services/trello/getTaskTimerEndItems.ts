@@ -1,10 +1,10 @@
-import { TaskTimerEndItems } from '@domain';
-import createMoveCardList from './helpers/createMoveCardList';
-import findOrFailTask from './helpers/findOrFailTask';
-import isCheckItem from './helpers/isCheckItem';
-import { TrelloRuntime } from './TrelloRuntime';
+import { TaskTimerEndItems } from '@pomello-desktop/domain';
+import { TrelloRuntime } from './domain';
+import { createMoveCardList } from './helpers/createMoveCardList';
+import { findOrFailTask } from './helpers/findOrFailTask';
+import { isCheckItem } from './helpers/isCheckItem';
 
-const getTaskTimerEndItems = (
+export const getTaskTimerEndItems = (
   { cache, translate }: TrelloRuntime,
   currentTaskId: string
 ): TaskTimerEndItems => {
@@ -24,5 +24,3 @@ const getTaskTimerEndItems = (
 
   return createMoveCardList(translate, cache);
 };
-
-export default getTaskTimerEndItems;

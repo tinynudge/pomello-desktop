@@ -1,9 +1,9 @@
-import { AppEvent, RemoveListenerFunction } from '@domain';
-import { ipcRenderer, IpcRendererEvent } from 'electron';
+import { AppEvent, Unsubscribe } from '@pomello-desktop/domain';
+import { IpcRendererEvent, ipcRenderer } from 'electron';
 
 type SelectOptionListener = (optionId: string) => void;
 
-const onSelectChange = (callback: SelectOptionListener): RemoveListenerFunction => {
+const onSelectChange = (callback: SelectOptionListener): Unsubscribe => {
   const handler = (_event: IpcRendererEvent, optionId: string) => callback(optionId);
 
   ipcRenderer.on(AppEvent.SelectChange, handler);

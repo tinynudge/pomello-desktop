@@ -1,5 +1,5 @@
 import runtime from '@/runtime';
-import { Services } from '@domain';
+import { Services } from '@pomello-desktop/domain';
 
 const handleGetActiveServiceId = (): string | undefined => {
   const services = runtime.storeManager.registerStore<Services>({

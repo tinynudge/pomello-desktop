@@ -1,49 +1,56 @@
-import { selectIsTimerVisible, selectOvertime } from '@/app/appSlice';
+import { useStore } from '@/app/context/StoreContext';
 import cc from 'classcat';
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { Component, Show, createMemo } from 'solid-js';
 import styles from './Overtime.module.scss';
 
-const Overtime: FC = () => {
-  const isTimerVisible = useSelector(selectIsTimerVisible);
-  const overtime = useSelector(selectOvertime);
+export const Overtime: Component = () => {
+  const store = useStore();
 
-  if (!overtime) {
-    return null;
-  }
+  const getTime = createMemo(() => {
+    const overtime = store.pomelloState.overtime;
 
-  const hours = Math.floor(overtime.time / 3600);
-  const minutes = Math.floor((overtime.time - hours * 3600) / 60);
-  const seconds = overtime.time % 60;
+    if (!overtime) {
+      return;
+    }
 
-  const timeUnits: string[] = [];
+    const hours = Math.floor(overtime.time / 3600);
+    const minutes = Math.floor((overtime.time - hours * 3600) / 60);
+    const seconds = overtime.time % 60;
 
-  if (hours) {
-    timeUnits.push(`${hours}`);
-  }
+    const timeUnits: string[] = [];
 
-  if (hours || minutes) {
-    timeUnits.push(hours && minutes < 10 ? `0${minutes}` : `${minutes}`);
-  }
+    if (hours) {
+      timeUnits.push(`${hours}`);
+    }
 
-  timeUnits.push(seconds < 10 ? `0${seconds}` : `${seconds}`);
+    if (hours || minutes) {
+      timeUnits.push(hours && minutes < 10 ? `0${minutes}` : `${minutes}`);
+    }
 
-  let time = timeUnits.join(':');
-  if (timeUnits.length === 1) {
-    time = `:${time}`;
-  }
+    timeUnits.push(seconds < 10 ? `0${seconds}` : `${seconds}`);
+
+    let time = timeUnits.join(':');
+
+    if (timeUnits.length === 1) {
+      time = `:${time}`;
+    }
+
+    return time;
+  });
 
   return (
-    <div
-      className={cc({
-        [styles.overtime]: true,
-        [styles.dialVisible]: isTimerVisible,
-      })}
-      data-testid="overtime"
-    >
-      {time}
-    </div>
+    <Show when={getTime()}>
+      {getTime => (
+        <div
+          class={cc({
+            [styles.overtime]: true,
+            [styles.dialVisible]: Boolean(store.pomelloState.timer),
+          })}
+          data-testid="overtime"
+        >
+          {getTime()}
+        </div>
+      )}
+    </Show>
   );
 };
-
-export default Overtime;

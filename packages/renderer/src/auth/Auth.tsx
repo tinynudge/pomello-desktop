@@ -1,45 +1,39 @@
-import { ServiceProvider } from '@/shared/context/ServiceContext';
-import useInitializeService from '@/shared/hooks/useInitializeService';
-import { AuthWindowType, Logger, ServiceRegistry } from '@domain';
-import { FC, useState } from 'react';
+import { useMaybeService } from '@/shared/context/ServiceContext';
+import { AuthWindowType } from '@pomello-desktop/domain';
+import { Component, Match, Show, Switch, createSignal } from 'solid-js';
+import { Dynamic } from 'solid-js/web';
 import styles from './Auth.module.scss';
-import PomelloAuthView from './components/PomelloAuthView';
-import SuccessMessage from './components/SuccessMessage';
-import AuthViewProvider from './context/AuthViewProvider';
+import { PomelloAuthView } from './components/PomelloAuthView';
+import { SuccessMessage } from './components/SuccessMessage';
+import { AuthViewProvider } from './context/AuthViewProvider';
 
 interface AuthProps {
   authWindow: AuthWindowType;
-  logger: Logger;
-  services: ServiceRegistry;
 }
 
-const Auth: FC<AuthProps> = ({ authWindow, logger, services }) => {
-  const [didSaveToken, setDidSaveToken] = useState(false);
+export const Auth: Component<AuthProps> = props => {
+  const getService = useMaybeService();
 
-  const serviceId = authWindow.type === 'service' ? authWindow.serviceId : undefined;
-  const { activeService } = useInitializeService({ logger, services, serviceId });
+  const [getDidSaveToken, setDidSaveToken] = createSignal(false);
 
   const handleTokenSave = () => {
     setDidSaveToken(true);
   };
 
   return (
-    <div className={styles.container}>
-      {!didSaveToken ? (
-        <AuthViewProvider onTokenSave={handleTokenSave}>
-          {authWindow.type === 'pomello' ? (
-            <PomelloAuthView action={authWindow.action} />
-          ) : activeService?.service?.AuthView ? (
-            <ServiceProvider service={activeService}>
-              <activeService.service.AuthView />
-            </ServiceProvider>
-          ) : null}
+    <div class={styles.container}>
+      <Show when={!getDidSaveToken()} fallback={<SuccessMessage />}>
+        <AuthViewProvider defaultOnTokenSave={handleTokenSave}>
+          <Switch>
+            <Match when={props.authWindow.type === 'pomello' && props.authWindow}>
+              {getAuthWindow => <PomelloAuthView action={getAuthWindow().action} />}
+            </Match>
+            <Match when={getService()?.AuthView}>
+              {getAuthView => <Dynamic component={getAuthView()} />}
+            </Match>
+          </Switch>
         </AuthViewProvider>
-      ) : (
-        <SuccessMessage />
-      )}
+      </Show>
     </div>
   );
 };
-
-export default Auth;

@@ -1,46 +1,40 @@
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, MouseEvent, ReactNode } from 'react';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { JSX, ParentComponent, Show } from 'solid-js';
 import styles from './AuthViewInstructions.module.scss';
 
 interface AuthViewInstructionsProps {
   authUrl?: string;
-  children?: ReactNode;
   heading?: string;
-  logo?: ReactNode;
+  logo?: JSX.Element;
 }
 
-const AuthViewInstructions: FC<AuthViewInstructionsProps> = ({
-  authUrl,
-  children,
-  heading,
-  logo,
-}) => {
-  const { t } = useTranslation();
+export const AuthViewInstructions: ParentComponent<AuthViewInstructionsProps> = props => {
+  const t = useTranslate();
 
-  const handleLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  const handleLinkClick: JSX.EventHandler<HTMLAnchorElement, MouseEvent> = event => {
     event.preventDefault();
     window.app.openUrl(event.currentTarget.href);
   };
 
   return (
-    <div className={styles.instructions}>
-      {typeof logo === 'string' ? (
-        <img className={styles.logo} src={logo} alt="" width={128} height={128} />
-      ) : (
-        <>{logo}</>
-      )}
-      {heading && <h1 className={styles.heading}>{heading}</h1>}
-      {authUrl && (
-        <>
-          <p>{t('authInstructions')}</p>
-          <a href={authUrl} onClick={handleLinkClick}>
-            {authUrl}
-          </a>
-        </>
-      )}
-      {children}
+    <div class={styles.instructions}>
+      <Show fallback={props.logo} when={typeof props.logo === 'string' && props.logo}>
+        {logoSrc => <img class={styles.logo} src={logoSrc()} alt="" width={128} height={128} />}
+      </Show>
+      <Show when={props.heading}>
+        {getHeading => <h1 class={styles.heading}>{getHeading()}</h1>}
+      </Show>
+      <Show when={props.authUrl}>
+        {getAuthUrl => (
+          <>
+            <p>{t('authInstructions')}</p>
+            <a href={getAuthUrl()} onClick={handleLinkClick}>
+              {getAuthUrl()}
+            </a>
+          </>
+        )}
+      </Show>
+      {props.children}
     </div>
   );
 };
-
-export default AuthViewInstructions;

@@ -1,5 +1,5 @@
 import getThemeCss from '@/helpers/getThemeCss';
-import { ThemeCss } from '@domain';
+import { ThemeCss } from '@pomello-desktop/domain';
 
 const handleGetThemeCss = async (): Promise<ThemeCss> => getThemeCss();
 

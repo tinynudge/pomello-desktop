@@ -1,11 +1,11 @@
-import incrementTaskPomodoroCount from '@/shared/helpers/incrementTaskNamePomodoros';
-import updateCard from '../api/updateCard';
-import updateCheckItem from '../api/updateCheckItem';
-import { TrelloRuntime } from '../TrelloRuntime';
-import findOrFailTask from './findOrFailTask';
-import isCheckItem from './isCheckItem';
+import { incrementTaskNamePomodoros } from '@/shared/helpers/incrementTaskNamePomodoros';
+import { updateCard } from '../api/updateCard';
+import { updateCheckItem } from '../api/updateCheckItem';
+import { TrelloRuntime } from '../domain';
+import { findOrFailTask } from './findOrFailTask';
+import { isCheckItem } from './isCheckItem';
 
-const updateTaskNamePomodoros = (
+export const updateTaskNamePomodoros = (
   runtime: TrelloRuntime,
   taskId: string,
   timer: {
@@ -14,12 +14,13 @@ const updateTaskNamePomodoros = (
     totalTime: number;
   }
 ): void => {
-  const { cache, getSettings } = runtime;
-  const { titleFormat, titleMarker } = getSettings();
+  const { cache, settings } = runtime;
+  const titleFormat = settings.titleFormat;
+  const titleMarker = settings.titleMarker;
 
   const task = findOrFailTask(cache, taskId);
 
-  const updatedLabel = incrementTaskPomodoroCount({
+  const updatedLabel = incrementTaskNamePomodoros({
     taskName: task.name,
     marker: titleMarker,
     mode: titleFormat,
@@ -45,5 +46,3 @@ const updateTaskNamePomodoros = (
     },
   });
 };
-
-export default updateTaskNamePomodoros;

@@ -1,5 +1,5 @@
 import runtime from '@/runtime';
-import { AuthWindowType } from '@domain';
+import { AuthWindowType } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 import { join } from 'path';
 

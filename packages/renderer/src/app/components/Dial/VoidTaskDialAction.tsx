@@ -1,28 +1,28 @@
-import useHotkeys from '@/app/hooks/useHotkeys';
-import usePomelloActions from '@/app/hooks/usePomelloActions';
-import createHintTitle from '@/shared/helpers/createHintTitle';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, useEffect } from 'react';
-import DialAction from './DialAction';
+import { useHotkeys } from '@/app/context/HotkeysContext';
+import { usePomelloActions } from '@/app/context/PomelloContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { createHintTitle } from '@/shared/helpers/createHintTitle';
+import { Component } from 'solid-js';
+import { DialAction } from './DialAction';
 import { DialActionProps } from './DialActionProps';
-import { ReactComponent as CloseIcon } from './assets/close.svg';
+import CloseIcon from './assets/close.svg';
 
-const VoidTaskDialAction: FC<DialActionProps> = ({ className, isVisible, onClick }) => {
+export const VoidTaskDialAction: Component<DialActionProps> = props => {
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
   const { voidTask } = usePomelloActions();
-  const { t } = useTranslation();
-
-  useEffect(() => registerHotkeys({ voidTask }), [registerHotkeys, voidTask]);
+  const t = useTranslate();
 
   const handleActionClick = () => {
     voidTask();
-    onClick();
+    props.onClick();
   };
+
+  registerHotkeys({ voidTask });
 
   return (
     <DialAction
-      className={className}
-      isVisible={isVisible}
+      class={props.class}
+      isVisible={props.isVisible}
       label={t('voidTaskLabel')}
       onClick={handleActionClick}
       title={createHintTitle(t, 'voidTaskLabel', getHotkeyLabel('voidTask'))}
@@ -31,5 +31,3 @@ const VoidTaskDialAction: FC<DialActionProps> = ({ className, isVisible, onClick
     </DialAction>
   );
 };
-
-export default VoidTaskDialAction;

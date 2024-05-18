@@ -1,4 +1,4 @@
-const getFraction = (decimal: number): string | undefined => {
+export const getFraction = (decimal: number): string | undefined => {
   const decimals: Record<number, string | undefined> = {
     0.125: '⅛',
     0.25: '¼',
@@ -11,5 +11,3 @@ const getFraction = (decimal: number): string | undefined => {
 
   return decimals[decimal];
 };
-
-export default getFraction;

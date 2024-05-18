@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
-import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
-import generateTrelloList from '../__fixtures__/generateTrelloList';
-import generateTrelloMember from '../__fixtures__/generateTrelloMember';
-import mountTrelloService, { screen, waitFor } from '../__fixtures__/mountTrelloService';
+import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
+import { generateTrelloList } from '../__fixtures__/generateTrelloList';
+import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
+import { screen, waitFor, renderTrelloService } from '../__fixtures__/renderTrelloService';
 
 describe('Trello service', () => {
   it('should show the login view if no token is present', async () => {
-    await mountTrelloService({
+    await renderTrelloService({
       config: {
         token: undefined,
       },
@@ -19,7 +19,7 @@ describe('Trello service', () => {
   });
 
   it('should show the login view if unable to decrypt the token', async () => {
-    await mountTrelloService({
+    await renderTrelloService({
       appApi: {
         decryptValue: () => null,
       },
@@ -35,7 +35,7 @@ describe('Trello service', () => {
   });
 
   it('should prompt the user to select a list if there is no current list in the config', async () => {
-    await mountTrelloService({
+    await renderTrelloService({
       config: {
         currentList: undefined,
         token: 'OPEN_SESAME',
@@ -48,7 +48,7 @@ describe('Trello service', () => {
   });
 
   it("should show the user's lists", async () => {
-    const { appApi } = await mountTrelloService({
+    const { appApi } = await renderTrelloService({
       config: {
         currentList: undefined,
       },
@@ -84,7 +84,7 @@ describe('Trello service', () => {
   });
 
   it('should go directly to the select task view if a current list exists', async () => {
-    await mountTrelloService({
+    await renderTrelloService({
       config: {
         currentList: '1',
       },
@@ -108,7 +108,7 @@ describe('Trello service', () => {
     const notificationMock = vi.fn();
     vi.stubGlobal('Notification', notificationMock);
 
-    const { config } = await mountTrelloService({
+    const { config } = await renderTrelloService({
       config: {
         currentList: 'INVALID_LIST',
       },
@@ -133,7 +133,7 @@ describe('Trello service', () => {
   });
 
   it('should filter lists', async () => {
-    const { appApi } = await mountTrelloService({
+    const { appApi } = await renderTrelloService({
       config: {
         currentList: undefined,
         listFilter: '(to)',
@@ -173,7 +173,7 @@ describe('Trello service', () => {
   });
 
   it('should filter lists with case sensitivity', async () => {
-    const { appApi } = await mountTrelloService({
+    const { appApi } = await renderTrelloService({
       config: {
         currentList: undefined,
         listFilter: '(To)',
@@ -213,7 +213,7 @@ describe('Trello service', () => {
   });
 
   it('should sort the lists by most recently used', async () => {
-    const { appApi } = await mountTrelloService({
+    const { appApi } = await renderTrelloService({
       config: {
         currentList: undefined,
         recentLists: ['4', '2'],
@@ -254,7 +254,7 @@ describe('Trello service', () => {
   });
 
   it('should update the recent lists when a list has been picked', async () => {
-    const { config, simulate } = await mountTrelloService({
+    const { config, simulate } = await renderTrelloService({
       config: {
         currentList: undefined,
       },
@@ -282,11 +282,11 @@ describe('Trello service', () => {
   });
 
   it('should use default preferences if none have been set', async () => {
-    const { cache, simulate } = await mountTrelloService();
+    const { cache, simulate } = await renderTrelloService();
 
     await simulate.waitForSelectTaskView();
 
-    expect(cache.get().preferences).toStrictEqual({
+    expect(cache.store.preferences).toStrictEqual({
       addChecks: true,
       keepLogs: true,
       trackStats: true,
@@ -295,7 +295,7 @@ describe('Trello service', () => {
   });
 
   it('should use global preferences if available', async () => {
-    const { cache, simulate } = await mountTrelloService({
+    const { cache, simulate } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -308,7 +308,7 @@ describe('Trello service', () => {
 
     await simulate.waitForSelectTaskView();
 
-    expect(cache.get().preferences).toStrictEqual({
+    expect(cache.store.preferences).toStrictEqual({
       addChecks: false,
       keepLogs: true,
       trackStats: false,
@@ -317,7 +317,7 @@ describe('Trello service', () => {
   });
 
   it('should use board preferences if available', async () => {
-    const { cache, simulate } = await mountTrelloService({
+    const { cache, simulate } = await renderTrelloService({
       config: {
         currentList: 'LIST_ID',
         preferences: {
@@ -347,7 +347,7 @@ describe('Trello service', () => {
 
     await simulate.waitForSelectTaskView();
 
-    expect(cache.get().preferences).toStrictEqual({
+    expect(cache.store.preferences).toStrictEqual({
       addChecks: true,
       keepLogs: true,
       trackStats: false,
@@ -356,7 +356,7 @@ describe('Trello service', () => {
   });
 
   it('should use list preferences if available', async () => {
-    const { cache, simulate } = await mountTrelloService({
+    const { cache, simulate } = await renderTrelloService({
       config: {
         currentList: 'LIST_ID',
         preferences: {
@@ -392,7 +392,7 @@ describe('Trello service', () => {
 
     await simulate.waitForSelectTaskView();
 
-    expect(cache.get().preferences).toStrictEqual({
+    expect(cache.store.preferences).toStrictEqual({
       addChecks: false,
       keepLogs: true,
       trackStats: false,

@@ -1,54 +1,44 @@
-import { SelectItem, SelectOptionType, Service, Signal } from '@domain';
-import { CSSProperties, HTMLAttributes, ReactNode, forwardRef } from 'react';
-import DropdownItem from '../DropdownItem';
+import { SelectItem, SelectOptionType, Service } from '@pomello-desktop/domain';
+import { For, JSX, ParentComponent, splitProps } from 'solid-js';
+import { DropdownItem } from '../DropdownItem';
 import styles from './DropdownList.module.scss';
 
-interface DropdownListProps extends HTMLAttributes<HTMLUListElement> {
-  activeOptionId: Signal<string | undefined>;
-  children?: ReactNode;
+interface DropdownListProps extends JSX.HTMLAttributes<HTMLUListElement> {
+  activeOptionId?: string;
   depth: number;
   items: SelectItem[];
   onOptionHover(option: SelectOptionType): void;
   onOptionSelect(): void;
+  ref?: HTMLUListElement;
   service?: Service;
 }
 
-const DropdownList = forwardRef<HTMLUListElement, DropdownListProps>(
-  (
-    {
-      activeOptionId,
-      children,
-      depth,
-      items,
-      onOptionHover,
-      onOptionSelect,
-      service,
-      ...remainingProps
-    },
-    ref
-  ) => {
-    return (
-      <ul
-        className={styles.list}
-        style={{ '--row-depth': depth } as CSSProperties}
-        ref={ref}
-        {...remainingProps}
-      >
-        {children}
-        {items.map(item => (
-          <DropdownItem
-            activeOptionId={activeOptionId}
-            depth={depth}
-            item={item}
-            key={item.id}
-            onOptionHover={onOptionHover}
-            onOptionSelect={onOptionSelect}
-            service={service}
-          />
-        ))}
-      </ul>
-    );
-  }
-);
+export const DropdownList: ParentComponent<DropdownListProps> = allProps => {
+  const [props, listProps] = splitProps(allProps, [
+    'activeOptionId',
+    'children',
+    'depth',
+    'items',
+    'onOptionHover',
+    'onOptionSelect',
+    'service',
+  ]);
 
-export default DropdownList;
+  return (
+    <ul class={styles.list} style={{ '--row-depth': props.depth }} {...listProps}>
+      {props.children}
+      <For each={props.items}>
+        {item => (
+          <DropdownItem
+            activeOptionId={props.activeOptionId}
+            depth={props.depth}
+            item={item}
+            onOptionHover={props.onOptionHover}
+            onOptionSelect={props.onOptionSelect}
+            service={props.service}
+          />
+        )}
+      </For>
+    </ul>
+  );
+};

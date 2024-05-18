@@ -1,4 +1,4 @@
-import { Settings } from '@domain';
+import { Settings } from '@pomello-desktop/domain';
 
 const defaultSettings: Settings = {
   alwaysOnTop: true,
@@ -52,11 +52,9 @@ const defaultSettings: Settings = {
   sounds: {},
 };
 
-const createMockSettings = (settings: Partial<Settings> = {}): Settings => {
+export const createMockSettings = (settings: Partial<Settings> = {}): Settings => {
   return {
     ...defaultSettings,
     ...settings,
   };
 };
-
-export default createMockSettings;

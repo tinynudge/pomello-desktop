@@ -1,14 +1,11 @@
-import useCurrentTask from '@/app/hooks/useCurrentTask';
-import Heading from '@/app/ui/Heading';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC } from 'react';
+import { useCurrentTask } from '@/app/hooks/useCurrentTask';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { Heading } from '@/ui/components/Heading';
+import { Component } from 'solid-js';
 
-const NextTaskHeading: FC = () => {
-  const { t } = useTranslation();
+export const NextTaskHeading: Component = () => {
+  const t = useTranslate();
+  const currentTask = useCurrentTask();
 
-  const { currentTaskLabel } = useCurrentTask();
-
-  return <Heading>{t('nextTaskHeading', { task: currentTaskLabel })}</Heading>;
+  return <Heading>{t('nextTaskHeading', { task: currentTask().label })}</Heading>;
 };
-
-export default NextTaskHeading;

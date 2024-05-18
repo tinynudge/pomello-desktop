@@ -1,5 +1,5 @@
-import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
-import produce from 'immer';
+import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
+import { produce } from 'immer';
 import ky, { Options } from 'ky';
 import { TRELLO_API_URL, TRELLO_KEY } from './constants';
 
@@ -45,6 +45,4 @@ let trelloClient = {
   },
 };
 
-const getTrelloClient = () => trelloClient;
-
-export default getTrelloClient;
+export const getTrelloClient = () => trelloClient;
