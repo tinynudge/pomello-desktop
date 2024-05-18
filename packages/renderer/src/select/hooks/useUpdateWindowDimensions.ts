@@ -1,70 +1,61 @@
-import { SelectItem } from '@domain';
+import { SelectItem } from '@pomello-desktop/domain';
 import { Rectangle } from 'electron';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { Accessor, createEffect, on, onCleanup } from 'solid-js';
 
 interface UseUpdateWindowDimensionsOptions {
-  container: HTMLElement | null;
-  items: SelectItem[];
+  getContainer(): HTMLElement;
+  getIsVisible: Accessor<boolean>;
+  getItems: Accessor<SelectItem[]>;
   maxRows: number;
-  onUpdate(): void;
 }
 
-const useUpdateWindowDimensions = ({
-  container,
-  items,
+export const useUpdateWindowDimensions = ({
+  getContainer,
+  getIsVisible,
+  getItems,
   maxRows,
-  onUpdate,
 }: UseUpdateWindowDimensionsOptions): void => {
-  const didSetWidth = useRef(false);
-  const windowOrientation = useRef<'bottom' | 'top'>();
+  let windowOrientation: 'bottom' | 'top' | undefined;
 
-  useEffect(() => {
-    return window.app.onSetSelectItems(() => {
-      didSetWidth.current = false;
-    });
-  }, []);
+  const removeOnShowSelect = window.app.onShowSelect(({ orientation }) => {
+    windowOrientation = orientation;
+  });
 
-  useEffect(() => {
-    return window.app.onShowSelect(({ orientation }) => {
-      windowOrientation.current = orientation;
-    });
-  }, []);
+  onCleanup(() => {
+    removeOnShowSelect();
+  });
 
-  useLayoutEffect(() => {
-    if (!container) {
-      return;
-    }
+  createEffect(
+    on(getItems, () => {
+      const container = getContainer();
+      const isVisible = getIsVisible();
+      const bounds: Partial<Rectangle> = {};
 
-    const bounds: Partial<Rectangle> = {};
+      // To prevent a jarring experience, only update the width when hidden
+      if (!isVisible) {
+        const originalDisplayProperty = container.style.display;
 
-    if (!didSetWidth.current) {
-      const originalDisplayProperty = container.style.display;
+        // Force the container to "inline-block" so we can get the actual width of
+        // of the content.
+        container.style.display = 'inline-block';
 
-      // Force the container to "inline-block" so we can get the actual width of
-      // of the content.
-      container.style.display = 'inline-block';
+        bounds.width = container.getBoundingClientRect().width + 1;
 
-      bounds.width = container.getBoundingClientRect().width + 1;
+        container.style.display = originalDisplayProperty;
+      }
 
-      container.style.display = originalDisplayProperty;
-      didSetWidth.current = true;
-    }
+      const rows = container.querySelectorAll('[data-row]');
 
-    const rows = container.querySelectorAll('[data-row]');
+      if (rows.length) {
+        const option = rows.length > maxRows ? rows[maxRows - 1] : rows[rows.length - 1];
 
-    if (rows.length) {
-      const option = rows.length > maxRows ? rows[maxRows - 1] : rows[rows.length - 1];
+        bounds.height = window.scrollY + option.getBoundingClientRect().bottom;
+      }
 
-      bounds.height = window.scrollY + option.getBoundingClientRect().bottom;
-    }
-
-    window.app.setSelectBounds({
-      bounds,
-      orientation: windowOrientation.current,
-    });
-
-    onUpdate();
-  }, [container, maxRows, items, onUpdate]);
+      window.app.setSelectBounds({
+        bounds,
+        orientation: windowOrientation,
+      });
+    })
+  );
 };
-
-export default useUpdateWindowDimensions;

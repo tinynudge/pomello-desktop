@@ -1,28 +1,28 @@
-import useHotkeys from '@/app/hooks/useHotkeys';
-import usePomelloActions from '@/app/hooks/usePomelloActions';
-import createHintTitle from '@/shared/helpers/createHintTitle';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, useEffect } from 'react';
-import DialAction from './DialAction';
+import { useHotkeys } from '@/app/context/HotkeysContext';
+import { usePomelloActions } from '@/app/context/PomelloContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { createHintTitle } from '@/shared/helpers/createHintTitle';
+import { Component } from 'solid-js';
+import { DialAction } from './DialAction';
 import { DialActionProps } from './DialActionProps';
-import { ReactComponent as PauseIcon } from './assets/pause.svg';
+import PauseIcon from './assets/pause.svg';
 
-const PauseTimerDialAction: FC<DialActionProps> = ({ className, isVisible, onClick }) => {
+export const PauseTimerDialAction: Component<DialActionProps> = props => {
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
   const { pauseTimer } = usePomelloActions();
-  const { t } = useTranslation();
-
-  useEffect(() => registerHotkeys({ pauseTimer }), [pauseTimer, registerHotkeys]);
+  const t = useTranslate();
 
   const handleActionClick = () => {
     pauseTimer();
-    onClick();
+    props.onClick();
   };
+
+  registerHotkeys({ pauseTimer });
 
   return (
     <DialAction
-      className={className}
-      isVisible={isVisible}
+      class={props.class}
+      isVisible={props.isVisible}
       label={t('pauseTimerLabel')}
       onClick={handleActionClick}
       title={createHintTitle(t, 'pauseTimerLabel', getHotkeyLabel('pauseTimer'))}
@@ -31,5 +31,3 @@ const PauseTimerDialAction: FC<DialActionProps> = ({ className, isVisible, onCli
     </DialAction>
   );
 };
-
-export default PauseTimerDialAction;

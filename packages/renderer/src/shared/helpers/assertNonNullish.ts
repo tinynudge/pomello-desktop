@@ -1,5 +1,5 @@
 // Must be a named function: https://github.com/microsoft/TypeScript/issues/34523
-function assertNonNullish<TValue>(
+export function assertNonNullish<TValue>(
   value: TValue,
   message: string
 ): asserts value is NonNullable<TValue> {
@@ -7,5 +7,3 @@ function assertNonNullish<TValue>(
     throw Error(message);
   }
 }
-
-export default assertNonNullish;

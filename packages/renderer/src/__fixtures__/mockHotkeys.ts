@@ -1,6 +1,6 @@
-import { LabeledHotkeys } from '@domain';
+import { LabeledHotkeys } from '@pomello-desktop/domain';
 
-const mockHotkeys: LabeledHotkeys = {
+export const mockHotkeys: LabeledHotkeys = {
   addNote: {
     binding: 'command+shift+a',
     label: 'Add note label',
@@ -70,5 +70,3 @@ const mockHotkeys: LabeledHotkeys = {
     label: 'Void task label',
   },
 };
-
-export default mockHotkeys;

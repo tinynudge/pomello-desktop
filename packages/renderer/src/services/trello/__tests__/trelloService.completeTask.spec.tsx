@@ -1,13 +1,13 @@
 import { vi } from 'vitest';
-import markCheckItemComplete from '../api/markCheckItemComplete';
-import moveCardToList from '../api/moveCardToList';
-import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
-import generateTrelloCard from '../__fixtures__/generateTrelloCard';
-import generateTrelloCheckItem from '../__fixtures__/generateTrelloCheckItem';
-import generateTrelloChecklist from '../__fixtures__/generateTrelloChecklist';
-import generateTrelloList from '../__fixtures__/generateTrelloList';
-import generateTrelloMember from '../__fixtures__/generateTrelloMember';
-import mountTrelloService, { screen, waitFor } from '../__fixtures__/mountTrelloService';
+import { markCheckItemComplete } from '../api/markCheckItemComplete';
+import { moveCardToList } from '../api/moveCardToList';
+import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
+import { generateTrelloCard } from '../__fixtures__/generateTrelloCard';
+import { generateTrelloCheckItem } from '../__fixtures__/generateTrelloCheckItem';
+import { generateTrelloChecklist } from '../__fixtures__/generateTrelloChecklist';
+import { generateTrelloList } from '../__fixtures__/generateTrelloList';
+import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
+import { screen, waitFor, renderTrelloService } from '../__fixtures__/renderTrelloService';
 
 describe('Trello service - Complete task', () => {
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should show Trello lists for cards', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       config: {
         currentList: 'PHASE_ONE',
         preferences: {
@@ -82,7 +82,7 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should not show the complete task view for check items', async () => {
-    const { simulate } = await mountTrelloService({
+    const { simulate } = await renderTrelloService({
       trelloApi: {
         fetchCardsByListId: [
           generateTrelloCard({
@@ -111,7 +111,7 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should store the selected list in the preferences', async () => {
-    const { config, simulate } = await mountTrelloService({
+    const { config, simulate } = await renderTrelloService({
       config: {
         currentList: 'PHASE_ONE',
         preferences: {
@@ -155,7 +155,7 @@ describe('Trello service - Complete task', () => {
   it('should move the card to the target list in Trello', async () => {
     const mockMoveCardToList = vi.mocked(moveCardToList);
 
-    const { simulate } = await mountTrelloService({
+    const { simulate } = await renderTrelloService({
       config: {
         currentList: 'PHASE_ONE',
       },
@@ -189,7 +189,7 @@ describe('Trello service - Complete task', () => {
   it('should archive the card upon moving the card in Trello if enabled', async () => {
     const mockMoveCardToList = vi.mocked(moveCardToList);
 
-    const { simulate } = await mountTrelloService({
+    const { simulate } = await renderTrelloService({
       config: {
         currentList: 'PHASE_ONE',
         preferences: {
@@ -230,7 +230,7 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should mark the checklist item as complete in Trello', async () => {
-    const { simulate } = await mountTrelloService({
+    const { simulate } = await renderTrelloService({
       settings: {
         taskTime: 5,
       },
@@ -261,7 +261,7 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should optimistically remove a card when completing early and moving to another list', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       config: {
         currentList: 'MY_FIRST_LIST_ID',
       },
@@ -315,7 +315,7 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should not optimistically remove the card when completing early and moving to the same list', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       config: {
         currentList: 'MY_FIRST_LIST_ID',
       },
@@ -373,7 +373,7 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should optimistically remove a checklist item when completing early', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       settings: {
         taskTime: 5,
         shortBreakTime: 3,

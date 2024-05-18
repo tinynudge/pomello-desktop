@@ -1,15 +1,16 @@
-import { SelectItem, Signal } from '@domain';
-import { MutableRefObject, RefObject, useCallback, useEffect } from 'react';
-import findFirstOption from '../helpers/findFirstOption';
+import { SelectItem } from '@pomello-desktop/domain';
+import { Accessor, Setter, createEffect, on } from 'solid-js';
+import { findFirstOption } from '../helpers/findOption';
 
 interface UseEnsureVisibleActiveOptionOptions {
-  activeOptionId: Signal<string | undefined>;
-  inputHeight: MutableRefObject<number>;
-  items: SelectItem[];
-  listRef: RefObject<HTMLUListElement>;
+  getActiveOptionId: Accessor<string | undefined>;
+  getInputRef(): HTMLInputElement;
+  getItems: Accessor<SelectItem[]>;
+  getListRef(): HTMLUListElement;
+  setActiveOptionId: Setter<string | undefined>;
 }
 
-const scrollBy = (top: number) => {
+const scrollBy = (top: number): void => {
   // "auto" is supposed to work here since "instant" is deprecated, but for some
   // reason the default "auto" is still smooth scrolling.
   window.scrollBy({
@@ -19,47 +20,39 @@ const scrollBy = (top: number) => {
   } as unknown as ScrollToOptions);
 };
 
-const useEnsureVisibleActiveOption = ({
-  activeOptionId,
-  inputHeight,
-  items,
-  listRef,
+export const useEnsureVisibleActiveOption = ({
+  getActiveOptionId,
+  getInputRef,
+  getItems,
+  getListRef,
+  setActiveOptionId,
 }: UseEnsureVisibleActiveOptionOptions): void => {
-  const ensureVisibleOption = useCallback(
-    (optionId?: string) => {
-      let option: Element | null = null;
+  let inputHeight = 0;
 
-      if (optionId) {
-        option = document.getElementById(optionId);
-      }
+  createEffect(
+    on([getActiveOptionId, getItems], ([optionId]) => {
+      queueMicrotask(() => {
+        const option = optionId ? document.getElementById(optionId) : null;
 
-      // The current active option may be gone after filtering so we'll just find
-      // the first available option.
-      if (!option) {
-        const firstOption = findFirstOption(listRef.current);
+        if (option) {
+          const { bottom, top } = option.getBoundingClientRect();
 
-        activeOptionId.set(firstOption?.id ?? undefined);
+          if (!inputHeight) {
+            inputHeight = getInputRef().getBoundingClientRect().height;
+          }
 
-        option = firstOption;
-      }
+          if (top < inputHeight) {
+            scrollBy(top - inputHeight);
+          } else if (bottom > window.innerHeight) {
+            scrollBy(bottom - window.innerHeight);
+          }
+        } else {
+          const listRef = getListRef();
+          const firstOption = findFirstOption(listRef);
 
-      if (option) {
-        const { bottom, top } = option.getBoundingClientRect();
-
-        if (top < inputHeight.current) {
-          scrollBy(top - inputHeight.current);
-        } else if (bottom > window.innerHeight) {
-          scrollBy(bottom - window.innerHeight);
+          setActiveOptionId(firstOption?.id);
         }
-      }
-    },
-    [activeOptionId, inputHeight, listRef]
-  );
-
-  useEffect(
-    () => activeOptionId.subscribe(ensureVisibleOption),
-    [activeOptionId, ensureVisibleOption, items]
+      });
+    })
   );
 };
-
-export default useEnsureVisibleActiveOption;

@@ -1,10 +1,10 @@
-import createCard from '../api/createCard';
-import { TrelloRuntime } from '../TrelloRuntime';
-import findLabelIds from './findLabelIds';
-import findTargetList from './findTargetList';
-import parseCreateTaskInput from './parseCreateTaskInput';
+import { createCard } from '../api/createCard';
+import { TrelloRuntime } from '../domain';
+import { findLabelIds } from './findLabelIds';
+import { findTargetList } from './findTargetList';
+import { parseCreateTaskInput } from './parseCreateTaskInput';
 
-const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
+export const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
   const { config, logger, translate } = runtime;
 
   const params = parseCreateTaskInput(input);
@@ -28,7 +28,7 @@ const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
       description: params.desc,
       labelIds,
       listId: list.id,
-      position: config.get().createdTaskPosition ?? 'top',
+      position: config.store.createdTaskPosition ?? 'top',
       title: params.title,
     });
 
@@ -41,5 +41,3 @@ const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
     new Notification(translate('createTaskSuccessHeading'), { body: message });
   });
 };
-
-export default onTaskCreate;

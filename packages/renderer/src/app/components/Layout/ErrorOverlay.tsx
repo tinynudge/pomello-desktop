@@ -1,18 +1,18 @@
-import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC } from 'react';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { ButtonsOverlay } from '@/ui/components/ButtonsOverlay';
+import { Component } from 'solid-js';
 
 interface ErrorOverlayProps {
   error: Error;
   resetErrorBoundary(): void;
 }
 
-const ErrorOverlay: FC<ErrorOverlayProps> = ({ error, resetErrorBoundary }) => {
-  const { t } = useTranslation();
+export const ErrorOverlay: Component<ErrorOverlayProps> = props => {
+  const t = useTranslate();
 
   const handleDetailsClick = async () => {
     const { response } = await window.app.showMessageBox({
-      message: t('unexpectedErrorTitle', { message: error.message }),
+      message: t('unexpectedErrorTitle', { message: props.error.message }),
       cancelId: 1,
       defaultId: 0,
       buttons: [t('errorDialogCopyError'), t('errorDialogCancel')],
@@ -21,9 +21,9 @@ const ErrorOverlay: FC<ErrorOverlayProps> = ({ error, resetErrorBoundary }) => {
 
     if (response === 0) {
       const serializedError = {
-        type: error.name,
-        message: error.message,
-        stack: error.stack?.split('\n'),
+        type: props.error.name,
+        message: props.error.message,
+        stack: props.error.stack?.split('\n'),
       };
 
       window.app.writeClipboardText(JSON.stringify(serializedError, null, 2));
@@ -33,13 +33,11 @@ const ErrorOverlay: FC<ErrorOverlayProps> = ({ error, resetErrorBoundary }) => {
   return (
     <ButtonsOverlay
       buttons={[
-        { id: 'retry', content: t('errorRetry'), onClick: resetErrorBoundary },
-        { id: 'details', content: t('errorDetails'), onClick: handleDetailsClick },
+        { content: t('errorRetry'), onClick: props.resetErrorBoundary },
+        { content: t('errorDetails'), onClick: handleDetailsClick },
       ]}
     >
       {t('genericErrorMessage')}
     </ButtonsOverlay>
   );
 };
-
-export default ErrorOverlay;

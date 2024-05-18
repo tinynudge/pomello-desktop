@@ -1,36 +1,29 @@
-import { dialActionsSet, dialActionsUnset, selectCurrentTaskId } from '@/app/appSlice';
-import Heading from '@/app/ui/Heading';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import NextTaskHeading from './NextTaskHeading';
+import { useStore, useStoreActions } from '@/app/context/StoreContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { Heading } from '@/ui/components/Heading';
+import { Component, Show } from 'solid-js';
+import { NextTaskHeading } from './NextTaskHeading';
 
 interface BreakViewProps {
   type: 'SHORT_BREAK' | 'LONG_BREAK';
 }
 
-const BreakView: FC<BreakViewProps> = ({ type }) => {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
+export const BreakView: Component<BreakViewProps> = props => {
+  const { dialActionsSet } = useStoreActions();
+  const store = useStore();
+  const t = useTranslate();
 
-  const currentTaskId = useSelector(selectCurrentTaskId);
-
-  useEffect(() => {
-    dispatch(dialActionsSet(['skipTimer']));
-
-    return () => {
-      dispatch(dialActionsUnset());
-    };
-  }, [dispatch]);
-
-  const breakMessageKey = type === 'SHORT_BREAK' ? 'shortBreakMessage' : 'longBreakMessage';
+  dialActionsSet(['skipTimer']);
 
   return (
     <>
-      {currentTaskId ? <NextTaskHeading /> : <Heading>{t('newTaskHeading')}</Heading>}
-      <p>{t(breakMessageKey)}</p>
+      <Show
+        fallback={<Heading>{t('newTaskHeading')}</Heading>}
+        when={store.pomelloState.currentTaskId}
+      >
+        <NextTaskHeading />
+      </Show>
+      <p>{props.type === 'SHORT_BREAK' ? t('shortBreakMessage') : t('longBreakMessage')}</p>
     </>
   );
 };
-
-export default BreakView;

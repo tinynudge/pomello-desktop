@@ -1,7 +1,7 @@
-import { Translate } from '@domain';
+import { Translate } from '@pomello-desktop/domain';
 import { TrelloCardAction, TrelloLog, TrelloLogTime } from '../../domain';
 
-const parseCommentLog = (translate: Translate, log: TrelloCardAction): TrelloLog => {
+export const parseCommentLog = (translate: Translate, log: TrelloCardAction): TrelloLog => {
   const lines = log.data.text.split('\n');
 
   const header = lines.splice(0, 2)[0];
@@ -35,5 +35,3 @@ const parseCommentLog = (translate: Translate, log: TrelloCardAction): TrelloLog
     entries: lines,
   };
 };
-
-export default parseCommentLog;

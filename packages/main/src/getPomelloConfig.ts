@@ -1,4 +1,4 @@
-import { PomelloConfig, Store } from '@domain';
+import { PomelloConfig, Store } from '@pomello-desktop/domain';
 import runtime from './runtime';
 
 const getPomelloConfig = (): Store<PomelloConfig> =>

@@ -1,9 +1,9 @@
 import { vi } from 'vitest';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
 describe('App - Complete Task', () => {
   it('should go to the select task view if there is no custom options', async () => {
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
           getTaskCompleteItems: undefined,
@@ -22,7 +22,7 @@ describe('App - Complete Task', () => {
   });
 
   it('should go to the select task view if getting custom options returns nothing', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           getTaskCompleteItems: () => {},
@@ -40,11 +40,13 @@ describe('App - Complete Task', () => {
   });
 
   it('should prompt the user for an action if there are custom options', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'task', label: 'My task' }]),
-          getTaskCompleteItems: () => [{ id: 'option', label: 'Option' }],
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'option', label: 'Option' }],
+          }),
         },
       },
     });
@@ -62,14 +64,16 @@ describe('App - Complete Task', () => {
   it('should call the custom option handler when an option is selected', async () => {
     const handleTaskComplete = vi.fn();
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
-          getTaskCompleteItems: () => [
-            { id: 'foo', label: 'Foo' },
-            { id: 'bar', label: 'Bar' },
-          ],
+          getTaskCompleteItems: () => ({
+            items: [
+              { id: 'foo', label: 'Foo' },
+              { id: 'bar', label: 'Bar' },
+            ],
+          }),
           onTaskCompletePromptHandled: handleTaskComplete,
         },
       },

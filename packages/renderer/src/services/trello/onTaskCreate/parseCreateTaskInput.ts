@@ -13,7 +13,7 @@ const paramsRegex = Object.entries(createTaskArguments).flat().join('|');
 
 const textRegex = new RegExp(`(?=-(?:${paramsRegex})\\s)`);
 
-const parseCreateTaskInput = (input: string): CreateTaskParams => {
+export const parseCreateTaskInput = (input: string): CreateTaskParams => {
   return input.split(textRegex).reduce((currentParams, text) => {
     const [, param, value] = text.match(/(?:-(\S+)\s)?(.+)/) ?? [];
 
@@ -25,5 +25,3 @@ const parseCreateTaskInput = (input: string): CreateTaskParams => {
     };
   }, {} as CreateTaskParams);
 };
-
-export default parseCreateTaskInput;

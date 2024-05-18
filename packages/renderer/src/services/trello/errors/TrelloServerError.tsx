@@ -1,15 +1,15 @@
-import ButtonsOverlay from '@/app/ui/ButtonsOverlay';
-import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC } from 'react';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
+import { ButtonsOverlay } from '@/ui/components/ButtonsOverlay';
+import { Component } from 'solid-js';
 
 interface TrelloServerErrorProps {
   error: SerializableHttpError;
   onRetry(): void;
 }
 
-const TrelloServerError: FC<TrelloServerErrorProps> = ({ error, onRetry }) => {
-  const { t } = useTranslation();
+export const TrelloServerError: Component<TrelloServerErrorProps> = props => {
+  const t = useTranslate();
 
   const handleDetailsClick = async () => {
     const { response } = await window.app.showMessageBox({
@@ -21,20 +21,18 @@ const TrelloServerError: FC<TrelloServerErrorProps> = ({ error, onRetry }) => {
     });
 
     if (response === 0) {
-      window.app.writeClipboardText(error.toString());
+      window.app.writeClipboardText(props.error.toString());
     }
   };
 
   return (
     <ButtonsOverlay
       buttons={[
-        { id: 'retry', content: t('errorRetry'), onClick: onRetry },
-        { id: 'details', content: t('errorDetails'), onClick: handleDetailsClick },
+        { content: t('errorRetry'), onClick: props.onRetry },
+        { content: t('errorDetails'), onClick: handleDetailsClick },
       ]}
     >
       {t('genericErrorMessage')}
     </ButtonsOverlay>
   );
 };
-
-export default TrelloServerError;

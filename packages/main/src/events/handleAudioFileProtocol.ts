@@ -1,12 +1,8 @@
-import { AppProtocol } from '@domain';
-import { ProtocolRequest, ProtocolResponse } from 'electron';
+import { AppProtocol } from '@pomello-desktop/domain';
+import { net } from 'electron';
+import { pathToFileURL } from 'url';
 
-type ProtocolCallback = (response: ProtocolResponse) => void;
-
-const handleAudioFileProtocol = (request: ProtocolRequest, callback: ProtocolCallback): void => {
-  callback({
-    path: request.url.replace(AppProtocol.Audio, ''),
-  });
-};
+const handleAudioFileProtocol = (request: Request): Promise<Response> =>
+  net.fetch(pathToFileURL(request.url.replace(AppProtocol.Audio, '')).toString());
 
 export default handleAudioFileProtocol;

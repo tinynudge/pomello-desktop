@@ -1,29 +1,21 @@
-import createLogger from '@/__bootstrap__/createLogger';
-import createPomelloService from '@/__bootstrap__/createPomelloService';
-import setTheme from '@/__bootstrap__/setTheme';
-import { PomelloProvider } from '@/app/context/PomelloContext';
-import createStore from '@/app/createStore';
-import services from '@/services';
+import { createLogger } from '@/__bootstrap__/createLogger';
+import { createPomelloService } from '@/__bootstrap__/createPomelloService';
+import { setTheme } from '@/__bootstrap__/setTheme';
+import { services } from '@/services';
 import { PomelloApiProvider } from '@/shared/context/PomelloApiContext';
-import { PomelloConfigProvider } from '@/shared/context/PomelloConfigContext';
-import { TranslationsProvider } from '@/shared/context/TranslationsContext';
-import createPomelloApi from '@/shared/helpers/createPomelloApi';
-import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider } from 'react-redux';
-import App from './components/App';
+import { RuntimeProvider } from '@/shared/context/RuntimeContext';
+import { ServiceProvider } from '@/shared/context/ServiceContext';
+import { createPomelloApi } from '@/shared/helpers/createPomelloApi';
+import { getPomelloServiceConfig } from '@/shared/helpers/getPomelloServiceConfig';
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query';
+import { render } from 'solid-js/web';
+import { App } from './components/App';
 import { HotkeysProvider } from './context/HotkeysContext';
+import { PomelloProvider } from './context/PomelloContext';
+import { StoreProvider } from './context/StoreContext';
 
 const renderApp = async () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        useErrorBoundary: true,
-      },
-    },
-  });
+  const queryClient = new QueryClient();
 
   const container = document.getElementById('root');
 
@@ -40,37 +32,38 @@ const renderApp = async () => {
     window.app.getSettings(),
   ]);
 
+  const pomelloApi = createPomelloApi(pomelloConfig);
   const pomelloService = createPomelloService(settings);
-
-  const store = createStore({
-    pomelloState: pomelloService.getState(),
-    serviceId,
-    settings,
-  });
+  const logger = createLogger();
 
   setTheme(themeCss);
 
-  createRoot(container).render(
-    <StrictMode>
-      <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <PomelloProvider service={pomelloService}>
-            <PomelloConfigProvider config={pomelloConfig}>
-              <PomelloApiProvider pomelloApi={createPomelloApi(pomelloConfig)}>
-                <TranslationsProvider commonTranslations={translations}>
+  render(
+    () => (
+      <QueryClientProvider client={queryClient}>
+        <PomelloProvider defaultService={pomelloService}>
+          <StoreProvider>
+            <RuntimeProvider
+              initialLogger={logger}
+              initialPomelloConfig={pomelloConfig}
+              initialServices={services}
+              initialSettings={settings}
+              initialTranslations={translations}
+            >
+              <PomelloApiProvider initialPomelloApi={pomelloApi}>
+                <ServiceProvider initialServiceId={serviceId}>
                   <HotkeysProvider hotkeys={hotkeys}>
-                    <App logger={createLogger()} services={services} />
+                    <App />
                   </HotkeysProvider>
-                </TranslationsProvider>
+                </ServiceProvider>
               </PomelloApiProvider>
-            </PomelloConfigProvider>
-          </PomelloProvider>
-        </QueryClientProvider>
-      </Provider>
-    </StrictMode>
+            </RuntimeProvider>
+          </StoreProvider>
+        </PomelloProvider>
+      </QueryClientProvider>
+    ),
+    container
   );
-
-  // TODO: Don't show app until here
 };
 
 renderApp();

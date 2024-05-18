@@ -1,4 +1,4 @@
-import { AppEvent, ThemeCss } from '@domain';
+import { AppEvent, ThemeCss } from '@pomello-desktop/domain';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 type ThemeCssChangeListener = (themeCss: ThemeCss) => void;

@@ -1,13 +1,15 @@
-import usePomelloService from '@/app/hooks/usePomelloService';
+import { usePomelloService } from '@/app/context/PomelloContext';
+import { useRuntime } from '@/shared/context/RuntimeContext';
 import { PomelloEvent } from '@tinynudge/pomello-service';
-import { useEffect } from 'react';
+import { onCleanup, onMount } from 'solid-js';
 
-const useLogPomelloEvents = () => {
+export const useLogPomelloEvents = () => {
   const pomelloService = usePomelloService();
+  const { logger } = useRuntime();
 
-  useEffect(() => {
+  onMount(() => {
     const createLogHandler = (message: string) => (event: PomelloEvent) =>
-      window.app.logMessage('debug', { message, event });
+      logger.debug({ message, event });
 
     const handleAppInitialize = createLogHandler('Did initialize Pomello service');
     const handleOvertimeEnd = createLogHandler('Did overtime end');
@@ -37,7 +39,7 @@ const useLogPomelloEvents = () => {
     pomelloService.on('timerSkip', handleTimerSkip);
     pomelloService.on('timerStart', handleTimerStart);
 
-    return () => {
+    onCleanup(() => {
       pomelloService.off('appInitialize', handleAppInitialize);
       pomelloService.off('overtimeEnd', handleOvertimeEnd);
       pomelloService.off('overtimeStart', handleOvertimeStart);
@@ -51,8 +53,6 @@ const useLogPomelloEvents = () => {
       pomelloService.off('timerResume', handleTimerResume);
       pomelloService.off('timerSkip', handleTimerSkip);
       pomelloService.off('timerStart', handleTimerStart);
-    };
-  }, [pomelloService]);
+    });
+  });
 };
-
-export default useLogPomelloEvents;

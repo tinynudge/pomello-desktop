@@ -1,25 +1,22 @@
-import ButtonsLayout from '@/app/ui/ButtonsOverlay';
-import useService from '@/shared/hooks/useService';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC } from 'react';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useService } from '@/shared/context/ServiceContext';
+import { ButtonsOverlay } from '@/ui/components/ButtonsOverlay';
+import { Component } from 'solid-js';
 
-const LoginView: FC = () => {
-  const { t } = useTranslation();
-  const { displayName, id } = useService();
+export const LoginView: Component = () => {
+  const t = useTranslate();
+  const getService = useService();
 
   return (
-    <ButtonsLayout
+    <ButtonsOverlay
       buttons={[
         {
-          id: 'connect',
           content: t('signIn'),
-          onClick: () => window.app.showAuthWindow({ type: 'service', serviceId: id }),
+          onClick: () => window.app.showAuthWindow({ type: 'service', serviceId: getService().id }),
         },
       ]}
     >
-      <p>{t('connectToService', { service: displayName })}</p>
-    </ButtonsLayout>
+      <p>{t('connectToService', { service: getService().displayName })}</p>
+    </ButtonsOverlay>
   );
 };
-
-export default LoginView;

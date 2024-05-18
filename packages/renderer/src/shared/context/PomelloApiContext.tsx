@@ -1,13 +1,25 @@
-import { PomelloApi } from '@domain';
-import { createContext, FC, ReactNode } from 'react';
+import { PomelloApi } from '@pomello-desktop/domain';
+import { ParentComponent, createContext, useContext } from 'solid-js';
+import { assertNonNullish } from '../helpers/assertNonNullish';
 
 interface PomelloApiProviderProps {
-  children: ReactNode;
-  pomelloApi: PomelloApi;
+  initialPomelloApi: PomelloApi;
 }
 
-export const PomelloApiContext = createContext<PomelloApi | undefined>(undefined);
+const PomelloApiContext = createContext<PomelloApi | undefined>(undefined);
 
-export const PomelloApiProvider: FC<PomelloApiProviderProps> = ({ children, pomelloApi }) => {
-  return <PomelloApiContext.Provider value={pomelloApi}>{children}</PomelloApiContext.Provider>;
+export const usePomelloApi = (): PomelloApi => {
+  const pomelloApi = useContext(PomelloApiContext);
+
+  assertNonNullish(pomelloApi, 'usePomelloApi must be used inside a <PomelloApiProvider>');
+
+  return pomelloApi;
+};
+
+export const PomelloApiProvider: ParentComponent<PomelloApiProviderProps> = props => {
+  return (
+    <PomelloApiContext.Provider value={props.initialPomelloApi}>
+      {props.children}
+    </PomelloApiContext.Provider>
+  );
 };

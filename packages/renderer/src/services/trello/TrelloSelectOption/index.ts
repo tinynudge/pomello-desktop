@@ -1,1 +1,1 @@
-export { default } from './TrelloSelectOption';
+export * from './TrelloSelectOption';

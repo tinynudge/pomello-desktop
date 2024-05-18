@@ -1,30 +1,27 @@
-import AuthView from '@/auth/ui/AuthView';
-import getPomelloServiceConfig from '@/shared/helpers/getPomelloServiceConfig';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC } from 'react';
+import { AuthView } from '@/auth/ui/AuthView';
+import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
+import { Component } from 'solid-js';
 import pomelloLogo from './assets/pomello.png';
 
 interface PomelloAuthViewProps {
   action: 'authorize' | 'register';
 }
 
-const PomelloAuthView: FC<PomelloAuthViewProps> = ({ action }) => {
-  const { t } = useTranslation();
+export const PomelloAuthView: Component<PomelloAuthViewProps> = props => {
+  const config = usePomelloConfig();
+  const t = useTranslate();
 
   const handleTokenSubmit = async (input: string) => {
-    const config = await getPomelloServiceConfig();
-
     const { pomelloToken } = JSON.parse(window.atob(input));
     const encryptedToken = window.app.encryptValue(pomelloToken);
 
-    config.set('token', encryptedToken);
-    config.unregister();
+    config.actions.tokenUpdated(encryptedToken);
   };
 
   return (
     <AuthView>
       <AuthView.Instructions
-        authUrl={`${import.meta.env.VITE_APP_URL}/api/${action}/`}
+        authUrl={`${import.meta.env.VITE_APP_URL}/api/${props.action}/`}
         heading={t('authPomelloHeading')}
         logo={pomelloLogo}
       />
@@ -32,5 +29,3 @@ const PomelloAuthView: FC<PomelloAuthViewProps> = ({ action }) => {
     </AuthView>
   );
 };
-
-export default PomelloAuthView;

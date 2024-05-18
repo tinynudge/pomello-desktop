@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
 describe('App - Task', () => {
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('App - Task', () => {
   });
 
   it('should be able to select nested tasks', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           fetchTasks: () =>
@@ -44,7 +44,7 @@ describe('App - Task', () => {
   });
 
   it('should show the dial', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
 
@@ -52,7 +52,7 @@ describe('App - Task', () => {
   });
 
   it('should show a heading if provided', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           getTaskHeading: () => 'Foobar',
@@ -66,7 +66,7 @@ describe('App - Task', () => {
   });
 
   it('should show a custom task label if provided', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'custom', label: 'Task' }]),
@@ -81,7 +81,7 @@ describe('App - Task', () => {
   });
 
   it('should show the correct dial actions', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -113,7 +113,7 @@ describe('App - Task', () => {
   });
 
   it('should pause the timer', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -128,7 +128,7 @@ describe('App - Task', () => {
   });
 
   it('should pause the timer via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.hotkey('startTimer');
@@ -144,7 +144,7 @@ describe('App - Task', () => {
   });
 
   it('should switch tasks', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -155,7 +155,7 @@ describe('App - Task', () => {
   });
 
   it('should switch tasks via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -165,10 +165,12 @@ describe('App - Task', () => {
   });
 
   it('should complete tasks', async () => {
-    const { simulate, userEvent } = mountApp({
+    const { simulate, userEvent } = renderApp({
       mockService: {
         service: {
-          getTaskCompleteItems: () => [{ id: 'option', label: 'Option' }],
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'option', label: 'Option' }],
+          }),
         },
       },
     });
@@ -184,10 +186,12 @@ describe('App - Task', () => {
   });
 
   it('should complete tasks via hotkeys', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
-          getTaskCompleteItems: () => [{ id: 'option', label: 'Option' }],
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'option', label: 'Option' }],
+          }),
         },
       },
     });
@@ -200,7 +204,7 @@ describe('App - Task', () => {
   });
 
   it('should void tasks', async () => {
-    const { simulate, userEvent } = mountApp();
+    const { simulate, userEvent } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -212,7 +216,7 @@ describe('App - Task', () => {
   });
 
   it('should void tasks via hotkeys', async () => {
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.selectTask();
     await simulate.startTimer();
@@ -226,7 +230,7 @@ describe('App - Task', () => {
     const mockedConsole = vi.spyOn(console, 'error');
     mockedConsole.mockImplementation(() => null);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([]),
@@ -242,7 +246,7 @@ describe('App - Task', () => {
   });
 
   it('should be able to optimistically remove a task after the timer ends', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         pomodoroSet: ['task', 'shortBreak'],
         shortBreakTime: 3,
@@ -275,7 +279,9 @@ describe('App - Task', () => {
               },
               { id: 'TASK_THREE', label: 'Task three' },
             ]),
-          getTaskTimerEndItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'NEXT', label: 'Next task' }],
+          }),
           onTaskTimerEndPromptHandled: () => ({
             action: 'switchTask',
             shouldRemoveTaskFromCache: true,
@@ -303,7 +309,7 @@ describe('App - Task', () => {
   });
 
   it('should be able to optimistically remove a task after being completed early', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         taskTime: 5,
       },
@@ -334,7 +340,9 @@ describe('App - Task', () => {
               },
               { id: 'TASK_THREE', label: 'Task three' },
             ]),
-          getTaskCompleteItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'NEXT', label: 'Next task' }],
+          }),
           onTaskCompletePromptHandled: () => ({
             shouldRemoveTaskFromCache: true,
           }),
@@ -361,7 +369,7 @@ describe('App - Task', () => {
   });
 
   it('should be able to optimistically remove a task after being completed early without handling the prompt', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         taskTime: 5,
       },
@@ -417,7 +425,7 @@ describe('App - Task', () => {
   it('should be able to invalidate the tasks cache when handling the task timer end prompt', async () => {
     const fetchTasks = vi.fn().mockResolvedValue([{ id: 'TASK_ONE', label: 'Task one' }]);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         pomodoroSet: ['task', 'shortBreak'],
         shortBreakTime: 3,
@@ -426,7 +434,9 @@ describe('App - Task', () => {
       mockService: {
         service: {
           fetchTasks,
-          getTaskTimerEndItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'NEXT', label: 'Next task' }],
+          }),
           onTaskTimerEndPromptHandled: ({ invalidateTasksCache }) => {
             invalidateTasksCache();
 
@@ -448,7 +458,7 @@ describe('App - Task', () => {
   it('should be able to invalidate the tasks cache when handling the task completed prompt', async () => {
     const fetchTasks = vi.fn().mockResolvedValue([{ id: 'TASK_ONE', label: 'Task one' }]);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         pomodoroSet: ['task', 'shortBreak'],
         taskTime: 5,
@@ -456,7 +466,9 @@ describe('App - Task', () => {
       mockService: {
         service: {
           fetchTasks,
-          getTaskCompleteItems: () => [{ id: 'NEXT', label: 'Next task' }],
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'NEXT', label: 'Next task' }],
+          }),
           onTaskCompletePromptHandled: ({ invalidateTasksCache }) => {
             invalidateTasksCache();
           },
@@ -476,7 +488,7 @@ describe('App - Task', () => {
   it('should be able to invalidate the tasks cache after being completed early without handling the prompt', async () => {
     const fetchTasks = vi.fn().mockResolvedValue([{ id: 'TASK_ONE', label: 'Task one' }]);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         pomodoroSet: ['task', 'shortBreak'],
         taskTime: 5,

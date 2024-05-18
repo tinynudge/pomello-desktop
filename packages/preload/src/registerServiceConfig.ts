@@ -4,7 +4,7 @@ import {
   ServiceConfigChangeCallback,
   ServiceConfigStore,
   StoreContents,
-} from '@domain';
+} from '@pomello-desktop/domain';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 const registerServiceConfig = async <TConfig = StoreContents>(

@@ -1,10 +1,10 @@
-import { TaskTimerEndPromptHandledResponse } from '@domain';
+import { TaskTimerEndPromptHandledResponse } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
-import mountApp, { screen } from '../__fixtures__/mountApp';
+import { renderApp, screen } from '../__fixtures__/renderApp';
 
 describe('App - Task Timer End', () => {
   it('should show the view when the task timer ends', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -24,7 +24,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should show the correct options', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -47,13 +47,15 @@ describe('App - Task Timer End', () => {
   });
 
   it('should show custom options', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
       mockService: {
         service: {
-          getTaskTimerEndItems: () => [{ id: 'foo', label: 'Foobar' }],
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foobar' }],
+          }),
         },
       },
     });
@@ -70,7 +72,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should enable overriding the move task hotkey action', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -102,7 +104,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should enable overriding the move task hotkey action on nested items', async () => {
-    const { appApi, simulate } = mountApp({
+    const { appApi, simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -146,7 +148,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the continue task option', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -167,7 +169,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the continue task hotkey', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -188,7 +190,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the switch task option', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -204,7 +206,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the move task hotkey', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -224,7 +226,7 @@ describe('App - Task Timer End', () => {
       .fn<never, TaskTimerEndPromptHandledResponse>()
       .mockReturnValue({ action: 'continueTask' });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           getTaskTimerEndItems: () => ({
@@ -249,7 +251,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the add note option', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -264,7 +266,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the add note hotkey', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -279,7 +281,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the void task option', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -295,7 +297,7 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the void task hotkey', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -313,13 +315,15 @@ describe('App - Task Timer End', () => {
   it('should handle a custom option without an action', async () => {
     const mockTaskTimerEndPromptHandler = vi.fn();
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
       mockService: {
         service: {
-          getTaskTimerEndItems: () => [{ id: 'foo', label: 'Foo' }],
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foo' }],
+          }),
           fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
           onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
         },
@@ -344,14 +348,16 @@ describe('App - Task Timer End', () => {
       .fn<never, TaskTimerEndPromptHandledResponse>()
       .mockReturnValue({ action: 'continueTask' });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
       mockService: {
         service: {
           fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
-          getTaskTimerEndItems: () => [{ id: 'foo', label: 'Foo' }],
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foo' }],
+          }),
           onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
         },
       },
@@ -372,13 +378,15 @@ describe('App - Task Timer End', () => {
       .fn<never, TaskTimerEndPromptHandledResponse>()
       .mockReturnValue({ action: 'switchTask' });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
       mockService: {
         service: {
-          getTaskTimerEndItems: () => [{ id: 'foo', label: 'Foo' }],
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foo' }],
+          }),
           onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
         },
       },
@@ -399,13 +407,15 @@ describe('App - Task Timer End', () => {
       .fn<never, TaskTimerEndPromptHandledResponse>()
       .mockReturnValue({ action: 'voidTask' });
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
       mockService: {
         service: {
-          getTaskTimerEndItems: () => [{ id: 'foo', label: 'Foo' }],
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foo' }],
+          }),
           onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
         },
       },

@@ -1,6 +1,6 @@
 import sanitizeBounds from '@/helpers/sanitizeBounds';
 import runtime from '@/runtime';
-import { SetSelectBoundsOptions } from '@domain';
+import { SetSelectBoundsOptions } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleSetSelectBounds = (

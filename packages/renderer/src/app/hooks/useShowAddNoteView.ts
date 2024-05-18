@@ -1,30 +1,26 @@
-import { setOverlayView } from '@/app/appSlice';
-import useService from '@/shared/hooks/useService';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { NoteType } from '@domain';
-import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useService } from '@/shared/context/ServiceContext';
+import { NoteType } from '@pomello-desktop/domain';
+import { useStoreActions } from '../context/StoreContext';
 
-const useShowAddNoteView = () => {
-  const { displayName, onNoteCreate } = useService();
-  const { t } = useTranslation();
+export const useShowAddNoteView = () => {
+  const { overlayViewSet } = useStoreActions();
+  const getService = useService();
+  const t = useTranslate();
 
-  const dispatch = useDispatch();
+  const showAddNoteView = (type: NoteType) => {
+    const { displayName, onNoteCreate } = getService();
 
-  return useCallback(
-    (type: NoteType) => {
-      if (!onNoteCreate) {
-        new Notification(t('notesDisabledHeading'), {
-          body: t('serviceActionUnavailable', { service: displayName }),
-        });
+    if (!onNoteCreate) {
+      new Notification(t('notesDisabledHeading'), {
+        body: t('serviceActionUnavailable', { service: displayName }),
+      });
 
-        return;
-      }
+      return;
+    }
 
-      dispatch(setOverlayView(type));
-    },
-    [dispatch, displayName, onNoteCreate, t]
-  );
+    overlayViewSet(type);
+  };
+
+  return showAddNoteView;
 };
-
-export default useShowAddNoteView;

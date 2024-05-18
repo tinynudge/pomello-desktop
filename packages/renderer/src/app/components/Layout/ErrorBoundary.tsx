@@ -1,50 +1,35 @@
-import SerializableHttpError from '@/shared/helpers/SerializableHttpError';
-import useMaybeService from '@/shared/hooks/useMaybeService';
-import { Logger } from '@domain';
-import { FC, Fragment, ReactNode } from 'react';
-import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
-import { QueryErrorResetBoundary } from 'react-query';
-import ErrorOverlay from './ErrorOverlay';
+import { useRuntime } from '@/shared/context/RuntimeContext';
+import { useMaybeService } from '@/shared/context/ServiceContext';
+import { ErrorBoundary as BaseErrorBoundary, JSX, ParentComponent } from 'solid-js';
+import { ServiceContainer } from '../ServiceContainer';
+import { ErrorOverlay } from './ErrorOverlay';
 
 interface ErrorBoundaryProps {
-  children: ReactNode;
-  logger: Logger;
-  renderError(children: ReactNode): JSX.Element;
+  renderError(children: JSX.Element): JSX.Element;
 }
 
-const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, logger, renderError }) => {
-  const service = useMaybeService();
+export const ErrorBoundary: ParentComponent<ErrorBoundaryProps> = props => {
+  const { logger } = useRuntime();
+  const getService = useMaybeService();
 
   return (
-    <QueryErrorResetBoundary>
-      {({ reset }) => (
-        <ReactErrorBoundary
-          fallbackRender={props => {
-            const customFallback = service?.handleError?.(props);
+    <BaseErrorBoundary
+      fallback={(error, resetErrorBoundary) => {
+        const service = getService();
+        const customFallback = service?.handleError?.({ error, resetErrorBoundary });
 
-            if (service && customFallback) {
-              const ServiceContainer = service.Container ?? Fragment;
+        logger.error('Caught error at error boundary', error);
 
-              return renderError(<ServiceContainer>{customFallback}</ServiceContainer>);
-            }
+        if (service && customFallback) {
+          return props.renderError(<ServiceContainer>{customFallback()}</ServiceContainer>);
+        }
 
-            return renderError(<ErrorOverlay {...props} />);
-          }}
-          onError={error => {
-            const message =
-              error instanceof SerializableHttpError
-                ? error.toJson()
-                : JSON.stringify({ message: error.message, stack: error.stack });
-
-            logger.error(message);
-          }}
-          onReset={reset}
-        >
-          {children}
-        </ReactErrorBoundary>
-      )}
-    </QueryErrorResetBoundary>
+        return props.renderError(
+          <ErrorOverlay error={error} resetErrorBoundary={resetErrorBoundary} />
+        );
+      }}
+    >
+      {props.children}
+    </BaseErrorBoundary>
   );
 };
-
-export default ErrorBoundary;

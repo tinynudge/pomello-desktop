@@ -1,51 +1,48 @@
-import useTranslation from '@/shared/hooks/useTranslation';
-import { forwardRef } from 'react';
-import { ReactComponent as AddIcon } from './assets/add.svg';
-import { ReactComponent as CogIcon } from './assets/cog.svg';
-import { ReactComponent as HomeIcon } from './assets/home.svg';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { Component } from 'solid-js';
 import styles from './Menu.module.scss';
+import AddIcon from './assets/add.svg';
+import CogIcon from './assets/cog.svg';
+import HomeIcon from './assets/home.svg';
 
 interface MenuProps {
   isOpen: boolean;
   onCreateTaskClick(): void;
   onHomeClick(): void;
+  ref: HTMLElement;
 }
 
-const Menu = forwardRef<HTMLElement, MenuProps>(
-  ({ isOpen, onCreateTaskClick, onHomeClick }, ref) => {
-    const { t } = useTranslation();
+export const Menu: Component<MenuProps> = props => {
+  const t = useTranslate();
 
-    return (
-      <nav aria-label={t('menuLabel')} className={styles.menu} ref={ref}>
-        <button
-          aria-hidden={!isOpen}
-          aria-label={t('homeButtonLabel')}
-          className={styles.button}
-          onClick={onHomeClick}
-          tabIndex={isOpen ? 0 : -1}
-        >
-          <HomeIcon aria-hidden />
-        </button>
-        <button
-          aria-label={t('dashboardButtonLabel')}
-          aria-hidden={!isOpen}
-          className={styles.button}
-          tabIndex={isOpen ? 0 : -1}
-        >
-          <CogIcon aria-hidden />
-        </button>
-        <button
-          aria-hidden={!isOpen}
-          aria-label={t('createTaskButtonLabel')}
-          className={styles.button}
-          onClick={onCreateTaskClick}
-          tabIndex={isOpen ? 0 : -1}
-        >
-          <AddIcon aria-hidden />
-        </button>
-      </nav>
-    );
-  }
-);
-
-export default Menu;
+  return (
+    <nav aria-label={t('menuLabel')} class={styles.menu} ref={props.ref}>
+      <button
+        aria-hidden={!props.isOpen}
+        aria-label={t('homeButtonLabel')}
+        class={styles.button}
+        onClick={() => props.onHomeClick()}
+        tabIndex={props.isOpen ? 0 : -1}
+      >
+        <HomeIcon aria-hidden />
+      </button>
+      <button
+        aria-label={t('dashboardButtonLabel')}
+        aria-hidden={!props.isOpen}
+        class={styles.button}
+        tabIndex={props.isOpen ? 0 : -1}
+      >
+        <CogIcon aria-hidden />
+      </button>
+      <button
+        aria-hidden={!props.isOpen}
+        aria-label={t('createTaskButtonLabel')}
+        class={styles.button}
+        onClick={() => props.onCreateTaskClick()}
+        tabIndex={props.isOpen ? 0 : -1}
+      >
+        <AddIcon aria-hidden />
+      </button>
+    </nav>
+  );
+};

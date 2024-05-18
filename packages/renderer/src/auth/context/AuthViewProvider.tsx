@@ -1,18 +1,32 @@
-import { createContext, FC, ReactNode } from 'react';
+import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
+import { ParentComponent, createContext, useContext } from 'solid-js';
 
 interface AuthViewProviderProps {
-  children: ReactNode;
-  onTokenSave(): void;
+  defaultOnTokenSave(): void;
 }
 
 interface AuthViewContextValue {
   onTokenSave(): void;
 }
 
-export const AuthViewContext = createContext<AuthViewContextValue | undefined>(undefined);
+const AuthViewContext = createContext<AuthViewContextValue | undefined>(undefined);
 
-const AuthViewProvider: FC<AuthViewProviderProps> = ({ children, onTokenSave }) => {
-  return <AuthViewContext.Provider value={{ onTokenSave }}>{children}</AuthViewContext.Provider>;
+export const useAuthView = () => {
+  const context = useContext(AuthViewContext);
+
+  assertNonNullish(context, 'useAuthView must be used inside <AuthViewProvider>');
+
+  return context;
 };
 
-export default AuthViewProvider;
+export const AuthViewProvider: ParentComponent<AuthViewProviderProps> = props => {
+  return (
+    <AuthViewContext.Provider
+      value={{
+        onTokenSave: props.defaultOnTokenSave,
+      }}
+    >
+      {props.children}
+    </AuthViewContext.Provider>
+  );
+};

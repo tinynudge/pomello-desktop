@@ -1,15 +1,22 @@
-import { Hotkeys } from '@domain';
-import { act } from 'react-dom/test-utils';
+import { MockAppEventEmitter } from '@/__fixtures__/createMockAppApi';
+import { Hotkeys } from '@pomello-desktop/domain';
+import { UserEvent } from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { tickTimer } from './mockPomelloServiceTicker';
-import { fireEvent, MountAppResults, screen } from './mountApp';
+import { fireEvent, screen } from './renderApp';
+
+type RenderAppContext = {
+  appApi: AppApi;
+  emitAppApiEvent: MockAppEventEmitter;
+  userEvent: UserEvent;
+};
 
 const sleep = (timeout: number) =>
   new Promise<void>(resolve => {
     setTimeout(resolve, timeout);
   });
 
-const advanceTimer = async (_results: MountAppResults, time: number) => {
+const advanceTimer = async (_results: RenderAppContext, time: number) => {
   let count = 0;
 
   const isFakeTimers = vi.isFakeTimers();
@@ -18,19 +25,15 @@ const advanceTimer = async (_results: MountAppResults, time: number) => {
     tickTimer();
 
     if (isFakeTimers) {
-      act(() => {
-        vi.advanceTimersByTime(1000);
-      });
+      vi.advanceTimersByTime(1000);
     }
 
     count += 1;
   }
-
-  await act(() => sleep(1));
 };
 
 const clickMenuButton = async (
-  { userEvent }: MountAppResults,
+  { userEvent }: RenderAppContext,
   button: 'createTask' | 'dashboard' | 'home'
 ) => {
   const buttonNames = {
@@ -42,17 +45,17 @@ const clickMenuButton = async (
   await userEvent.click(screen.getByRole('button', { name: buttonNames[button] }));
 };
 
-const enterNote = async ({ userEvent }: MountAppResults, note: string) => {
+const enterNote = async ({ userEvent }: RenderAppContext, note: string) => {
   await screen.findByRole('textbox');
 
   await userEvent.type(screen.getByRole('textbox'), note);
 };
 
-const hideDialActions = async ({ userEvent }: MountAppResults) => {
+const hideDialActions = async ({ userEvent }: RenderAppContext) => {
   await userEvent.click(screen.getByRole('button', { name: 'Hide actions' }));
 };
 
-const hotkey = async (_results: MountAppResults, command: keyof Hotkeys) => {
+const hotkey = async (_results: RenderAppContext, command: keyof Hotkeys) => {
   const keyCodes: Record<keyof Hotkeys, number> = {
     addNote: 65, // A
     completeTaskEarly: 66, // B
@@ -73,42 +76,36 @@ const hotkey = async (_results: MountAppResults, command: keyof Hotkeys) => {
     voidTask: 81, // Q
   };
 
-  await act(async () => {
-    fireEvent.keyDown(document, {
-      metaKey: true,
-      shiftKey: true,
-      which: keyCodes[command],
-    });
-
-    await sleep(1);
+  fireEvent.keyDown(document, {
+    metaKey: true,
+    shiftKey: true,
+    which: keyCodes[command],
   });
+
+  await sleep(1);
 };
 
-const openMenu = async ({ userEvent }: MountAppResults) => {
+const openMenu = async ({ userEvent }: RenderAppContext) => {
   await userEvent.click(screen.getByRole('button', { name: 'Open menu' }));
 };
 
-const selectService = async (results: MountAppResults, serviceId: string) => {
+const selectService = async (results: RenderAppContext, serviceId: string) => {
   await selectOption(results, serviceId);
 
-  await act(async () => {
-    results.emitAppApiEvent('onServicesChange', {
-      activeServiceId: serviceId,
-    });
-
-    await sleep(1);
+  results.emitAppApiEvent('onServicesChange', {
+    activeServiceId: serviceId,
   });
+
+  await sleep(1);
 };
 
-const selectOption = async ({ emitAppApiEvent }: MountAppResults, optionId: string) => {
-  await act(async () => {
-    emitAppApiEvent('onSelectChange', optionId);
+const selectOption = async ({ emitAppApiEvent }: RenderAppContext, optionId: string) => {
+  emitAppApiEvent('onSelectChange', optionId);
 
-    await sleep(1);
-  });
+  await sleep(1);
 };
 
-const selectTask = async (results: MountAppResults, taskId: string = 'one') => {
+const selectTask = async (results: RenderAppContext, taskId: string = 'one') => {
   await waitForSelectTaskView();
 
   await sleep(1);
@@ -116,17 +113,17 @@ const selectTask = async (results: MountAppResults, taskId: string = 'one') => {
   await selectOption(results, taskId);
 };
 
-const showDialActions = async ({ userEvent }: MountAppResults) => {
+const showDialActions = async ({ userEvent }: RenderAppContext) => {
   await userEvent.click(screen.getByRole('button', { name: 'Show actions' }));
 };
 
-const startTimer = async ({ userEvent }: MountAppResults) => {
+const startTimer = async ({ userEvent }: RenderAppContext) => {
   const startTimerButton = await screen.findByRole('button', { name: 'Start timer' });
 
   await userEvent.click(startTimerButton);
 };
 
-const switchLists = async (results: MountAppResults) => {
+const switchLists = async (results: RenderAppContext) => {
   await waitForSelectTaskView();
 
   await sleep(1);
@@ -138,7 +135,7 @@ const waitForSelectTaskView = async () => {
   await screen.findByRole('button', { name: 'Pick a task' });
 };
 
-const simulate = {
+export const simulate = {
   advanceTimer,
   clickMenuButton,
   enterNote,
@@ -153,5 +150,3 @@ const simulate = {
   switchLists,
   waitForSelectTaskView,
 };
-
-export default simulate;

@@ -1,9 +1,8 @@
-import { Signal } from '@domain';
-import { ChangeEvent, forwardRef, KeyboardEvent, useSyncExternalStore } from 'react';
+import { Component, JSX } from 'solid-js';
 import styles from './FilterInput.module.scss';
 
 interface FilterInputProps {
-  activeOptionId: Signal<string | undefined>;
+  activeOptionId?: string;
   listboxId: string;
   onChange(query: string): void;
   onEnter(): void;
@@ -14,70 +13,50 @@ interface FilterInputProps {
   onPreviousOptionSelect(): void;
   placeholder: string;
   query: string;
+  ref: HTMLInputElement;
 }
 
-const FilterInput = forwardRef<HTMLInputElement, FilterInputProps>(
-  (
-    {
-      activeOptionId,
-      listboxId,
-      onChange,
-      onEnter,
-      onEscape,
-      onFirstOptionSelect,
-      onLastOptionSelect,
-      onNextOptionSelect,
-      onPreviousOptionSelect,
-      placeholder,
-      query,
-    },
-    ref
-  ) => {
-    const currentOptionId = useSyncExternalStore(activeOptionId.subscribe, activeOptionId.get);
+export const FilterInput: Component<FilterInputProps> = props => {
+  const handleInputChange: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
+    props.onChange(event.currentTarget.value);
+  };
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-      onChange(event.currentTarget.value);
-    };
+  const handleInputKeyDown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = event => {
+    const { key, shiftKey } = event;
 
-    const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-      const { key, shiftKey } = event;
+    if (key === 'Tab') {
+      event.preventDefault();
+    }
 
-      if (key === 'Tab') {
-        event.preventDefault();
-      }
+    if (key === 'ArrowDown' || (!shiftKey && key === 'Tab')) {
+      props.onNextOptionSelect();
+    } else if (key === 'ArrowUp' || (shiftKey && key === 'Tab')) {
+      props.onPreviousOptionSelect();
+    } else if (key === 'Home') {
+      props.onFirstOptionSelect();
+    } else if (key === 'End') {
+      props.onLastOptionSelect();
+    } else if (key === 'Escape') {
+      props.onEscape();
+    } else if (key === 'Enter') {
+      props.onEnter();
+    }
+  };
 
-      if (key === 'ArrowDown' || (!shiftKey && key === 'Tab')) {
-        onNextOptionSelect();
-      } else if (key === 'ArrowUp' || (shiftKey && key === 'Tab')) {
-        onPreviousOptionSelect();
-      } else if (key === 'Home') {
-        onFirstOptionSelect();
-      } else if (key === 'End') {
-        onLastOptionSelect();
-      } else if (key === 'Escape') {
-        onEscape();
-      } else if (key === 'Enter') {
-        onEnter();
-      }
-    };
-
-    return (
-      <input
-        aria-activedescendant={currentOptionId}
-        aria-autocomplete="list"
-        aria-controls={listboxId}
-        aria-expanded
-        className={styles.input}
-        onChange={handleInputChange}
-        onKeyDown={handleInputKeyDown}
-        placeholder={placeholder}
-        ref={ref}
-        role="combobox"
-        type="text"
-        value={query}
-      />
-    );
-  }
-);
-
-export default FilterInput;
+  return (
+    <input
+      aria-activedescendant={props.activeOptionId}
+      aria-autocomplete="list"
+      aria-controls={props.listboxId}
+      aria-expanded
+      class={styles.input}
+      onInput={handleInputChange}
+      onKeyDown={handleInputKeyDown}
+      placeholder={props.placeholder}
+      ref={props.ref}
+      role="combobox"
+      type="text"
+      value={props.query}
+    />
+  );
+};

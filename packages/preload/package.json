@@ -1,0 +1,18 @@
+{
+  "name": "@pomello-desktop/preload",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Preloaded scripts for Pomello desktop app",
+  "license": "UNLICENSED",
+  "author": "Tiny Nudge LLC <pomello@tinynudge.co>",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write . --ignore-path ../../.prettierignore",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@pomello-desktop/domain": "workspace:*"
+  }
+}

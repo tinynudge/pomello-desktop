@@ -1,7 +1,7 @@
-import SelectField from '@/app/ui/SelectField';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { SelectItem } from '@domain';
-import { FC } from 'react';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { SelectField } from '@/ui/components/SelectField';
+import { SelectItem } from '@pomello-desktop/domain';
+import { Component } from 'solid-js';
 
 interface SelectListViewProps {
   defaultOpen: boolean;
@@ -9,17 +9,15 @@ interface SelectListViewProps {
   onListSelect(listId: string): void;
 }
 
-const SelectListView: FC<SelectListViewProps> = ({ defaultOpen, lists, onListSelect }) => {
-  const { t } = useTranslation();
+export const SelectListView: Component<SelectListViewProps> = props => {
+  const t = useTranslate();
 
   return (
     <SelectField
-      defaultOpen={defaultOpen}
-      items={lists}
-      onChange={onListSelect}
+      defaultOpen={props.defaultOpen}
+      items={props.lists}
+      onChange={props.onListSelect}
       placeholder={t('service:selectListPlaceholder')}
     />
   );
 };
-
-export default SelectListView;

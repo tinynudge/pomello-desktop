@@ -1,15 +1,15 @@
-import generatePomelloUser from '@/app/__fixtures__/generatePomelloUser';
-import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
-import generateTrelloCard from '../__fixtures__/generateTrelloCard';
-import generateTrelloCheckItem from '../__fixtures__/generateTrelloCheckItem';
-import generateTrelloChecklist from '../__fixtures__/generateTrelloChecklist';
-import generateTrelloList from '../__fixtures__/generateTrelloList';
-import generateTrelloMember from '../__fixtures__/generateTrelloMember';
-import mountTrelloService, { screen, waitFor } from '../__fixtures__/mountTrelloService';
+import { generatePomelloUser } from '@/app/__fixtures__/generatePomelloUser';
+import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
+import { generateTrelloCard } from '../__fixtures__/generateTrelloCard';
+import { generateTrelloCheckItem } from '../__fixtures__/generateTrelloCheckItem';
+import { generateTrelloChecklist } from '../__fixtures__/generateTrelloChecklist';
+import { generateTrelloList } from '../__fixtures__/generateTrelloList';
+import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
+import { screen, waitFor, renderTrelloService } from '../__fixtures__/renderTrelloService';
 
 describe('Trello service - Select task', () => {
   it('should show the board and list in the heading', async () => {
-    const { simulate } = await mountTrelloService({
+    const { simulate } = await renderTrelloService({
       config: {
         currentList: 'TASKS_ID',
       },
@@ -31,7 +31,7 @@ describe('Trello service - Select task', () => {
   });
 
   it('should fetch the cards in the correct order', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       trelloApi: {
         fetchCardsByListId: [
           generateTrelloCard({ checklists: [], id: '3', name: 'Third', pos: 3 }),
@@ -58,7 +58,7 @@ describe('Trello service - Select task', () => {
   });
 
   it('should fetch incomplete checklists in the correct order', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       trelloApi: {
         fetchCardsByListId: [
           generateTrelloCard({
@@ -169,7 +169,7 @@ describe('Trello service - Select task', () => {
   });
 
   it('should not show checklists if they are not a premium user', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       pomelloApi: {
         fetchUser: generatePomelloUser({
           type: 'free',
@@ -225,7 +225,7 @@ describe('Trello service - Select task', () => {
   });
 
   it('should not show pomodoro markers in the options', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       trelloApi: {
         fetchCardsByListId: [
           generateTrelloCard({
@@ -269,7 +269,7 @@ describe('Trello service - Select task', () => {
   });
 
   it('should be able to return to the select list view', async () => {
-    const { appApi, simulate } = await mountTrelloService({
+    const { appApi, simulate } = await renderTrelloService({
       config: {
         currentList: 'ONE',
       },
@@ -304,7 +304,7 @@ describe('Trello service - Select task', () => {
   });
 
   it('should be able to return to their original list', async () => {
-    const { simulate } = await mountTrelloService();
+    const { simulate } = await renderTrelloService();
 
     await simulate.selectTask('switch-lists');
     await screen.findByRole('button', { name: 'Pick a list' });

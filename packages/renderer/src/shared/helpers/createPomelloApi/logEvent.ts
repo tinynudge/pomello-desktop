@@ -1,7 +1,11 @@
-import { CreatedPomelloTrackingEvent, PomelloApiResponse, PomelloTrackingEvent } from '@domain';
+import {
+  CreatedPomelloTrackingEvent,
+  PomelloApiResponse,
+  PomelloTrackingEvent,
+} from '@pomello-desktop/domain';
 import { PomelloApiContext } from './createPomelloApi';
 
-const logEvent = async (
+export const logEvent = async (
   { client }: PomelloApiContext,
   event: PomelloTrackingEvent
 ): Promise<CreatedPomelloTrackingEvent> => {
@@ -16,5 +20,3 @@ const logEvent = async (
 
   return data;
 };
-
-export default logEvent;

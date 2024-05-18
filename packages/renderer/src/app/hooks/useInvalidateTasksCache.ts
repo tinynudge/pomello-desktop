@@ -1,14 +1,13 @@
-import useTasksCacheKey from '@/app/hooks/useTasksCacheKey';
-import { useCallback } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/solid-query';
+import { useTasksCacheKey } from './useTasksCacheKey';
 
-const useInvalidateTasksCache = () => {
+export const useInvalidateTasksCache = () => {
+  const getTasksCacheKey = useTasksCacheKey();
   const queryClient = useQueryClient();
-  const tasksCacheKey = useTasksCacheKey();
 
-  return useCallback(() => {
-    queryClient.invalidateQueries(tasksCacheKey);
-  }, [queryClient, tasksCacheKey]);
+  return () => {
+    queryClient.invalidateQueries({
+      queryKey: getTasksCacheKey(),
+    });
+  };
 };
-
-export default useInvalidateTasksCache;

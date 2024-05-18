@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
-import updateCard from '../api/updateCard';
-import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
-import generateTrelloCard from '../__fixtures__/generateTrelloCard';
-import generateTrelloList from '../__fixtures__/generateTrelloList';
-import generateTrelloMember from '../__fixtures__/generateTrelloMember';
-import mountTrelloService, { screen } from '../__fixtures__/mountTrelloService';
+import { updateCard } from '../api/updateCard';
+import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
+import { generateTrelloCard } from '../__fixtures__/generateTrelloCard';
+import { generateTrelloList } from '../__fixtures__/generateTrelloList';
+import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
+import { screen, renderTrelloService } from '../__fixtures__/renderTrelloService';
 
 vi.mock('../api/updateCard');
 
@@ -27,7 +27,7 @@ describe('Trello service - Switch task', () => {
   });
 
   it('should show the correct pomodoro count when switching tasks', async () => {
-    const { simulate } = await mountTrelloService({
+    const { simulate } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -69,7 +69,7 @@ describe('Trello service - Switch task', () => {
   it('should open the tasks lists after switching lists', async () => {
     const mockShowSelect = vi.fn();
 
-    const { emitAppApiEvent, simulate } = await mountTrelloService({
+    const { emitAppApiEvent, simulate } = await renderTrelloService({
       config: {
         currentList: 'FIRST_LIST',
       },
@@ -100,7 +100,7 @@ describe('Trello service - Switch task', () => {
   });
 
   it('should not destroy the active timer when switching lists', async () => {
-    const { simulate } = await mountTrelloService({
+    const { simulate } = await renderTrelloService({
       settings: {
         taskTime: 30,
       },

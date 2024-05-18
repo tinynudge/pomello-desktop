@@ -1,14 +1,16 @@
-import moveCardToList from '../api/moveCardToList';
-import { TrelloCard } from '../domain';
-import { TrelloRuntime } from '../TrelloRuntime';
+import { moveCardToList } from '../api/moveCardToList';
+import { TrelloCard, TrelloRuntime } from '../domain';
 
-const moveCardAndUpdateDoneList = async (
+export const moveCardAndUpdateDoneList = async (
   { config, cache, logger, translate }: TrelloRuntime,
   task: TrelloCard,
   listId: string
 ): Promise<void> => {
-  const { currentList, lists, log, preferences } = cache.get();
-  const position = config.get().completedTaskPosition ?? 'top';
+  const currentList = cache.store.currentList;
+  const lists = cache.store.lists;
+  const log = cache.store.log;
+  const preferences = cache.store.preferences;
+  const position = config.store.completedTaskPosition ?? 'top';
 
   if (preferences.keepLogs && log) {
     const list = lists.get(listId);
@@ -18,7 +20,7 @@ const moveCardAndUpdateDoneList = async (
     }
   }
 
-  const updatedPreferences = { ...config.get().preferences };
+  const updatedPreferences = { ...config.store.preferences };
   updatedPreferences.lists = {
     ...updatedPreferences.lists,
     [currentList.id]: {
@@ -27,11 +29,8 @@ const moveCardAndUpdateDoneList = async (
     },
   };
 
-  cache.set(draft => {
-    draft.preferences.doneList = listId;
-  });
-
-  config.set('preferences', updatedPreferences);
+  cache.actions.doneListUpdated(listId);
+  config.actions.preferencesUpdated(updatedPreferences);
 
   logger.debug('Will move Trello card');
 
@@ -44,5 +43,3 @@ const moveCardAndUpdateDoneList = async (
 
   logger.debug('Did move Trello card');
 };
-
-export default moveCardAndUpdateDoneList;

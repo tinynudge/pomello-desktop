@@ -1,5 +1,5 @@
 import runtime from '@/runtime';
-import { Hotkeys, Store } from '@domain';
+import { Hotkeys, Store } from '@pomello-desktop/domain';
 
 type HotkeyDefaults = Record<keyof Hotkeys, PlatformValue | string>;
 

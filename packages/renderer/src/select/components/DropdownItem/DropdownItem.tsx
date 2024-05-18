@@ -1,12 +1,13 @@
-import { SelectItem, SelectOptionType, Service, Signal } from '@domain';
+import { SelectItem, SelectOptionType, Service } from '@pomello-desktop/domain';
 import cc from 'classcat';
-import { FC, useSyncExternalStore } from 'react';
-import DropdownList from '../DropdownList';
-import DropdownRow from '../DropdownRow';
+import { Component } from 'solid-js';
+import { Dynamic } from 'solid-js/web';
+import { DropdownList } from '../DropdownList';
+import { DropdownRow } from '../DropdownRow';
 import styles from './DropdownItem.module.scss';
 
 interface DropdownItemProps {
-  activeOptionId: Signal<string | undefined>;
+  activeOptionId?: string;
   depth: number;
   item: SelectItem;
   onOptionHover(option: SelectOptionType): void;
@@ -14,72 +15,60 @@ interface DropdownItemProps {
   service?: Service;
 }
 
-const DropdownItem: FC<DropdownItemProps> = ({
-  activeOptionId,
-  depth,
-  item,
-  onOptionHover,
-  onOptionSelect,
-  service,
-}) => {
-  const isSelected = useSyncExternalStore(
-    activeOptionId.subscribe,
-    () => activeOptionId.get() === item.id
-  );
-
-  const isGroupType = item.type === 'group' || item.type === 'customGroup';
-
-  if (isGroupType) {
-    return (
-      <DropdownList
-        activeOptionId={activeOptionId}
-        aria-labelledby={item.id}
-        depth={depth + 1}
-        items={item.items}
-        onOptionHover={onOptionHover}
-        onOptionSelect={onOptionSelect}
-        role="group"
-        service={service}
-      >
-        <DropdownRow className={cc([styles.item, styles.group])} id={item.id} role="presentation">
-          {item.type === 'customGroup' && service?.CustomSelectGroup ? (
-            <service.CustomSelectGroup group={item} />
+export const DropdownItem: Component<DropdownItemProps> = props => {
+  return (
+    <>
+      {props.item.type === 'group' || props.item.type === 'customGroup' ? (
+        <DropdownList
+          activeOptionId={props.activeOptionId}
+          aria-labelledby={props.item.id}
+          depth={props.depth + 1}
+          items={props.item.items}
+          onOptionHover={props.onOptionHover}
+          onOptionSelect={props.onOptionSelect}
+          role="group"
+          service={props.service}
+        >
+          <DropdownRow
+            class={cc([styles.item, styles.group])}
+            id={props.item.id}
+            role="presentation"
+          >
+            {props.item.type === 'customGroup' && props.service?.CustomSelectGroup ? (
+              <Dynamic component={props.service.CustomSelectGroup} group={props.item} />
+            ) : (
+              <>
+                <span class={styles.label}>{props.item.label}</span>
+                {props.item.hint && <span class={styles.hint}>{props.item.hint}</span>}
+              </>
+            )}
+          </DropdownRow>
+        </DropdownList>
+      ) : (
+        <DropdownRow
+          class={cc({
+            [styles.item]: true,
+            [styles.selected]: props.activeOptionId === props.item.id,
+          })}
+          id={props.item.id}
+          onClick={props.onOptionSelect}
+          onMouseOver={() => props.onOptionHover(props.item as SelectOptionType)}
+          role="option"
+        >
+          {props.item.type === 'customOption' && props.service?.CustomSelectOption ? (
+            <Dynamic
+              children={props.item.label}
+              component={props.service.CustomSelectOption}
+              option={props.item}
+            />
           ) : (
             <>
-              <span className={styles.label}>{item.label}</span>
-              {item.hint && <span className={styles.hint}>{item.hint}</span>}
+              <span class={styles.label}>{props.item.label}</span>
+              {props.item.hint && <span class={styles.hint}>{props.item.hint}</span>}
             </>
           )}
         </DropdownRow>
-      </DropdownList>
-    );
-  }
-
-  const handleOptionMouseOver = () => {
-    onOptionHover(item);
-  };
-
-  return (
-    <DropdownRow
-      className={cc({
-        [styles.item]: true,
-        [styles.selected]: isSelected,
-      })}
-      id={item.id}
-      onClick={onOptionSelect}
-      onMouseOver={handleOptionMouseOver}
-      role="option"
-    >
-      {item.type === 'customOption' && service?.CustomSelectOption ? (
-        <service.CustomSelectOption option={item} children={item.label} />
-      ) : (
-        <>
-          <span className={styles.label}>{item.label}</span>
-          {item.hint && <span className={styles.hint}>{item.hint}</span>}
-        </>
       )}
-    </DropdownRow>
+    </>
   );
 };
-
-export default DropdownItem;

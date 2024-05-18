@@ -1,171 +1,108 @@
-import useTasksCacheKey from '@/app/hooks/useTasksCacheKey';
-import LoadingText from '@/app/ui/LoadingText';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { InitializingView, SelectItem } from '@domain';
-import { useEffect, useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-import fetchBoardsAndLists from '../api/fetchBoardsAndLists';
-import {
-  selectBoards,
-  selectToken as selectCachedToken,
-  selectDidSwitchList,
-  selectLists,
-  selectPreviousListId,
-  useTrelloCache,
-} from '../useTrelloCache';
-import {
-  selectCurrentListId,
-  selectListFilter,
-  selectListFilterCaseSensitive,
-  selectPreferences,
-  selectRecentLists,
-  selectToken,
-  useTrelloConfig,
-} from '../useTrelloConfig';
-import LoginView from './LoginView';
-import SelectListView from './SelectListView';
-import getPreferences from './helpers/getPreferences';
-import parseBoardsAndLists from './helpers/parseBoardsAndLists';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useClearTasksCache } from '@/shared/hooks/useClearTasksCache';
+import { LoadingText } from '@/ui/components/LoadingText';
+import { InitializingView, SelectItem } from '@pomello-desktop/domain';
+import { createQuery } from '@tanstack/solid-query';
+import { Match, Switch, createEffect, createSignal } from 'solid-js';
+import { useTrelloCache, useTrelloConfig } from '../TrelloRuntimeContext';
+import { fetchBoardsAndLists } from '../api/fetchBoardsAndLists';
+import { LoginView } from './LoginView';
+import { SelectListView } from './SelectListView';
+import { getPreferences } from './helpers/getPreferences';
+import { parseBoardsAndLists } from './helpers/parseBoardsAndLists';
 
-const TrelloInitializingView: InitializingView = ({ onReady }) => {
-  const { t } = useTranslation();
+export const TrelloInitializingView: InitializingView = props => {
+  const t = useTranslate();
+  const cache = useTrelloCache();
+  const config = useTrelloConfig();
+  const clearTasksCache = useClearTasksCache();
 
-  const trelloCache = useTrelloCache();
-  const trelloConfig = useTrelloConfig();
+  const [getLists, setLists] = createSignal<SelectItem[]>();
 
-  const cachedBoards = trelloCache(selectBoards);
-  const cachedLists = trelloCache(selectLists);
-  const cachedToken = trelloCache(selectCachedToken);
-  const didSwitchList = trelloCache(selectDidSwitchList);
-  const previousListId = trelloCache(selectPreviousListId);
-
-  const currentListId = trelloConfig(selectCurrentListId);
-  const listFilter = trelloConfig(selectListFilter);
-  const listFilterCaseSensitive = trelloConfig(selectListFilterCaseSensitive);
-  const preferences = trelloConfig(selectPreferences);
-  const recentLists = trelloConfig(selectRecentLists);
-  const token = trelloConfig(selectToken);
-
-  const [lists, setLists] = useState<SelectItem[]>();
-
-  const { data: boardsAndLists } = useQuery({
-    enabled: Boolean(cachedToken),
-    queryKey: 'trello-boards-lists',
+  const boardsAndLists = createQuery(() => ({
+    enabled: cache.store.hasToken,
     queryFn: fetchBoardsAndLists,
-  });
+    queryKey: ['trello-boards-lists'],
+    throwOnError: true,
+  }));
 
-  useEffect(() => {
-    if (token) {
-      const decryptedToken = window.app.decryptValue(token);
-
-      if (decryptedToken) {
-        trelloCache.tokenSet(decryptedToken);
-      } else {
-        trelloConfig.tokenUnset();
-      }
-    } else {
-      trelloCache.tokenUnset();
-    }
-  }, [token, trelloCache, trelloConfig]);
-
-  useEffect(() => {
-    if (!boardsAndLists) {
+  createEffect(() => {
+    if (!boardsAndLists.data) {
       return;
     }
 
     const { boards, lists, selectItems } = parseBoardsAndLists({
-      boardsAndLists,
-      listFilter,
-      listFilterCaseSensitive,
-      previousListId,
-      recentLists,
+      boardsAndLists: boardsAndLists.data,
+      listFilter: config.store.listFilter,
+      listFilterCaseSensitive: config.store.listFilterCaseSensitive,
+      previousListId: cache.store.previousListId,
+      recentLists: config.store.recentLists,
       translate: t,
     });
 
     setLists(selectItems);
 
-    trelloCache.boardsAndListsFetched(boards, lists, boardsAndLists.id);
-  }, [
-    boardsAndLists,
-    currentListId,
-    listFilter,
-    listFilterCaseSensitive,
-    previousListId,
-    recentLists,
-    t,
-    trelloCache,
-  ]);
+    cache.actions.boardsAndListsFetched(boards, lists, boardsAndLists.data.id);
+  });
 
-  useEffect(() => {
-    if (!currentListId || !cachedLists) {
+  createEffect(() => {
+    if (!config.store.currentList || !cache.store.lists) {
       return;
     }
 
-    const currentList = cachedLists.get(currentListId);
-    const currentBoard = currentList ? cachedBoards.get(currentList.idBoard) : null;
+    const currentList = cache.store.lists.get(config.store.currentList);
+    const currentBoard = currentList ? cache.store.boards.get(currentList.idBoard) : null;
 
     if (currentBoard && currentList) {
-      const listPreferences = getPreferences(currentList, preferences);
+      const listPreferences = getPreferences(currentList, config.store.preferences);
 
-      trelloCache.currentListSet(currentBoard, currentList, listPreferences);
+      cache.actions.currentListSet(currentBoard, currentList, listPreferences);
 
-      onReady({ openTaskSelect: didSwitchList });
+      props.onReady({
+        openTaskSelect: cache.store.didSwitchList,
+      });
 
-      if (didSwitchList) {
-        trelloCache.didSwitchListUnset();
+      if (cache.store.didSwitchList) {
+        cache.actions.didSwitchListUnset();
       }
     } else {
       new Notification(t('service:invalidListHeading'), { body: t('service:invalidListBody') });
 
-      trelloConfig.currentListUnset();
+      config.actions.currentListUnset();
     }
-  }, [
-    cachedBoards,
-    cachedLists,
-    currentListId,
-    didSwitchList,
-    onReady,
-    preferences,
-    t,
-    trelloCache,
-    trelloConfig,
-  ]);
-
-  const queryClient = useQueryClient();
-  const tasksCacheKey = useTasksCacheKey();
+  });
 
   const handleListSelect = (optionId: string) => {
     let listId = optionId;
 
-    if (optionId === 'previous-list' && previousListId) {
-      listId = previousListId;
+    if (optionId === 'previous-list' && cache.store.previousListId) {
+      listId = cache.store.previousListId;
 
-      trelloCache.previousListIdUnset();
+      cache.actions.previousListIdUnset();
     } else {
-      queryClient.removeQueries(tasksCacheKey);
+      clearTasksCache();
     }
 
-    const updatedRecentLists = new Set(recentLists ?? []);
+    const updatedRecentLists = new Set(config.store.recentLists ?? []);
     updatedRecentLists.delete(listId);
 
-    trelloConfig.listSelected(listId, updatedRecentLists);
+    config.actions.listSelected(listId, updatedRecentLists);
   };
 
-  if (!cachedToken && !token) {
-    return <LoginView />;
-  }
-
-  if (!currentListId && lists) {
-    return (
-      <SelectListView
-        defaultOpen={Boolean(previousListId)}
-        lists={lists}
-        onListSelect={handleListSelect}
-      />
-    );
-  }
-
-  return <LoadingText />;
+  return (
+    <Switch fallback={<LoadingText />}>
+      <Match when={!cache.store.hasToken && !config.store.token}>
+        <LoginView />
+      </Match>
+      <Match when={!config.store.currentList && getLists()}>
+        {getLists => (
+          <SelectListView
+            defaultOpen={Boolean(cache.store.previousListId)}
+            lists={getLists()}
+            onListSelect={handleListSelect}
+          />
+        )}
+      </Match>
+    </Switch>
+  );
 };
-
-export default TrelloInitializingView;

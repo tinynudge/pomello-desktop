@@ -1,16 +1,16 @@
-import { AppProtocol } from '@domain';
+import { AppProtocol } from '@pomello-desktop/domain';
 import { Howl } from 'howler';
 import { vi } from 'vitest';
-import mountApp from '../__fixtures__/mountApp';
+import { renderApp } from '../__fixtures__/renderApp';
 
 describe('App - Timer sounds', () => {
   it('should load the sounds when the app loads', async () => {
     vi.mock('howler');
     const MockHowl = vi.mocked(Howl);
 
-    const assetPath = '/src/app/hooks/useTimerSounds/assets';
+    const assetPath = '/src/app/components/App/useTimerSounds/assets';
 
-    const { simulate } = mountApp();
+    const { simulate } = renderApp();
 
     await simulate.waitForSelectTaskView();
 
@@ -24,7 +24,7 @@ describe('App - Timer sounds', () => {
     vi.mock('howler');
     const MockHowl = vi.mocked(Howl);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTimerStartSound: 'custom',
         sounds: {

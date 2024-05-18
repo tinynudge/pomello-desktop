@@ -1,6 +1,6 @@
 import { TrelloBoard } from './TrelloBoard';
 
-export interface TrelloMember {
+export type TrelloMember = {
   id: string;
   boards: TrelloBoard[];
-}
+};

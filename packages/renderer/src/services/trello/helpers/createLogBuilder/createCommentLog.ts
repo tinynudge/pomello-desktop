@@ -1,7 +1,7 @@
-import { Translate } from '@domain';
+import { Translate } from '@pomello-desktop/domain';
 import { TrelloLog } from '../../domain';
 
-const createCommentLog = (translate: Translate, cardId: string): TrelloLog => {
+export const createCommentLog = (translate: Translate, cardId: string): TrelloLog => {
   return {
     cardId,
     entries: [],
@@ -11,5 +11,3 @@ const createCommentLog = (translate: Translate, cardId: string): TrelloLog => {
     timeSpent: translate('commentLogTimeSpent', { time: '**' }),
   };
 };
-
-export default createCommentLog;

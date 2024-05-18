@@ -1,1 +1,1 @@
-export { default } from './createMockService';
+export * from './createMockService';

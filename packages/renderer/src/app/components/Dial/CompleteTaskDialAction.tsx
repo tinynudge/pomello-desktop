@@ -1,31 +1,28 @@
-import useHotkeys from '@/app/hooks/useHotkeys';
-import usePomelloActions from '@/app/hooks/usePomelloActions';
-import createHintTitle from '@/shared/helpers/createHintTitle';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC, useEffect } from 'react';
-import DialAction from './DialAction';
+import { useHotkeys } from '@/app/context/HotkeysContext';
+import { usePomelloActions } from '@/app/context/PomelloContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { createHintTitle } from '@/shared/helpers/createHintTitle';
+import { Component } from 'solid-js';
+import { DialAction } from './DialAction';
 import { DialActionProps } from './DialActionProps';
-import { ReactComponent as CheckIcon } from './assets/check.svg';
+import CheckIcon from './assets/check.svg';
 
-const CompleteTaskDialAction: FC<DialActionProps> = ({ className, isVisible, onClick }) => {
+export const CompleteTaskDialAction: Component<DialActionProps> = props => {
   const { getHotkeyLabel, registerHotkeys } = useHotkeys();
   const { completeTask } = usePomelloActions();
-  const { t } = useTranslation();
-
-  useEffect(
-    () => registerHotkeys({ completeTaskEarly: completeTask }),
-    [registerHotkeys, completeTask]
-  );
+  const t = useTranslate();
 
   const handleActionClick = () => {
     completeTask();
-    onClick();
+    props.onClick();
   };
+
+  registerHotkeys({ completeTaskEarly: completeTask });
 
   return (
     <DialAction
-      className={className}
-      isVisible={isVisible}
+      class={props.class}
+      isVisible={props.isVisible}
       label={t('completeTaskLabel')}
       onClick={handleActionClick}
       title={createHintTitle(t, 'completeTaskLabel', getHotkeyLabel('completeTaskEarly'))}
@@ -34,5 +31,3 @@ const CompleteTaskDialAction: FC<DialActionProps> = ({ className, isVisible, onC
     </DialAction>
   );
 };
-
-export default CompleteTaskDialAction;

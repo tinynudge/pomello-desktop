@@ -6,7 +6,7 @@ interface SerializableHttpErrorParams {
   sensitiveSearchParams?: string[];
 }
 
-export default class SerializableHttpError extends HTTPError {
+export class SerializableHttpError extends HTTPError {
   private sensitiveSearchParams: string[];
 
   constructor({ error, message, sensitiveSearchParams = [] }: SerializableHttpErrorParams) {
@@ -20,6 +20,7 @@ export default class SerializableHttpError extends HTTPError {
     const url = new URL(this.request.url);
 
     return {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       body: (this.options as any).json,
       message: this.message,
       method: this.request.method,

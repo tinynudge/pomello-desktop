@@ -1,39 +1,45 @@
-import { selectTimerTime } from '@/app/appSlice';
+import { useStore } from '@/app/context/StoreContext';
 import cc from 'classcat';
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { Component, Show, createMemo } from 'solid-js';
 import styles from './Counter.module.scss';
 
-const Counter: FC = () => {
-  const time = useSelector(selectTimerTime);
+export const Counter: Component = () => {
+  const store = useStore();
 
-  const minutes = Math.floor(time / 60);
-  const seconds = time % 60;
+  const getCounter = createMemo(() => {
+    const time = store.pomelloState.timer?.time ?? 0;
 
-  const isSubMinute = minutes === 0;
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    const isSubMinute = minutes === 0;
 
-  let count = `${minutes}`;
-  if (isSubMinute) {
-    count = seconds < 10 ? `0${seconds}` : `${seconds}`;
-  }
+    let count = `${minutes}`;
+    if (isSubMinute) {
+      count = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    }
 
-  const rotation = (60 - seconds) * 6;
+    const rotation = (60 - seconds) * 6;
+
+    return {
+      count,
+      isSubMinute,
+      rotation,
+    };
+  });
 
   return (
     <>
       <span
-        className={cc({
+        class={cc({
           [styles.count]: true,
-          [styles.isSubMinute]: isSubMinute,
+          [styles.isSubMinute]: getCounter().isSubMinute,
         })}
       >
-        {count}
+        {getCounter().count}
       </span>
-      {!isSubMinute && (
-        <span className={styles.dot} style={{ transform: `rotate(-${rotation}deg)` }} />
-      )}
+      <Show when={!getCounter().isSubMinute}>
+        <span class={styles.dot} style={{ transform: `rotate(-${getCounter().rotation}deg)` }} />
+      </Show>
     </>
   );
 };
-
-export default Counter;

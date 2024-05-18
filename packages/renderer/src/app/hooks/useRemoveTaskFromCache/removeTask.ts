@@ -1,6 +1,6 @@
-import { SelectItem } from '@domain';
+import { SelectItem } from '@pomello-desktop/domain';
 
-const removeTask = (tasks: SelectItem[], taskId: string) => {
+export const removeTask = (tasks: SelectItem[], taskId: string) => {
   let didFindTask = false;
 
   tasks.forEach((task, index) => {
@@ -30,5 +30,3 @@ const removeTask = (tasks: SelectItem[], taskId: string) => {
 
   return { didFindTask, tasks };
 };
-
-export default removeTask;

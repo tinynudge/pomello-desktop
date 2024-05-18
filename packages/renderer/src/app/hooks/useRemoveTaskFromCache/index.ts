@@ -1,1 +1,1 @@
-export { default } from './useRemoveTaskFromCache';
+export * from './useRemoveTaskFromCache';

@@ -1,31 +1,26 @@
-import { selectCurrentTaskId } from '@/app/appSlice';
-import assertNonNullish from '@/shared/helpers/assertNonNullish';
-import useService from '@/shared/hooks/useService';
-import { SelectItem, SelectOptionType } from '@domain';
-import { useMemo } from 'react';
-import { useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
-import useTasksCacheKey from './useTasksCacheKey';
+import { useService } from '@/shared/context/ServiceContext';
+import { SelectItem, SelectOptionType } from '@pomello-desktop/domain';
+import { useQueryClient } from '@tanstack/solid-query';
+import { Accessor, createMemo } from 'solid-js';
+import { useStore } from '../context/StoreContext';
+import { useTasksCacheKey } from './useTasksCacheKey';
 
 interface CurrentTask {
-  currentTask: SelectOptionType;
-  currentTaskLabel: string;
+  item: SelectOptionType;
+  label: string;
 }
 
-const useCurrentTask = (): CurrentTask => {
-  const { getTaskLabel } = useService();
-
-  const tasksCacheKey = useTasksCacheKey();
+export const useCurrentTask = (): Accessor<CurrentTask> => {
+  const getService = useService();
+  const getTasksCacheKey = useTasksCacheKey();
   const queryClient = useQueryClient();
-  const tasks = queryClient.getQueryData<SelectItem[]>(tasksCacheKey);
+  const store = useStore();
 
-  const currentTaskId = useSelector(selectCurrentTaskId);
-
-  assertNonNullish(tasks, 'Unable to get cached tasks');
-
-  const currentTask = useMemo(() => {
+  const currentTask = createMemo(() => {
     let task: SelectOptionType | undefined;
 
+    const currentTaskId = store.pomelloState.currentTaskId;
+    const tasks = queryClient.getQueryData<SelectItem[]>(getTasksCacheKey()) ?? [];
     const itemsToSearch = [...tasks];
 
     while (!task && itemsToSearch.length) {
@@ -38,19 +33,15 @@ const useCurrentTask = (): CurrentTask => {
       }
     }
 
-    return task;
-  }, [tasks, currentTaskId]);
+    if (!task) {
+      throw new Error(`Unable to find task with id "${currentTaskId}"`);
+    }
 
-  if (!currentTask) {
-    throw new Error(`Unable to find task with id "${currentTask}"`);
-  }
+    return {
+      item: task,
+      label: getService().getTaskLabel?.(task.id) ?? task?.label,
+    };
+  });
 
-  const currentTaskLabel = useMemo(
-    () => getTaskLabel?.(currentTask.id) ?? currentTask.label,
-    [currentTask, getTaskLabel]
-  );
-
-  return { currentTask, currentTaskLabel };
+  return currentTask;
 };
-
-export default useCurrentTask;

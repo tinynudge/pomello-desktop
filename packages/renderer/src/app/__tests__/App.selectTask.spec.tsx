@@ -1,11 +1,10 @@
-import { InitializingView } from '@domain';
-import { useEffect } from 'react';
+import { InitializingView } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
-import mountApp, { screen, waitFor } from '../__fixtures__/mountApp';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
 describe('App - Select task', () => {
   it('should show a heading if provided', async () => {
-    mountApp({
+    renderApp({
       mockService: {
         service: {
           getSelectTaskHeading: () => 'Choose wisely',
@@ -19,7 +18,7 @@ describe('App - Select task', () => {
   });
 
   it('should automatically open the select window after switching tasks', async () => {
-    const { appApi, emitAppApiEvent, simulate } = mountApp({
+    const { appApi, emitAppApiEvent, simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -38,7 +37,7 @@ describe('App - Select task', () => {
   });
 
   it('should automatically open the select window after completing tasks', async () => {
-    const { appApi, emitAppApiEvent, simulate } = mountApp({
+    const { appApi, emitAppApiEvent, simulate } = renderApp({
       settings: {
         taskTime: 3,
       },
@@ -60,14 +59,12 @@ describe('App - Select task', () => {
     const mockShowSelect = vi.fn();
 
     const MockInitializingView: InitializingView = ({ onReady }) => {
-      useEffect(() => {
-        onReady({ openTaskSelect: true });
-      }, [onReady]);
+      onReady({ openTaskSelect: true });
 
       return null;
     };
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       appApi: {
         showSelect: mockShowSelect,
       },
@@ -88,7 +85,7 @@ describe('App - Select task', () => {
   });
 
   it('should not go to the task view if overridden', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           fetchTasks: () =>

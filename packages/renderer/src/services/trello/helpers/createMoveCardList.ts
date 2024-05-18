@@ -1,13 +1,14 @@
-import { SelectItem, Signal, Translate } from '@domain';
+import { SelectItem, Translate } from '@pomello-desktop/domain';
 import { TrelloCache } from '../domain';
 
-interface MoveCardList {
+type MoveCardList = {
   items: SelectItem[];
   moveTaskItemId?: string;
-}
+};
 
-const createMoveCardList = (translate: Translate, cache: Signal<TrelloCache>): MoveCardList => {
-  const { currentBoard, preferences } = cache.get();
+export const createMoveCardList = (translate: Translate, cache: TrelloCache): MoveCardList => {
+  const currentBoard = cache.store.currentBoard;
+  const preferences = cache.store.preferences;
 
   return {
     items: [
@@ -21,5 +22,3 @@ const createMoveCardList = (translate: Translate, cache: Signal<TrelloCache>): M
     moveTaskItemId: preferences.doneList,
   };
 };
-
-export default createMoveCardList;

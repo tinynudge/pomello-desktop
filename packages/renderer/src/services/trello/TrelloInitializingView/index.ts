@@ -1,1 +1,1 @@
-export { default } from './TrelloInitializingView';
+export * from './TrelloInitializingView';

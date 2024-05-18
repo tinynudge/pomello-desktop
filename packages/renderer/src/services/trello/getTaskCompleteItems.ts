@@ -1,14 +1,14 @@
-import { GetTaskCompleteItemsParams, GetTaskCompleteItemsResponse } from '@domain';
-import { TrelloRuntime } from './TrelloRuntime';
-import completeCheckItem from './helpers/completeCheckItem';
-import createMoveCardList from './helpers/createMoveCardList';
-import findOrFailTask from './helpers/findOrFailTask';
-import isCheckItem from './helpers/isCheckItem';
+import { GetTaskCompleteItemsParams, TaskCompleteItems } from '@pomello-desktop/domain';
+import { TrelloRuntime } from './domain';
+import { completeCheckItem } from './helpers/completeCheckItem';
+import { createMoveCardList } from './helpers/createMoveCardList';
+import { findOrFailTask } from './helpers/findOrFailTask';
+import { isCheckItem } from './helpers/isCheckItem';
 
-const getTaskCompleteItems = (
+export const getTaskCompleteItems = (
   runtime: TrelloRuntime,
   { taskId }: GetTaskCompleteItemsParams
-): GetTaskCompleteItemsResponse => {
+): TaskCompleteItems => {
   const { cache, translate } = runtime;
 
   const task = findOrFailTask(cache, taskId);
@@ -23,5 +23,3 @@ const getTaskCompleteItems = (
     shouldRemoveTaskFromCache: true,
   };
 };
-
-export default getTaskCompleteItems;

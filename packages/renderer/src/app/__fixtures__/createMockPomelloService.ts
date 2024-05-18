@@ -1,4 +1,4 @@
-import { Settings } from '@domain';
+import { Settings } from '@pomello-desktop/domain';
 import createPomelloService, {
   PomelloService,
   PomelloSettings,
@@ -15,7 +15,7 @@ const defaultSettings: PomelloSettings = {
   taskTime: 30,
 };
 
-const createMockPomelloService = (settings: Settings): PomelloService => {
+export const createMockPomelloService = (settings: Settings): PomelloService => {
   const { pomodoroSet } = settings;
 
   const set = Array.isArray(pomodoroSet)
@@ -33,5 +33,3 @@ const createMockPomelloService = (settings: Settings): PomelloService => {
     },
   });
 };
-
-export default createMockPomelloService;

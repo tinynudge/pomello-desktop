@@ -1,6 +1,6 @@
 import getThemeCss from '@/helpers/getThemeCss';
 import runtime from '@/runtime';
-import { AppEvent } from '@domain';
+import { AppEvent } from '@pomello-desktop/domain';
 
 const handleThemeUpdate = (): void => {
   const themeCss = getThemeCss();

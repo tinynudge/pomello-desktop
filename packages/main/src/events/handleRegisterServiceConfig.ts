@@ -1,5 +1,5 @@
 import runtime from '@/runtime';
-import { ServiceConfigStore, StoreContents } from '@domain';
+import { ServiceConfigStore, StoreContents } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleRegisterServiceConfig = async (

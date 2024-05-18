@@ -1,10 +1,10 @@
-import { CustomSelectGroupComponent, CustomSelectOptionComponent } from '@domain';
+import { CustomSelectGroupComponent, CustomSelectOptionComponent } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
-import mountSelect, { fireEvent, screen, waitFor } from '../__fixtures__/mountSelect';
+import { renderSelect, screen, waitFor } from '../__fixtures__/renderSelect';
 
 describe('Select', () => {
   it('should show a custom placeholder', () => {
-    mountSelect({
+    renderSelect({
       setSelectItems: {
         items: [{ id: 'one', label: 'One' }],
         placeholder: 'My super select',
@@ -14,8 +14,8 @@ describe('Select', () => {
     expect(screen.getByRole('combobox')).toHaveAttribute('placeholder', 'My super select');
   });
 
-  it('should render a list of options', () => {
-    mountSelect({
+  it('should render a list of options', async () => {
+    renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -24,14 +24,14 @@ describe('Select', () => {
       },
     });
 
-    const options = screen.getAllByRole('option');
+    const options = await screen.findAllByRole('option');
 
     expect(options.at(0)).toHaveTextContent('One');
     expect(options.at(1)).toHaveTextContent('Two');
   });
 
   it('should show a message if the list is empty', () => {
-    mountSelect({
+    renderSelect({
       setSelectItems: {
         items: [],
       },
@@ -41,7 +41,7 @@ describe('Select', () => {
   });
 
   it('should show a custom no results message', () => {
-    mountSelect({
+    renderSelect({
       setSelectItems: {
         items: [],
         noResultsMessage: 'Say the magic word',
@@ -51,18 +51,20 @@ describe('Select', () => {
     expect(screen.getByText('Say the magic word')).toBeInTheDocument();
   });
 
-  it('should render hints for options', () => {
-    mountSelect({
+  it('should render hints for options', async () => {
+    renderSelect({
       setSelectItems: {
         items: [{ hint: 'Click me!', id: 'one', label: 'One' }],
       },
     });
 
-    expect(screen.getByRole('option')).toHaveTextContent('Click me!');
+    const option = await screen.findByRole('option');
+
+    expect(option).toHaveTextContent('Click me!');
   });
 
-  it('should render hints for option groups', () => {
-    mountSelect({
+  it('should render hints for option groups', async () => {
+    renderSelect({
       setSelectItems: {
         items: [
           {
@@ -76,11 +78,13 @@ describe('Select', () => {
       },
     });
 
-    expect(screen.getByRole('group')).toHaveTextContent('Stay away!');
+    const group = await screen.findByRole('group');
+
+    expect(group).toHaveTextContent('Stay away!');
   });
 
-  it('should render option groups', () => {
-    mountSelect({
+  it('should render option groups', async () => {
+    renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -94,7 +98,7 @@ describe('Select', () => {
       },
     });
 
-    const options = screen.getAllByRole('option');
+    const options = await screen.findAllByRole('option');
 
     expect(options.at(0)).toHaveTextContent('One');
     expect(options.at(1)).toHaveTextContent('Two - One');
@@ -102,11 +106,11 @@ describe('Select', () => {
   });
 
   it('should render custom options', async () => {
-    const CustomSelectOption: CustomSelectOptionComponent = ({ option }) => (
-      <>Custom - {option.label}</>
+    const CustomSelectOption: CustomSelectOptionComponent = props => (
+      <>Custom - {props.option.label}</>
     );
 
-    mountSelect({
+    renderSelect({
       service: { CustomSelectOption },
       serviceId: 'mock',
       setSelectItems: {
@@ -114,17 +118,17 @@ describe('Select', () => {
       },
     });
 
-    await waitFor(() => {
-      expect(screen.getByRole('option')).toHaveTextContent('Custom - One');
-    });
+    const option = await screen.findByRole('option');
+
+    expect(option).toHaveTextContent('Custom - One');
   });
 
   it('should render custom option groups', async () => {
-    const CustomSelectGroup: CustomSelectGroupComponent = ({ group }) => (
-      <>Custom Group - {group.label}</>
+    const CustomSelectGroup: CustomSelectGroupComponent = props => (
+      <>Custom Group - {props.group.label}</>
     );
 
-    mountSelect({
+    renderSelect({
       service: { CustomSelectGroup },
       serviceId: 'mock',
       setSelectItems: {
@@ -139,13 +143,13 @@ describe('Select', () => {
       },
     });
 
-    await waitFor(() => {
-      expect(screen.getByRole('group')).toHaveTextContent('Custom Group - One');
-    });
+    const group = await screen.findByRole('group');
+
+    expect(group).toHaveTextContent('Custom Group - One');
   });
 
   it('should select the option when clicked', async () => {
-    const { appApi, userEvent } = mountSelect({
+    const { appApi, userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'one', label: 'One' },
@@ -154,13 +158,15 @@ describe('Select', () => {
       },
     });
 
-    await userEvent.click(screen.getByRole('option', { name: 'Two' }));
+    const option = await screen.findByRole('option', { name: 'Two' });
+
+    await userEvent.click(option);
 
     expect(appApi.selectOption).toHaveBeenCalledWith('two');
   });
 
   it('should fuzzy filter options', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'charmander', label: 'Charmander' },
@@ -181,7 +187,7 @@ describe('Select', () => {
   });
 
   it('should fuzzy filter groups', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'walk-dog', label: 'Walk the dog' },
@@ -225,7 +231,7 @@ describe('Select', () => {
   });
 
   it('should show a no matches found message', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'bulbasaur', label: 'Bulbasaur' },
@@ -241,7 +247,7 @@ describe('Select', () => {
   });
 
   it('should pass the window orientation when updating the bounds', async () => {
-    const { appApi, emitAppApiEvent, userEvent } = mountSelect({
+    const { appApi, emitAppApiEvent, userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'bulbasaur', label: 'Bulbasaur' },
@@ -260,7 +266,7 @@ describe('Select', () => {
   });
 
   it('should hide the select when the escape key is pressed', async () => {
-    const { appApi, userEvent } = mountSelect({
+    const { appApi, userEvent } = renderSelect({
       setSelectItems: {
         items: [],
       },
@@ -272,7 +278,7 @@ describe('Select', () => {
   });
 
   it('should reset the state when the select is hidden', async () => {
-    const { emitAppApiEvent, userEvent } = mountSelect({
+    const { emitAppApiEvent, userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'charmander', label: 'Charmander' },
@@ -299,7 +305,7 @@ describe('Select', () => {
   });
 
   it('should select the first available option if the previous active option was filtered out', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [
           { id: 'charmander', label: 'Charmander' },
@@ -311,8 +317,6 @@ describe('Select', () => {
     });
 
     await userEvent.type(screen.getByRole('combobox'), 'ivy');
-    // A resize gets triggered when the window's bounds are updated to match the filtered items
-    fireEvent(window, new Event('resize'));
 
     expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'ivysaur');
 
@@ -320,39 +324,40 @@ describe('Select', () => {
       initialSelectionStart: 0,
       initialSelectionEnd: 3,
     });
-    fireEvent(window, new Event('resize'));
 
     expect(screen.getByRole('combobox')).toHaveAttribute('aria-activedescendant', 'charmander');
   });
 
   it('should scroll the window to the top or bottom of the active option', async () => {
-    const { userEvent } = mountSelect({
+    const { userEvent } = renderSelect({
       setSelectItems: {
         items: [{ id: 'ivysaur', label: 'Ivysaur' }],
       },
     });
 
     const previousInnerHeight = window.innerHeight;
-    const previousScrollBy = window.scrollBy;
-    const previousGetBoundingClientRect = Element.prototype.getBoundingClientRect;
+    const getBoundingClientRect = vi.spyOn(Element.prototype, 'getBoundingClientRect');
+    const scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
 
-    window.scrollBy = vi.fn() as any;
-    Element.prototype.getBoundingClientRect = () => ({ top: -50, bottom: 0 } as DOMRect);
+    getBoundingClientRect.mockReturnValue({ height: 0 } as DOMRect);
+    getBoundingClientRect.mockReturnValueOnce({ top: -50, bottom: 0 } as DOMRect);
 
-    await userEvent.hover(screen.getByRole('option', { name: 'Ivysaur' }));
+    const option = await screen.findByRole('option', { name: 'Ivysaur' });
+
+    await userEvent.hover(option);
     await userEvent.type(screen.getByRole('combobox'), 'i');
 
-    expect(window.scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: -50 }));
+    expect(scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: -50 }));
 
     window.innerHeight = 120;
-    Element.prototype.getBoundingClientRect = () => ({ top: 0, bottom: 150 } as DOMRect);
+    getBoundingClientRect.mockReturnValue({ top: 0, bottom: 150 } as DOMRect);
 
     await userEvent.type(screen.getByRole('combobox'), '{Backspace}');
 
-    expect(window.scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: 30 }));
+    expect(scrollBy).toHaveBeenCalledWith(expect.objectContaining({ top: 30 }));
 
     window.innerHeight = previousInnerHeight;
-    window.scrollBy = previousScrollBy;
-    Element.prototype.getBoundingClientRect = previousGetBoundingClientRect;
+    scrollBy.mockRestore();
+    getBoundingClientRect.mockRestore();
   });
 });

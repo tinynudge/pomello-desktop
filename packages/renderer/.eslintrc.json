@@ -1,8 +1,9 @@
 {
-  "extends": "react-app",
   "env": {
-    "es6": true,
     "browser": true,
+    "es6": true,
     "jest": true
-  }
+  },
+  "extends": ["plugin:solid/typescript"],
+  "plugins": ["solid"]
 }

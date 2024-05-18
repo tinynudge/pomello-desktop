@@ -1,6 +1,9 @@
-import { TrelloConfig, TrelloList } from '../../domain';
+import { TrelloConfigStore, TrelloList } from '../../domain';
 
-const getPreferences = (currentList: TrelloList, preferences: TrelloConfig['preferences']) => {
+export const getPreferences = (
+  currentList: TrelloList,
+  preferences: TrelloConfigStore['preferences']
+) => {
   const globalPreferences = preferences?.global;
   const boardPreferences = preferences?.boards?.[currentList.idBoard];
   const listPreferences = preferences?.lists?.[currentList.id];
@@ -19,5 +22,3 @@ const getPreferences = (currentList: TrelloList, preferences: TrelloConfig['pref
     ...listPreferences,
   };
 };
-
-export default getPreferences;

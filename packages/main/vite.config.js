@@ -12,7 +12,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/': join(PACKAGE_ROOT, 'src') + '/',
-      '@domain': join(PACKAGE_ROOT, '..', 'domain'),
     },
   },
   build: {

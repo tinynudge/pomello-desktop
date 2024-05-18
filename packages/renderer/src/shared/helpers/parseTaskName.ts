@@ -1,7 +1,7 @@
-interface ParseTaskName {
+type ParseTaskName = {
   name: string;
   pomodoroCount: number;
-}
+};
 
 const fractionMap: Record<string, string> = {
   '⅛': '.125',
@@ -13,7 +13,7 @@ const fractionMap: Record<string, string> = {
   '⅞': '.875',
 };
 
-const parseTaskName = (name: string, marker: string): ParseTaskName => {
+export const parseTaskName = (name: string, marker: string): ParseTaskName => {
   const regex = new RegExp(`(?:([\\d\\.⅛|¼|⅜|½|⅝|¾|⅞]+)?\\s${marker})?(.+)`);
   const results = name.match(regex);
 
@@ -34,5 +34,3 @@ const parseTaskName = (name: string, marker: string): ParseTaskName => {
     name: parsedName.trim(),
   };
 };
-
-export default parseTaskName;

@@ -1,24 +1,25 @@
-import { ServiceConfigActions, Settings } from '@domain';
-import { act } from 'react-dom/test-utils';
+import { ServiceConfigActions, Settings } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
-import mockRegisterServiceConfig from './mockRegisterServiceConfig';
-import mockHotkeys from './mockHotkeys';
+import { mockHotkeys } from './mockHotkeys';
+import { mockRegisterServiceConfig } from './mockRegisterServiceConfig';
 
+export type MockAppEventEmitter = (event: string, ...args: unknown[]) => void;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CallbackFunction = (...args: any[]) => any;
 
-type EventEmitter = (event: string, ...args: unknown[]) => void;
-
-interface CreateMockAppApiOptions {
+type CreateMockAppApiOptions = {
   appApi?: Partial<AppApi>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceConfigs?: Record<string, ServiceConfigActions<any>>;
   settings: Settings;
-}
+};
 
-const createMockAppApi = ({
+export const createMockAppApi = ({
   appApi = {},
   serviceConfigs = {},
   settings,
-}: CreateMockAppApiOptions): [AppApi, EventEmitter] => {
+}: CreateMockAppApiOptions): [AppApi, MockAppEventEmitter] => {
   const listenersMap = new Map<string, CallbackFunction[]>();
 
   const addListener = (event: string, callback: CallbackFunction) => {
@@ -33,13 +34,12 @@ const createMockAppApi = ({
     };
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const emit = (event: string, ...args: any[]) => {
     const listeners = listenersMap.get(event) ?? [];
 
     for (const listener of listeners) {
-      act(() => {
-        listener(...args);
-      });
+      listener(...args);
     }
   };
 
@@ -53,7 +53,7 @@ const createMockAppApi = ({
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),
     logMessage: vi.fn(),
-    onPowerMonitorChange: vi.fn(),
+    onPowerMonitorChange: vi.fn(() => () => {}),
     onSelectChange: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectChange', callback))
     ),
@@ -97,7 +97,7 @@ const createMockAppApi = ({
     writeClipboardText: vi.fn(),
   };
 
+  window.app = api;
+
   return [api, emit];
 };
-
-export default createMockAppApi;

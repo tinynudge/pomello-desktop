@@ -1,1 +1,1 @@
-export { default } from './createPomelloApi';
+export * from './createPomelloApi';

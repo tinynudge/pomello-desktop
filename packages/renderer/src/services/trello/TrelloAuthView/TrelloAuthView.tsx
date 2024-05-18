@@ -1,16 +1,17 @@
-import AuthView from '@/auth/ui/AuthView';
-import useService from '@/shared/hooks/useService';
-import useTranslation from '@/shared/hooks/useTranslation';
-import { FC } from 'react';
+import { AuthView } from '@/auth/ui/AuthView';
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useService } from '@/shared/context/ServiceContext';
+import { Component } from 'solid-js';
 import { TRELLO_KEY } from '../constants';
-import { useTrelloConfig } from '../useTrelloConfig';
 import trelloLogo from './assets/trello.png';
 
-const TrelloAuthView: FC = () => {
-  const { t } = useTranslation();
+interface TrelloAuthViewProps {
+  setToken(token: string): void;
+}
 
-  const { displayName } = useService();
-  const trelloConfig = useTrelloConfig();
+export const TrelloAuthView: Component<TrelloAuthViewProps> = props => {
+  const getService = useService();
+  const t = useTranslate();
 
   const authParams = new URLSearchParams({
     key: TRELLO_KEY,
@@ -21,19 +22,17 @@ const TrelloAuthView: FC = () => {
   });
 
   const handleTokenSubmit = (token: string) => {
-    trelloConfig.tokenSet(window.app.encryptValue(token));
+    props.setToken(window.app.encryptValue(token));
   };
 
   return (
     <AuthView>
       <AuthView.Instructions
-        logo={trelloLogo}
         authUrl={`https://trello.com/1/authorize?${authParams}`}
-        heading={t('connectToService', { service: displayName })}
+        heading={t('connectToService', { service: getService().displayName })}
+        logo={trelloLogo}
       />
       <AuthView.Form onSubmit={handleTokenSubmit} />
     </AuthView>
   );
 };
-
-export default TrelloAuthView;

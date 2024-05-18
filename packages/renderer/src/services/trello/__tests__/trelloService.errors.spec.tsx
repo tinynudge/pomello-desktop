@@ -1,27 +1,21 @@
-import mockServer from '@/__fixtures__/mockServer';
-import { ResponseResolver, rest, RestContext, RestRequest } from 'msw';
-import { SpyInstance, vi } from 'vitest';
+import { mockServer } from '@/__fixtures__/mockServer';
+import { HttpResponse, http } from 'msw';
+import { MockInstance, vi } from 'vitest';
+import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
+import { renderTrelloService, screen, waitFor } from '../__fixtures__/renderTrelloService';
 import { TRELLO_API_URL } from '../constants';
 import { TrelloMember } from '../domain';
-import generateTrelloMember from '../__fixtures__/generateTrelloMember';
-import mountTrelloService, { screen, waitFor } from '../__fixtures__/mountTrelloService';
 
 describe('Trello service - Errors', () => {
-  let mockedConsole: SpyInstance;
+  let mockedConsole: MockInstance;
 
-  const resolveAuthError: ResponseResolver<RestRequest, RestContext> = (
-    _request,
-    response,
-    context
-  ) => {
-    return response(context.status(401), context.json('invalid token'));
+  const resolveAuthError = () => {
+    throw new HttpResponse('invalid token', { status: 401 });
   };
 
-  const resolveServerError: ResponseResolver<RestRequest, RestContext> = (
-    _request,
-    response,
-    context
-  ) => response.once(context.status(500));
+  const resolveServerError = () => {
+    throw new HttpResponse(null, { status: 500 });
+  };
 
   beforeAll(() => {
     mockedConsole = vi.spyOn(console, 'error');
@@ -33,7 +27,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should handle Trello authorization errors', async () => {
-    const { appApi, userEvent } = await mountTrelloService({
+    const { appApi, userEvent } = await renderTrelloService({
       trelloApi: {
         fetchBoardsAndLists: resolveAuthError,
       },
@@ -56,7 +50,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should open the auth window from the sign in button', async () => {
-    const { appApi, userEvent } = await mountTrelloService({
+    const { appApi, userEvent } = await renderTrelloService({
       trelloApi: {
         fetchBoardsAndLists: resolveAuthError,
       },
@@ -73,7 +67,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should open the auth window from the authorization error dialog', async () => {
-    const { appApi, userEvent } = await mountTrelloService({
+    const { appApi, userEvent } = await renderTrelloService({
       appApi: {
         showMessageBox: vi.fn().mockResolvedValue({ response: 0 }),
       },
@@ -93,7 +87,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should copy the error message from the authorization error dialog', async () => {
-    const { appApi, userEvent } = await mountTrelloService({
+    const { appApi, userEvent } = await renderTrelloService({
       appApi: {
         showMessageBox: vi.fn().mockResolvedValue({ response: 1 }),
       },
@@ -110,7 +104,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should refetch the request when signed in', async () => {
-    const { config, userEvent } = await mountTrelloService({
+    const { config, userEvent } = await renderTrelloService({
       config: {
         token: 'MY_BAD_TOKEN',
       },
@@ -124,9 +118,7 @@ describe('Trello service - Errors', () => {
     await userEvent.click(signInButton);
 
     mockServer.use(
-      rest.get(`${TRELLO_API_URL}members/me`, (_request, response, context) =>
-        response(context.json(generateTrelloMember()))
-      )
+      http.get(`${TRELLO_API_URL}members/me`, () => HttpResponse.json(generateTrelloMember()))
     );
 
     config.set('token', 'MY_NEW_TOKEN');
@@ -137,7 +129,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should handle server errors', async () => {
-    const { appApi, userEvent } = await mountTrelloService({
+    const { appApi, userEvent } = await renderTrelloService({
       trelloApi: {
         fetchBoardsAndLists: resolveServerError,
       },
@@ -161,7 +153,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should refetch the request when retry is click', async () => {
-    const { userEvent } = await mountTrelloService({
+    const { userEvent } = await renderTrelloService({
       trelloApi: {
         fetchBoardsAndLists: resolveServerError,
       },
@@ -170,9 +162,7 @@ describe('Trello service - Errors', () => {
     const retryButton = await screen.findByRole('button', { name: 'Retry' });
 
     mockServer.use(
-      rest.get(`${TRELLO_API_URL}members/me`, (_request, response, context) =>
-        response(context.json(generateTrelloMember()))
-      )
+      http.get(`${TRELLO_API_URL}members/me`, () => HttpResponse.json(generateTrelloMember()))
     );
 
     await userEvent.click(retryButton);
@@ -183,7 +173,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should copy the error message from the server error dialog', async () => {
-    const { appApi, userEvent } = await mountTrelloService({
+    const { appApi, userEvent } = await renderTrelloService({
       appApi: {
         showMessageBox: vi.fn().mockResolvedValue({ response: 0 }),
       },
@@ -200,7 +190,7 @@ describe('Trello service - Errors', () => {
   });
 
   it('should throw non-API related errors to the next boundary', async () => {
-    await mountTrelloService({
+    await renderTrelloService({
       trelloApi: {
         fetchBoardsAndLists: {} as TrelloMember,
       },

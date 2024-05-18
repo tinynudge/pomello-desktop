@@ -1,16 +1,15 @@
 import { format } from 'date-fns';
-import addComment from '../../api/addComment';
-import updateComment from '../../api/updateComment';
-import { TrelloCard, TrelloLogBuilder } from '../../domain';
-import { TrelloRuntime } from '../../TrelloRuntime';
-import createCommentLog from './createCommentLog';
-import parseCommentLog from './parseCommentLog';
+import { addComment } from '../../api/addComment';
+import { updateComment } from '../../api/updateComment';
+import { TrelloCard, TrelloLogBuilder, TrelloRuntime } from '../../domain';
+import { createCommentLog } from './createCommentLog';
+import { parseCommentLog } from './parseCommentLog';
 
-const createLogBuilder = (
+export const createLogBuilder = (
   { cache, config, logger, translate }: TrelloRuntime,
   card: TrelloCard
 ): TrelloLogBuilder => {
-  const { userId } = cache.get();
+  const userId = cache.store.userId;
 
   const commentLog = card.actions.find(
     action =>
@@ -90,10 +89,10 @@ const createLogBuilder = (
         });
 
         notification.addEventListener('click', () => {
-          const { currentList } = cache.get();
-          const { preferences = {} } = config.get();
+          const currentList = cache.store.currentList;
+          const preferences = config.store.preferences ?? {};
 
-          config.set('preferences', {
+          config.actions.preferencesUpdated({
             ...preferences,
             lists: {
               ...preferences.lists,
@@ -150,5 +149,3 @@ const createLogBuilder = (
 
   return builder;
 };
-
-export default createLogBuilder;

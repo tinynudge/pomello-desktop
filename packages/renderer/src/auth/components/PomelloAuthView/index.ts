@@ -1,1 +1,1 @@
-export { default } from './PomelloAuthView';
+export * from './PomelloAuthView';

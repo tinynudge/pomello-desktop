@@ -1,26 +1,24 @@
-import { TrelloRuntime } from './TrelloRuntime';
-import getTrelloClient from './getTrelloClient';
+import { createEffect, createRoot } from 'solid-js';
+import { TrelloRuntime } from './domain';
 
-const onTrelloServiceMount = ({ cache }: TrelloRuntime) => {
-  let previousToken: string | undefined = undefined;
+export const onTrelloServiceMount = ({ cache, config }: TrelloRuntime) => {
+  return createRoot(dispose => {
+    createEffect(() => {
+      const token = config.store.token;
 
-  const removeCacheSubscription = cache.subscribe(({ token }) => {
-    if (token === previousToken) {
-      return;
-    }
+      if (token) {
+        const decryptedToken = window.app.decryptValue(token);
 
-    if (token) {
-      getTrelloClient().setToken(token);
-    } else {
-      getTrelloClient().unsetToken();
-    }
+        if (decryptedToken) {
+          cache.actions.tokenSet(decryptedToken);
+        } else {
+          config.actions.tokenUnset();
+        }
+      } else {
+        cache.actions.tokenUnset();
+      }
+    });
 
-    previousToken = token;
+    return dispose;
   });
-
-  return () => {
-    removeCacheSubscription();
-  };
 };
-
-export default onTrelloServiceMount;

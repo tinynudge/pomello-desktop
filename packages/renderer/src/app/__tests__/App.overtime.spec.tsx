@@ -1,8 +1,8 @@
-import mountApp, { screen } from '../__fixtures__/mountApp';
+import { renderApp, screen } from '../__fixtures__/renderApp';
 
 describe('App - Overtime', () => {
   it('should show overtime after the delay', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
         overtimeDelay: 5,
@@ -22,7 +22,7 @@ describe('App - Overtime', () => {
   });
 
   it('should show the overtime in m:ss format', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
         overtimeDelay: 5,
@@ -38,7 +38,7 @@ describe('App - Overtime', () => {
   });
 
   it('should show the overtime in h:m:s format', async () => {
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       settings: {
         taskTime: 3,
         overtimeDelay: 5,

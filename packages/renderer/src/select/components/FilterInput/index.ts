@@ -1,1 +1,1 @@
-export { default } from './FilterInput';
+export * from './FilterInput';

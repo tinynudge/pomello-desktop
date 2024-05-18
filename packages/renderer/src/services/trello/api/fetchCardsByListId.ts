@@ -1,11 +1,11 @@
 import { TrelloCard } from '../domain';
-import getTrelloClient from '../getTrelloClient';
+import { getTrelloClient } from '../getTrelloClient';
 
 const limit = 300;
 
 // Since Trello blocks requests if there are too many cards, we'll need to chunk
 // the requests to ensure we stay within the limit.
-const fetchCardsByListId = async (
+export const fetchCardsByListId = async (
   listId: string,
   previousCards: TrelloCard[] = []
 ): Promise<TrelloCard[]> => {
@@ -34,5 +34,3 @@ const fetchCardsByListId = async (
 
   return cards;
 };
-
-export default fetchCardsByListId;

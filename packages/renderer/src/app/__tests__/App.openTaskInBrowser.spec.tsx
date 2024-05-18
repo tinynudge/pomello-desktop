@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
-import mountApp from '../__fixtures__/mountApp';
+import { renderApp } from '../__fixtures__/renderApp';
 
 describe('App - Open Task', () => {
   it('should show a message if unable to open the task in the browser', async () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           onTaskOpen: undefined,
@@ -25,7 +25,7 @@ describe('App - Open Task', () => {
   it('should open a task in the browser', async () => {
     const mockTaskOpen = vi.fn();
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           fetchTasks: async () => [{ id: 'TASK_ID', label: 'My task' }],
@@ -46,7 +46,7 @@ describe('App - Open Task', () => {
   it('should not open a task if no task is selected', async () => {
     const mockTaskOpen = vi.fn();
 
-    const { simulate } = mountApp({
+    const { simulate } = renderApp({
       mockService: {
         service: {
           onTaskOpen: mockTaskOpen,

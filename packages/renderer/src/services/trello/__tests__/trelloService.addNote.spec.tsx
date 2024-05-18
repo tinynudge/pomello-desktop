@@ -1,14 +1,15 @@
+import { HttpResponse } from 'msw';
 import { vi } from 'vitest';
-import addComment from '../api/addComment';
-import updateComment from '../api/updateComment';
-import generateTrelloBoard from '../__fixtures__/generateTrelloBoard';
-import generateTrelloCard from '../__fixtures__/generateTrelloCard';
-import generateTrelloCardAction from '../__fixtures__/generateTrelloCardAction';
-import generateTrelloCheckItem from '../__fixtures__/generateTrelloCheckItem';
-import generateTrelloChecklist from '../__fixtures__/generateTrelloChecklist';
-import generateTrelloList from '../__fixtures__/generateTrelloList';
-import generateTrelloMember from '../__fixtures__/generateTrelloMember';
-import mountTrelloService, { screen, waitFor } from '../__fixtures__/mountTrelloService';
+import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
+import { generateTrelloCard } from '../__fixtures__/generateTrelloCard';
+import { generateTrelloCardAction } from '../__fixtures__/generateTrelloCardAction';
+import { generateTrelloCheckItem } from '../__fixtures__/generateTrelloCheckItem';
+import { generateTrelloChecklist } from '../__fixtures__/generateTrelloChecklist';
+import { generateTrelloList } from '../__fixtures__/generateTrelloList';
+import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
+import { renderTrelloService, screen, waitFor } from '../__fixtures__/renderTrelloService';
+import { addComment } from '../api/addComment';
+import { updateComment } from '../api/updateComment';
 
 describe('Trello service - Add note', () => {
   beforeEach(() => {
@@ -29,7 +30,7 @@ describe('Trello service - Add note', () => {
   it('should update the comment log if the user enabled logs', async () => {
     const mockUpdateComment = vi.mocked(updateComment);
 
-    const { simulate, userEvent } = await mountTrelloService({
+    const { simulate, userEvent } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -71,7 +72,7 @@ describe('Trello service - Add note', () => {
   it('should add a comment if the user enabled logs but no comment log exists', async () => {
     const mockAddComment = vi.mocked(addComment);
 
-    const { simulate, userEvent } = await mountTrelloService({
+    const { simulate, userEvent } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -100,7 +101,7 @@ describe('Trello service - Add note', () => {
 
     const mockEntries = Array(395).fill('Task stopped  - *3:04 pm on Aug 22, 2022').join('\n');
 
-    const { simulate, userEvent } = await mountTrelloService({
+    const { simulate, userEvent } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -142,7 +143,7 @@ describe('Trello service - Add note', () => {
   it('should add a comment to the parent card if the current task is a check item', async () => {
     const mockUpdateComment = vi.mocked(updateComment);
 
-    const { simulate, userEvent } = await mountTrelloService({
+    const { simulate, userEvent } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -193,7 +194,7 @@ describe('Trello service - Add note', () => {
   it('should add a comment if the user disabled logs', async () => {
     const mockAddComment = vi.mocked(addComment);
 
-    const { simulate, userEvent } = await mountTrelloService({
+    const { simulate, userEvent } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -219,7 +220,7 @@ describe('Trello service - Add note', () => {
   it('should handle a malformed encoded JSON string in the comment log', async () => {
     const mockUpdateComment = vi.mocked(updateComment);
 
-    const { simulate, userEvent } = await mountTrelloService({
+    const { simulate, userEvent } = await renderTrelloService({
       config: {
         preferences: {
           global: {
@@ -273,7 +274,7 @@ describe('Trello service - Add note', () => {
     const mockAddComment = vi.mocked(addComment);
     mockAddComment.mockRejectedValue(new Error('no commenting permissions'));
 
-    const { config, simulate, userEvent } = await mountTrelloService({
+    const { config, simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'LIST_ID',
         preferences: {
@@ -286,8 +287,8 @@ describe('Trello service - Add note', () => {
         },
       },
       trelloApi: {
-        addComment: (_request, response, context) => {
-          return response(context.status(401));
+        addComment: () => {
+          throw new HttpResponse('', { status: 401 });
         },
         fetchBoardsAndLists: generateTrelloMember({
           boards: [

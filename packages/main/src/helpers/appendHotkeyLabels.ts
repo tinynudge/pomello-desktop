@@ -1,4 +1,4 @@
-import { Hotkeys, LabeledHotkeys } from '@domain';
+import { Hotkeys, LabeledHotkeys } from '@pomello-desktop/domain';
 
 const isOsx = process.platform === 'darwin';
 

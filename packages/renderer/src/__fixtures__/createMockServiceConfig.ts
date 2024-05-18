@@ -1,9 +1,13 @@
-import { ServiceConfig, ServiceConfigActions, StoreContents } from '@domain';
+import { ServiceConfig, ServiceConfigActions, StoreContents } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
+import { mockRegisterServiceConfig } from './mockRegisterServiceConfig';
 
-const createMockServiceConfig = <TConfig = StoreContents>(
-  configActions: ServiceConfigActions<TConfig>
-): ServiceConfig<TConfig> => {
+export const createMockServiceConfig = <TConfig = StoreContents>(
+  serviceId: string,
+  initialConfig: TConfig
+): [ServiceConfig<TConfig>, ServiceConfigActions<TConfig>] => {
+  const configActions = mockRegisterServiceConfig(serviceId, initialConfig);
+
   const { onChange, set, unset } = configActions;
 
   let contents = configActions.contents;
@@ -18,13 +22,13 @@ const createMockServiceConfig = <TConfig = StoreContents>(
     removeChangeListener();
   };
 
-  return {
+  const config = {
     get,
     onChange,
     set,
     unregister,
     unset,
   };
-};
 
-export default createMockServiceConfig;
+  return [config, configActions];
+};

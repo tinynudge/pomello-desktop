@@ -1,16 +1,19 @@
-import { TaskTimerEndPromptHandledEvent, TaskTimerEndPromptHandledResponse } from '@domain';
-import { TrelloRuntime } from './TrelloRuntime';
-import completeCheckItem from './helpers/completeCheckItem';
-import findOrFailTask from './helpers/findOrFailTask';
-import isCheckItem from './helpers/isCheckItem';
-import moveCardAndUpdateDoneList from './helpers/moveCardAndUpdateDoneList';
+import {
+  TaskTimerEndPromptHandledEvent,
+  TaskTimerEndPromptHandledResponse,
+} from '@pomello-desktop/domain';
+import { TrelloRuntime } from './domain';
+import { completeCheckItem } from './helpers/completeCheckItem';
+import { findOrFailTask } from './helpers/findOrFailTask';
+import { isCheckItem } from './helpers/isCheckItem';
+import { moveCardAndUpdateDoneList } from './helpers/moveCardAndUpdateDoneList';
 
-const onTaskTimerEndPromptHandled = (
+export const onTaskTimerEndPromptHandled = (
   runtime: TrelloRuntime,
   { optionId, taskId }: TaskTimerEndPromptHandledEvent
 ): TaskTimerEndPromptHandledResponse => {
   const task = findOrFailTask(runtime.cache, taskId);
-  const isCurrentList = runtime.cache.get().currentList.id === optionId;
+  const isCurrentList = runtime.cache.store.currentList.id === optionId;
 
   if (isCheckItem(task)) {
     completeCheckItem(runtime, task);
@@ -23,5 +26,3 @@ const onTaskTimerEndPromptHandled = (
     shouldRemoveTaskFromCache: !isCurrentList,
   };
 };
-
-export default onTaskTimerEndPromptHandled;

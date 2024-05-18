@@ -1,8 +1,9 @@
-import react from '@vitejs/plugin-react-swc';
+/*eslint-env node*/
 import { builtinModules } from 'module';
 import { join } from 'path';
-import { defineConfig } from 'vite';
-import svgr from 'vite-plugin-svgr';
+import { defineConfig, loadEnv } from 'vite';
+import solid from 'vite-plugin-solid';
+import svg from 'vite-plugin-solid-svg';
 import { chrome } from '../../.electron-vendors.cache.json';
 
 const PACKAGE_ROOT = __dirname;
@@ -13,11 +14,11 @@ export default defineConfig({
   envDir: process.cwd(),
   resolve: {
     alias: {
-      '@/': join(PACKAGE_ROOT, 'src') + '/',
-      '@domain': join(PACKAGE_ROOT, '../domain'),
+      '@': join(PACKAGE_ROOT, 'src'),
+      'msw/node': '/node_modules/msw/lib/native/index.mjs', // https://github.com/solidjs/vite-plugin-solid/issues/125
     },
   },
-  plugins: [react(), svgr()],
+  plugins: [solid(), svg({ defaultAsComponent: true })],
   base: '',
   server: {
     fs: {
@@ -50,12 +51,12 @@ export default defineConfig({
         '**/__tests__',
         '**/*.d.ts',
         '**/*.spec.{ts,tsx}',
-        '**/domain',
         '**/index.{ts,tsx}',
       ],
     },
-    globals: true,
+    env: loadEnv(process.env.MODE, join(process.cwd(), '../..')),
     environment: 'jsdom',
+    globals: true,
     setupFiles: './setupTests.ts',
   },
 });

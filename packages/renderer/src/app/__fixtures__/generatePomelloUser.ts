@@ -1,6 +1,6 @@
-import { PomelloApiResponse, PomelloUser } from '@domain';
+import { PomelloApiResponse, PomelloUser } from '@pomello-desktop/domain';
 
-const generatePomelloUser = (
+export const generatePomelloUser = (
   values: Partial<PomelloUser> = {}
 ): PomelloApiResponse<PomelloUser> => ({
   data: {
@@ -10,5 +10,3 @@ const generatePomelloUser = (
     type: values.type ?? 'premium',
   },
 });
-
-export default generatePomelloUser;

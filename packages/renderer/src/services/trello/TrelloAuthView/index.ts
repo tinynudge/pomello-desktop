@@ -1,1 +1,1 @@
-export { default } from './TrelloAuthView';
+export * from './TrelloAuthView';

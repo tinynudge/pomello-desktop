@@ -1,18 +1,22 @@
 import cc from 'classcat';
-import { FC, HTMLAttributes, ReactNode } from 'react';
+import { JSX, ParentComponent, splitProps } from 'solid-js';
 import styles from './DropdownRow.module.scss';
 
-interface DropdownRowProps extends HTMLAttributes<HTMLLIElement> {
-  children: ReactNode;
+interface DropdownRowProps extends JSX.HTMLAttributes<HTMLLIElement> {
   onClick?(): void;
 }
 
-const DropdownRow: FC<DropdownRowProps> = ({ children, className, onClick, ...remainingProps }) => {
+export const DropdownRow: ParentComponent<DropdownRowProps> = allProps => {
+  const [props, listItemProps] = splitProps(allProps, ['children', 'class', 'onClick']);
+
   return (
-    <li className={cc([styles.row, className])} data-row onClick={onClick} {...remainingProps}>
-      {children}
+    <li
+      {...listItemProps}
+      class={cc([styles.row, props.class])}
+      data-row
+      onClick={() => props.onClick?.()}
+    >
+      {props.children}
     </li>
   );
 };
-
-export default DropdownRow;

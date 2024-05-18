@@ -1,4 +1,10 @@
-import { AppEvent, RegisterStoreOptions, Store, StoreContents, StoreManager } from '@domain';
+import {
+  AppEvent,
+  RegisterStoreOptions,
+  Store,
+  StoreContents,
+  StoreManager,
+} from '@pomello-desktop/domain';
 import Ajv from 'ajv';
 import ElectronStore from 'electron-store';
 import runtime from '.';

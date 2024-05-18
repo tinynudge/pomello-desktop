@@ -1,12 +1,16 @@
-import { selectIsPremium, usePomelloConfigSelector } from '@/shared/hooks/usePomelloConfig';
-import useService from '@/shared/hooks/useService';
+import { usePomelloConfig } from '@/shared/context/RuntimeContext';
+import { useService } from '@/shared/context/ServiceContext';
+import { Accessor, createMemo } from 'solid-js';
 
-const useTasksCacheKey = () => {
-  const { id } = useService();
+export const useTasksCacheKey = (): Accessor<string[]> => {
+  const config = usePomelloConfig();
+  const getService = useService();
 
-  const isPremium = usePomelloConfigSelector(selectIsPremium);
+  const taskCacheKey = createMemo(() => {
+    const isPremium = config.store.user?.type === 'premium';
 
-  return `${id}-premium:${isPremium}-tasks`;
+    return ['tasks', getService().id, `premium:${isPremium}`];
+  });
+
+  return taskCacheKey;
 };
-
-export default useTasksCacheKey;

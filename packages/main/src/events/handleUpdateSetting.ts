@@ -1,5 +1,5 @@
 import getSettings from '@/getSettings';
-import { Settings } from '@domain';
+import { Settings } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 const handleUpdateSetting = async <TSetting extends keyof Settings>(

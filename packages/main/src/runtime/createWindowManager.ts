@@ -1,4 +1,4 @@
-import { FindOrCreateWindowOptions, WindowManager } from '@domain';
+import { FindOrCreateWindowOptions, WindowManager } from '@pomello-desktop/domain';
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 
 const createWindowManager = (): WindowManager => {

@@ -1,6 +1,6 @@
-import { ServiceConfig, ServiceConfigStore, StoreContents } from '@domain';
+import { ServiceConfig, ServiceConfigStore, StoreContents } from '@pomello-desktop/domain';
 
-const createServiceConfig = async <TContents = StoreContents>(
+export const createServiceConfig = async <TContents = StoreContents>(
   serviceId: string,
   config: ServiceConfigStore<TContents>
 ): Promise<ServiceConfig<TContents>> => {
@@ -26,5 +26,3 @@ const createServiceConfig = async <TContents = StoreContents>(
     unset: serviceConfig.unset,
   };
 };
-
-export default createServiceConfig;

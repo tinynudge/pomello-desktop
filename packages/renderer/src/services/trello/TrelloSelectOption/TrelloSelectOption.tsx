@@ -1,27 +1,23 @@
-import { CustomSelectOptionComponent } from '@domain';
+import { CustomSelectOptionComponent } from '@pomello-desktop/domain';
 import cc from 'classcat';
-import { ReactComponent as BackIcon } from './assets/back.svg';
-import { ReactComponent as SwitchIcon } from './assets/switch.svg';
+import { Match, Switch } from 'solid-js';
 import styles from './TrelloSelectOption.module.scss';
+import BackIcon from './assets/back.svg';
+import SwitchIcon from './assets/switch.svg';
 
-const TrelloSelectOption: CustomSelectOptionComponent = ({ children, option }) => {
-  if (option.id === 'previous-list') {
-    return (
-      <div className={cc([styles.option, styles.bottomBorder])}>
-        <BackIcon className={styles.icon} width={16} /> {children}
-      </div>
-    );
-  }
-
-  if (option.id === 'switch-lists') {
-    return (
-      <div className={cc([styles.option, styles.topBorder])}>
-        <SwitchIcon className={styles.icon} width={16} /> {children}
-      </div>
-    );
-  }
-
-  return null;
+export const TrelloSelectOption: CustomSelectOptionComponent = props => {
+  return (
+    <Switch>
+      <Match when={props.option.id === 'previous-list'}>
+        <div class={cc([styles.option, styles.bottomBorder])}>
+          <BackIcon class={styles.icon} width={16} /> {props.children}
+        </div>
+      </Match>
+      <Match when={props.option.id === 'switch-lists'}>
+        <div class={cc([styles.option, styles.topBorder])}>
+          <SwitchIcon class={styles.icon} width={16} /> {props.children}
+        </div>
+      </Match>
+    </Switch>
+  );
 };
-
-export default TrelloSelectOption;

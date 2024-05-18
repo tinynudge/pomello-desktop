@@ -1,8 +1,8 @@
 import { TrelloCheckItem } from './TrelloCheckItem';
 
-export interface TrelloChecklist {
+export type TrelloChecklist = {
   checkItems: TrelloCheckItem[];
   id: string;
   name: string;
   pos: number;
-}
+};

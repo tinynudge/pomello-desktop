@@ -1,16 +1,14 @@
-import { ServiceFactory } from '@domain';
-import ZenSelectTaskView from './ZenSelectTaskView';
+import { ServiceFactory } from '@pomello-desktop/domain';
+import { ZenSelectTaskView } from './ZenSelectTaskView';
 
-const createZenService: ServiceFactory = () => {
+export const createZenService: ServiceFactory = () => {
   return {
-    id: createZenService.id,
     displayName: createZenService.displayName,
     fetchTasks: () => Promise.resolve([]),
-    SelectTaskView: props => <ZenSelectTaskView {...props} />,
+    id: createZenService.id,
+    SelectTaskView: ZenSelectTaskView,
   };
 };
 
 createZenService.displayName = 'Zen mode';
 createZenService.id = 'zen';
-
-export default createZenService;
