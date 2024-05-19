@@ -25,11 +25,11 @@ const config = {
   },
   afterSign: 'electron-builder-notarize',
   generateUpdatesFilesForAllChannels: true,
-  // publish: {
-  //   provider: 's3',
-  //   bucket: process.env.S3_RELEASE_BUCKET,
-  //   acl: 'private',
-  // },
+  publish: {
+    provider: 's3',
+    bucket: process.env.S3_RELEASE_BUCKET,
+    acl: 'private',
+  },
 };
 
 module.exports = config;

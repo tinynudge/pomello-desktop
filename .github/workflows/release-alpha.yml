@@ -12,12 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Create Alpha Release
-        run: |
-          git config --global user.email "bot@pomelloapp.com"
-          git config --global user.name "pomello[bot]"
-          npx standard-version --prerelease alpha --skip.tag --skip.changelog
-          git push --follow-tags origin main
+      # - name: Create Alpha Release
+      #   run: |
+      #     git config --global user.email "bot@pomelloapp.com"
+      #     git config --global user.name "pomello[bot]"
+      #     npx standard-version --prerelease alpha --skip.tag --skip.changelog
+      #     git push --follow-tags origin main
 
       - name: Get Latest Commit Hash
         id: commit-hash
