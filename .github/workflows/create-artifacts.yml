@@ -12,7 +12,7 @@ on:
     secrets:
       APPLE_API_KEY_ID:
         required: true
-      APPLE_API_KEY_ISSUER:
+      APPLE_API_ISSUER:
         required: true
       APPLE_API_KEY:
         required: true
@@ -97,17 +97,18 @@ jobs:
           snapcraft_token: ${{ secrets.SNAPCRAFT_TOKEN }}
 
       - name: Compile
-        uses: brrian/action-electron-builder@v2.0
+        uses: brrian/action-electron-builder@v2.1
         env:
-          APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER }}
-          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_KEY: ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
           S3_RELEASE_BUCKET: ${{ secrets.S3_RELEASE_BUCKET }}
           VITE_APP_ID: ${{ vars.APP_ID }}
           VITE_APP_URL: ${{ inputs.APP_URL }}
           VITE_AUTO_UPDATE_URL: ${{ secrets.AUTO_UPDATE_URL }}
         with:
           build_script_name: build
-          args: --config .electron-builder.config.js
+          args: --config .electron-builder.config.cjs
           github_token: ${{ secrets.github_token }}
           release: true
           max_attempts: 3

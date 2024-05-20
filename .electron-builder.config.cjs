@@ -20,10 +20,9 @@ const config = {
     icon: 'icons',
   },
   mac: {
-    hardenedRuntime: true,
     entitlements: './build/entitlements.mac.plist',
+    hardenedRuntime: true,
   },
-  afterSign: 'electron-builder-notarize',
   generateUpdatesFilesForAllChannels: true,
   publish: {
     provider: 's3',

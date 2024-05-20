@@ -1,7 +1,7 @@
 Deployment
 
 - `APPLE_API_KEY_ID`: The key id of the generated Apple App Store Connect API token.
-- `APPLE_API_KEY_ISSUER`: The issuer id for the Apple App Store Connect user.
+- `APPLE_API_ISSUER`: The issuer id for the Apple App Store Connect user.
 - `APPLE_API_KEY`: The contents of the secret key that is downloaded after generating a new Apple App Store Connect API key (access: App Manager). Note that the file is only downloadable once. The file name looks like: `AuthKey_XXXXXXXXXX.p8`
 - `AWS_ACCESS_KEY_ID`: The AWS acccount id that has permission to upload to the `S3_RELEASE_BUCKET`.
 - `AWS_SECRET_ACCESS_KEY`: The access key for the AWS account.

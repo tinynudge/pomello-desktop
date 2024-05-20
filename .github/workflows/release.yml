@@ -34,7 +34,7 @@ jobs:
       COMMIT_HASH: ${{ needs.draft.outputs.commit-hash }}
     secrets:
       APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-      APPLE_API_KEY_ISSUER: ${{ secrets.APPLE_API_KEY_ISSUER }}
+      APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
       APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
       AUTO_UPDATE_URL: ${{ secrets.AUTO_UPDATE_URL }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
