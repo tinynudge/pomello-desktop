@@ -3,7 +3,7 @@ import { IpcRendererEvent, ipcRenderer } from 'electron';
 
 type ServicesChangeListener = (services: Services) => void;
 
-const onServicesChange = (callback: ServicesChangeListener): Unsubscribe => {
+export const onServicesChange = (callback: ServicesChangeListener): Unsubscribe => {
   const handler = (_event: IpcRendererEvent, services: Services) => callback(services);
 
   ipcRenderer.on(`${AppEvent.StoreChange}:services`, handler);
@@ -12,5 +12,3 @@ const onServicesChange = (callback: ServicesChangeListener): Unsubscribe => {
     ipcRenderer.off(`${AppEvent.StoreChange}:services`, handler);
   };
 };
-
-export default onServicesChange;

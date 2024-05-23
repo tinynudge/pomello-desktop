@@ -1,7 +1,7 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { Settings, Store } from '@pomello-desktop/domain';
 
-const getSettings = (): Store<Settings> =>
+export const getSettings = (): Store<Settings> =>
   runtime.storeManager.registerStore<Settings>({
     emitChangeEvents: true,
     path: 'settings',
@@ -298,5 +298,3 @@ const getSettings = (): Store<Settings> =>
       ],
     },
   });
-
-export default getSettings;

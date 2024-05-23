@@ -1,8 +1,8 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { ServiceConfigStore, StoreContents } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleRegisterServiceConfig = async (
+export const handleRegisterServiceConfig = async (
   _event: IpcMainInvokeEvent,
   path: string,
   config: ServiceConfigStore
@@ -16,5 +16,3 @@ const handleRegisterServiceConfig = async (
 
   return store.all();
 };
-
-export default handleRegisterServiceConfig;

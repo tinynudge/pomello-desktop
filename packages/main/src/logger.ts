@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import winston, { format } from 'winston';
 
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   format: format.combine(format.timestamp(), format.prettyPrint()),
   transports: [
     new winston.transports.File({
@@ -20,5 +20,3 @@ if (import.meta.env.DEV) {
     })
   );
 }
-
-export default logger;

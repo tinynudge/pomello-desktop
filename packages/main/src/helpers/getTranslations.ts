@@ -25,7 +25,7 @@ const loadTranslations = (locale: string, serviceId?: string) => {
   }
 };
 
-const getTranslations = (serviceId?: string): TranslationsDictionary => {
+export const getTranslations = (serviceId?: string): TranslationsDictionary => {
   const namespace = serviceId ?? 'common';
 
   // Don't use the cached translations during dev to make it easier to get fresh
@@ -44,5 +44,3 @@ const getTranslations = (serviceId?: string): TranslationsDictionary => {
 
   return cachedTranslations[namespace];
 };
-
-export default getTranslations;

@@ -1,4 +1,4 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { Hotkeys, Store } from '@pomello-desktop/domain';
 
 type HotkeyDefaults = Record<keyof Hotkeys, PlatformValue | string>;
@@ -84,7 +84,7 @@ const platformDefaults = Object.entries(hotkeyDefaults).reduce(
   {} as Hotkeys
 );
 
-const getHotkeys = (): Store<Hotkeys> => {
+export const getHotkeys = (): Store<Hotkeys> => {
   return runtime.storeManager.registerStore<Hotkeys>({
     path: 'bindings',
     defaults: platformDefaults,
@@ -131,5 +131,3 @@ const getHotkeys = (): Store<Hotkeys> => {
     },
   });
 };
-
-export default getHotkeys;

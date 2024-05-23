@@ -3,7 +3,7 @@ import { ipcRenderer } from 'electron';
 
 type SelectHideListener = () => void;
 
-const onSelectHide = (callback: SelectHideListener): Unsubscribe => {
+export const onSelectHide = (callback: SelectHideListener): Unsubscribe => {
   const handler = () => callback();
 
   ipcRenderer.on(AppEvent.HideSelect, handler);
@@ -12,5 +12,3 @@ const onSelectHide = (callback: SelectHideListener): Unsubscribe => {
     ipcRenderer.off(AppEvent.HideSelect, handler);
   };
 };
-
-export default onSelectHide;

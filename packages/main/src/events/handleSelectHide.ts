@@ -1,7 +1,5 @@
-import hideSelectWindow from '@/helpers/hideSelectWindow';
+import { hideSelectWindow } from '@/helpers/hideSelectWindow';
 
-const handleSelectHide = async (): Promise<void> => {
+export const handleSelectHide = async (): Promise<void> => {
   hideSelectWindow();
 };
-
-export default handleSelectHide;

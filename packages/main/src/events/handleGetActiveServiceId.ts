@@ -1,7 +1,7 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { Services } from '@pomello-desktop/domain';
 
-const handleGetActiveServiceId = (): string | undefined => {
+export const handleGetActiveServiceId = (): string | undefined => {
   const services = runtime.storeManager.registerStore<Services>({
     path: 'services',
     emitChangeEvents: true,
@@ -20,5 +20,3 @@ const handleGetActiveServiceId = (): string | undefined => {
 
   return services.get('activeServiceId');
 };
-
-export default handleGetActiveServiceId;

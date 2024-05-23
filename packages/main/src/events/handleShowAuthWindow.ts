@@ -1,9 +1,12 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { AuthWindowType } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 import { join } from 'path';
 
-const handleShowAuthWindow = async (_event: IpcMainInvokeEvent, windowType: AuthWindowType) => {
+export const handleShowAuthWindow = async (
+  _event: IpcMainInvokeEvent,
+  windowType: AuthWindowType
+) => {
   const windowId =
     windowType.type === 'pomello'
       ? `auth-pomello-${windowType.action}`
@@ -25,5 +28,3 @@ const handleShowAuthWindow = async (_event: IpcMainInvokeEvent, windowType: Auth
     runtime.windowManager.destroyWindow(windowId);
   });
 };
-
-export default handleShowAuthWindow;

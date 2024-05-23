@@ -1,6 +1,6 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 
-const handleAppQuit = (): void => {
+export const handleAppQuit = (): void => {
   const appWindow = runtime.windowManager.findOrFailWindow('app');
   const windows = runtime.windowManager.getAllWindows();
 
@@ -9,5 +9,3 @@ const handleAppQuit = (): void => {
 
   appWindow.destroy();
 };
-
-export default handleAppQuit;

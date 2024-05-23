@@ -23,7 +23,7 @@ const humanizeBinding = (binding: string): string =>
     })
     .join(' ');
 
-const appendHotkeyLabels = (hotkeys: Hotkeys): LabeledHotkeys => {
+export const appendHotkeyLabels = (hotkeys: Hotkeys): LabeledHotkeys => {
   return Object.keys(hotkeys).reduce((labeledHotkeys, command) => {
     const binding = hotkeys[command as keyof Hotkeys];
 
@@ -42,5 +42,3 @@ const appendHotkeyLabels = (hotkeys: Hotkeys): LabeledHotkeys => {
     };
   }, {} as LabeledHotkeys);
 };
-
-export default appendHotkeyLabels;

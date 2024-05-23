@@ -128,7 +128,7 @@ const defaultTheme: ThemeConfig = {
   },
 };
 
-const getThemeCss = (): ThemeCss => {
+export const getThemeCss = (): ThemeCss => {
   const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 
   let css = '';
@@ -159,5 +159,3 @@ const getThemeCss = (): ThemeCss => {
     theme,
   };
 };
-
-export default getThemeCss;
