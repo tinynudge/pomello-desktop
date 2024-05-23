@@ -1,14 +1,14 @@
 import { join } from 'path';
 import { throttle } from 'throttle-debounce';
 import { version } from '../../../package.json';
-import handleAppWindowMove from './events/handleAppWindowMove';
-import handleAppWindowResize from './events/handleAppWindowResize';
-import getPomelloConfig from './getPomelloConfig';
-import getSettings from './getSettings';
-import hideSelectWindow from './helpers/hideSelectWindow';
-import runtime from './runtime';
+import { handleAppWindowMove } from './events/handleAppWindowMove';
+import { handleAppWindowResize } from './events/handleAppWindowResize';
+import { getPomelloConfig } from './getPomelloConfig';
+import { getSettings } from './getSettings';
+import { hideSelectWindow } from './helpers/hideSelectWindow';
+import { runtime } from './runtime';
 
-const createAppWindows = async (): Promise<void> => {
+export const createAppWindows = async (): Promise<void> => {
   const { dev, x, y, width, height } = getPomelloConfig().all();
   const { alwaysOnTop, osxAllowMoveAnywhere } = getSettings().all();
 
@@ -57,5 +57,3 @@ const createAppWindows = async (): Promise<void> => {
 
   appWindow.focus();
 };
-
-export default createAppWindows;

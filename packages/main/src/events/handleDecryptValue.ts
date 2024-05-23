@@ -1,7 +1,7 @@
-import logger from '@/logger';
+import { logger } from '@/logger';
 import { IpcMainEvent, safeStorage } from 'electron';
 
-const handleDecryptValue = (event: IpcMainEvent, value: string): void => {
+export const handleDecryptValue = (event: IpcMainEvent, value: string): void => {
   const buffer = Buffer.from(value, 'latin1');
 
   let decryptedValue: string | null = null;
@@ -16,5 +16,3 @@ const handleDecryptValue = (event: IpcMainEvent, value: string): void => {
 
   event.returnValue = decryptedValue;
 };
-
-export default handleDecryptValue;

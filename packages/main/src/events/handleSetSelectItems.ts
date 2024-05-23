@@ -1,8 +1,8 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { AppEvent, SetSelectItemsOptions } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleSetSelectItems = async (
+export const handleSetSelectItems = async (
   _event: IpcMainInvokeEvent,
   options: SetSelectItemsOptions
 ): Promise<void> => {
@@ -10,5 +10,3 @@ const handleSetSelectItems = async (
 
   selectWindow.webContents.send(AppEvent.SetSelectItems, options);
 };
-
-export default handleSetSelectItems;

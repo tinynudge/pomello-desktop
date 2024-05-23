@@ -1,7 +1,5 @@
 import { AppEvent } from '@pomello-desktop/domain';
 import { ipcRenderer } from 'electron';
 
-const selectOption = (optionId: string): Promise<void> =>
+export const selectOption = (optionId: string): Promise<void> =>
   ipcRenderer.invoke(AppEvent.SelectOption, optionId);
-
-export default selectOption;

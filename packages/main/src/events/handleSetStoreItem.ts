@@ -1,7 +1,7 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleSetStoreItem = (
+export const handleSetStoreItem = (
   _event: IpcMainInvokeEvent,
   storeName: string,
   key: string,
@@ -11,5 +11,3 @@ const handleSetStoreItem = (
 
   store.set(key, value);
 };
-
-export default handleSetStoreItem;

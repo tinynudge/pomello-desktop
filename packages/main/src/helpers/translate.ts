@@ -1,7 +1,7 @@
 import { Translate } from '@pomello-desktop/domain';
-import getTranslations from './getTranslations';
+import { getTranslations } from './getTranslations';
 
-const translate: Translate = (key, mappings) => {
+export const translate: Translate = (key, mappings) => {
   const translations = getTranslations();
 
   const translation = translations[key];
@@ -14,5 +14,3 @@ const translate: Translate = (key, mappings) => {
     ? translation.replace(/\{\{(\w+)\}\}/gm, (_match, mapping) => mappings[mapping] ?? mapping)
     : translation;
 };
-
-export default translate;

@@ -1,7 +1,7 @@
-import getPomelloConfig from '@/getPomelloConfig';
-import runtime from '@/runtime';
+import { getPomelloConfig } from '@/getPomelloConfig';
+import { runtime } from '@/runtime';
 
-const handleAppWindowResize = (): void => {
+export const handleAppWindowResize = (): void => {
   const appWindow = runtime.windowManager.findOrFailWindow('app');
   const pomelloConfig = getPomelloConfig();
 
@@ -10,5 +10,3 @@ const handleAppWindowResize = (): void => {
   pomelloConfig.set('width', width);
   pomelloConfig.set('height', height);
 };
-
-export default handleAppWindowResize;

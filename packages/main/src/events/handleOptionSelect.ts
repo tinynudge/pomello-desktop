@@ -1,9 +1,12 @@
-import hideSelectWindow from '@/helpers/hideSelectWindow';
-import runtime from '@/runtime';
+import { hideSelectWindow } from '@/helpers/hideSelectWindow';
+import { runtime } from '@/runtime';
 import { AppEvent } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleOptionSelect = async (_event: IpcMainInvokeEvent, optionId: string): Promise<void> => {
+export const handleOptionSelect = async (
+  _event: IpcMainInvokeEvent,
+  optionId: string
+): Promise<void> => {
   const appWindow = runtime.windowManager.findOrFailWindow('app');
 
   appWindow.webContents.send(AppEvent.SelectChange, optionId);
@@ -13,5 +16,3 @@ const handleOptionSelect = async (_event: IpcMainInvokeEvent, optionId: string):
   // select window disappears and then the content updates.
   setTimeout(hideSelectWindow, 5);
 };
-
-export default handleOptionSelect;

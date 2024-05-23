@@ -1,7 +1,7 @@
 import { Menu, MenuItemConstructorOptions, shell } from 'electron';
-import translate from './helpers/translate';
+import { translate } from './helpers/translate';
 
-const createMenu = (): void => {
+export const createMenu = (): void => {
   const template: MenuItemConstructorOptions[] = [
     { role: 'editMenu' },
     {
@@ -36,5 +36,3 @@ const createMenu = (): void => {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
-
-export default createMenu;

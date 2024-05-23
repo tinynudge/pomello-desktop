@@ -1,7 +1,7 @@
 import { PomelloConfig, Store } from '@pomello-desktop/domain';
-import runtime from './runtime';
+import { runtime } from './runtime';
 
-const getPomelloConfig = (): Store<PomelloConfig> =>
+export const getPomelloConfig = (): Store<PomelloConfig> =>
   runtime.storeManager.registerStore<PomelloConfig>({
     path: 'pomello',
     defaults: {
@@ -59,5 +59,3 @@ const getPomelloConfig = (): Store<PomelloConfig> =>
       additionalProperties: false,
     },
   });
-
-export default getPomelloConfig;

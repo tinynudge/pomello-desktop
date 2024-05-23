@@ -1,8 +1,8 @@
-import getSettings from '@/getSettings';
+import { getSettings } from '@/getSettings';
 import { Settings } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleUpdateSetting = async <TSetting extends keyof Settings>(
+export const handleUpdateSetting = async <TSetting extends keyof Settings>(
   _event: IpcMainInvokeEvent,
   setting: TSetting,
   value: Settings[TSetting]
@@ -11,5 +11,3 @@ const handleUpdateSetting = async <TSetting extends keyof Settings>(
 
   settings.set(setting, value);
 };
-
-export default handleUpdateSetting;

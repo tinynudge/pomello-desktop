@@ -7,7 +7,7 @@ import {
 } from '@pomello-desktop/domain';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
-const registerServiceConfig = async <TConfig = StoreContents>(
+export const registerServiceConfig = async <TConfig = StoreContents>(
   serviceId: string,
   configStore: ServiceConfigStore<TConfig>
 ): Promise<ServiceConfigActions<TConfig>> => {
@@ -40,5 +40,3 @@ const registerServiceConfig = async <TConfig = StoreContents>(
     unset,
   };
 };
-
-export default registerServiceConfig;

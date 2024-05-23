@@ -3,7 +3,7 @@ import { IpcRendererEvent, ipcRenderer } from 'electron';
 
 type ShowSelectListener = (options: ShowSelectRendererOptions) => void;
 
-const onShowSelect = (callback: ShowSelectListener): Unsubscribe => {
+export const onShowSelect = (callback: ShowSelectListener): Unsubscribe => {
   const handler = (_event: IpcRendererEvent, options: ShowSelectRendererOptions) =>
     callback(options);
 
@@ -13,5 +13,3 @@ const onShowSelect = (callback: ShowSelectListener): Unsubscribe => {
     ipcRenderer.off(AppEvent.ShowSelect, handler);
   };
 };
-
-export default onShowSelect;

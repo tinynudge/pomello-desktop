@@ -1,7 +1,7 @@
-import runtime from '@/runtime';
+import { runtime } from '@/runtime';
 import { screen } from 'electron';
 
-const snapAppWindowToDisplayEdge = (): void => {
+export const snapAppWindowToDisplayEdge = (): void => {
   const appWindow = runtime.windowManager.findOrFailWindow('app');
 
   if (appWindow.isMaximized() || appWindow.isMinimized()) {
@@ -31,5 +31,3 @@ const snapAppWindowToDisplayEdge = (): void => {
     appWindow.setPosition(x, y);
   }
 };
-
-export default snapAppWindowToDisplayEdge;

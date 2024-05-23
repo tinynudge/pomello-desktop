@@ -1,12 +1,12 @@
 import { app, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import winston from 'winston';
-import createAppWindows from './createAppWindows';
-import createMenu from './createMenu';
-import getPomelloConfig from './getPomelloConfig';
-import initializeListeners from './helpers/initializeListeners';
-import translate from './helpers/translate';
-import logger from './logger';
+import { createAppWindows } from './createAppWindows';
+import { createMenu } from './createMenu';
+import { getPomelloConfig } from './getPomelloConfig';
+import { initializeListeners } from './helpers/initializeListeners';
+import { translate } from './helpers/translate';
+import { logger } from './logger';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 if (!isSingleInstance) {

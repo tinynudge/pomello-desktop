@@ -7,7 +7,7 @@ import {
 } from '@pomello-desktop/domain';
 import Ajv from 'ajv';
 import ElectronStore from 'electron-store';
-import runtime from '.';
+import { runtime } from '.';
 
 const validator = new Ajv({
   allowUnionTypes: true,
@@ -53,7 +53,7 @@ const createStore = <TContents extends StoreContents = StoreContents>({
   };
 };
 
-const createStoreManager = (): StoreManager => {
+export const createStoreManager = (): StoreManager => {
   const stores: Map<string, Store> = new Map();
 
   const getOrFailStore = <TContents = StoreContents>(id: string): Store<TContents> => {
@@ -87,5 +87,3 @@ const createStoreManager = (): StoreManager => {
     registerStore,
   };
 };
-
-export default createStoreManager;

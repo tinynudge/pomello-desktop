@@ -1,9 +1,9 @@
-import sanitizeBounds from '@/helpers/sanitizeBounds';
-import runtime from '@/runtime';
+import { sanitizeBounds } from '@/helpers/sanitizeBounds';
+import { runtime } from '@/runtime';
 import { SetSelectBoundsOptions } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
-const handleSetSelectBounds = (
+export const handleSetSelectBounds = (
   _event: IpcMainInvokeEvent,
   { bounds, orientation }: SetSelectBoundsOptions
 ): void => {
@@ -28,5 +28,3 @@ const handleSetSelectBounds = (
 
   selectWindow.setBounds(sanitizeBounds(newBounds));
 };
-
-export default handleSetSelectBounds;

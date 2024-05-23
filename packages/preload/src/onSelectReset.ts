@@ -3,7 +3,7 @@ import { ipcRenderer } from 'electron';
 
 type SelectResetListener = () => void;
 
-const onSelectReset = (callback: SelectResetListener): Unsubscribe => {
+export const onSelectReset = (callback: SelectResetListener): Unsubscribe => {
   const handler = () => callback();
 
   ipcRenderer.on(AppEvent.ResetSelect, handler);
@@ -12,5 +12,3 @@ const onSelectReset = (callback: SelectResetListener): Unsubscribe => {
     ipcRenderer.off(AppEvent.ResetSelect, handler);
   };
 };
-
-export default onSelectReset;

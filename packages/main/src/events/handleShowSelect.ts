@@ -1,5 +1,5 @@
-import sanitizeBounds from '@/helpers/sanitizeBounds';
-import runtime from '@/runtime';
+import { sanitizeBounds } from '@/helpers/sanitizeBounds';
+import { runtime } from '@/runtime';
 import { AppEvent, ShowSelectMainOptions } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent, Rectangle, screen } from 'electron';
 
@@ -23,7 +23,7 @@ const getDisplayEdges = (appBounds: Rectangle): DisplayEdges => {
   };
 };
 
-const handleShowSelect = async (
+export const handleShowSelect = async (
   _event: IpcMainInvokeEvent,
   options: ShowSelectMainOptions
 ): Promise<void> => {
@@ -74,5 +74,3 @@ const handleShowSelect = async (
 
   selectWindow.show();
 };
-
-export default handleShowSelect;

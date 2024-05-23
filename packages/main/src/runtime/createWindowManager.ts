@@ -1,7 +1,7 @@
 import { FindOrCreateWindowOptions, WindowManager } from '@pomello-desktop/domain';
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 
-const createWindowManager = (): WindowManager => {
+export const createWindowManager = (): WindowManager => {
   const windows: Map<string, BrowserWindow> = new Map();
 
   const destroyWindow = (id: string): void => {
@@ -89,5 +89,3 @@ const createWindowManager = (): WindowManager => {
     getWindow,
   };
 };
-
-export default createWindowManager;
