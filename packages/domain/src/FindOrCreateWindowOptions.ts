@@ -14,6 +14,7 @@ type BrowserWindowTypes =
   | 'title'
   | 'titleBarStyle'
   | 'transparent'
+  | 'webPreferences'
   | 'width'
   | 'x'
   | 'y';

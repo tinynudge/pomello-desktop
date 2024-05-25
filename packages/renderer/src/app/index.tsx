@@ -7,7 +7,7 @@ import { RuntimeProvider } from '@/shared/context/RuntimeContext';
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import { createPomelloApi } from '@/shared/helpers/createPomelloApi';
 import { getPomelloServiceConfig } from '@/shared/helpers/getPomelloServiceConfig';
-import { QueryClient, QueryClientProvider } from '@tanstack/solid-query';
+import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/solid-query';
 import { render } from 'solid-js/web';
 import { App } from './components/App';
 import { HotkeysProvider } from './context/HotkeysContext';
@@ -16,6 +16,18 @@ import { StoreProvider } from './context/StoreContext';
 
 const renderApp = async () => {
   const queryClient = new QueryClient();
+
+  focusManager.setEventListener(handleFocus => {
+    const handleVisibilityChange = () => {
+      handleFocus();
+    };
+
+    window.addEventListener('focus', handleVisibilityChange, false);
+
+    return () => {
+      window.removeEventListener('focus', handleVisibilityChange);
+    };
+  });
 
   const container = document.getElementById('root');
 

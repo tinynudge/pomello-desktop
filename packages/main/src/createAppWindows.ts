@@ -39,6 +39,9 @@ export const createAppWindows = async (): Promise<void> => {
     showDevTools,
     titleBarStyle: osxAllowMoveAnywhere ? 'customButtonsOnHover' : 'default',
     transparent: true,
+    webPreferences: {
+      backgroundThrottling: false,
+    },
     width,
     x,
     y,
