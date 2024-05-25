@@ -18,15 +18,7 @@ const renderApp = async () => {
   const queryClient = new QueryClient();
 
   focusManager.setEventListener(handleFocus => {
-    const handleVisibilityChange = () => {
-      handleFocus();
-    };
-
-    window.addEventListener('focus', handleVisibilityChange, false);
-
-    return () => {
-      window.removeEventListener('focus', handleVisibilityChange);
-    };
+    return window.app.onAppWindowFocus(handleFocus);
   });
 
   const container = document.getElementById('root');

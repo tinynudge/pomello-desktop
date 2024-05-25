@@ -8,6 +8,7 @@ import { getThemeCss } from './getThemeCss';
 import { getTranslations } from './getTranslations';
 import { hideSelect } from './hideSelect';
 import { logMessage } from './logMessage';
+import { onAppWindowFocus } from './onAppWindowFocus';
 import { onPowerMonitorChange } from './onPowerMonitorChange';
 import { onSelectChange } from './onSelectChange';
 import { onSelectHide } from './onSelectHide';
@@ -41,6 +42,7 @@ export const api = {
   getTranslations,
   hideSelect,
   logMessage,
+  onAppWindowFocus,
   onPowerMonitorChange,
   onSelectChange,
   onSelectHide,

@@ -1,3 +1,4 @@
+import { AppEvent } from '@pomello-desktop/domain';
 import { join } from 'path';
 import { throttle } from 'throttle-debounce';
 import { version } from '../../../package.json';
@@ -53,6 +54,20 @@ export const createAppWindows = async (): Promise<void> => {
   selectWindow.setParentWindow(appWindow);
   selectWindow.excludedFromShownWindowsMenu = true;
   selectWindow.on('blur', hideSelectWindow);
+
+  let didSelectWindowBlur = false;
+
+  appWindow.on('focus', () => {
+    if (!didSelectWindowBlur) {
+      appWindow.webContents.send(AppEvent.AppWindowFocus);
+    } else {
+      didSelectWindowBlur = false;
+    }
+  });
+
+  selectWindow.on('blur', () => {
+    didSelectWindowBlur = true;
+  });
 
   if (appWindow.isMinimized()) {
     appWindow.restore();
