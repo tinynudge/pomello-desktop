@@ -8,6 +8,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "clean": "rimraf dist",
     "format": "prettier --write . --ignore-path ../../.prettierignore",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore",
     "lint": "eslint .",
