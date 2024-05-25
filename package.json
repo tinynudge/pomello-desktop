@@ -9,7 +9,7 @@
   "type": "module",
   "main": "packages/main/dist/index.cjs",
   "scripts": {
-    "build": "pnpm --recursive run build",
+    "build": "pnpm --recursive run clean && pnpm --recursive run build",
     "compile": "electron-builder --config .electron-builder.config.cjs --dir --config.asar=false --mac",
     "format:check": "pnpm --recursive --no-bail run format:check",
     "format": "pnpm --recursive run format:check",
@@ -37,6 +37,7 @@
     "eslint-config-prettier": "^9.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.2.5",
+    "rimraf": "^5.0.7",
     "sort-package-json": "^2.10.0",
     "standard-version": "^9.5.0",
     "typescript": "^5.4.5",
