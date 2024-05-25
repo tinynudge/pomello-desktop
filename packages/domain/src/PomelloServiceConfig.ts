@@ -1,7 +1,7 @@
 import { PomelloUser } from './PomelloUser';
 
-export interface PomelloServiceConfig {
+export type PomelloServiceConfig = {
   didPromptRegistration?: boolean;
   token?: string;
   user?: PomelloUser;
-}
+};

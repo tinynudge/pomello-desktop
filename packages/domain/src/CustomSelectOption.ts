@@ -1,5 +1,5 @@
 import { SelectItemBase } from './SelectItemBase';
 
-export interface CustomSelectOption extends SelectItemBase {
+export type CustomSelectOption = SelectItemBase & {
   type: 'customOption';
-}
+};

@@ -1,7 +1,7 @@
 import { SelectItem } from './SelectItem';
 
-export interface SetSelectItemsOptions {
+export type SetSelectItemsOptions = {
   items: SelectItem[];
   noResultsMessage?: string;
   placeholder?: string;
-}
+};

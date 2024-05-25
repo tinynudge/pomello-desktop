@@ -1,4 +1,4 @@
-export interface CustomSound {
+export type CustomSound = {
   name: string;
   path: string;
-}
+};

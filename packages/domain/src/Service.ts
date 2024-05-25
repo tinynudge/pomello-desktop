@@ -21,7 +21,7 @@ import { TaskTimerEndPromptHandledEvent } from './TaskTimerEndPromptHandledEvent
 import { TaskTimerEndPromptHandledResponse } from './TaskTimerEndPromptHandledResponse';
 import { Unsubscribe } from './Unsubscribe';
 
-export interface Service {
+export type Service = {
   AuthView?: Component;
   Container?: ServiceContainer;
   CustomSelectGroup?: CustomSelectGroupComponent;
@@ -50,4 +50,4 @@ export interface Service {
   ): TaskTimerEndPromptHandledResponse;
   pomelloEventListeners?: PomelloEventListeners;
   SelectTaskView?: SelectTaskView;
-}
+};

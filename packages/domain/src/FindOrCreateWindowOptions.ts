@@ -18,11 +18,13 @@ type BrowserWindowTypes =
   | 'x'
   | 'y';
 
-export interface FindOrCreateWindowOptions
-  extends Pick<BrowserWindowConstructorOptions, BrowserWindowTypes> {
+export type FindOrCreateWindowOptions = Pick<
+  BrowserWindowConstructorOptions,
+  BrowserWindowTypes
+> & {
   id: string;
   path: string;
   preloadPath?: string;
   showDevTools?: boolean;
   showOnReady?: boolean;
-}
+};

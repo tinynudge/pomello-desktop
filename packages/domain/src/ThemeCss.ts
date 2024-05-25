@@ -1,4 +1,4 @@
-export interface ThemeCss {
+export type ThemeCss = {
   css: string;
   theme: 'dark' | 'light';
-}
+};

@@ -1,4 +1,4 @@
-export interface OnTaskOpenEvent {
+export type OnTaskOpenEvent = {
   taskId: string;
   openUrl(url: string): void;
-}
+};
