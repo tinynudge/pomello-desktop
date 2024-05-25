@@ -1,7 +1,7 @@
 import { NoteType } from './NoteType';
 
-export interface Note {
+export type Note = {
   label: string;
   text: string;
   type: NoteType;
-}
+};

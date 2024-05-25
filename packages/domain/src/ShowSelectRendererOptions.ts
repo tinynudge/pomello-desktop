@@ -1,3 +1,3 @@
-export interface ShowSelectRendererOptions {
+export type ShowSelectRendererOptions = {
   orientation: 'bottom' | 'top';
-}
+};

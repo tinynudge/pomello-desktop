@@ -1,4 +1,4 @@
-export interface PomelloConfig {
+export type PomelloConfig = {
   dashboardHeight: number;
   dashboardWidth: number;
   dashboardX?: number;
@@ -10,4 +10,4 @@ export interface PomelloConfig {
   width: number;
   x?: number;
   y?: number;
-}
+};

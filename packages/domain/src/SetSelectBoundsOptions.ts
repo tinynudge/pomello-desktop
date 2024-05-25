@@ -1,6 +1,6 @@
 import { Rectangle } from 'electron';
 
-export interface SetSelectBoundsOptions {
+export type SetSelectBoundsOptions = {
   bounds: Partial<Rectangle>;
   orientation?: 'bottom' | 'top';
-}
+};

@@ -5,9 +5,9 @@ import { bindContext } from '../bindContext';
 import { fetchUser } from './fetchUser';
 import { logEvent } from './logEvent';
 
-export interface PomelloApiContext {
+export type PomelloApiContext = {
   client: typeof ky;
-}
+};
 
 export const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): PomelloApi => {
   let { token: encryptedToken } = config.get();

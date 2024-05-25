@@ -32,7 +32,7 @@ import { simulate } from './simulate';
 
 export * from '@solidjs/testing-library';
 
-export interface RenderAppOptions {
+export type RenderAppOptions = {
   appApi?: Partial<AppApi>;
   createServiceRegistry?(
     defaultRegistry: ServiceRegistry
@@ -49,7 +49,7 @@ export interface RenderAppOptions {
   serviceConfigs?: Record<string, ServiceConfigActions<any>>;
   serviceId?: string | null;
   settings?: Partial<Settings>;
-}
+};
 
 export const renderApp = (options: RenderAppOptions = {}) => {
   const serviceId = options.serviceId === null ? undefined : options.serviceId ?? 'mock';

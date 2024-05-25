@@ -1,7 +1,7 @@
 import { StoreManager } from './StoreManager';
 import { WindowManager } from './WindowManager';
 
-export interface Runtime {
+export type Runtime = {
   storeManager: StoreManager;
   windowManager: WindowManager;
-}
+};

@@ -1,7 +1,7 @@
 import { SelectItem } from './SelectItem';
 import { SelectItemBase } from './SelectItemBase';
 
-export interface SelectGroupDefault extends SelectItemBase {
+export type SelectGroupDefault = SelectItemBase & {
   type: 'group';
   items: SelectItem[];
-}
+};

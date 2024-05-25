@@ -2,11 +2,11 @@ import { Translate, Translations, TranslationsDictionary } from '@pomello-deskto
 import { createStore, produce } from 'solid-js/store';
 import { useRuntime } from './RuntimeContext';
 
-export interface RuntimeTranslations {
+export type RuntimeTranslations = {
   addNamespace(namespace: string, translations: TranslationsDictionary): void;
   removeNamespace(namespace: string): void;
   t(namespacedKey: string, mappings?: Record<string, string>): string;
-}
+};
 
 export const useTranslate = (): Translate => {
   const runtime = useRuntime();

@@ -1,7 +1,7 @@
 import { SetItem } from '@tinynudge/pomello-service';
 import { CustomSound } from './CustomSound';
 
-export interface Settings {
+export type Settings = {
   alwaysOnTop: boolean;
   snapEdges: boolean;
   timeExpiredNotification: string;
@@ -52,4 +52,4 @@ export interface Settings {
   taskTimerTickVol: number | string;
   sounds: Record<string, CustomSound | undefined>;
   timestamp?: number;
-}
+};

@@ -1,6 +1,6 @@
-export interface ThemeConfig {
+export type ThemeConfig = {
   [key: string]: ThemeType;
-}
+};
 
 type ThemeType = ThemeConfig | ThemeValue;
 
