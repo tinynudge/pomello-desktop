@@ -1,4 +1,5 @@
 export enum AppEvent {
+  AppWindowFocus = 'app-window-focus',
   ClipboardTextWrite = 'clipboard-text-write',
   DecryptValue = 'decrypt-value',
   EncryptValue = 'encrypt-value',

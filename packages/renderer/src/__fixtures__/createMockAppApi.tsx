@@ -53,6 +53,7 @@ export const createMockAppApi = ({
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),
     logMessage: vi.fn(),
+    onAppWindowFocus: vi.fn(),
     onPowerMonitorChange: vi.fn(() => () => {}),
     onSelectChange: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectChange', callback))
