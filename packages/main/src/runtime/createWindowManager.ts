@@ -34,9 +34,11 @@ export const createWindowManager = (): WindowManager => {
     };
 
     if (preloadPath) {
-      options.webPreferences = {
-        preload: preloadPath,
-      };
+      if (!options.webPreferences) {
+        options.webPreferences = {};
+      }
+
+      options.webPreferences.preload = preloadPath;
     }
 
     const browserWindow = new BrowserWindow(options);
