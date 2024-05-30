@@ -171,11 +171,11 @@ describe('App - Pomello', () => {
   });
 
   it('should refetch the tasks if the user changes to premium account', async () => {
-    const fooService: ServiceFactory = ({ user }) => {
+    const fooService: ServiceFactory = ({ getUser }) => {
       return {
         displayName: fooService.displayName,
         fetchTasks: async () => {
-          const isPremium = user?.type === 'premium';
+          const isPremium = getUser()?.type === 'premium';
 
           return isPremium
             ? [{ id: 'premium', label: 'Premium item' }]
@@ -227,11 +227,11 @@ describe('App - Pomello', () => {
   });
 
   it('should refetch the tasks if the user changes to free account', async () => {
-    const fooService: ServiceFactory = ({ user }) => {
+    const fooService: ServiceFactory = ({ getUser }) => {
       return {
         displayName: fooService.displayName,
         fetchTasks: async () => {
-          const isPremium = user?.type === 'premium';
+          const isPremium = getUser()?.type === 'premium';
 
           return isPremium
             ? [{ id: 'premium', label: 'Premium item' }]
