@@ -1,11 +1,12 @@
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
 import { usePomelloConfig, useSettings, useTranslate } from '@/shared/context/RuntimeContext';
 import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
-import { createQuery } from '@tanstack/solid-query';
-import { createEffect } from 'solid-js';
+import { createQuery, useQueryClient } from '@tanstack/solid-query';
+import { createEffect, on } from 'solid-js';
 import { unwrap } from 'solid-js/store';
 
 export const useCheckPomelloAccount = () => {
+  const queryClient = useQueryClient();
   const config = usePomelloConfig();
   const pomelloApi = usePomelloApi();
   const settings = useSettings();
@@ -29,6 +30,18 @@ export const useCheckPomelloAccount = () => {
     suspense: false,
     useErrorBoundary: false,
   }));
+
+  createEffect(
+    on(
+      () => config.store.user?.type === 'premium',
+      () => {
+        queryClient.invalidateQueries({
+          refetchType: 'all',
+          predicate: ({ queryKey }) => queryKey.at(0) === 'tasks',
+        });
+      }
+    )
+  );
 
   createEffect(() => {
     if (config.store.token) {

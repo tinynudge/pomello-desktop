@@ -7,9 +7,9 @@ import { Translate } from './Translate';
 
 export type ServiceRuntime<TConfig> = {
   config: TConfig extends void ? null : ServiceConfig<TConfig>;
+  getUser(): PomelloUser | undefined;
   logger: Logger;
   onServiceCleanUp(callback: ServiceCleanUpCallback): void;
   settings: Settings;
   translate: Translate;
-  user?: PomelloUser;
 };

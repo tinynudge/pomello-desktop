@@ -7,12 +7,13 @@ import { TrelloCard, TrelloCheckItem, TrelloRuntime } from './domain';
 export const fetchTasks = async ({
   cache,
   config,
+  getUser,
   logger,
   settings,
   translate,
-  user,
 }: TrelloRuntime): Promise<SelectItem[]> => {
   const currentList = config.store.currentList;
+  const user = getUser();
 
   assertNonNullish(currentList, 'Unable to get current list');
 

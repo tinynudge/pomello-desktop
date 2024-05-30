@@ -101,11 +101,11 @@ export const ServiceProvider: ParentComponent<ServiceProviderProps> = props => {
 
     const service = createService({
       config: config as null,
+      getUser: () => pomelloConfig.store.user,
       logger,
       onServiceCleanUp,
       settings,
       translate: (key, mappings) => translations.t(`service:${key}`, mappings),
-      user: pomelloConfig.store.user,
     });
 
     onMountUnsubscribe = service.onMount?.();
