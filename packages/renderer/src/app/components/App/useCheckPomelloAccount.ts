@@ -21,7 +21,7 @@ export const useCheckPomelloAccount = () => {
       return pomelloApi.fetchUser();
     },
     cacheTime: Infinity,
-    refetchInterval: 60 * 1000 * 10,
+    refetchInterval: () => 60 * 1000 * 10, // Use callback so multiple requests don't stack in background mode
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
