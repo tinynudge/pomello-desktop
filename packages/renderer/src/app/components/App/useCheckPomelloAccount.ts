@@ -1,9 +1,14 @@
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
 import { usePomelloConfig, useSettings, useTranslate } from '@/shared/context/RuntimeContext';
 import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
-import { createQuery, useQueryClient } from '@tanstack/solid-query';
+import { PomelloUser } from '@pomello-desktop/domain';
+import { useQueryClient } from '@tanstack/solid-query';
 import { createEffect, on } from 'solid-js';
-import { unwrap } from 'solid-js/store';
+
+const sleep = (timeout: number): Promise<void> =>
+  new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
 
 export const useCheckPomelloAccount = () => {
   const queryClient = useQueryClient();
@@ -12,24 +17,7 @@ export const useCheckPomelloAccount = () => {
   const settings = useSettings();
   const t = useTranslate();
 
-  const user = createQuery(() => ({
-    queryKey: ['pomelloUser'],
-    queryFn: async () => {
-      if (!config.store.token) {
-        return Promise.reject(new Error('NO_TOKEN'));
-      }
-
-      return pomelloApi.fetchUser();
-    },
-    cacheTime: Infinity,
-    refetchInterval: () => 60 * 1000 * 10, // Use callback so multiple requests don't stack in background mode
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
-    suspense: false,
-    useErrorBoundary: false,
-  }));
+  let timeoutId: number | undefined;
 
   createEffect(
     on(
@@ -43,43 +31,79 @@ export const useCheckPomelloAccount = () => {
     )
   );
 
-  createEffect(() => {
-    if (config.store.token) {
-      user.refetch();
+  createEffect(
+    on(
+      () => config.store.token,
+      token => {
+        if (!token) {
+          return;
+        }
+
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+
+          timeoutId = undefined;
+        }
+
+        checkPomelloAccount();
+      },
+      { defer: true }
+    )
+  );
+
+  const checkPomelloAccount = async () => {
+    await setPomelloUser();
+
+    timeoutId = window.setTimeout(checkPomelloAccount, 1000 * 60 * 10);
+  };
+
+  const setPomelloUser = async (): Promise<void> => {
+    try {
+      const user = await fetchPomelloUser()
+        .catch(error => retryFetchPomelloUser(error, 2000))
+        .catch(error => retryFetchPomelloUser(error, 3000));
+
+      config.actions.userFetched(user);
+    } catch (error) {
+      if (error instanceof SerializableHttpError && error.response.status === 500) {
+        new Notification(t('pomelloApiUnresponsiveTitle'));
+
+        return;
+      }
+
+      if (
+        error !== 'NO_TOKEN' &&
+        error instanceof SerializableHttpError &&
+        error.response.status !== 401
+      ) {
+        return;
+      }
+
+      config.actions.userInvalidated();
+
+      if (settings.checkPomelloStatus) {
+        await showUnconnectedDialog();
+      }
     }
-  });
+  };
 
-  createEffect(() => {
-    if (user.data) {
-      config.actions.userFetched(unwrap(user.data));
-    }
-  });
-
-  createEffect(() => {
-    if (!user.error) {
-      return;
+  const fetchPomelloUser = async (): Promise<PomelloUser> => {
+    if (!config.store.token) {
+      throw 'NO_TOKEN';
     }
 
-    if (user.error instanceof SerializableHttpError && user.error.response.status === 500) {
-      new Notification(t('pomelloApiUnresponsiveTitle'));
+    return pomelloApi.fetchUser();
+  };
 
-      return;
+  const retryFetchPomelloUser = async (error: unknown, timeout: number): Promise<PomelloUser> => {
+    if (import.meta.env.MODE === 'test') {
+      throw error;
     }
 
-    if (
-      user.error.message !== 'NO_TOKEN' &&
-      user.error instanceof SerializableHttpError &&
-      user.error.response.status !== 401
-    ) {
-      return;
-    }
+    await sleep(timeout);
 
-    config.actions.userInvalidated();
-
-    if (settings.checkPomelloStatus) {
-      showUnconnectedDialog();
-    }
-  });
+    return fetchPomelloUser();
+  };
 
   const showUnconnectedDialog = async () => {
     const { response } = await window.app.showMessageBox({
@@ -106,4 +130,6 @@ export const useCheckPomelloAccount = () => {
       window.app.updateSetting('checkPomelloStatus', false);
     }
   };
+
+  checkPomelloAccount();
 };
