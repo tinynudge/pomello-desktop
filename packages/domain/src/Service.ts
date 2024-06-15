@@ -41,13 +41,13 @@ export type Service = {
   onNoteCreate?: OnNoteCreate;
   onTaskCompletePromptHandled?(
     event: TaskCompletePromptHandledEvent
-  ): TaskCompletePromptHandledResponse;
+  ): TaskCompletePromptHandledResponse | void;
   onTaskCreate?: OnTaskCreate;
   onTaskOpen?(event: OnTaskOpenEvent): void;
   onTaskSelect?(taskId: string): boolean | void;
   onTaskTimerEndPromptHandled?(
     event: TaskTimerEndPromptHandledEvent
-  ): TaskTimerEndPromptHandledResponse;
+  ): TaskTimerEndPromptHandledResponse | void;
   pomelloEventListeners?: PomelloEventListeners;
   SelectTaskView?: SelectTaskView;
 };

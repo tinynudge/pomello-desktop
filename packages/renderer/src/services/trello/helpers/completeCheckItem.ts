@@ -1,10 +1,10 @@
 import { markCheckItemComplete } from '../api/markCheckItemComplete';
 import { TrelloCheckItem, TrelloRuntime } from '../domain';
 
-export const completeCheckItem = (
+export const completeCheckItem = async (
   { cache, logger, translate }: TrelloRuntime,
   checkItem: TrelloCheckItem
-): void => {
+): Promise<void> => {
   const log = cache.store.log;
   const preferences = cache.store.preferences;
 
@@ -14,7 +14,7 @@ export const completeCheckItem = (
 
   logger.debug('Will complete Trello check item');
 
-  markCheckItemComplete(checkItem);
+  await markCheckItemComplete(checkItem);
 
   logger.debug('Did complete Trello check item');
 };

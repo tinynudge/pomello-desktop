@@ -19,6 +19,7 @@ export const SelectTaskView: Component = () => {
   const t = useTranslate();
 
   const tasks = createQuery(() => ({
+    enabled: !store.isUpdatingTasks,
     gcTime: Infinity,
     queryFn: getService().fetchTasks,
     queryKey: getTasksCacheKey(),

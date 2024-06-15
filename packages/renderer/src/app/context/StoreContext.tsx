@@ -9,6 +9,7 @@ type OverlayView = 'create-task' | NoteType;
 interface Store {
   dialActions: DialAction[];
   isQuickTaskSelectEnabled: boolean;
+  isUpdatingTasks: boolean;
   overlayView: OverlayView | null;
   pomelloState: PomelloState;
 }
@@ -19,6 +20,8 @@ interface StoreActions {
   overlayViewSet(type: OverlayView): void;
   quickTaskEnabled(): void;
   quickTaskReset(): void;
+  updateTasksFinished(): void;
+  updateTasksStarted(): void;
 }
 
 const StoreContext = createContext<[Store, StoreActions]>();
@@ -49,6 +52,7 @@ export const StoreProvider: ParentComponent = props => {
   const [store, setStore] = createStore<Store>({
     dialActions: [],
     isQuickTaskSelectEnabled: false,
+    isUpdatingTasks: false,
     overlayView: null,
     pomelloState: pomelloService.getState(),
   });
@@ -87,12 +91,22 @@ export const StoreProvider: ParentComponent = props => {
     setStore('isQuickTaskSelectEnabled', false);
   };
 
+  const updateTasksFinished = () => {
+    setStore('isUpdatingTasks', false);
+  };
+
+  const updateTasksStarted = () => {
+    setStore('isUpdatingTasks', true);
+  };
+
   const actions: StoreActions = {
     dialActionsSet,
     overlayViewCleared,
     overlayViewSet,
     quickTaskEnabled,
     quickTaskReset,
+    updateTasksFinished,
+    updateTasksStarted,
   };
 
   return <StoreContext.Provider value={[store, actions]}>{props.children}</StoreContext.Provider>;

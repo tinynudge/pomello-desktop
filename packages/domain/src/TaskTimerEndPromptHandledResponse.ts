@@ -1,6 +1,7 @@
 import { TaskTimerEndPromptHandledAction } from '@tinynudge/pomello-service';
+import { RemoveTask } from './RemoveTask';
 
 export type TaskTimerEndPromptHandledResponse = {
   action?: TaskTimerEndPromptHandledAction;
-  shouldRemoveTaskFromCache?: boolean;
-} | void;
+  removeTask?: RemoveTask;
+};

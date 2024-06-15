@@ -98,8 +98,8 @@ export const TaskTimerEndView: Component = () => {
         taskTimerEndPromptHandled(response.action);
       }
 
-      if (response?.shouldRemoveTaskFromCache) {
-        removeTaskFromCache(currentTask().item.id);
+      if (response?.removeTask) {
+        removeTaskFromCache(response.removeTask, currentTask().item.id);
       }
     }
   };

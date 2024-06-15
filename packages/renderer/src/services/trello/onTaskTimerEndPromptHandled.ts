@@ -16,13 +16,20 @@ export const onTaskTimerEndPromptHandled = (
   const isCurrentList = runtime.cache.store.currentList.id === optionId;
 
   if (isCheckItem(task)) {
-    completeCheckItem(runtime, task);
-  } else if (!isCurrentList) {
-    moveCardAndUpdateDoneList(runtime, task, optionId);
+    return {
+      action: 'switchTask',
+      removeTask: async () => await completeCheckItem(runtime, task),
+    };
+  }
+
+  if (!isCurrentList) {
+    return {
+      action: 'switchTask',
+      removeTask: async () => await moveCardAndUpdateDoneList(runtime, task, optionId),
+    };
   }
 
   return {
     action: 'switchTask',
-    shouldRemoveTaskFromCache: !isCurrentList,
   };
 };

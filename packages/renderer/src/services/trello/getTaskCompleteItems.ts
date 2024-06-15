@@ -17,9 +17,7 @@ export const getTaskCompleteItems = (
     return createMoveCardList(translate, cache);
   }
 
-  completeCheckItem(runtime, task);
-
   return {
-    shouldRemoveTaskFromCache: true,
+    removeTask: async () => await completeCheckItem(runtime, task),
   };
 };
