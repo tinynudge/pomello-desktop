@@ -87,7 +87,6 @@ export const renderApp = (options: RenderAppOptions = {}) => {
     defaultOptions: {
       queries: {
         retry: 0,
-        staleTime: Infinity,
       },
     },
   });

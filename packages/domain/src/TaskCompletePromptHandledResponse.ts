@@ -1,3 +1,5 @@
+import { RemoveTask } from './RemoveTask';
+
 export type TaskCompletePromptHandledResponse = {
-  shouldRemoveTaskFromCache?: boolean;
-} | void;
+  removeTask?: RemoveTask;
+};

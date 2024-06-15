@@ -1,13 +1,15 @@
+import { HttpResponse } from 'msw';
 import { vi } from 'vitest';
-import { markCheckItemComplete } from '../api/markCheckItemComplete';
-import { moveCardToList } from '../api/moveCardToList';
 import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
 import { generateTrelloCard } from '../__fixtures__/generateTrelloCard';
 import { generateTrelloCheckItem } from '../__fixtures__/generateTrelloCheckItem';
 import { generateTrelloChecklist } from '../__fixtures__/generateTrelloChecklist';
 import { generateTrelloList } from '../__fixtures__/generateTrelloList';
 import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
-import { screen, waitFor, renderTrelloService } from '../__fixtures__/renderTrelloService';
+import { renderTrelloService, screen, waitFor } from '../__fixtures__/renderTrelloService';
+import { markCheckItemComplete } from '../api/markCheckItemComplete';
+import { moveCardToList } from '../api/moveCardToList';
+import { TrelloCard, TrelloCheckItem } from '../domain';
 
 describe('Trello service - Complete task', () => {
   beforeEach(() => {
@@ -261,6 +263,17 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should optimistically remove a card when completing early and moving to another list', async () => {
+    const cards = new Map([
+      [
+        'MY_FIRST_TASK',
+        generateTrelloCard({ id: 'MY_FIRST_TASK', name: 'My first task', checklists: [] }),
+      ],
+      [
+        'MY_SECOND_TASK',
+        generateTrelloCard({ id: 'MY_SECOND_TASK', name: 'My second task', checklists: [] }),
+      ],
+    ]);
+
     const { appApi, simulate } = await renderTrelloService({
       config: {
         currentList: 'MY_FIRST_LIST_ID',
@@ -280,10 +293,15 @@ describe('Trello service - Complete task', () => {
             }),
           ],
         }),
-        fetchCardsByListId: [
-          generateTrelloCard({ id: 'MY_FIRST_TASK', name: 'My first task', checklists: [] }),
-          generateTrelloCard({ id: 'MY_SECOND_TASK', name: 'My second task', checklists: [] }),
-        ],
+        fetchCardsByListId: () => HttpResponse.json<TrelloCard[]>(Array.from(cards.values())),
+        moveCardToList: ({ params }) => {
+          const cardId = params.idCard as string;
+          const card = cards.get(cardId);
+
+          cards.delete(cardId);
+
+          return HttpResponse.json<TrelloCard>(card);
+        },
       },
     });
 
@@ -297,21 +315,23 @@ describe('Trello service - Complete task', () => {
     await simulate.advanceTimer(3);
     await simulate.waitForSelectTaskView();
 
-    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        items: [
-          {
-            id: 'MY_SECOND_TASK',
-            label: 'My second task',
-          },
-          {
-            id: 'switch-lists',
-            label: 'Switch to a different list',
-            type: 'customOption',
-          },
-        ],
-      })
-    );
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          items: [
+            {
+              id: 'MY_SECOND_TASK',
+              label: 'My second task',
+            },
+            {
+              id: 'switch-lists',
+              label: 'Switch to a different list',
+              type: 'customOption',
+            },
+          ],
+        })
+      );
+    });
   });
 
   it('should not optimistically remove the card when completing early and moving to the same list', async () => {
@@ -373,34 +393,44 @@ describe('Trello service - Complete task', () => {
   });
 
   it('should optimistically remove a checklist item when completing early', async () => {
+    const checkItems = new Map([
+      [
+        'MY_FIRST_CHECK_ITEM',
+        generateTrelloCheckItem({ id: 'MY_FIRST_CHECK_ITEM', name: 'My first check item' }),
+      ],
+      [
+        'MY_SECOND_CHECK_ITEM',
+        generateTrelloCheckItem({ id: 'MY_SECOND_CHECK_ITEM', name: 'My second check item' }),
+      ],
+    ]);
     const { appApi, simulate } = await renderTrelloService({
       settings: {
         taskTime: 5,
         shortBreakTime: 3,
       },
       trelloApi: {
-        fetchCardsByListId: [
-          generateTrelloCard({
-            id: 'MY_FIRST_TASK',
-            name: 'My first task',
-            checklists: [
-              generateTrelloChecklist({
-                id: 'MY_FIRST_CHECKLIST',
-                name: 'My first checklist',
-                checkItems: [
-                  generateTrelloCheckItem({
-                    id: 'MY_FIRST_CHECK_ITEM',
-                    name: 'My first check item',
-                  }),
-                  generateTrelloCheckItem({
-                    id: 'MY_SECOND_CHECK_ITEM',
-                    name: 'My second check item',
-                  }),
-                ],
-              }),
-            ],
-          }),
-        ],
+        fetchCardsByListId: () =>
+          HttpResponse.json<TrelloCard[]>([
+            generateTrelloCard({
+              id: 'MY_FIRST_TASK',
+              name: 'My first task',
+              checklists: [
+                generateTrelloChecklist({
+                  id: 'MY_FIRST_CHECKLIST',
+                  name: 'My first checklist',
+                  checkItems: Array.from(checkItems.values()),
+                }),
+              ],
+            }),
+          ]),
+        markCheckItemComplete: request => {
+          const checkItemId = request.params.idCheckItem as string;
+          const checkItem = checkItems.get(checkItemId);
+
+          checkItems.delete(checkItemId);
+
+          return HttpResponse.json<TrelloCheckItem>(checkItem);
+        },
       },
     });
 
@@ -413,26 +443,28 @@ describe('Trello service - Complete task', () => {
     await simulate.advanceTimer(3);
     await simulate.waitForSelectTaskView();
 
-    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        items: [
-          {
-            id: 'MY_FIRST_TASK',
-            label: 'My first task',
-          },
-          {
-            id: 'MY_FIRST_CHECKLIST',
-            label: 'My first checklist',
-            items: [{ id: 'MY_SECOND_CHECK_ITEM', label: 'My second check item' }],
-            type: 'group',
-          },
-          {
-            id: 'switch-lists',
-            label: 'Switch to a different list',
-            type: 'customOption',
-          },
-        ],
-      })
-    );
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          items: [
+            {
+              id: 'MY_FIRST_TASK',
+              label: 'My first task',
+            },
+            {
+              id: 'MY_FIRST_CHECKLIST',
+              label: 'My first checklist',
+              items: [{ id: 'MY_SECOND_CHECK_ITEM', label: 'My second check item' }],
+              type: 'group',
+            },
+            {
+              id: 'switch-lists',
+              label: 'Switch to a different list',
+              type: 'customOption',
+            },
+          ],
+        })
+      );
+    });
   });
 });

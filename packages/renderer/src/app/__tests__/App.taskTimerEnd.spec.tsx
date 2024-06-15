@@ -1,6 +1,6 @@
 import { TaskTimerEndPromptHandledResponse } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
-import { renderApp, screen } from '../__fixtures__/renderApp';
+import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
 describe('App - Task Timer End', () => {
   it('should show the view when the task timer ends', async () => {
@@ -429,5 +429,49 @@ describe('App - Task Timer End', () => {
     expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
     expect(screen.getByRole('heading', { name: 'External distraction' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter /? for help')).toBeInTheDocument();
+  });
+
+  it('should delay fetching the task if there is a mutation to update tasks', async () => {
+    const fetchTasks = vi.fn(() => Promise.resolve([{ id: 'hello', label: 'World' }]));
+
+    let resolveRemoveTask = () => {};
+
+    const removeTask = () =>
+      new Promise<void>(resolve => {
+        resolveRemoveTask = resolve;
+      });
+
+    const { simulate } = renderApp({
+      settings: {
+        taskTime: 3,
+      },
+      mockService: {
+        service: {
+          fetchTasks,
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foo' }],
+          }),
+          onTaskTimerEndPromptHandled: () => ({
+            action: 'switchTask',
+            removeTask,
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('hello');
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.selectOption('foo');
+    await simulate.hotkey('skipBreak');
+    await simulate.waitForSelectTaskView();
+
+    expect(fetchTasks).toHaveBeenCalledOnce();
+
+    resolveRemoveTask();
+
+    await waitFor(() => {
+      expect(fetchTasks).toHaveBeenCalledTimes(2);
+    });
   });
 });

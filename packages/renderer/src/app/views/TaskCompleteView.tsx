@@ -33,10 +33,10 @@ export const TaskCompleteView: Component = () => {
     let customItems: SelectItem[] | undefined;
 
     if (result) {
-      const { items, moveTaskItemId, shouldRemoveTaskFromCache } = result;
+      const { items, moveTaskItemId, removeTask } = result;
 
-      if (shouldRemoveTaskFromCache) {
-        removeTaskFromCache(currentTask().item.id);
+      if (removeTask) {
+        removeTaskFromCache(removeTask, currentTask().item.id);
       }
 
       customItems = items;
@@ -79,8 +79,8 @@ export const TaskCompleteView: Component = () => {
       invalidateTasksCache,
     });
 
-    if (response?.shouldRemoveTaskFromCache) {
-      removeTaskFromCache(currentTask().item.id);
+    if (response?.removeTask) {
+      removeTaskFromCache(response.removeTask, currentTask().item.id);
     }
 
     taskCompleteHandled();

@@ -94,4 +94,43 @@ describe('App - Complete Task', () => {
       expect(screen.getByRole('button', { name: 'Pick a task' })).toBeInTheDocument();
     });
   });
+
+  it('should delay fetching the task if there is a mutation to update tasks', async () => {
+    const fetchTasks = vi.fn(() => Promise.resolve([{ id: 'hello', label: 'World' }]));
+
+    let resolveRemoveTask = () => {};
+
+    const removeTask = () =>
+      new Promise<void>(resolve => {
+        resolveRemoveTask = resolve;
+      });
+
+    const { simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks,
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'bar', label: 'Bar' }],
+          }),
+          onTaskCompletePromptHandled: () => ({
+            removeTask,
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('hello');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.selectOption('bar');
+    await simulate.waitForSelectTaskView();
+
+    expect(fetchTasks).toHaveBeenCalledOnce();
+
+    resolveRemoveTask();
+
+    await waitFor(() => {
+      expect(fetchTasks).toHaveBeenCalledTimes(2);
+    });
+  });
 });

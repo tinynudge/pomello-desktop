@@ -284,7 +284,7 @@ describe('App - Task', () => {
           }),
           onTaskTimerEndPromptHandled: () => ({
             action: 'switchTask',
-            shouldRemoveTaskFromCache: true,
+            removeTask: true,
           }),
         },
       },
@@ -344,7 +344,7 @@ describe('App - Task', () => {
             items: [{ id: 'NEXT', label: 'Next task' }],
           }),
           onTaskCompletePromptHandled: () => ({
-            shouldRemoveTaskFromCache: true,
+            removeTask: true,
           }),
         },
       },
@@ -400,7 +400,7 @@ describe('App - Task', () => {
               },
               { id: 'TASK_THREE', label: 'Task three' },
             ]),
-          getTaskCompleteItems: () => ({ shouldRemoveTaskFromCache: true }),
+          getTaskCompleteItems: () => ({ removeTask: true }),
         },
       },
     });
