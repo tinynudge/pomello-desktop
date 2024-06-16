@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
-import { TranslationsDictionary } from '@pomello-desktop/domain';
+import { SelectItem, TranslationsDictionary } from '@pomello-desktop/domain';
 
 describe('App - Create task', () => {
   it('should show a message if there is no active service', async () => {
@@ -37,7 +37,7 @@ describe('App - Create task', () => {
     });
   });
 
-  it('should show a message if unable to create a note', async () => {
+  it('should show a message if task creation is not supported', async () => {
     const NotificationMock = vi.fn();
     vi.stubGlobal('Notification', NotificationMock);
 
@@ -55,6 +55,54 @@ describe('App - Create task', () => {
 
     expect(NotificationMock).toHaveBeenCalledWith('Unable to create task', {
       body: 'Mock service does not support this',
+    });
+  });
+
+  it('should show a message if unable to create a task', async () => {
+    const NotificationMock = vi.fn();
+    vi.stubGlobal('Notification', NotificationMock);
+
+    const { simulate, userEvent } = renderApp({
+      mockService: {
+        service: {
+          onTaskCreate: () => ({
+            notification: ['Ah ah ah', "You didn't say the magic word"],
+          }),
+        },
+      },
+    });
+
+    await simulate.waitForSelectTaskView();
+    await simulate.hotkey('createTask');
+    await userEvent.type(screen.getByRole('textbox'), 'access main security grid{Enter}');
+
+    expect(NotificationMock).toHaveBeenCalledWith('Ah ah ah', {
+      body: "You didn't say the magic word",
+    });
+  });
+
+  it('should be able to show a message after creating a task', async () => {
+    const NotificationMock = vi.fn();
+    vi.stubGlobal('Notification', NotificationMock);
+
+    const { simulate, userEvent } = renderApp({
+      mockService: {
+        service: {
+          onTaskCreate: () => ({
+            createTask: () => ({
+              notification: ['Ah ah ah', "You didn't say the magic word"],
+            }),
+          }),
+        },
+      },
+    });
+
+    await simulate.waitForSelectTaskView();
+    await simulate.hotkey('createTask');
+    await userEvent.type(screen.getByRole('textbox'), 'PLEASE! GODDAMMIT!{Enter}');
+
+    expect(NotificationMock).toHaveBeenCalledWith('Ah ah ah', {
+      body: "You didn't say the magic word",
     });
   });
 
@@ -83,7 +131,9 @@ describe('App - Create task', () => {
   });
 
   it('should handle when a task is created', async () => {
-    const handleTaskCreate = vi.fn();
+    const handleTaskCreate = vi.fn(() => ({
+      createTask: () => {},
+    }));
 
     const { simulate, userEvent } = renderApp({
       mockService: {
@@ -139,5 +189,28 @@ describe('App - Create task', () => {
 
     expect(appApi.openUrl).toHaveBeenCalled();
     expect(screen.getByRole('heading', { name: 'Create task' })).toBeInTheDocument();
+  });
+
+  it('should be able to re-fetch tasks after creating a task', async () => {
+    const fetchTasks = vi.fn<SelectItem[]>(() => []);
+
+    const { simulate, userEvent } = renderApp({
+      mockService: {
+        service: {
+          onTaskCreate: () => ({
+            createTask: () => ({
+              shouldInvalidateTasksCache: true,
+            }),
+          }),
+          fetchTasks,
+        },
+      },
+    });
+
+    await simulate.waitForSelectTaskView();
+    await simulate.hotkey('createTask');
+    await userEvent.type(screen.getByRole('textbox'), 'This is my task{Enter}');
+
+    expect(fetchTasks).toHaveBeenCalledTimes(2);
   });
 });

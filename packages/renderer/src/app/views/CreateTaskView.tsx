@@ -1,13 +1,15 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { useService } from '@/shared/context/ServiceContext';
-import { Component, JSX, createSignal, onMount } from 'solid-js';
-import { useStoreActions } from '../context/StoreContext';
 import { Content } from '@/ui/components/Content';
 import { Heading } from '@/ui/components/Heading';
 import { InputField } from '@/ui/components/InputField';
+import { Component, JSX, createSignal, onMount } from 'solid-js';
+import { useStoreActions } from '../context/StoreContext';
+import { useInvalidateTasksCache } from '../hooks/useInvalidateTasksCache';
 
 export const CreateTaskView: Component = () => {
   const { overlayViewCleared } = useStoreActions();
+  const invalidateTasksCache = useInvalidateTasksCache();
   const getService = useService();
   const t = useTranslate();
 
@@ -27,7 +29,7 @@ export const CreateTaskView: Component = () => {
     overlayViewCleared();
   };
 
-  const handleInputSubmit = () => {
+  const handleInputSubmit = async () => {
     const text = getText();
 
     if (!text) {
@@ -42,17 +44,32 @@ export const CreateTaskView: Component = () => {
       return;
     }
 
-    const { onTaskCreate } = getService();
-    let response: false | void | undefined;
+    const { createTask, notification } = getService().onTaskCreate?.(text) ?? {};
 
-    if (onTaskCreate) {
-      window.app.logMessage('debug', 'Will create task');
+    if (notification) {
+      const [title, body] = notification;
 
-      response = onTaskCreate(text);
+      new Notification(title, { body });
     }
 
-    if (response !== false) {
+    if (createTask) {
       overlayViewCleared();
+
+      window.app.logMessage('debug', 'Will create task');
+
+      const { notification, shouldInvalidateTasksCache } = (await createTask()) ?? {};
+
+      window.app.logMessage('debug', 'Did create task');
+
+      if (notification) {
+        const [title, body] = notification;
+
+        new Notification(title, { body });
+      }
+
+      if (shouldInvalidateTasksCache) {
+        invalidateTasksCache();
+      }
     }
   };
 

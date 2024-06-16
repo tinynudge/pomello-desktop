@@ -1,1 +1,3 @@
-export type OnTaskCreate = (text: string) => false | void;
+import { OnTaskCreateResponse } from './OnTaskCreateResponse';
+
+export type OnTaskCreate = (text: string) => OnTaskCreateResponse;

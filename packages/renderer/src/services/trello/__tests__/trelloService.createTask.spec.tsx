@@ -5,6 +5,7 @@ import { generateTrelloList } from '../__fixtures__/generateTrelloList';
 import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
 import { renderTrelloService, screen, waitFor } from '../__fixtures__/renderTrelloService';
 import { createCard } from '../api/createCard';
+import { fetchCardsByListId } from '../api/fetchCardsByListId';
 
 describe('Trello service - Create task', () => {
   const NotificationMock = vi.fn();
@@ -14,6 +15,14 @@ describe('Trello service - Create task', () => {
     vi.mock('../api/createCard', () => ({
       createCard: vi.fn(async () => {}),
     }));
+
+    vi.mock('../api/fetchCardsByListId', async importOriginal => {
+      const module = await importOriginal<{ fetchCardsByListId: typeof fetchCardsByListId }>();
+
+      return {
+        fetchCardsByListId: vi.fn(module.fetchCardsByListId),
+      };
+    });
   });
 
   afterEach(() => {
@@ -27,7 +36,7 @@ describe('Trello service - Create task', () => {
     await simulate.hotkey('createTask');
     await userEvent.type(screen.getByRole('textbox'), '-desc Hi there{Enter}');
 
-    expect(NotificationMock).toHaveBeenCalledWith('A title is required');
+    expect(NotificationMock).toHaveBeenCalledWith('A title is required', { body: undefined });
   });
 
   it('should notify the user when a task is created', async () => {
@@ -41,8 +50,6 @@ describe('Trello service - Create task', () => {
   });
 
   it('should create a task in the current list', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         createdTaskPosition: 'bottom',
@@ -67,7 +74,7 @@ describe('Trello service - Create task', () => {
     );
 
     await waitFor(() => {
-      expect(mockCreateCard).toHaveBeenCalledWith({
+      expect(createCard).toHaveBeenCalledWith({
         description: 'Take over the world',
         labelIds: [],
         listId: 'MY_CURRENT_LIST',
@@ -75,11 +82,11 @@ describe('Trello service - Create task', () => {
         title: 'World domination',
       });
     });
+
+    expect(fetchCardsByListId).toHaveBeenCalledTimes(2);
   });
 
   it('should create a task in another list on the same board', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'MY_CURRENT_LIST',
@@ -103,17 +110,17 @@ describe('Trello service - Create task', () => {
     await simulate.hotkey('createTask');
     await userEvent.type(screen.getByRole('textbox'), 'Buy groceries -list pckme{Enter}');
 
-    expect(mockCreateCard).toHaveBeenCalledWith({
+    expect(createCard).toHaveBeenCalledWith({
       labelIds: [],
       listId: 'PICK_ME',
       position: 'top',
       title: 'Buy groceries',
     });
+
+    expect(fetchCardsByListId).toHaveBeenCalledTimes(1);
   });
 
   it('should create a task in another list on the same board', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'MY_CURRENT_LIST',
@@ -148,7 +155,7 @@ describe('Trello service - Create task', () => {
       '-t Show Princess Jasmine something -l scnd/a whlenewlist{Enter}'
     );
 
-    expect(mockCreateCard).toHaveBeenCalledWith({
+    expect(createCard).toHaveBeenCalledWith({
       labelIds: [],
       listId: 'A_WHOLE_NEW_LIST',
       position: 'top',
@@ -157,8 +164,6 @@ describe('Trello service - Create task', () => {
   });
 
   it('should notify the user if unable to find the board when creating a task', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'MY_CURRENT_LIST',
@@ -193,13 +198,11 @@ describe('Trello service - Create task', () => {
     await userEvent.type(screen.getByRole('textbox'), `${input}{Enter}`);
 
     expect(NotificationMock).toHaveBeenCalledWith('Could find any boards matching "unknown board"');
-    expect(mockCreateCard).not.toHaveBeenCalled();
+    expect(createCard).not.toHaveBeenCalled();
     expect(screen.getByRole('textbox')).toHaveValue(input);
   });
 
   it('should notify the user if there are too many boards found when creating a task', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'MY_CURRENT_LIST',
@@ -237,13 +240,11 @@ describe('Trello service - Create task', () => {
     expect(NotificationMock).toHaveBeenCalledWith(
       'Multiple boards found matching "board". Please refine your query.'
     );
-    expect(mockCreateCard).not.toHaveBeenCalled();
+    expect(createCard).not.toHaveBeenCalled();
     expect(screen.getByRole('textbox')).toHaveValue(input);
   });
 
   it('should notify the user if unable to find the list when creating a task', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       trelloApi: {
         fetchBoardsAndLists: generateTrelloMember({
@@ -263,13 +264,11 @@ describe('Trello service - Create task', () => {
     await userEvent.type(screen.getByRole('textbox'), `${input}{Enter}`);
 
     expect(NotificationMock).toHaveBeenCalledWith('Could find any lists matching "nowhere"');
-    expect(mockCreateCard).not.toHaveBeenCalled();
+    expect(createCard).not.toHaveBeenCalled();
     expect(screen.getByRole('textbox')).toHaveValue(input);
   });
 
   it('should notify the user if there are too many lists found when creating a task', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'MY_LIST_ONE',
@@ -297,13 +296,11 @@ describe('Trello service - Create task', () => {
     expect(NotificationMock).toHaveBeenCalledWith(
       'Multiple lists found matching "mylist". Please refine your query.'
     );
-    expect(mockCreateCard).not.toHaveBeenCalled();
+    expect(createCard).not.toHaveBeenCalled();
     expect(screen.getByRole('textbox')).toHaveValue(input);
   });
 
   it('should create a task with labels', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'MY_LIST',
@@ -328,7 +325,7 @@ describe('Trello service - Create task', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Do laundry -# red, urgent{Enter}');
 
     await waitFor(() => {
-      expect(mockCreateCard).toHaveBeenCalledWith({
+      expect(createCard).toHaveBeenCalledWith({
         labelIds: ['RED_LABEL', 'URGENT_LABEL'],
         listId: 'MY_LIST',
         position: 'top',
@@ -338,8 +335,6 @@ describe('Trello service - Create task', () => {
   });
 
   it('should inform the user if certain labels were not used', async () => {
-    const mockCreateCard = vi.mocked(createCard);
-
     const { simulate, userEvent } = await renderTrelloService({
       config: {
         currentList: 'MY_LIST',
@@ -367,7 +362,7 @@ describe('Trello service - Create task', () => {
         body: 'Task created. Ignored labels: urgent, taupe. See help for details.',
       });
 
-      expect(mockCreateCard).toHaveBeenCalledWith({
+      expect(createCard).toHaveBeenCalledWith({
         labelIds: ['PURPLE_LABEL'],
         listId: 'MY_LIST',
         position: 'top',

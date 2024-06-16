@@ -1,43 +1,51 @@
+import { OnTaskCreateResponse } from '@pomello-desktop/domain';
 import { createCard } from '../api/createCard';
 import { TrelloRuntime } from '../domain';
 import { findLabelIds } from './findLabelIds';
 import { findTargetList } from './findTargetList';
 import { parseCreateTaskInput } from './parseCreateTaskInput';
 
-export const onTaskCreate = (runtime: TrelloRuntime, input: string): false | void => {
-  const { config, logger, translate } = runtime;
+export const onTaskCreate = (runtime: TrelloRuntime, input: string): OnTaskCreateResponse => {
+  const { cache, config, logger, translate } = runtime;
 
   const params = parseCreateTaskInput(input);
 
   if (!params.title) {
-    new Notification(translate('createTaskTitleRequired'));
-
-    return false;
+    return {
+      notification: [translate('createTaskTitleRequired')],
+    };
   }
 
   const list = findTargetList(runtime, params.list);
 
   if (!list) {
-    return false;
+    return;
   }
 
-  findLabelIds(list, params.labels).then(async ({ labelIds, unknownLabels }) => {
-    logger.debug('Will create Trello card');
+  return {
+    createTask: async () => {
+      const { labelIds, unknownLabels } = await findLabelIds(list, params.labels);
 
-    await createCard({
-      description: params.desc,
-      labelIds,
-      listId: list.id,
-      position: config.store.createdTaskPosition ?? 'top',
-      title: params.title,
-    });
+      logger.debug('Will create Trello card');
 
-    logger.debug('Did create Trello card');
+      await createCard({
+        description: params.desc,
+        labelIds,
+        listId: list.id,
+        position: config.store.createdTaskPosition ?? 'top',
+        title: params.title,
+      });
 
-    const message = unknownLabels.length
-      ? translate('createTaskSuccessWithoutLabelsMessage', { labels: unknownLabels.join(', ') })
-      : translate('createTaskSuccessMessage');
+      logger.debug('Did create Trello card');
 
-    new Notification(translate('createTaskSuccessHeading'), { body: message });
-  });
+      const message = unknownLabels.length
+        ? translate('createTaskSuccessWithoutLabelsMessage', { labels: unknownLabels.join(', ') })
+        : translate('createTaskSuccessMessage');
+
+      return {
+        notification: [translate('createTaskSuccessHeading'), message],
+        shouldInvalidateTasksCache: list.id === cache.store.currentList.id,
+      };
+    },
+  };
 };
