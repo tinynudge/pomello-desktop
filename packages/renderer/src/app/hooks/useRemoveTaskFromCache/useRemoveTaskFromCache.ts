@@ -1,6 +1,5 @@
 import { useStoreActions } from '@/app/context/StoreContext';
-import { SelectItem } from '@pomello-desktop/domain';
-import { RemoveTask } from '@pomello-desktop/domain/src/RemoveTask';
+import { RemoveTask, SelectItem } from '@pomello-desktop/domain';
 import { useQueryClient } from '@tanstack/solid-query';
 import { produce } from 'immer';
 import { useTasksCacheKey } from '../useTasksCacheKey';
