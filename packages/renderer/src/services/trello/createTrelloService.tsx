@@ -12,6 +12,7 @@ import { fetchTasks } from './fetchTasks';
 import { getDefaultTrelloHeading } from './getDefaultTrelloHeading';
 import { getTaskCompleteItems } from './getTaskCompleteItems';
 import { getTaskTimerEndItems } from './getTaskTimerEndItems';
+import { getTrackingEventServiceData } from './getTrackingEventServiceData';
 import { onNoteCreate } from './onNoteCreate';
 import { onTaskCompletePromptHandled } from './onTaskCompletePromptHandled';
 import { onTaskCreate } from './onTaskCreate';
@@ -39,6 +40,7 @@ export const createTrelloService: ServiceFactory<TrelloConfigStore> = runtime =>
     getTaskCompleteItems: getTaskCompleteItems.bind(null, trelloRuntime),
     getTaskHeading: getDefaultTrelloHeading.bind(null, trelloRuntime),
     getTaskTimerEndItems: getTaskTimerEndItems.bind(null, trelloRuntime),
+    getTrackingEventServiceData: getTrackingEventServiceData.bind(null, trelloRuntime),
     handleError,
     id: createTrelloService.id,
     InitializingView: TrelloInitializingView,

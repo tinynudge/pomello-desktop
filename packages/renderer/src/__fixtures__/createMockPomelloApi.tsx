@@ -4,14 +4,13 @@ import {
   PomelloApi,
   PomelloApiResponse,
   PomelloServiceConfig,
-  PomelloTrackingEvent,
   PomelloUser,
   ServiceConfig,
 } from '@pomello-desktop/domain';
+import { SavedTrackingEvent, TrackingEventWithServiceData } from '@tinynudge/pomello-service';
 import { DefaultBodyType, HttpResponse, HttpResponseResolver, PathParams, http } from 'msw';
 import { v4 as uuid } from 'uuid';
 import { Mocked, vi } from 'vitest';
-import { CreatedPomelloTrackingEvent } from '../../../domain/src/CreatedPomelloTrackingEvent';
 import { createHttpResponse } from './createHttpResponse';
 import { mockServer } from './mockServer';
 
@@ -39,7 +38,7 @@ export const createMockPomelloApi = (
   // was passed in to the request.
   const pomelloApiResponses: Partial<PomelloApiResponses> = {
     logEvent: async ({ request }) => {
-      const event = (await request.json()) as PomelloTrackingEvent;
+      const event = (await request.json()) as TrackingEventWithServiceData;
 
       const data = {
         ...event,
@@ -61,8 +60,8 @@ export const createMockPomelloApi = (
     ),
     http.post(
       `${import.meta.env.VITE_APP_URL}/api/events`,
-      createHttpResponse<PomelloApiResponse<CreatedPomelloTrackingEvent>>(
-        { data: {} as CreatedPomelloTrackingEvent },
+      createHttpResponse<PomelloApiResponse<SavedTrackingEvent>>(
+        { data: {} as SavedTrackingEvent },
         pomelloApiResponses.logEvent
       )
     )

@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@tanstack/solid-query": "^5.45.0",
-    "@tinynudge/pomello-service": "^0.1.22",
+    "@tinynudge/pomello-service": "^0.1.29",
     "classcat": "^5.0.4",
     "date-fns": "^3.5.0",
     "howler": "^2.2.4",

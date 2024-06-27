@@ -48,5 +48,14 @@ export const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): P
     retry: 0,
   });
 
-  return bindContext({ fetchUser, logEvent }, { client });
+  const hasToken = () => !!token;
+
+  return bindContext(
+    {
+      fetchUser,
+      hasToken,
+      logEvent,
+    },
+    { client }
+  );
 };
