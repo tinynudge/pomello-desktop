@@ -14,7 +14,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@tinynudge/pomello-service": "^0.1.22",
+    "@tinynudge/pomello-service": "^0.1.29",
     "ajv": "^8.12.0",
     "solid-js": "^1.8.15"
   }

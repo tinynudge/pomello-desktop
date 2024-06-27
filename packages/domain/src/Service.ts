@@ -1,10 +1,9 @@
-import { PomelloEvent } from '@tinynudge/pomello-service';
 import { Component } from 'solid-js';
-import { AdditionalTrackingData } from './AdditionalTrackingData';
 import { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 import { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
 import { ErrorHandler } from './ErrorHandler';
 import { GetTaskCompleteItemsParams } from './GetTaskCompleteItemsParams';
+import { GetTrackingEventServiceDataResponse } from './GetTrackingEventServiceDataResponse';
 import { InitializingView } from './InitializingView';
 import { OnNoteCreate } from './OnNoteCreate';
 import { OnTaskCreate } from './OnTaskCreate';
@@ -28,12 +27,12 @@ export type Service = {
   CustomSelectOption?: CustomSelectOptionComponent;
   displayName: string;
   fetchTasks(): Promise<SelectItem[]>;
-  getAdditionalTrackingData?(event: PomelloEvent): AdditionalTrackingData | void;
   getSelectTaskHeading?(): string;
   getTaskCompleteItems?(params: GetTaskCompleteItemsParams): TaskCompleteItems | void;
   getTaskHeading?(): string;
   getTaskLabel?(taskId: string): string;
   getTaskTimerEndItems?(currentTaskId: string): TaskTimerEndItems;
+  getTrackingEventServiceData?(currentTaskId: string): GetTrackingEventServiceDataResponse;
   handleError?: ErrorHandler;
   id: string;
   InitializingView?: InitializingView;

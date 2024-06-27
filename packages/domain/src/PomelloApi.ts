@@ -1,8 +1,8 @@
-import { CreatedPomelloTrackingEvent } from './CreatedPomelloTrackingEvent';
-import { PomelloTrackingEvent } from './PomelloTrackingEvent';
+import { SavedTrackingEvent, TrackingEvent } from '@tinynudge/pomello-service';
 import { PomelloUser } from './PomelloUser';
 
 export type PomelloApi = {
   fetchUser(): Promise<PomelloUser>;
-  logEvent(event: PomelloTrackingEvent): Promise<CreatedPomelloTrackingEvent>;
+  hasToken(): boolean;
+  logEvent(event: TrackingEvent): Promise<SavedTrackingEvent>;
 };

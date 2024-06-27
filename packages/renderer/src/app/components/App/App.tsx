@@ -15,6 +15,7 @@ import styles from './App.module.scss';
 import { useCheckPomelloAccount } from './useCheckPomelloAccount';
 import { useEmitPomelloEvents } from './useEmitPomelloEvents';
 import { useLogPomelloEvents } from './useLogPomelloEvents';
+import { useLogTrackingEvents } from './useLogTrackingEvents';
 import { useMonitorPowerChange } from './useMonitorPowerChange';
 import { useOpenTask } from './useOpenTask';
 import { useTimerSounds } from './useTimerSounds';
@@ -29,6 +30,7 @@ export const App: Component = () => {
   useCheckPomelloAccount();
   useEmitPomelloEvents();
   useLogPomelloEvents();
+  useLogTrackingEvents();
   useMonitorPowerChange();
   useOpenTask();
   useTimerSounds();

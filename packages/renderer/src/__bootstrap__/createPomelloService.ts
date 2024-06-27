@@ -1,5 +1,6 @@
 import { Settings } from '@pomello-desktop/domain';
-import baseCreatePomelloService, {
+import {
+  createPomelloService as baseCreatePomelloService,
   PomelloService,
   SetItem,
   Ticker,
