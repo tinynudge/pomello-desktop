@@ -66,8 +66,8 @@ importers:
   packages/domain:
     dependencies:
       '@tinynudge/pomello-service':
-        specifier: ^0.1.29
-        version: 0.1.29
+        specifier: ^0.1.31
+        version: 0.1.31
       ajv:
         specifier: ^8.12.0
         version: 8.13.0
@@ -112,8 +112,8 @@ importers:
         specifier: ^5.45.0
         version: 5.45.0(solid-js@1.8.17)
       '@tinynudge/pomello-service':
-        specifier: ^0.1.29
-        version: 0.1.29
+        specifier: ^0.1.31
+        version: 0.1.31
       classcat:
         specifier: ^5.0.4
         version: 5.0.5
@@ -773,8 +773,8 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@tinynudge/pomello-service@0.1.29':
-    resolution: {integrity: sha512-tFF4yApDuG8c/MaGqvIv/iu5WRuRYaVL1+n4XUGotwYadbsx9TH5jjc7jEjHxLDJJnUI0GxV4hQecBZdwEEQ9Q==, tarball: https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.29/547e4f2912478f75c1ecfe81e99e6e65334a046c}
+  '@tinynudge/pomello-service@0.1.31':
+    resolution: {integrity: sha512-Srf547w/dnBecly2fTIDoO9KhAg69lFlQeHFQ8HBf8cUK8bVJicrXG7/4Sf0gZO93getG/D04xqxbk4u9rLQbg==, tarball: https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.31/80b3dde2912cb9c8124464bd9b65471ded89da83}
 
   '@tootallnate/once@2.0.0':
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
@@ -4578,7 +4578,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.1.0
 
-  '@tinynudge/pomello-service@0.1.29': {}
+  '@tinynudge/pomello-service@0.1.31': {}
 
   '@tootallnate/once@2.0.0': {}
 

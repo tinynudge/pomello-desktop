@@ -17,7 +17,6 @@ export type { LogLevel } from './LogLevel';
 export type { LogMessage } from './LogMessage';
 export type { Logger } from './Logger';
 export type { Note } from './Note';
-export type { NoteType } from './NoteType';
 export type { OnNoteCreate } from './OnNoteCreate';
 export type { OnTaskCreate } from './OnTaskCreate';
 export type { OnTaskCreateResponse } from './OnTaskCreateResponse';

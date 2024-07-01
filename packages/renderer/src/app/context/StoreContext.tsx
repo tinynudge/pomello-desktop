@@ -1,5 +1,5 @@
-import { DialAction, NoteType } from '@pomello-desktop/domain';
-import { PomelloState } from '@tinynudge/pomello-service';
+import { DialAction } from '@pomello-desktop/domain';
+import { NoteType, PomelloState } from '@tinynudge/pomello-service';
 import { ParentComponent, createContext, onCleanup, useContext } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
 import { usePomelloService } from './PomelloContext';
