@@ -1,6 +1,6 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { useService } from '@/shared/context/ServiceContext';
-import { NoteType } from '@pomello-desktop/domain';
+import { NoteType } from '@tinynudge/pomello-service';
 import { useStoreActions } from '../context/StoreContext';
 
 export const useShowAddNoteView = () => {

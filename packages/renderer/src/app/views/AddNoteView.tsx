@@ -3,8 +3,9 @@ import { useService } from '@/shared/context/ServiceContext';
 import { Content } from '@/ui/components/Content';
 import { Heading } from '@/ui/components/Heading';
 import { InputField } from '@/ui/components/InputField';
-import { NoteType } from '@pomello-desktop/domain';
+import { NoteType } from '@tinynudge/pomello-service';
 import { Component, JSX, createSignal, onMount } from 'solid-js';
+import { usePomelloActions } from '../context/PomelloContext';
 import { useStoreActions } from '../context/StoreContext';
 import { useCurrentTask } from '../hooks/useCurrentTask';
 
@@ -19,6 +20,7 @@ const noteTypeCodes: Record<string, NoteType> = {
 };
 
 export const AddNoteView: Component<AddNoteViewProps> = props => {
+  const { addNoteHandled } = usePomelloActions();
   const { overlayViewCleared, overlayViewSet } = useStoreActions();
   const currentTask = useCurrentTask();
   const getService = useService();
@@ -66,13 +68,17 @@ export const AddNoteView: Component<AddNoteViewProps> = props => {
     const { onNoteCreate } = getService();
 
     if (onNoteCreate) {
+      const note = getNote();
+
       window.app.logMessage('debug', 'Will create note');
 
       onNoteCreate(currentTask().item.id, {
         label: t(`${props.noteType}Label`),
-        text: getNote(),
+        text: note,
         type: props.noteType,
       });
+
+      addNoteHandled(note, props.noteType);
     }
 
     overlayViewCleared();
