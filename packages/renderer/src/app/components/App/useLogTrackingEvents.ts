@@ -9,12 +9,12 @@ export const useLogTrackingEvents = () => {
   const service = useMaybeService();
 
   createEffect(() => {
-    setSaveTrackingEvent(async ({ currentTaskId, event }) => {
+    setSaveTrackingEvent(async ({ event, taskId }) => {
       if (!pomelloApi.hasToken()) {
         return false;
       }
 
-      const serviceData = service()?.getTrackingEventServiceData?.(currentTaskId);
+      const serviceData = service()?.getTrackingEventServiceData?.(taskId);
 
       if (!serviceData) {
         return false;

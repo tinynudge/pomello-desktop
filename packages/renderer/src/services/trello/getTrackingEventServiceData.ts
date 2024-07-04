@@ -5,22 +5,22 @@ import { isCheckItem } from './helpers/isCheckItem';
 
 export const getTrackingEventServiceData = (
   { cache }: TrelloRuntime,
-  currentTaskId: string
+  taskId: string
 ): GetTrackingEventServiceDataResponse => {
   if (!cache.store.preferences.trackStats) {
     return false;
   }
 
-  const currentTask = findOrFailTask(cache, currentTaskId);
+  const task = findOrFailTask(cache, taskId);
 
-  if (isCheckItem(currentTask)) {
+  if (isCheckItem(task)) {
     return {
-      parent_service_id: currentTask.idCard,
-      service_id: currentTask.id,
+      parent_service_id: task.idCard,
+      service_id: task.id,
     };
   }
 
   return {
-    service_id: currentTask.id,
+    service_id: task.id,
   };
 };
