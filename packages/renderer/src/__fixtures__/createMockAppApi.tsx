@@ -90,6 +90,7 @@ export const createMockAppApi = ({
     setSelectBounds: vi.fn(),
     setSelectItems: vi.fn(appApi.setSelectItems ?? (() => Promise.resolve())),
     showAuthWindow: vi.fn(),
+    showDashboardWindow: vi.fn(),
     showMessageBox: vi.fn(
       appApi.showMessageBox ?? (() => Promise.resolve({ checkboxChecked: false, response: 0 }))
     ),

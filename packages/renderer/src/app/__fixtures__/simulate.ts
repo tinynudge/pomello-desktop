@@ -34,12 +34,12 @@ const advanceTimer = async (_results: RenderAppContext, time: number) => {
 
 const clickMenuButton = async (
   { userEvent }: RenderAppContext,
-  button: 'createTask' | 'dashboard' | 'home'
+  button: 'createTask' | 'home' | 'settings'
 ) => {
   const buttonNames = {
     createTask: 'Create task',
-    dashboard: 'Dashboard',
     home: 'Home',
+    settings: 'Settings',
   };
 
   await userEvent.click(screen.getByRole('button', { name: buttonNames[button] }));

@@ -2,9 +2,10 @@ import { getPomelloConfig } from '@/getPomelloConfig';
 import { getSettings } from '@/getSettings';
 import { snapAppWindowToDisplayEdge } from '@/helpers/snapAppWindowToDisplayEdge';
 import { runtime } from '@/runtime';
+import { WindowId } from '@pomello-desktop/domain';
 
 export const handleAppWindowMove = (): void => {
-  const appWindow = runtime.windowManager.findOrFailWindow('app');
+  const appWindow = runtime.windowManager.findOrFailWindow(WindowId.App);
   const pomelloConfig = getPomelloConfig();
   const settings = getSettings();
 

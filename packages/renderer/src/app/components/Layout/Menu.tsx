@@ -9,6 +9,7 @@ interface MenuProps {
   isOpen: boolean;
   onCreateTaskClick(): void;
   onHomeClick(): void;
+  onSettingsClick(): void;
   ref: HTMLElement;
 }
 
@@ -27,9 +28,10 @@ export const Menu: Component<MenuProps> = props => {
         <HomeIcon aria-hidden />
       </button>
       <button
-        aria-label={t('dashboardButtonLabel')}
+        aria-label={t('settingsButtonLabel')}
         aria-hidden={!props.isOpen}
         class={styles.button}
+        onClick={() => props.onSettingsClick()}
         tabIndex={props.isOpen ? 0 : -1}
       >
         <CogIcon aria-hidden />

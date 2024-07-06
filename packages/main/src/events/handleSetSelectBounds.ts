@@ -1,13 +1,13 @@
 import { sanitizeBounds } from '@/helpers/sanitizeBounds';
 import { runtime } from '@/runtime';
-import { SetSelectBoundsOptions } from '@pomello-desktop/domain';
+import { SetSelectBoundsOptions, WindowId } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 export const handleSetSelectBounds = (
   _event: IpcMainInvokeEvent,
   { bounds, orientation }: SetSelectBoundsOptions
 ): void => {
-  const selectWindow = runtime.windowManager.findOrFailWindow('select');
+  const selectWindow = runtime.windowManager.findOrFailWindow(WindowId.Select);
   const newBounds = bounds;
 
   // We don't adjust the width if the select window is already open for a better

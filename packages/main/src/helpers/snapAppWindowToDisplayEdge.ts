@@ -1,8 +1,9 @@
 import { runtime } from '@/runtime';
+import { WindowId } from '@pomello-desktop/domain';
 import { screen } from 'electron';
 
 export const snapAppWindowToDisplayEdge = (): void => {
-  const appWindow = runtime.windowManager.findOrFailWindow('app');
+  const appWindow = runtime.windowManager.findOrFailWindow(WindowId.App);
 
   if (appWindow.isMaximized() || appWindow.isMinimized()) {
     return;

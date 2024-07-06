@@ -34,6 +34,7 @@ export default defineConfig({
       input: {
         app: join(PACKAGE_ROOT, 'app.html'),
         auth: join(PACKAGE_ROOT, 'auth.html'),
+        dashboard: join(PACKAGE_ROOT, 'dashboard.html'),
         select: join(PACKAGE_ROOT, 'select.html'),
       },
       external: [...builtinModules.flatMap(p => [p, `node:${p}`])],
