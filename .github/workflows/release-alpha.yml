@@ -10,9 +10,10 @@ jobs:
       commit-hash: ${{ steps.commit-hash.outputs.hash }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.7
 
       - name: Create Alpha Release
+        if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.email "bot@pomelloapp.com"
           git config --global user.name "pomello[bot]"
@@ -30,6 +31,7 @@ jobs:
     with:
       APP_URL: ${{ vars.APP_URL_QA }}
       COMMIT_HASH: ${{ needs.draft.outputs.commit-hash }}
+      SNAPCRAFT_CHANNEL: edge
     secrets:
       APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
       APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
