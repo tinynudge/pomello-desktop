@@ -1,8 +1,8 @@
 import { runtime } from '@/runtime';
-import { AppEvent } from '@pomello-desktop/domain';
+import { AppEvent, WindowId } from '@pomello-desktop/domain';
 
 export const handlePowerMonitorChange = (status: 'resume' | 'suspend'): void => {
-  const appWindow = runtime.windowManager.findOrFailWindow('app');
+  const appWindow = runtime.windowManager.findOrFailWindow(WindowId.App);
 
   appWindow.webContents.send(AppEvent.PowerMonitorChange, status);
 };

@@ -13,7 +13,7 @@ describe('App', () => {
     await simulate.openMenu();
 
     expect(screen.getByRole('button', { name: /home/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /dashboard/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /settings/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create task/i })).toBeInTheDocument();
 
     Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
@@ -54,6 +54,34 @@ describe('App', () => {
 
     expect(screen.getByText('Pick a task')).toBeInTheDocument();
     expect(screen.queryByTestId('dial')).not.toBeInTheDocument();
+  });
+
+  it('should open the dashboard to the settings page when the settings button is clicked', async () => {
+    const { appApi, simulate } = renderApp();
+
+    await simulate.openMenu();
+    await simulate.clickMenuButton('settings');
+
+    expect(appApi.showDashboardWindow).toHaveBeenCalledWith('settings');
+    expect(screen.getByRole('button', { name: 'Open menu' })).toBeInTheDocument();
+  });
+
+  it('should open the dashboard to the settings page via the route settings hotkey', async () => {
+    const { appApi, simulate } = renderApp();
+
+    await simulate.hotkey('routeSettings');
+
+    expect(appApi.showDashboardWindow).toHaveBeenCalledWith('settings');
+    expect(screen.getByRole('button', { name: 'Open menu' })).toBeInTheDocument();
+  });
+
+  it('should open the dashboard to the productivity page via the route productivity hotkey', async () => {
+    const { appApi, simulate } = renderApp();
+
+    await simulate.hotkey('routeProductivity');
+
+    expect(appApi.showDashboardWindow).toHaveBeenCalledWith('productivity');
+    expect(screen.getByRole('button', { name: 'Open menu' })).toBeInTheDocument();
   });
 
   it('should prompt the user for confirmation if resetting during an active task (if enabled)', async () => {

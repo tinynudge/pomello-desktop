@@ -2,6 +2,7 @@ import { useHotkeys } from '@/app/context/HotkeysContext';
 import { usePomelloActions } from '@/app/context/PomelloContext';
 import { useStore } from '@/app/context/StoreContext';
 import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import { DashboardRoute } from '@pomello-desktop/domain';
 import { ParentComponent, batch, createSignal } from 'solid-js';
 import { Dial } from '../Dial';
 import { Overtime } from '../Overtime';
@@ -32,6 +33,12 @@ export const Layout: ParentComponent<LayoutProps> = props => {
 
   const createTask = () => {
     props.onTaskCreate();
+    hideMenu();
+  };
+
+  const openDashboard = (route: DashboardRoute) => {
+    window.app.showDashboardWindow(route);
+
     hideMenu();
   };
 
@@ -78,6 +85,10 @@ export const Layout: ParentComponent<LayoutProps> = props => {
     toggleMenu();
   };
 
+  const handleSettingsClick = () => {
+    openDashboard(DashboardRoute.Settings);
+  };
+
   const handleCreateTaskClick = () => {
     createTask();
   };
@@ -86,7 +97,13 @@ export const Layout: ParentComponent<LayoutProps> = props => {
     routeHome();
   };
 
-  registerHotkeys({ createTask, routeHome, toggleMenu });
+  registerHotkeys({
+    createTask,
+    routeHome,
+    routeProductivity: () => openDashboard(DashboardRoute.Productivity),
+    routeSettings: () => openDashboard(DashboardRoute.Settings),
+    toggleMenu,
+  });
 
   return (
     <>
@@ -94,6 +111,7 @@ export const Layout: ParentComponent<LayoutProps> = props => {
         isOpen={getIsMenuOpen()}
         onCreateTaskClick={handleCreateTaskClick}
         onHomeClick={handleHomeButtonClick}
+        onSettingsClick={handleSettingsClick}
         ref={menuRef!}
       />
 

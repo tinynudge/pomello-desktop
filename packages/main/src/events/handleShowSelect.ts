@@ -1,6 +1,6 @@
 import { sanitizeBounds } from '@/helpers/sanitizeBounds';
 import { runtime } from '@/runtime';
-import { AppEvent, ShowSelectMainOptions } from '@pomello-desktop/domain';
+import { AppEvent, ShowSelectMainOptions, WindowId } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent, Rectangle, screen } from 'electron';
 
 interface DisplayEdges {
@@ -27,8 +27,8 @@ export const handleShowSelect = async (
   _event: IpcMainInvokeEvent,
   options: ShowSelectMainOptions
 ): Promise<void> => {
-  const appWindow = runtime.windowManager.findOrFailWindow('app');
-  const selectWindow = runtime.windowManager.findOrFailWindow('select');
+  const appWindow = runtime.windowManager.findOrFailWindow(WindowId.App);
+  const selectWindow = runtime.windowManager.findOrFailWindow(WindowId.Select);
 
   const appBounds = appWindow.getBounds();
   const selectBounds = selectWindow.getBounds();

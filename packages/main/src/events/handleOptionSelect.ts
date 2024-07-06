@@ -1,13 +1,13 @@
 import { hideSelectWindow } from '@/helpers/hideSelectWindow';
 import { runtime } from '@/runtime';
-import { AppEvent } from '@pomello-desktop/domain';
+import { AppEvent, WindowId } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent } from 'electron';
 
 export const handleOptionSelect = async (
   _event: IpcMainInvokeEvent,
   optionId: string
 ): Promise<void> => {
-  const appWindow = runtime.windowManager.findOrFailWindow('app');
+  const appWindow = runtime.windowManager.findOrFailWindow(WindowId.App);
 
   appWindow.webContents.send(AppEvent.SelectChange, optionId);
 

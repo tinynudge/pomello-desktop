@@ -1,4 +1,4 @@
-import { AppEvent } from '@pomello-desktop/domain';
+import { AppEvent, WindowId } from '@pomello-desktop/domain';
 import { join } from 'path';
 import { throttle } from 'throttle-debounce';
 import { version } from '../../../package.json';
@@ -18,7 +18,7 @@ export const createAppWindows = async (): Promise<void> => {
   const selectWindow = await runtime.windowManager.findOrCreateWindow({
     alwaysOnTop,
     frame: false,
-    id: 'select',
+    id: WindowId.Select,
     modal: true,
     movable: false,
     path: 'select.html',
@@ -32,7 +32,7 @@ export const createAppWindows = async (): Promise<void> => {
     alwaysOnTop,
     frame: false,
     height,
-    id: 'app',
+    id: WindowId.App,
     path: 'app.html',
     minHeight: 56,
     minWidth: 230,

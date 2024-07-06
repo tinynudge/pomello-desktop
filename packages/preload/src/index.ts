@@ -27,6 +27,7 @@ import { setActiveServiceId } from './setActiveServiceId';
 import { setSelectBounds } from './setSelectBounds';
 import { setSelectItems } from './setSelectItems';
 import { showAuthWindow } from './showAuthWindow';
+import { showDashboardWindow } from './showDashboardWindow';
 import { showMessageBox } from './showMessageBox';
 import { showSelect } from './showSelect';
 import { updateSetting } from './updateSetting';
@@ -61,6 +62,7 @@ export const api = {
   setSelectBounds,
   setSelectItems,
   showAuthWindow,
+  showDashboardWindow,
   showMessageBox,
   showSelect,
   updateSetting,

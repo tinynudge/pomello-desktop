@@ -21,6 +21,7 @@ export enum AppEvent {
   SetSelectItems = 'set-select-items',
   SetStoreItem = 'set-store-item',
   ShowAuthWindow = 'show-auth-window',
+  ShowDashboardWindow = 'show-dashboard-window',
   ShowMessageBox = 'show-message-box',
   ShowSelect = 'show-select',
   StoreChange = 'store-change',
