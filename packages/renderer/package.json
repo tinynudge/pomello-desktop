@@ -18,6 +18,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@solidjs/router": "^0.14.1",
     "@tanstack/solid-query": "^5.45.0",
     "@tinynudge/pomello-service": "^0.1.33",
     "classcat": "^5.0.4",

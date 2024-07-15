@@ -1,0 +1,43 @@
+.layout {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.sidebar {
+  border-right: 1px solid var(--dashboard-border);
+  background: var(--dashboard-sidebar-background);
+}
+
+.menu {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  a {
+    display: block;
+    padding: 24px 32px 24px 26px;
+    border-left: 6px solid transparent;
+    color: inherit;
+    font-size: 18px;
+    outline: none;
+    text-decoration: none;
+
+    &.active {
+        border-color: var(--dashboard-menu-active);
+    }
+ 
+     &:hover, &:focus {
+        background-color: var(--dashboard-menu-background-hover);
+     }
+
+  }
+}
+
+.content {
+  --content-padding: 32px;
+
+  flex: 1;
+  padding: var(--content-padding);
+  background-color: var(--dashboard-content-background);
+}

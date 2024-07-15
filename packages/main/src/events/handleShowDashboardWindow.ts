@@ -17,7 +17,7 @@ export const handleShowDashboardWindow = async (
 
   let path = 'dashboard.html';
   if (route) {
-    path += `#${route}`;
+    path += `#/${route}`;
   }
 
   const dashboardWindow = await runtime.windowManager.findOrCreateWindow({
