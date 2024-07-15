@@ -10,6 +10,7 @@ const colors = {
   longBreak: 'rgb(75 174 79)',
   longBreakDark: 'rgb(67 157 71)',
   primary: 'rgb(0 194 193)',
+  primaryDark: 'rgb(19 175 174)',
   shortBreak: 'rgb(32 149 242)',
   shortBreakDark: 'rgb(27 125 203)',
   task: 'rgb(243 66 53)',
@@ -125,6 +126,21 @@ const defaultTheme: ThemeConfig = {
       helper: [opacity(colors.black, 38), opacity(colors.white, 38)],
     },
     divider: [colors.lightAlt, colors.dark],
+  },
+  dashboard: {
+    border: [opacity(colors.dark, 24), colors.dark],
+    content: {
+      background: [colors.lightAlt, colors.dark],
+    },
+    sidebar: {
+      background: [colors.white, colors.darkAlt],
+    },
+    menu: {
+      active: [colors.primary, colors.primaryDark],
+      background: {
+        hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
+      },
+    },
   },
 };
 

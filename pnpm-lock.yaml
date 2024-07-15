@@ -108,6 +108,9 @@ importers:
 
   packages/renderer:
     dependencies:
+      '@solidjs/router':
+        specifier: ^0.14.1
+        version: 0.14.1(solid-js@1.8.17)
       '@tanstack/solid-query':
         specifier: ^5.45.0
         version: 5.45.0(solid-js@1.8.17)
@@ -144,7 +147,7 @@ importers:
         version: link:../domain
       '@solidjs/testing-library':
         specifier: ^0.8.5
-        version: 0.8.8(solid-js@1.8.17)
+        version: 0.8.8(@solidjs/router@0.14.1(solid-js@1.8.17))(solid-js@1.8.17)
       '@testing-library/jest-dom':
         specifier: ^6.4.6
         version: 6.4.6(vitest@1.6.0(@types/node@20.14.2)(@vitest/ui@1.6.0)(jsdom@24.1.0)(sass@1.77.5))
@@ -719,6 +722,11 @@ packages:
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
+
+  '@solidjs/router@0.14.1':
+    resolution: {integrity: sha512-GumQ4jbt5xDngLypAndC4EjapY/3DP0G8Az4YWEVQHdCtjHwB8IOm32eEBxE9lKpOffbtXV0r/0X0mofHJ1m5w==}
+    peerDependencies:
+      solid-js: ^1.8.6
 
   '@solidjs/testing-library@0.8.8':
     resolution: {integrity: sha512-47J9Aw+iG45Fs5Kxu/IJmkaaucpF7qhDazW+iXeNssAYI0FH+4MeM/SfYRhPbIMH/hBpMh/XjbK1Wpyu9PcSwg==}
@@ -4534,10 +4542,16 @@ snapshots:
 
   '@sindresorhus/is@4.6.0': {}
 
-  '@solidjs/testing-library@0.8.8(solid-js@1.8.17)':
+  '@solidjs/router@0.14.1(solid-js@1.8.17)':
+    dependencies:
+      solid-js: 1.8.17
+
+  '@solidjs/testing-library@0.8.8(@solidjs/router@0.14.1(solid-js@1.8.17))(solid-js@1.8.17)':
     dependencies:
       '@testing-library/dom': 10.1.0
       solid-js: 1.8.17
+    optionalDependencies:
+      '@solidjs/router': 0.14.1(solid-js@1.8.17)
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
