@@ -1,5 +1,5 @@
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
-import { ButtonsOverlay } from '@/ui/components/ButtonsOverlay';
+import { ButtonsOverlay } from '@/ui/app/ButtonsOverlay';
 import { Component } from 'solid-js';
 
 export const CreatePomelloAccountView: Component = () => {

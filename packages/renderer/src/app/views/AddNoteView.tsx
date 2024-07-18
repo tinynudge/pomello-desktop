@@ -1,8 +1,8 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { useService } from '@/shared/context/ServiceContext';
-import { Content } from '@/ui/components/Content';
-import { Heading } from '@/ui/components/Heading';
-import { InputField } from '@/ui/components/InputField';
+import { Content } from '@/ui/app/Content';
+import { Heading } from '@/ui/app/Heading';
+import { InputField } from '@/ui/app/InputField';
 import { NoteType } from '@tinynudge/pomello-service';
 import { Component, JSX, createSignal, onMount } from 'solid-js';
 import { usePomelloActions } from '../context/PomelloContext';

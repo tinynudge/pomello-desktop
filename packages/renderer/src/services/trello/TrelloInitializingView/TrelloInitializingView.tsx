@@ -1,6 +1,6 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { useClearTasksCache } from '@/shared/hooks/useClearTasksCache';
-import { LoadingText } from '@/ui/components/LoadingText';
+import { LoadingText } from '@/ui/app/LoadingText';
 import { InitializingView, SelectItem } from '@pomello-desktop/domain';
 import { createQuery } from '@tanstack/solid-query';
 import { Match, Switch, createEffect, createSignal } from 'solid-js';

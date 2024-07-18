@@ -1,7 +1,7 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { useService } from '@/shared/context/ServiceContext';
 import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
-import { ButtonsOverlay } from '@/ui/components/ButtonsOverlay';
+import { ButtonsOverlay } from '@/ui/app/ButtonsOverlay';
 import { Component, createEffect } from 'solid-js';
 import { useTrelloConfig } from '../TrelloRuntimeContext';
 

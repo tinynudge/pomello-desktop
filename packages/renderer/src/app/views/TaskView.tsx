@@ -1,6 +1,6 @@
 import { useService } from '@/shared/context/ServiceContext';
-import { Heading } from '@/ui/components/Heading';
-import { Text } from '@/ui/components/Text';
+import { Heading } from '@/ui/app/Heading';
+import { Text } from '@/ui/app/Text';
 import { Component, Show } from 'solid-js';
 import { useStoreActions } from '../context/StoreContext';
 import { useCurrentTask } from '../hooks/useCurrentTask';

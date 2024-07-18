@@ -1,6 +1,6 @@
 import { useUpdateTasks } from '@/app/hooks/useUpdateTasks';
 import { useTranslate } from '@/shared/context/RuntimeContext';
-import { InputField } from '@/ui/components/InputField';
+import { InputField } from '@/ui/app/InputField';
 import { SelectTaskView } from '@pomello-desktop/domain';
 import { JSX, createSignal, onMount } from 'solid-js';
 

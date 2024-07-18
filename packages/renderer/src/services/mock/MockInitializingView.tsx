@@ -1,4 +1,4 @@
-import { LoadingText } from '@/ui/components/LoadingText';
+import { LoadingText } from '@/ui/app/LoadingText';
 import { InitializingView } from '@pomello-desktop/domain';
 
 export const MockInitializingView: InitializingView = props => {
