@@ -1,6 +1,6 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
-import { ButtonsOverlay } from '@/ui/components/ButtonsOverlay';
+import { ButtonsOverlay } from '@/ui/app/ButtonsOverlay';
 import { Component } from 'solid-js';
 
 interface TrelloServerErrorProps {

@@ -9,7 +9,7 @@ import { TaskView } from '@/app/views/TaskView';
 import { TaskVoidView } from '@/app/views/TaskVoidView';
 import { usePomelloConfig } from '@/shared/context/RuntimeContext';
 import { useService } from '@/shared/context/ServiceContext';
-import { LoadingText } from '@/ui/components/LoadingText';
+import { LoadingText } from '@/ui/app/LoadingText';
 import { Match, Suspense, Switch, createEffect } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 

@@ -1,6 +1,6 @@
 import { useStore, useStoreActions } from '@/app/context/StoreContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
-import { Heading } from '@/ui/components/Heading';
+import { Heading } from '@/ui/app/Heading';
 import { Component, Show } from 'solid-js';
 import { NextTaskHeading } from './NextTaskHeading';
 

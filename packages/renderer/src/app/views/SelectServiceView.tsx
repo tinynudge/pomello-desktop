@@ -1,7 +1,7 @@
 import { useRuntime, useTranslate } from '@/shared/context/RuntimeContext';
-import { Content } from '@/ui/components/Content';
-import { Heading } from '@/ui/components/Heading';
-import { SelectField } from '@/ui/components/SelectField';
+import { Content } from '@/ui/app/Content';
+import { Heading } from '@/ui/app/Heading';
+import { SelectField } from '@/ui/app/SelectField';
 import { SelectItem } from '@pomello-desktop/domain';
 import { Component } from 'solid-js';
 

@@ -1,5 +1,5 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
-import { SelectField } from '@/ui/components/SelectField';
+import { SelectField } from '@/ui/app/SelectField';
 import { SelectItem } from '@pomello-desktop/domain';
 import { Component } from 'solid-js';
 
