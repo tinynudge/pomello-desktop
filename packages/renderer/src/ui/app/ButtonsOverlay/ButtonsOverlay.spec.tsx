@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { renderComponent, screen } from '../__fixtures__/renderComponent';
+import { renderComponent, screen } from '../../__fixtures__/renderComponent';
 import { ButtonsOverlay } from './ButtonsOverlay';
 
 describe('UI - Buttons Overlay', () => {

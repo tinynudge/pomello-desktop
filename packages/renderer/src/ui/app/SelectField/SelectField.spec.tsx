@@ -1,6 +1,6 @@
 import { Component, createSignal } from 'solid-js';
 import { vi } from 'vitest';
-import { renderComponent, screen, waitFor } from '../__fixtures__/renderComponent';
+import { renderComponent, screen, waitFor } from '../../__fixtures__/renderComponent';
 import { SelectField } from './SelectField';
 
 describe('UI - Select Field', () => {

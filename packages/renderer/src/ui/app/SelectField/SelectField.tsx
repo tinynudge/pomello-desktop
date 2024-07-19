@@ -3,13 +3,13 @@ import { SelectItem } from '@pomello-desktop/domain';
 import { Component, createEffect, onCleanup } from 'solid-js';
 import styles from './SelectField.module.scss';
 
-interface SelectFieldProps {
+type SelectFieldProps = {
   defaultOpen?: boolean;
   items: SelectItem[];
   noResultsMessage?: string;
   onChange(optionId: string): void;
   placeholder?: string;
-}
+};
 
 export const SelectField: Component<SelectFieldProps> = props => {
   const t = useTranslate();

@@ -2,15 +2,15 @@ import { For, JSX, ParentComponent } from 'solid-js';
 import { Content } from '../Content/Content';
 import styles from './ButtonsOverlay.module.scss';
 
-interface ButtonsOverlayProps {
+type ButtonsOverlayProps = {
   buttons: Button[];
-}
+};
 
-interface Button {
+type Button = {
   content: JSX.Element;
   onClick(): void;
   title?: string;
-}
+};
 
 export const ButtonsOverlay: ParentComponent<ButtonsOverlayProps> = props => {
   return (
