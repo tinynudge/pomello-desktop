@@ -2,11 +2,11 @@ import cc from 'classcat';
 import { Component, JSX, splitProps } from 'solid-js';
 import styles from './InputField.module.scss';
 
-interface InputFieldProps extends JSX.InputHTMLAttributes<HTMLInputElement> {
+type InputFieldProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
   onEscape?(): void;
   onKeyDown?: JSX.EventHandler<HTMLInputElement, KeyboardEvent>;
   onSubmit?(): void;
-}
+};
 
 export const InputField: Component<InputFieldProps> = props => {
   const [formProps, inputProps] = splitProps(props, ['onEscape', 'onKeyDown', 'onSubmit']);

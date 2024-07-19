@@ -3,18 +3,19 @@ import { createMockLogger } from '@/__fixtures__/createMockLogger';
 import { createMockServiceConfig } from '@/__fixtures__/createMockServiceConfig';
 import { createMockSettings } from '@/__fixtures__/createMockSettings';
 import { RuntimeProvider } from '@/shared/context/RuntimeContext';
-import { PomelloServiceConfig, Settings } from '@pomello-desktop/domain';
+import { PomelloServiceConfig, Settings, TranslationsDictionary } from '@pomello-desktop/domain';
 import { render } from '@solidjs/testing-library';
 import userEvent from '@testing-library/user-event';
 import { JSX } from 'solid-js';
-import translations from '../../../../../../translations/en-US.json';
+import translations from '../../../../../translations/en-US.json';
 
 export * from '@solidjs/testing-library';
 
-interface MountComponentOptions {
+type MountComponentOptions = {
   appApi?: Partial<AppApi>;
   settings?: Partial<Settings>;
-}
+  translations?: TranslationsDictionary;
+};
 
 export const renderComponent = (ui: () => JSX.Element, options: MountComponentOptions = {}) => {
   const logger = createMockLogger();
@@ -33,7 +34,7 @@ export const renderComponent = (ui: () => JSX.Element, options: MountComponentOp
           initialPomelloConfig={pomelloConfig}
           initialServices={{}}
           initialSettings={settings}
-          initialTranslations={translations}
+          initialTranslations={{ ...translations, ...options.translations }}
         >
           {props.children}
         </RuntimeProvider>

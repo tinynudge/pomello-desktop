@@ -1,4 +1,4 @@
-import { renderComponent, screen } from '../__fixtures__/renderComponent';
+import { renderComponent, screen } from '../../__fixtures__/renderComponent';
 import { LoadingText } from './LoadingText';
 
 describe('UI - Loading Text', () => {

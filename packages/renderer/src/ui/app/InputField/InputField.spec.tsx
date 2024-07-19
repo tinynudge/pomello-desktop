@@ -1,6 +1,6 @@
 import { JSX } from 'solid-js';
 import { vi } from 'vitest';
-import { renderComponent, screen } from '../__fixtures__/renderComponent';
+import { renderComponent, screen } from '../../__fixtures__/renderComponent';
 import { InputField } from './InputField';
 
 describe('UI - Input Field', () => {

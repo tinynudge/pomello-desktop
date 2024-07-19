@@ -1,4 +1,4 @@
-import { renderComponent, screen } from '../__fixtures__/renderComponent';
+import { renderComponent, screen } from '../../__fixtures__/renderComponent';
 import { Content } from './Content';
 
 describe('UI - Content', () => {
