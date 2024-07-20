@@ -5,32 +5,82 @@
 }
 
 .sidebar {
+  display: flex;
+  width: 240px;
+  flex-direction: column;
   border-right: 1px solid var(--dashboard-border);
   background: var(--dashboard-sidebar-background);
 }
 
 .menu {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+  flex: 1;
+
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
 
   a {
     display: block;
-    padding: 24px 32px 24px 26px;
+    padding: 24px 32px 24px calc(32px - 6px);
     border-left: 6px solid transparent;
     color: inherit;
-    font-size: 18px;
+    font-size: 16px;
     outline: none;
     text-decoration: none;
 
     &.active {
-        border-color: var(--dashboard-menu-active);
+      border-color: var(--dashboard-menu-active);
     }
- 
-     &:hover, &:focus {
-        background-color: var(--dashboard-menu-background-hover);
-     }
 
+    &:hover,
+    &:focus {
+      background-color: var(--dashboard-menu-background-hover);
+    }
+  }
+}
+
+.accountDetails {
+  padding: 24px 32px;
+  border-top: 1px solid var(--dashboard-border);
+  font-size: 14px;
+}
+
+.button {
+  padding: 0 2px;
+  border: 0;
+  background-color: transparent;
+  color: var(--dashboard-link-default);
+  line-height: 1.2;
+  outline-offset: 1px;
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  &:active {
+    color: var(--dashboard-link-active);
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-size: 12px;
+
+  &[data-type='free'] {
+    background-color: var(--dashboard-badge-free-background);
+    color: var(--dashboard-badge-free-text);
+  }
+
+  &[data-type='premium'] {
+    background-color: var(--dashboard-badge-premium-background);
+    color: var(--dashboard-badge-premium-text);
   }
 }
 

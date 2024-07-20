@@ -22,6 +22,7 @@ export * from '@solidjs/testing-library';
 
 interface RenderDashboardOptions {
   appApi?: Partial<AppApi>;
+  pomelloConfig?: Partial<PomelloServiceConfig>;
   route?: DashboardRoute;
   service?: Partial<Service>;
   settings?: Partial<Settings>;
@@ -31,10 +32,26 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
   const logger = createMockLogger();
   const mockServiceFactory = createMockServiceFactory({ service: options.service });
   const settings = createMockSettings(options.settings);
-  const [pomelloConfig] = createMockServiceConfig<PomelloServiceConfig>('pomello', {});
+  const [pomelloConfig, pomelloConfigActions] = createMockServiceConfig<PomelloServiceConfig>(
+    'pomello',
+    {
+      didPromptRegistration: true,
+      token: 'MY_POMELLO_TOKEN',
+      user: {
+        email: 'thomas@tester.com',
+        name: 'Thomas Tester',
+        timezone: 'America/Chicago',
+        type: 'premium',
+      },
+      ...options.pomelloConfig,
+    }
+  );
 
   const [appApi, emitAppApiEvent] = createMockAppApi({
     appApi: options.appApi,
+    serviceConfigs: {
+      pomello: pomelloConfigActions,
+    },
     settings,
   });
 

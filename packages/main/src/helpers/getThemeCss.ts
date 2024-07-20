@@ -4,8 +4,10 @@ import { nativeTheme } from 'electron';
 const colors = {
   black: 'rgb(0 0 0)',
   blue: 'rgb(67 134 250)',
+  blueDark: 'rgb(107 167 255)',
   dark: 'rgb(35 35 35)',
   darkAlt: 'rgb(56 56 56)',
+  gold: 'rgb(255 225 0)',
   lightAlt: 'rgb(240 240 240)',
   longBreak: 'rgb(75 174 79)',
   longBreakDark: 'rgb(67 157 71)',
@@ -16,6 +18,32 @@ const colors = {
   task: 'rgb(243 66 53)',
   taskDark: 'rgb(204 55 45)',
   white: 'rgb(255 255 255)',
+};
+
+const darken = (color: string, percent: number) => {
+  const step = (100 - percent) / 100;
+
+  const values = color
+    .slice(4, -1)
+    .split(' ')
+    .map(value => Math.round(+value * step))
+    .join(' ');
+
+  return `rgb(${values})`;
+};
+
+const lighten = (color: string, percent: number) => {
+  const values = color
+    .slice(4, -1)
+    .split(' ')
+    .map(value => {
+      const numericValue = +value;
+
+      return Math.round((255 - numericValue) * (percent / 100)) + numericValue;
+    })
+    .join(' ');
+
+  return `rgb(${values})`;
 };
 
 const opacity = (color: string, opacity: number): string => {
@@ -128,9 +156,23 @@ const defaultTheme: ThemeConfig = {
     divider: [colors.lightAlt, colors.dark],
   },
   dashboard: {
+    badge: {
+      free: {
+        background: [opacity(colors.dark, 12), colors.lightAlt],
+        text: colors.black,
+      },
+      premium: {
+        background: [colors.gold, darken(colors.gold, 24)],
+        text: darken(colors.gold, 80),
+      },
+    },
     border: [opacity(colors.dark, 24), colors.dark],
     content: {
       background: [colors.lightAlt, colors.dark],
+    },
+    link: {
+      default: [colors.blue, colors.blueDark],
+      active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
     },
     sidebar: {
       background: [colors.white, colors.darkAlt],
