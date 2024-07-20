@@ -2,7 +2,7 @@ import { parseTaskName } from '../parseTaskName';
 import { getFraction } from './getFraction';
 import { roundToNearestEighth } from './roundToNearestEighth';
 
-interface IncrementTaskNamePomodorosOptions {
+type IncrementTaskNamePomodorosOptions = {
   marker: string;
   mode: string;
   taskName: string;
@@ -11,7 +11,7 @@ interface IncrementTaskNamePomodorosOptions {
     time: number;
     totalTime: number;
   };
-}
+};
 
 export const incrementTaskNamePomodoros = ({
   marker,

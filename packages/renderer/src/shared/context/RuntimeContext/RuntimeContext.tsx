@@ -16,21 +16,21 @@ export { useTranslate } from './createRuntimeTranslations';
 export { usePomelloConfig } from './createRuntimePomelloConfig';
 export { useSettings } from './createRuntimeSettings';
 
-interface RuntimeProviderProps {
+type RuntimeProviderProps = {
   initialLogger: Logger;
   initialPomelloConfig: ServiceConfig<PomelloServiceConfig>;
   initialServices: ServiceRegistry;
   initialSettings: Settings;
   initialTranslations: TranslationsDictionary;
-}
+};
 
-interface RuntimeContextValue {
+type RuntimeContextValue = {
   logger: Logger;
   pomelloConfig: RuntimePomelloConfig;
   services: ServiceRegistry;
   settings: Settings;
   translations: RuntimeTranslations;
-}
+};
 
 const RuntimeContext = createContext<RuntimeContextValue | undefined>(undefined);
 

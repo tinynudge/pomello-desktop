@@ -1,10 +1,10 @@
 import { Service, ServiceConfigStore, ServiceFactory } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 
-interface MockService {
+type MockService = {
   config?: ServiceConfigStore;
   service?: Partial<Service>;
-}
+};
 
 export const createMockServiceFactory = ({
   config,

@@ -19,10 +19,10 @@ import { assertNonNullish } from '../helpers/assertNonNullish';
 import { createServiceConfig } from '../helpers/createServiceConfig';
 import { useRuntime } from './RuntimeContext';
 
-interface ServiceProviderProps {
+type ServiceProviderProps = {
   freezeServiceId?: boolean;
   initialServiceId?: string;
-}
+};
 
 const ServiceContext = createContext<Resource<ActiveService | undefined> | undefined>(undefined);
 

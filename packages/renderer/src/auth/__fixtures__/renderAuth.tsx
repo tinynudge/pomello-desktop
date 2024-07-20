@@ -19,13 +19,13 @@ import { Auth } from '../Auth';
 
 export * from '@solidjs/testing-library';
 
-interface RenderAuthOptions {
+type RenderAuthOptions = {
   authWindow?: AuthWindowType;
   appApi?: Partial<AppApi>;
   service?: Partial<Service>;
   serviceId?: string;
   settings?: Partial<Settings>;
-}
+};
 
 export const renderAuth = (options: RenderAuthOptions = {}) => {
   const logger = createMockLogger();

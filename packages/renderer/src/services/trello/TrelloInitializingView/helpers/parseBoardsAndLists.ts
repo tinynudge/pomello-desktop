@@ -1,14 +1,14 @@
 import { SelectItem, SelectOptionType, Translate } from '@pomello-desktop/domain';
 import { TrelloBoard, TrelloList, TrelloMember } from '../../domain';
 
-interface ParseBoardsAndListsOptions {
+type ParseBoardsAndListsOptions = {
   boardsAndLists: TrelloMember;
   listFilter?: string;
   listFilterCaseSensitive?: boolean;
   previousListId?: string;
   recentLists?: string[];
   translate: Translate;
-}
+};
 
 export const parseBoardsAndLists = ({
   boardsAndLists,

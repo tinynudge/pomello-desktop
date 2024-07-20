@@ -1,10 +1,10 @@
 import { HTTPError } from 'ky';
 
-interface SerializableHttpErrorParams {
+type SerializableHttpErrorParams = {
   error: HTTPError;
   message: string;
   sensitiveSearchParams?: string[];
-}
+};
 
 export class SerializableHttpError extends HTTPError {
   private sensitiveSearchParams: string[];

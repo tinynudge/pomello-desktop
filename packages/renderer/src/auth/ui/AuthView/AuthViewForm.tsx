@@ -4,9 +4,9 @@ import cc from 'classcat';
 import { Component, JSX, createSignal } from 'solid-js';
 import styles from './AuthViewForm.module.scss';
 
-interface AuthViewFormProps {
+type AuthViewFormProps = {
   onSubmit(token: string): Promise<void> | void;
-}
+};
 
 export const AuthViewForm: Component<AuthViewFormProps> = props => {
   const t = useTranslate();

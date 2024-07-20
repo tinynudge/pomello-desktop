@@ -2,9 +2,9 @@ import { PomelloApi } from '@pomello-desktop/domain';
 import { ParentComponent, createContext, useContext } from 'solid-js';
 import { assertNonNullish } from '../helpers/assertNonNullish';
 
-interface PomelloApiProviderProps {
+type PomelloApiProviderProps = {
   initialPomelloApi: PomelloApi;
-}
+};
 
 const PomelloApiContext = createContext<PomelloApi | undefined>(undefined);
 

@@ -5,10 +5,10 @@ import { Accessor, createMemo } from 'solid-js';
 import { useStore } from '../context/StoreContext';
 import { useTasksCacheKey } from './useTasksCacheKey';
 
-interface CurrentTask {
+type CurrentTask = {
   item: SelectOptionType;
   label: string;
-}
+};
 
 export const useCurrentTask = (): Accessor<CurrentTask> => {
   const getService = useService();

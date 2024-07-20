@@ -17,10 +17,10 @@ import { SwitchTaskDialAction } from './SwitchTaskDialAction';
 import { VoidTaskDialAction } from './VoidTaskDialAction';
 import MoreIcon from './assets/more.svg';
 
-interface DialAttributes {
+type DialAttributes = {
   label: string;
   onClick: JSX.EventHandler<HTMLButtonElement, MouseEvent>;
-}
+};
 
 const DialActionsMap: Record<DialAction, Component<DialActionProps>> = {
   addNote: AddNoteDialAction,

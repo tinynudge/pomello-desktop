@@ -2,9 +2,9 @@ import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
 import { PomelloService } from '@tinynudge/pomello-service';
 import { ParentComponent, createContext, useContext } from 'solid-js';
 
-interface PomelloProviderProps {
+type PomelloProviderProps = {
   defaultService: PomelloService;
-}
+};
 
 const PomelloContext = createContext<PomelloService | undefined>(undefined);
 

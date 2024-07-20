@@ -8,12 +8,12 @@ export type RuntimePomelloConfig = {
   store: PomelloServiceConfig;
 };
 
-interface PomelloConfigActions {
+type PomelloConfigActions = {
   registrationPromptHandled(): void;
   tokenUpdated(token: string): void;
   userFetched(user: PomelloUser): void;
   userInvalidated(): void;
-}
+};
 
 export const usePomelloConfig = (): RuntimePomelloConfig => {
   const runtime = useRuntime();

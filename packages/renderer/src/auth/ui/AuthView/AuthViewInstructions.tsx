@@ -2,11 +2,11 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { JSX, ParentComponent, Show } from 'solid-js';
 import styles from './AuthViewInstructions.module.scss';
 
-interface AuthViewInstructionsProps {
+type AuthViewInstructionsProps = {
   authUrl?: string;
   heading?: string;
   logo?: JSX.Element;
-}
+};
 
 export const AuthViewInstructions: ParentComponent<AuthViewInstructionsProps> = props => {
   const t = useTranslate();

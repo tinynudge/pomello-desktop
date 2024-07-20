@@ -3,10 +3,10 @@ import { runtime } from '@/runtime';
 import { AppEvent, ShowSelectMainOptions, WindowId } from '@pomello-desktop/domain';
 import { IpcMainInvokeEvent, Rectangle, screen } from 'electron';
 
-interface DisplayEdges {
+type DisplayEdges = {
   right: number;
   bottom: number;
-}
+};
 
 const X_OFFSET = 6;
 const Y_OFFSET = 16;

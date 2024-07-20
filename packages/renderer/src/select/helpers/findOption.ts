@@ -1,14 +1,14 @@
-interface FindNearestOptionOptions {
+type FindNearestOptionOptions = {
   activeOptionId?: string;
   container: HTMLElement | null;
   direction: 'next' | 'previous';
-}
+};
 
-interface ParseElementOptions {
+type ParseElementOptions = {
   direction: 'next' | 'previous';
   element?: Element | null;
   parentElement?: Element | null;
-}
+};
 
 const parseElement = ({
   direction,

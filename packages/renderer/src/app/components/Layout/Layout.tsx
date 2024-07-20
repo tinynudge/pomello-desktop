@@ -11,9 +11,9 @@ import styles from './Layout.module.scss';
 import { Menu } from './Menu';
 import MenuIcon from './assets/menu.svg';
 
-interface LayoutProps {
+type LayoutProps = {
   onTaskCreate(): void;
-}
+};
 
 export const Layout: ParentComponent<LayoutProps> = props => {
   const { getTitleWithHotkey, registerHotkeys } = useHotkeys();

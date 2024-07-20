@@ -1,12 +1,12 @@
 import { JSX, ParentComponent } from 'solid-js';
 
-interface DialActionProps {
+type DialActionProps = {
   class: string;
   isVisible: boolean;
   label: string;
   onClick(): void;
   title: string;
-}
+};
 
 export const DialAction: ParentComponent<DialActionProps> = props => {
   const handleButtonClick: JSX.EventHandler<HTMLButtonElement, MouseEvent> = event => {

@@ -19,13 +19,13 @@ import { ServiceProvider } from '@/shared/context/ServiceContext';
 
 export * from '@solidjs/testing-library';
 
-interface RenderSelectOptions {
+type RenderSelectOptions = {
   appApi?: Partial<AppApi>;
   service?: Partial<Service>;
   serviceId?: string;
   setSelectItems?: SetSelectItemsOptions;
   settings?: Partial<Settings>;
-}
+};
 
 export const renderSelect = (options: RenderSelectOptions = {}) => {
   const logger = createMockLogger();
