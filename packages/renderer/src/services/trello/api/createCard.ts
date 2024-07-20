@@ -1,13 +1,13 @@
 import { TrelloCard } from '../domain';
 import { getTrelloClient } from '../getTrelloClient';
 
-interface CreateCardOptions {
+type CreateCardOptions = {
   description?: string;
   labelIds?: string[];
   listId: string;
   position: 'top' | 'bottom';
   title: string;
-}
+};
 
 export const createCard = async (options: CreateCardOptions): Promise<void> => {
   await getTrelloClient()

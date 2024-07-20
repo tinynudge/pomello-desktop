@@ -6,15 +6,15 @@ import { usePomelloService } from './PomelloContext';
 
 type OverlayView = 'create-task' | NoteType;
 
-interface Store {
+type Store = {
   dialActions: DialAction[];
   isQuickTaskSelectEnabled: boolean;
   isUpdatingTasks: boolean;
   overlayView: OverlayView | null;
   pomelloState: PomelloState;
-}
+};
 
-interface StoreActions {
+type StoreActions = {
   dialActionsSet(actions: DialAction[]): void;
   overlayViewCleared(): void;
   overlayViewSet(type: OverlayView): void;
@@ -22,7 +22,7 @@ interface StoreActions {
   quickTaskReset(): void;
   updateTasksFinished(): void;
   updateTasksStarted(): void;
-}
+};
 
 const StoreContext = createContext<[Store, StoreActions]>();
 

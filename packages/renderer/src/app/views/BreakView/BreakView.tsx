@@ -4,9 +4,9 @@ import { Heading } from '@/ui/app/Heading';
 import { Component, Show } from 'solid-js';
 import { NextTaskHeading } from './NextTaskHeading';
 
-interface BreakViewProps {
+type BreakViewProps = {
   type: 'SHORT_BREAK' | 'LONG_BREAK';
-}
+};
 
 export const BreakView: Component<BreakViewProps> = props => {
   const { dialActionsSet } = useStoreActions();

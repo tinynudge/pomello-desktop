@@ -3,9 +3,9 @@ import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext'
 import { Component } from 'solid-js';
 import pomelloLogo from './assets/pomello.png';
 
-interface PomelloAuthViewProps {
+type PomelloAuthViewProps = {
   action: 'authorize' | 'register';
-}
+};
 
 export const PomelloAuthView: Component<PomelloAuthViewProps> = props => {
   const config = usePomelloConfig();

@@ -1,11 +1,11 @@
 export type AuthWindowType = PomelloAuth | ServiceAuth;
 
-interface PomelloAuth {
+type PomelloAuth = {
   type: 'pomello';
   action: 'authorize' | 'register';
-}
+};
 
-interface ServiceAuth {
+type ServiceAuth = {
   type: 'service';
   serviceId: string;
-}
+};

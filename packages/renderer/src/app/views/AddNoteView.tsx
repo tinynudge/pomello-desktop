@@ -9,9 +9,9 @@ import { usePomelloActions } from '../context/PomelloContext';
 import { useStoreActions } from '../context/StoreContext';
 import { useCurrentTask } from '../hooks/useCurrentTask';
 
-interface AddNoteViewProps {
+type AddNoteViewProps = {
   noteType: NoteType;
-}
+};
 
 const noteTypeCodes: Record<string, NoteType> = {
   n: 'generalNote',

@@ -7,9 +7,9 @@ import { PomelloAuthView } from './components/PomelloAuthView';
 import { SuccessMessage } from './components/SuccessMessage';
 import { AuthViewProvider } from './context/AuthViewProvider';
 
-interface AuthProps {
+type AuthProps = {
   authWindow: AuthWindowType;
-}
+};
 
 export const Auth: Component<AuthProps> = props => {
   const getService = useMaybeService();

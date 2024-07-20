@@ -3,11 +3,11 @@ import { SelectField } from '@/ui/app/SelectField';
 import { SelectItem } from '@pomello-desktop/domain';
 import { Component } from 'solid-js';
 
-interface SelectListViewProps {
+type SelectListViewProps = {
   defaultOpen: boolean;
   lists: SelectItem[];
   onListSelect(listId: string): void;
-}
+};
 
 export const SelectListView: Component<SelectListViewProps> = props => {
   const t = useTranslate();

@@ -1,7 +1,7 @@
 import { Component, JSX } from 'solid-js';
 import styles from './FilterInput.module.scss';
 
-interface FilterInputProps {
+type FilterInputProps = {
   activeOptionId?: string;
   listboxId: string;
   onChange(query: string): void;
@@ -14,7 +14,7 @@ interface FilterInputProps {
   placeholder: string;
   query: string;
   ref: HTMLInputElement;
-}
+};
 
 export const FilterInput: Component<FilterInputProps> = props => {
   const handleInputChange: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {

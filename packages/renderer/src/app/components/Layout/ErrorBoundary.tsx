@@ -4,9 +4,9 @@ import { ErrorBoundary as BaseErrorBoundary, JSX, ParentComponent } from 'solid-
 import { ServiceContainer } from '../ServiceContainer';
 import { ErrorOverlay } from './ErrorOverlay';
 
-interface ErrorBoundaryProps {
+type ErrorBoundaryProps = {
   renderError(children: JSX.Element): JSX.Element;
-}
+};
 
 export const ErrorBoundary: ParentComponent<ErrorBoundaryProps> = props => {
   const { logger } = useRuntime();

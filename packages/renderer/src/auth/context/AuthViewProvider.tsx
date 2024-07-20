@@ -1,13 +1,13 @@
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
 import { ParentComponent, createContext, useContext } from 'solid-js';
 
-interface AuthViewProviderProps {
+type AuthViewProviderProps = {
   defaultOnTokenSave(): void;
-}
+};
 
-interface AuthViewContextValue {
+type AuthViewContextValue = {
   onTokenSave(): void;
-}
+};
 
 const AuthViewContext = createContext<AuthViewContextValue | undefined>(undefined);
 

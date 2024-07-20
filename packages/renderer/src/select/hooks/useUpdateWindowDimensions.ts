@@ -2,12 +2,12 @@ import { SelectItem } from '@pomello-desktop/domain';
 import { Rectangle } from 'electron';
 import { Accessor, createEffect, on, onCleanup } from 'solid-js';
 
-interface UseUpdateWindowDimensionsOptions {
+type UseUpdateWindowDimensionsOptions = {
   getContainer(): HTMLElement;
   getIsVisible: Accessor<boolean>;
   getItems: Accessor<SelectItem[]>;
   maxRows: number;
-}
+};
 
 export const useUpdateWindowDimensions = ({
   getContainer,

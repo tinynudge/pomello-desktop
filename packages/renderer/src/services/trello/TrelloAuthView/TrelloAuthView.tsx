@@ -5,9 +5,9 @@ import { Component } from 'solid-js';
 import { TRELLO_KEY } from '../constants';
 import trelloLogo from './assets/trello.png';
 
-interface TrelloAuthViewProps {
+type TrelloAuthViewProps = {
   setToken(token: string): void;
-}
+};
 
 export const TrelloAuthView: Component<TrelloAuthViewProps> = props => {
   const getService = useService();

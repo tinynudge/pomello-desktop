@@ -2,10 +2,10 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { ButtonsOverlay } from '@/ui/app/ButtonsOverlay';
 import { Component } from 'solid-js';
 
-interface ErrorOverlayProps {
+type ErrorOverlayProps = {
   error: Error;
   resetErrorBoundary(): void;
-}
+};
 
 export const ErrorOverlay: Component<ErrorOverlayProps> = props => {
   const t = useTranslate();

@@ -20,13 +20,13 @@ import { Routes } from '../components/Routes';
 
 export * from '@solidjs/testing-library';
 
-interface RenderDashboardOptions {
+type RenderDashboardOptions = {
   appApi?: Partial<AppApi>;
   pomelloConfig?: Partial<PomelloServiceConfig>;
   route?: DashboardRoute;
   service?: Partial<Service>;
   settings?: Partial<Settings>;
-}
+};
 
 export const renderDashboard = (options: RenderDashboardOptions = {}) => {
   const logger = createMockLogger();

@@ -5,13 +5,13 @@ import AddIcon from './assets/add.svg';
 import CogIcon from './assets/cog.svg';
 import HomeIcon from './assets/home.svg';
 
-interface MenuProps {
+type MenuProps = {
   isOpen: boolean;
   onCreateTaskClick(): void;
   onHomeClick(): void;
   onSettingsClick(): void;
   ref: HTMLElement;
-}
+};
 
 export const Menu: Component<MenuProps> = props => {
   const t = useTranslate();

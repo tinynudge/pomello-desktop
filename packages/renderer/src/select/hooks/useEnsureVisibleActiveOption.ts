@@ -2,13 +2,13 @@ import { SelectItem } from '@pomello-desktop/domain';
 import { Accessor, Setter, createEffect, on } from 'solid-js';
 import { findFirstOption } from '../helpers/findOption';
 
-interface UseEnsureVisibleActiveOptionOptions {
+type UseEnsureVisibleActiveOptionOptions = {
   getActiveOptionId: Accessor<string | undefined>;
   getInputRef(): HTMLInputElement;
   getItems: Accessor<SelectItem[]>;
   getListRef(): HTMLUListElement;
   setActiveOptionId: Setter<string | undefined>;
-}
+};
 
 const scrollBy = (top: number): void => {
   // "auto" is supposed to work here since "instant" is deprecated, but for some

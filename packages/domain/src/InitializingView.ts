@@ -6,6 +6,6 @@ export type InitializingView<TProps = Record<string, unknown>> = Component<
   } & TProps
 >;
 
-interface OnReadyOptions {
+type OnReadyOptions = {
   openTaskSelect?: boolean;
-}
+};

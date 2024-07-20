@@ -4,15 +4,15 @@ import { HotkeyCommand, Hotkeys, LabeledHotkeys, Unsubscribe } from '@pomello-de
 import Mousetrap from 'mousetrap';
 import { ParentComponent, createContext, onCleanup, onMount, useContext } from 'solid-js';
 
-interface HotkeysProviderProps {
+type HotkeysProviderProps = {
   hotkeys: LabeledHotkeys;
-}
+};
 
-interface HotkeysContextValue {
+type HotkeysContextValue = {
   getHotkeyLabel(command: HotkeyCommand): string | undefined;
   getTitleWithHotkey(titleKey: string, command: HotkeyCommand): string;
   registerHotkeys(hotkeys: HotkeysRegistry): void;
-}
+};
 
 type HotkeysRegistry = Partial<Record<HotkeyCommand, HotkeyHandler>>;
 

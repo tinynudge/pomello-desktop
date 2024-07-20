@@ -3,10 +3,10 @@ import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
 import { ButtonsOverlay } from '@/ui/app/ButtonsOverlay';
 import { Component } from 'solid-js';
 
-interface TrelloServerErrorProps {
+type TrelloServerErrorProps = {
   error: SerializableHttpError;
   onRetry(): void;
-}
+};
 
 export const TrelloServerError: Component<TrelloServerErrorProps> = props => {
   const t = useTranslate();
