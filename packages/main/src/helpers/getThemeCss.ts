@@ -156,6 +156,26 @@ const defaultTheme: ThemeConfig = {
     divider: [colors.lightAlt, colors.dark],
   },
   dashboard: {
+    'actions-menu': {
+      button: {
+        icon: {
+          default: [opacity(colors.black, 38), opacity(colors.white, 40)],
+          hover: [opacity(colors.black, 60), opacity(colors.white, 60)],
+        },
+        border: {
+          active: [opacity(colors.black, 24), opacity(colors.white, 24)],
+          hover: [opacity(colors.black, 12), opacity(colors.white, 12)],
+        },
+      },
+      tooltip: {
+        background: colors.black,
+        text: colors.white,
+      },
+      menu: {
+        default: [colors.white, colors.darkAlt],
+        hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
+      },
+    },
     badge: {
       free: {
         background: [opacity(colors.dark, 12), colors.lightAlt],
@@ -175,11 +195,9 @@ const defaultTheme: ThemeConfig = {
       active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
     },
     sidebar: {
-      background: [colors.white, colors.darkAlt],
-    },
-    menu: {
-      active: [colors.primary, colors.primaryDark],
       background: {
+        active: [colors.primary, colors.primaryDark],
+        default: [colors.white, colors.darkAlt],
         hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
       },
     },

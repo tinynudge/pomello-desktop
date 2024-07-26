@@ -55,6 +55,8 @@
   "internalDistractionLabel": "Internal distraction",
   "longBreakMessage": "Take a long break",
   "menuLabel": "Menu",
+  "moreActionsLabel": "Show more actions",
+  "moreActionsShortLabel": "More actions",
   "newTaskHeading": "Next: New task",
   "nextTaskHeading": "Next: {{task}}",
   "noTasksFound": "No tasks found",
