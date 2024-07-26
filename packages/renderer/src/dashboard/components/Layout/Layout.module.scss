@@ -9,7 +9,7 @@
   width: 240px;
   flex-direction: column;
   border-right: 1px solid var(--dashboard-border);
-  background: var(--dashboard-sidebar-background);
+  background: var(--dashboard-sidebar-background-default);
 }
 
 .menu {
@@ -31,12 +31,12 @@
     text-decoration: none;
 
     &.active {
-      border-color: var(--dashboard-menu-active);
+      border-color: var(--dashboard-sidebar-background-active);
     }
 
     &:hover,
-    &:focus {
-      background-color: var(--dashboard-menu-background-hover);
+    &:focus-within {
+      background-color: var(--dashboard-sidebar-background-hover);
     }
   }
 }

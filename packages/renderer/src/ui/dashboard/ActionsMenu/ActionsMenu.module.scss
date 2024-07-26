@@ -1,0 +1,82 @@
+@import '@/shared/styles/global';
+
+.actionsMenu {
+  position: relative;
+  display: inline-block;
+}
+
+.button {
+  display: inline-flex;
+  width: 24px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--dashboard-actions-menu-button-icon-default);
+  outline: 0;
+
+  &.active,
+  &:hover,
+  &:focus-within {
+    border-color: var(--dashboard-actions-menu-button-border-hover);
+    color: var(--dashboard-actions-menu-button-icon-hover);
+    cursor: pointer;
+
+    &:not(.active)::after {
+      position: absolute;
+      bottom: 100%;
+      display: block;
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      background-color: var(--dashboard-actions-menu-tooltip-background);
+      box-shadow: $z1-shadow;
+      color: var(--dashboard-actions-menu-tooltip-text);
+      content: attr(data-label);
+      white-space: nowrap;
+    }
+  }
+
+  &.active {
+    border-color: var(--dashboard-actions-menu-button-icon-active);
+  }
+}
+
+.list {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  display: none;
+  overflow: hidden;
+  padding: 0;
+  padding: 6px 0;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 8px;
+  margin: 0;
+  margin-bottom: 16px;
+  background-color: var(--dashboard-actions-menu-menu-default);
+  box-shadow: $z2-shadow;
+  list-style: none;
+  white-space: nowrap;
+
+  &.isExpanded {
+    display: block;
+  }
+}
+
+.action {
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  outline: 0;
+  text-align: left;
+
+  &:focus-within {
+    background-color: var(--dashboard-actions-menu-menu-hover);
+  }
+}
