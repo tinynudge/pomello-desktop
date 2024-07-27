@@ -1,0 +1,23 @@
+.loggedOutText {
+  padding: 20px 32px;
+  font-size: 14px;
+}
+
+.button {
+  padding: 0 2px;
+  border: 0;
+  background-color: transparent;
+  color: var(--dashboard-link-default);
+  line-height: 1.2;
+  outline-offset: 1px;
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  &:active {
+    color: var(--dashboard-link-active);
+  }
+}

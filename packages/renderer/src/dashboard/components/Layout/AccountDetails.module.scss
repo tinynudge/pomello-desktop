@@ -1,0 +1,34 @@
+.accountDetails {
+  display: flex;
+  align-items: center;
+  padding: 20px 16px 20px 32px;
+}
+
+.user {
+  overflow: hidden;
+  flex: 1;
+}
+
+.userDetail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-size: 12px;
+
+  &[data-type='free'] {
+    background-color: var(--dashboard-badge-free-background);
+    color: var(--dashboard-badge-free-text);
+  }
+
+  &[data-type='premium'] {
+    background-color: var(--dashboard-badge-premium-background);
+    color: var(--dashboard-badge-premium-text);
+  }
+}

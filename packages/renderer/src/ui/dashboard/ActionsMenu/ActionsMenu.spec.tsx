@@ -23,6 +23,29 @@ describe('UI - ActionsMenu', () => {
     expect(screen.getByRole('menuitem', { name: 'One' })).toHaveFocus();
   });
 
+  it('should allow custom labels', async () => {
+    const { userEvent } = renderComponent(() => (
+      <ActionsMenu
+        actions={[
+          {
+            content: 'One',
+            onClick: () => {},
+          },
+        ]}
+        menuLabel="Secret menu"
+        tooltip="Nothing to see here"
+        triggerLabel="Do not press"
+      />
+    ));
+
+    const button = screen.getByRole('button', { name: 'Do not press' });
+
+    await userEvent.click(button);
+
+    expect(button).toHaveAttribute('data-tooltip', 'Nothing to see here');
+    expect(screen.getByRole('menu', { name: 'Secret menu' })).toBeInTheDocument();
+  });
+
   it('should trigger the menu item when Space is pressed', async () => {
     const handleItemClick = vi.fn();
 

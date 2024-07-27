@@ -6,6 +6,9 @@ import MoreIcon from './assets/more.svg';
 
 type ActionsMenuProps = {
   actions: Action[];
+  menuLabel?: string;
+  tooltip?: string;
+  triggerLabel?: string;
 };
 
 type Action = {
@@ -24,11 +27,7 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
   const getActiveActionMeta = createMemo(() => {
     const activeAction = getActiveAction();
 
-    if (!activeAction) {
-      return null;
-    }
-
-    return actionMetaMap.get(activeAction) ?? null;
+    return activeAction ? actionMetaMap.get(activeAction) : undefined;
   });
 
   createEffect(() => {
@@ -160,12 +159,12 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
       <button
         aria-expanded={getIsExpanded()}
         aria-haspopup
-        aria-label={t('moreActionsLabel')}
+        aria-label={props.triggerLabel ?? t('moreActionsLabel')}
         class={cc({
           [styles.button]: true,
           [styles.active]: getIsExpanded(),
         })}
-        data-label={t('moreActionsShortLabel')}
+        data-tooltip={props.tooltip ?? t('moreActionsShortLabel')}
         onClick={handleButtonClick}
         ref={buttonRef!}
       >
@@ -173,7 +172,7 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
       </button>
       <ul
         aria-hidden={!getIsExpanded()}
-        aria-label={t('moreActionsShortLabel')}
+        aria-label={props.menuLabel ?? t('moreActionsShortLabel')}
         class={cc({
           [styles.list]: true,
           [styles.isExpanded]: getIsExpanded(),

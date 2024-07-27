@@ -94,4 +94,48 @@ describe('Dashboard', () => {
       action: 'register',
     });
   });
+
+  it('should show the account options menu', async () => {
+    const { userEvent } = renderDashboard();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
+
+    const menu = screen.getByRole('menu', { name: 'Account' });
+    const menuItems = within(menu).getAllByRole('menuitem');
+
+    expect(menu).toBeInTheDocument();
+    expect(menuItems.at(0)).toHaveTextContent('Edit profile');
+    expect(menuItems.at(1)).toHaveTextContent('Log out');
+  });
+
+  it('should navigate to the Profile page when "Edit profile" is clicked', async () => {
+    const { userEvent } = renderDashboard();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Edit profile' }));
+
+    expect(screen.getByRole('heading', { name: 'Profile', level: 1 })).toBeInTheDocument();
+  });
+
+  it('should log the user out when "Log out" is clicked', async () => {
+    const { userEvent } = renderDashboard();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Log out' }));
+
+    expect(screen.getByTestId('account-details')).toHaveTextContent(
+      'Log in or sign up to track your productivity'
+    );
+  });
+
+  it('should navigate to the Productivity page when logged out from the Profile page', async () => {
+    const { userEvent } = renderDashboard();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Edit profile' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Log out' }));
+
+    expect(screen.getByRole('heading', { name: 'Productivity', level: 1 })).toBeInTheDocument();
+  });
 });
