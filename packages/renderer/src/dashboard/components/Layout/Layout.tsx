@@ -1,20 +1,14 @@
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
-import { Translate } from '@/ui/shared/Translate';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { A } from '@solidjs/router';
 import { For, ParentComponent, Show } from 'solid-js';
+import { AccountDetails } from './AccountDetails';
 import styles from './Layout.module.scss';
+import { LoggedOutText } from './LoggedOutText';
 
 export const Layout: ParentComponent = props => {
   const { store } = usePomelloConfig();
   const t = useTranslate();
-
-  const handleAuthButtonClick = (action: 'authorize' | 'register') => {
-    window.app.showAuthWindow({
-      type: 'pomello',
-      action,
-    });
-  };
 
   const routes: [DashboardRoute, label: string][] = [
     [DashboardRoute.Productivity, t('dashboardMenuProductivity')],
@@ -40,39 +34,9 @@ export const Layout: ParentComponent = props => {
             </For>
           </ul>
         </nav>
-        <div class={styles.accountDetails} data-testid="account-details">
-          <Show
-            fallback={
-              <Translate
-                components={{
-                  logIn: props => (
-                    <button
-                      class={styles.button}
-                      onClick={() => handleAuthButtonClick('authorize')}
-                    >
-                      {props.children}
-                    </button>
-                  ),
-                  signUp: props => (
-                    <button class={styles.button} onClick={() => handleAuthButtonClick('register')}>
-                      {props.children}
-                    </button>
-                  ),
-                }}
-                key="trackProductivityMessage"
-              />
-            }
-            when={store.user}
-          >
-            {getUser => (
-              <>
-                <span class={styles.badge} data-type={getUser().type}>
-                  {t(`${getUser().type}AccountLabel`)}
-                </span>
-                <p>{getUser().name}</p>
-                <p>{getUser().email}</p>
-              </>
-            )}
+        <div data-testid="account-details">
+          <Show fallback={<LoggedOutText />} when={store.user}>
+            {getUser => <AccountDetails user={getUser()} />}
           </Show>
         </div>
       </div>

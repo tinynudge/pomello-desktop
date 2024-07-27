@@ -1,4 +1,9 @@
 {
+  "accountActionsMenuLabel": "Account",
+  "accountActionsTooltip": "Account menu",
+  "accountActionsTriggerLabel": "Show account menu",
+  "accountDetailsEditProfile": "Edit profile",
+  "accountDetailsLogOut": "Log out",
   "addNoteLabel": "Add note",
   "addNotePlaceholder": "Enter /? for help",
   "authCloseMessage": "This window will automatically close in {{count}} seconds.",
@@ -27,6 +32,7 @@
   "dashboardMenuKeyboardShortcuts": "Keyboard shortcuts",
   "dashboardMenuLabel": "Main menu",
   "dashboardMenuProductivity": "Productivity",
+  "dashboardMenuProfile": "Profile",
   "dashboardMenuServices": "Services",
   "dashboardMenuSettings": "Settings",
   "dashboardMenuSounds": "Sounds",

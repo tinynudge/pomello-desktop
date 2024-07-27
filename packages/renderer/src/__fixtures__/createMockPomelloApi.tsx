@@ -9,7 +9,7 @@ import {
 } from '@pomello-desktop/domain';
 import { SavedTrackingEvent, TrackingEventWithServiceData } from '@tinynudge/pomello-service';
 import { DefaultBodyType, HttpResponse, HttpResponseResolver, PathParams, http } from 'msw';
-import { v4 as uuid } from 'uuid';
+import { nanoid } from 'nanoid';
 import { Mocked, vi } from 'vitest';
 import { createHttpResponse } from './createHttpResponse';
 import { mockServer } from './mockServer';
@@ -42,7 +42,7 @@ export const createMockPomelloApi = (
 
       const data = {
         ...event,
-        id: uuid(),
+        id: nanoid(),
       };
 
       return HttpResponse.json({ data });

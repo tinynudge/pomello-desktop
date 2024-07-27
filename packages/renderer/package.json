@@ -27,8 +27,7 @@
     "immer": "^10.0.4",
     "ky": "^1.3.0",
     "mousetrap": "^1.6.5",
-    "solid-js": "^1.8.17",
-    "uuid": "^9.0.1"
+    "solid-js": "^1.8.17"
   },
   "devDependencies": {
     "@pomello-desktop/domain": "workspace:*",
@@ -37,11 +36,11 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/howler": "^2.2.11",
     "@types/mousetrap": "^1.6.15",
-    "@types/uuid": "^9.0.8",
     "@vitest/ui": "^1.5.0",
     "eslint-plugin-solid": "^0.14.0",
     "jsdom": "^24.1.0",
     "msw": "^2.3.1",
+    "nanoid": "^5.0.7",
     "sass": "^1.77.5",
     "stylelint": "^16.6.1",
     "stylelint-config-idiomatic-order": "^10.0.0",

@@ -34,7 +34,7 @@
       background-color: var(--dashboard-actions-menu-tooltip-background);
       box-shadow: $z1-shadow;
       color: var(--dashboard-actions-menu-tooltip-text);
-      content: attr(data-label);
+      content: attr(data-tooltip);
       white-space: nowrap;
     }
   }
