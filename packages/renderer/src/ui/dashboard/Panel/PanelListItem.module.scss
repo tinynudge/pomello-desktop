@@ -1,0 +1,7 @@
+.panelListItem {
+  padding: 24px var(--content-padding);
+
+  & + & {
+    border-top: 1px solid var(--dashboard-panel-divider);
+  }
+}
