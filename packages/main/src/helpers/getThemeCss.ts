@@ -191,8 +191,12 @@ const defaultTheme: ThemeConfig = {
       background: [colors.lightAlt, colors.dark],
     },
     link: {
-      default: [colors.blue, colors.blueDark],
       active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
+      default: [colors.blue, colors.blueDark],
+    },
+    panel: {
+      background: [colors.white, colors.darkAlt],
+      divider: [opacity(colors.black, 12), colors.dark],
     },
     sidebar: {
       background: {
@@ -200,6 +204,10 @@ const defaultTheme: ThemeConfig = {
         default: [colors.white, colors.darkAlt],
         hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
       },
+    },
+    text: {
+      default: [colors.darkAlt, opacity(colors.white, 84)],
+      hint: [opacity(colors.darkAlt, 84), opacity(colors.white, 60)],
     },
   },
 };

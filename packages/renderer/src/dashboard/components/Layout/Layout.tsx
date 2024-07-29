@@ -40,7 +40,7 @@ export const Layout: ParentComponent = props => {
           </Show>
         </div>
       </div>
-      <section class={styles.content}>{props.children}</section>
+      <main class={styles.content}>{props.children}</main>
     </div>
   );
 };
