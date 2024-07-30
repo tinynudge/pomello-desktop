@@ -1,0 +1,31 @@
+.toggleSwitch {
+  width: 42px;
+  height: 26px;
+  padding: 2px;
+  border-radius: 13px;
+  appearance: none;
+  background-color: var(--dashboard-toggle-switch-background-default);
+
+  &:focus-visible {
+    outline: 4px solid var(--dashboard-toggle-switch-focus);
+    outline-offset: 0;
+  }
+
+  &::after {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--dashboard-toggle-switch-dot);
+    content: '';
+    transition: transform 80ms ease-in-out;
+  }
+
+  &:checked {
+    background-color: var(--dashboard-toggle-switch-background-active);
+
+    &::after {
+      transform: translateX(16px);
+    }
+  }
+}

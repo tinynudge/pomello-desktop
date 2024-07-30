@@ -209,6 +209,14 @@ const defaultTheme: ThemeConfig = {
       default: [colors.darkAlt, opacity(colors.white, 84)],
       hint: [opacity(colors.darkAlt, 84), opacity(colors.white, 60)],
     },
+    'toggle-switch': {
+      background: {
+        default: [opacity(colors.black, 38), colors.dark],
+        active: [colors.primary, colors.primaryDark],
+      },
+      dot: colors.white,
+      focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
+    },
   },
 };
 
