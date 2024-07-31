@@ -2,6 +2,7 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { Route } from '@solidjs/router';
 import { Component, For } from 'solid-js';
+import { MainHeader } from '../MainHeader';
 
 export const Routes: Component = () => {
   const t = useTranslate();
@@ -17,7 +18,7 @@ export const Routes: Component = () => {
 
   return (
     <For each={Object.values(DashboardRoute)}>
-      {route => <Route path={route} component={() => <h1>{routes[route]}</h1>} />}
+      {route => <Route path={route} component={() => <MainHeader heading={routes[route]} />} />}
     </For>
   );
 };
