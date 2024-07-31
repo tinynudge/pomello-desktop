@@ -190,6 +190,7 @@ const defaultTheme: ThemeConfig = {
     content: {
       background: [colors.lightAlt, colors.dark],
     },
+    focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
     link: {
       active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
       default: [colors.blue, colors.blueDark],
@@ -215,7 +216,6 @@ const defaultTheme: ThemeConfig = {
         active: [colors.primary, colors.primaryDark],
       },
       dot: colors.white,
-      focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
     },
   },
 };

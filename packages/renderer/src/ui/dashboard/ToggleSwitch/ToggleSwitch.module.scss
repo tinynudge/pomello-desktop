@@ -7,7 +7,7 @@
   background-color: var(--dashboard-toggle-switch-background-default);
 
   &:focus-visible {
-    outline: 4px solid var(--dashboard-toggle-switch-focus);
+    outline: 4px solid var(--dashboard-focus);
     outline-offset: 0;
   }
 
