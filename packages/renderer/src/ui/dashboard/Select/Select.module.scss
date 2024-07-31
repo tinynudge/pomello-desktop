@@ -1,0 +1,22 @@
+.select {
+  position: relative;
+}
+
+.caret {
+  position: absolute;
+  top: calc(50% - 6px);
+  right: 12px;
+  pointer-events: none;
+}
+
+.dropdown {
+  padding: 6px 32px 6px 12px;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 4px;
+  appearance: none;
+
+  &:focus-visible {
+    outline: 4px solid var(--dashboard-focus);
+    outline-offset: 0;
+  }
+}
