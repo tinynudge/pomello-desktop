@@ -1,0 +1,24 @@
+// Duplicate class name needed to increase specificity
+.panelListFormField.panelListFormField {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 42px;
+  gap: 32px;
+
+  &.hasActions {
+    padding-right: 12px;
+  }
+}
+
+.description {
+  margin-top: 4px;
+  color: var(--dashboard-text-hint);
+  font-size: 13px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

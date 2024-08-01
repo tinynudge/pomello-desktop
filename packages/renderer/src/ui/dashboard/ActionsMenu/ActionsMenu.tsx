@@ -4,16 +4,17 @@ import { Component, For, JSX, createEffect, createMemo, createSignal } from 'sol
 import styles from './ActionsMenu.module.scss';
 import MoreIcon from './assets/more.svg';
 
+export type Action = {
+  content: string;
+  onClick(): void;
+};
+
 type ActionsMenuProps = {
   actions: Action[];
   menuLabel?: string;
   tooltip?: string;
+  tooltipPosition?: 'center' | 'left' | 'right';
   triggerLabel?: string;
-};
-
-type Action = {
-  content: string;
-  onClick(): void;
 };
 
 export const ActionsMenu: Component<ActionsMenuProps> = props => {
@@ -165,6 +166,7 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
           [styles.active]: getIsExpanded(),
         })}
         data-tooltip={props.tooltip ?? t('moreActionsShortLabel')}
+        data-tooltip-position={props.tooltipPosition ?? 'center'}
         onClick={handleButtonClick}
         ref={buttonRef!}
       >
