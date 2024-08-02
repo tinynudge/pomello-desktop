@@ -14,7 +14,7 @@ import {
 } from '@pomello-desktop/domain';
 import { render } from '@solidjs/testing-library';
 import userEvent from '@testing-library/user-event';
-import translations from '../../../../../translations/en-US.json';
+import translations from '../../../../../translations/main/en-US.json';
 import { Auth } from '../Auth';
 
 export * from '@solidjs/testing-library';

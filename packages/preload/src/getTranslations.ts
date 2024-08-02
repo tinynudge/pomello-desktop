@@ -1,5 +1,5 @@
-import { AppEvent, TranslationsDictionary } from '@pomello-desktop/domain';
+import { AppEvent, TranslationLocation, TranslationsDictionary } from '@pomello-desktop/domain';
 import { ipcRenderer } from 'electron';
 
-export const getTranslations = (serviceId?: string): Promise<TranslationsDictionary> =>
-  ipcRenderer.invoke(AppEvent.GetTranslations, serviceId);
+export const getTranslations = (location: TranslationLocation): Promise<TranslationsDictionary> =>
+  ipcRenderer.invoke(AppEvent.GetTranslations, location);

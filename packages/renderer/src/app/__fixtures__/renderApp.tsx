@@ -22,7 +22,7 @@ import {
 import { render } from '@solidjs/testing-library';
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query';
 import userEvent from '@testing-library/user-event';
-import translations from '../../../../../translations/en-US.json';
+import translations from '../../../../../translations/main/en-US.json';
 import { App } from '../components/App';
 import { HotkeysProvider } from '../context/HotkeysContext';
 import { PomelloProvider } from '../context/PomelloContext';

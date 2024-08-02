@@ -1,5 +1,5 @@
 import { ParentComponent } from 'solid-js';
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderSharedComponent, screen } from '../__fixtures__/renderSharedComponent';
 import { Translate } from './Translate';
 
 describe('UI - Translate', () => {
@@ -17,7 +17,7 @@ describe('UI - Translate', () => {
 
     const Two: ParentComponent = props => <button>{props.children}</button>;
 
-    renderComponent(
+    renderSharedComponent(
       () => (
         <div data-testid="container">
           <Translate

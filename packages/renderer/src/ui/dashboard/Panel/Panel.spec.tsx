@@ -1,9 +1,9 @@
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderDashboardComponent, screen } from '../__fixtures__/renderDashboardComponent';
 import { Panel } from './Panel';
 
 describe('UI - Panel', () => {
   it('should render the panel', async () => {
-    renderComponent(() => <Panel heading="Head shoulder knees and toes" />);
+    renderDashboardComponent(() => <Panel heading="Head shoulder knees and toes" />);
 
     expect(
       screen.getByRole('heading', { name: 'Head shoulder knees and toes', level: 2 })
@@ -11,7 +11,7 @@ describe('UI - Panel', () => {
   });
 
   it('should render the panel list', async () => {
-    renderComponent(() => (
+    renderDashboardComponent(() => (
       <Panel heading="H.S.K.T.">
         <Panel.List aria-label="H.S.K.T.">
           <Panel.List.Item>Head</Panel.List.Item>
@@ -27,7 +27,7 @@ describe('UI - Panel', () => {
   });
 
   it('should render the panel form field', async () => {
-    renderComponent(() => (
+    renderDashboardComponent(() => (
       <Panel heading="Form">
         <Panel.List>
           <Panel.List.FormField description="What's in a name?" label="Name" for="name">
@@ -44,7 +44,7 @@ describe('UI - Panel', () => {
   });
 
   it('should render the panel form field actions', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <Panel heading="Form">
         <Panel.List>
           <Panel.List.FormField

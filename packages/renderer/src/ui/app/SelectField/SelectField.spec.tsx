@@ -1,17 +1,17 @@
 import { Component, createSignal } from 'solid-js';
 import { vi } from 'vitest';
-import { renderComponent, screen, waitFor } from '../../__fixtures__/renderComponent';
+import { renderAppComponent, screen, waitFor } from '../__fixtures__/renderAppComponent';
 import { SelectField } from './SelectField';
 
 describe('UI - Select Field', () => {
   it('should render the placeholder', () => {
-    renderComponent(() => <SelectField items={[]} onChange={vi.fn()} placeholder="Foobar" />);
+    renderAppComponent(() => <SelectField items={[]} onChange={vi.fn()} placeholder="Foobar" />);
 
     expect(screen.getByRole('button')).toHaveTextContent('Foobar');
   });
 
   it('should tell the select window what items to show', () => {
-    const { appApi } = renderComponent(() => (
+    const { appApi } = renderAppComponent(() => (
       <SelectField
         items={[
           { id: 'bulbasaur', label: 'Bulbasaur' },
@@ -32,7 +32,7 @@ describe('UI - Select Field', () => {
   });
 
   it('should open the select automatically if specified', async () => {
-    const { appApi } = renderComponent(() => (
+    const { appApi } = renderAppComponent(() => (
       <SelectField defaultOpen items={[]} onChange={vi.fn()} placeholder="Pick a Pokemon" />
     ));
 
@@ -42,7 +42,7 @@ describe('UI - Select Field', () => {
   });
 
   it('should open the select when clicked', async () => {
-    const { appApi, userEvent } = renderComponent(() => (
+    const { appApi, userEvent } = renderAppComponent(() => (
       <SelectField items={[]} onChange={vi.fn()} />
     ));
 
@@ -52,7 +52,7 @@ describe('UI - Select Field', () => {
   });
 
   it('should open the select when the space bar is pressed', async () => {
-    const { appApi, userEvent } = renderComponent(() => (
+    const { appApi, userEvent } = renderAppComponent(() => (
       <SelectField items={[]} onChange={vi.fn()} />
     ));
 
@@ -64,7 +64,7 @@ describe('UI - Select Field', () => {
   it('should call the change handler when an option has been selected', async () => {
     const onSelectChange = vi.fn();
 
-    const { emitAppApiEvent } = renderComponent(() => (
+    const { emitAppApiEvent } = renderAppComponent(() => (
       <SelectField items={[]} onChange={onSelectChange} />
     ));
 
@@ -85,7 +85,7 @@ describe('UI - Select Field', () => {
       );
     };
 
-    const { appApi, userEvent } = renderComponent(() => <Container />);
+    const { appApi, userEvent } = renderAppComponent(() => <Container />);
 
     await userEvent.click(screen.getByRole('button', { name: 'Hide select' }));
 

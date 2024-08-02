@@ -1,9 +1,9 @@
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderDashboardComponent, screen } from '../__fixtures__/renderDashboardComponent';
 import { ToggleSwitch } from './ToggleSwitch';
 
 describe('UI - ToggleSwitch', () => {
   it('should render the toggle switch', async () => {
-    renderComponent(() => <ToggleSwitch />);
+    renderDashboardComponent(() => <ToggleSwitch />);
 
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
   });
@@ -11,7 +11,9 @@ describe('UI - ToggleSwitch', () => {
   it('should trigger the onChange handler', async () => {
     const handleSwitchChange = vi.fn();
 
-    const { userEvent } = renderComponent(() => <ToggleSwitch onChange={handleSwitchChange} />);
+    const { userEvent } = renderDashboardComponent(() => (
+      <ToggleSwitch onChange={handleSwitchChange} />
+    ));
 
     await userEvent.click(screen.getByRole('checkbox'));
 

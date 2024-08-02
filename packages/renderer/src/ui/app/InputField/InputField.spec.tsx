@@ -1,6 +1,6 @@
 import { JSX } from 'solid-js';
 import { vi } from 'vitest';
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderAppComponent, screen } from '../__fixtures__/renderAppComponent';
 import { InputField } from './InputField';
 
 describe('UI - Input Field', () => {
@@ -16,13 +16,13 @@ describe('UI - Input Field', () => {
   });
 
   it('should render the placeholder', () => {
-    renderComponent(() => <InputField placeholder="Hello world" />);
+    renderAppComponent(() => <InputField placeholder="Hello world" />);
 
     expect(screen.getByPlaceholderText('Hello world')).toBeInTheDocument();
   });
 
   it('should call the onInput handler when updated', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderAppComponent(() => (
       <InputField value={value} onInput={handleInputChange} />
     ));
 
@@ -35,7 +35,7 @@ describe('UI - Input Field', () => {
   it('should call the onEscape handler when content is entered', async () => {
     const handleInputEscape = vi.fn();
 
-    const { userEvent } = renderComponent(() => <InputField onEscape={handleInputEscape} />);
+    const { userEvent } = renderAppComponent(() => <InputField onEscape={handleInputEscape} />);
 
     await userEvent.type(screen.getByRole('textbox'), '{Escape}');
 
@@ -45,7 +45,7 @@ describe('UI - Input Field', () => {
   it('should call the onSubmit handler when content is entered', async () => {
     const handleInputSubmit = vi.fn();
 
-    const { userEvent } = renderComponent(() => <InputField onSubmit={handleInputSubmit} />);
+    const { userEvent } = renderAppComponent(() => <InputField onSubmit={handleInputSubmit} />);
 
     await userEvent.type(screen.getByRole('textbox'), '{Enter}');
 

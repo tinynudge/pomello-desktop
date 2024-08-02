@@ -1,0 +1,23 @@
+{
+  "accountActionsMenuLabel": "Account",
+  "accountActionsTooltip": "Account menu",
+  "accountActionsTriggerLabel": "Show account menu",
+  "accountDetailsEditProfile": "Edit profile",
+  "accountDetailsLogOut": "Log out",
+  "formFieldMoreOptionsMenuLabel": "More options",
+  "formFieldMoreOptionsTooltip": "More",
+  "formFieldMoreOptionsTriggerLabel": "Show more options",
+  "freeAccountLabel": "Free",
+  "lastSyncDate": "Last synced: {{date}}",
+  "menuLabel": "Main menu",
+  "moreActionsLabel": "Show more actions",
+  "moreActionsShortLabel": "More actions",
+  "premiumAccountLabel": "Premium",
+  "routeKeyboardShortcuts": "Keyboard shortcuts",
+  "routeProductivity": "Productivity",
+  "routeProfile": "Profile",
+  "routeServices": "Services",
+  "routeSettings": "Settings",
+  "routeSounds": "Sounds",
+  "trackProductivityMessage": "<logIn>Log in</logIn> or <signUp>sign up</signUp> to track your productivity."
+}

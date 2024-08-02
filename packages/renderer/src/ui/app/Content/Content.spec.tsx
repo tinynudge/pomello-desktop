@@ -1,9 +1,9 @@
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderAppComponent, screen } from '../__fixtures__/renderAppComponent';
 import { Content } from './Content';
 
 describe('UI - Content', () => {
   it('should display children content', () => {
-    renderComponent(() => (
+    renderAppComponent(() => (
       <Content>
         <h1>Hello world</h1>
       </Content>

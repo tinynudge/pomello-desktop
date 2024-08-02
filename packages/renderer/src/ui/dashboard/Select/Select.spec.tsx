@@ -1,9 +1,9 @@
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderDashboardComponent, screen } from '../__fixtures__/renderDashboardComponent';
 import { Select } from './Select';
 
 describe('UI - Select', () => {
   it('should render the select', async () => {
-    renderComponent(() => (
+    renderDashboardComponent(() => (
       <Select
         aria-label="Count"
         options={[
@@ -17,7 +17,7 @@ describe('UI - Select', () => {
   });
 
   it('should select a default value', async () => {
-    renderComponent(() => (
+    renderDashboardComponent(() => (
       <Select
         options={[
           { id: 'one', label: 'One' },
@@ -33,7 +33,7 @@ describe('UI - Select', () => {
   it('should trigger the onChange handler', async () => {
     const handleSelectChange = vi.fn();
 
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <Select
         onChange={handleSelectChange}
         options={[

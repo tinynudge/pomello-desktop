@@ -17,7 +17,7 @@ const renderDashboard = async () => {
 
   const [themeCss, translations, pomelloConfig, settings] = await Promise.all([
     window.app.getThemeCss(),
-    window.app.getTranslations(),
+    window.app.getTranslations('dashboard'),
     getPomelloServiceConfig(),
     window.app.getSettings(),
   ]);

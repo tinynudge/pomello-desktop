@@ -1,9 +1,9 @@
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderDashboardComponent, screen } from '../__fixtures__/renderDashboardComponent';
 import { ActionsMenu } from './ActionsMenu';
 
 describe('UI - ActionsMenu', () => {
   it('should show the menu when the button is clicked', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -24,7 +24,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should allow custom labels', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -49,7 +49,7 @@ describe('UI - ActionsMenu', () => {
   it('should trigger the menu item when Space is pressed', async () => {
     const handleItemClick = vi.fn();
 
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -69,7 +69,7 @@ describe('UI - ActionsMenu', () => {
   it('should trigger the menu item when Enter is pressed', async () => {
     const handleItemClick = vi.fn();
 
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -87,7 +87,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should close the menu when Escape is pressed', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -106,7 +106,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should close the menu when Tab is pressed', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -124,7 +124,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should focus on the next menu item when the down arrow is pressed', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -146,7 +146,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should focus on the previous menu item when the up arrow is pressed', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -169,7 +169,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should focus on the first menu item when the down arrow is pressed on the last menu item', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -196,7 +196,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should focus on the last menu item when the up arrow is pressed on the first menu item', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -222,7 +222,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should focus on the first menu item when Home is pressed', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {
@@ -249,7 +249,7 @@ describe('UI - ActionsMenu', () => {
   });
 
   it('should focus on the last menu item when Home is pressed', async () => {
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderDashboardComponent(() => (
       <ActionsMenu
         actions={[
           {

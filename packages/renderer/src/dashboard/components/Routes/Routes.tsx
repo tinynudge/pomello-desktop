@@ -8,12 +8,12 @@ export const Routes: Component = () => {
   const t = useTranslate();
 
   const routes: Record<DashboardRoute, string> = {
-    [DashboardRoute.KeyboardShortcuts]: t('dashboardMenuKeyboardShortcuts'),
-    [DashboardRoute.Productivity]: t('dashboardMenuProductivity'),
-    [DashboardRoute.Profile]: t('dashboardMenuProfile'),
-    [DashboardRoute.Services]: t('dashboardMenuServices'),
-    [DashboardRoute.Settings]: t('dashboardMenuSettings'),
-    [DashboardRoute.Sounds]: t('dashboardMenuSounds'),
+    [DashboardRoute.KeyboardShortcuts]: t('routeKeyboardShortcuts'),
+    [DashboardRoute.Productivity]: t('routeProductivity'),
+    [DashboardRoute.Profile]: t('routeProfile'),
+    [DashboardRoute.Services]: t('routeServices'),
+    [DashboardRoute.Settings]: t('routeSettings'),
+    [DashboardRoute.Sounds]: t('routeSounds'),
   };
 
   return (

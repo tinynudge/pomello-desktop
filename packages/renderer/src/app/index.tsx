@@ -30,7 +30,7 @@ const renderApp = async () => {
   const [hotkeys, themeCss, translations, pomelloConfig, serviceId, settings] = await Promise.all([
     window.app.getHotkeys(),
     window.app.getThemeCss(),
-    window.app.getTranslations(),
+    window.app.getTranslations('main'),
     getPomelloServiceConfig(),
     window.app.getActiveServiceId(),
     window.app.getSettings(),
