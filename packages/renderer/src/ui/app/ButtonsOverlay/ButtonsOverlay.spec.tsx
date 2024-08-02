@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
-import { renderComponent, screen } from '../../__fixtures__/renderComponent';
+import { renderAppComponent, screen } from '../__fixtures__/renderAppComponent';
 import { ButtonsOverlay } from './ButtonsOverlay';
 
 describe('UI - Buttons Overlay', () => {
   it('should render properly', () => {
-    renderComponent(() => (
+    renderAppComponent(() => (
       <ButtonsOverlay
         buttons={[
           { content: 'One', onClick: () => null },
@@ -23,7 +23,7 @@ describe('UI - Buttons Overlay', () => {
   it('should call a handler when a button is clicked', async () => {
     const handleButtonClick = vi.fn();
 
-    const { userEvent } = renderComponent(() => (
+    const { userEvent } = renderAppComponent(() => (
       <ButtonsOverlay
         buttons={[
           {

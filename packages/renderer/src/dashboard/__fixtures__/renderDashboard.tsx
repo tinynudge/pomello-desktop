@@ -14,7 +14,7 @@ import {
 import { MemoryRouter, createMemoryHistory } from '@solidjs/router';
 import { render } from '@solidjs/testing-library';
 import userEvent from '@testing-library/user-event';
-import translations from '../../../../../translations/en-US.json';
+import translations from '../../../../../translations/dashboard/en-US.json';
 import { Layout } from '../components/Layout';
 import { Routes } from '../components/Routes';
 

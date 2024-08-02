@@ -94,7 +94,7 @@ export const ServiceProvider: ParentComponent<ServiceProviderProps> = props => {
 
     const [config, serviceTranslations] = await Promise.all([
       createService.config ? createServiceConfig(createService.id, createService.config) : null,
-      window.app.getTranslations(createService.id),
+      window.app.getTranslations({ serviceId: createService.id }),
     ]);
 
     translations.addNamespace('service', serviceTranslations);

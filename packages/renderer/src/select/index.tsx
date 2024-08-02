@@ -19,7 +19,7 @@ const renderSelect = async () => {
     window.app.getActiveServiceId(),
     window.app.getSettings(),
     window.app.getThemeCss(),
-    window.app.getTranslations(),
+    window.app.getTranslations('main'),
   ]);
 
   const logger = createLogger();

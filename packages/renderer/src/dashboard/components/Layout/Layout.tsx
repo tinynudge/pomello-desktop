@@ -11,17 +11,17 @@ export const Layout: ParentComponent = props => {
   const t = useTranslate();
 
   const routes: [DashboardRoute, label: string][] = [
-    [DashboardRoute.Productivity, t('dashboardMenuProductivity')],
-    [DashboardRoute.Settings, t('dashboardMenuSettings')],
-    [DashboardRoute.Sounds, t('dashboardMenuSounds')],
-    [DashboardRoute.KeyboardShortcuts, t('dashboardMenuKeyboardShortcuts')],
-    [DashboardRoute.Services, t('dashboardMenuServices')],
+    [DashboardRoute.Productivity, t('routeProductivity')],
+    [DashboardRoute.Settings, t('routeSettings')],
+    [DashboardRoute.Sounds, t('routeSounds')],
+    [DashboardRoute.KeyboardShortcuts, t('routeKeyboardShortcuts')],
+    [DashboardRoute.Services, t('routeServices')],
   ];
 
   return (
     <div class={styles.layout}>
       <div class={styles.sidebar}>
-        <nav aria-label={t('dashboardMenuLabel')} class={styles.menu}>
+        <nav aria-label={t('menuLabel')} class={styles.menu}>
           <ul>
             <For each={routes}>
               {([route, label]) => (

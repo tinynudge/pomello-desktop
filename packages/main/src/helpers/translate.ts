@@ -2,7 +2,7 @@ import { Translate } from '@pomello-desktop/domain';
 import { getTranslations } from './getTranslations';
 
 export const translate: Translate = (key, mappings) => {
-  const translations = getTranslations();
+  const translations = getTranslations('main');
 
   const translation = translations[key];
 

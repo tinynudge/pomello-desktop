@@ -7,17 +7,19 @@ import { PomelloServiceConfig, Settings, TranslationsDictionary } from '@pomello
 import { render } from '@solidjs/testing-library';
 import userEvent from '@testing-library/user-event';
 import { JSX } from 'solid-js';
-import translations from '../../../../../translations/en-US.json';
 
 export * from '@solidjs/testing-library';
 
-type MountComponentOptions = {
+type RenderSharedComponentOptions = {
   appApi?: Partial<AppApi>;
   settings?: Partial<Settings>;
   translations?: TranslationsDictionary;
 };
 
-export const renderComponent = (ui: () => JSX.Element, options: MountComponentOptions = {}) => {
+export const renderSharedComponent = (
+  ui: () => JSX.Element,
+  options: RenderSharedComponentOptions = {}
+) => {
   const logger = createMockLogger();
   const settings = createMockSettings(options.settings);
   const [pomelloConfig] = createMockServiceConfig<PomelloServiceConfig>('pomello', {});
@@ -34,7 +36,7 @@ export const renderComponent = (ui: () => JSX.Element, options: MountComponentOp
           initialPomelloConfig={pomelloConfig}
           initialServices={{}}
           initialSettings={settings}
-          initialTranslations={{ ...translations, ...options.translations }}
+          initialTranslations={{ ...options.translations }}
         >
           {props.children}
         </RuntimeProvider>
