@@ -1,3 +1,4 @@
+import { SettingsView } from '@/dashboard/views/SettingsView';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { Route } from '@solidjs/router';
@@ -17,8 +18,11 @@ export const Routes: Component = () => {
   };
 
   return (
-    <For each={Object.values(DashboardRoute)}>
-      {route => <Route path={route} component={() => <MainHeader heading={routes[route]} />} />}
-    </For>
+    <>
+      <Route path={DashboardRoute.Settings} component={SettingsView} />
+      <For each={Object.values(DashboardRoute)}>
+        {route => <Route path={route} component={() => <MainHeader heading={routes[route]} />} />}
+      </For>
+    </>
   );
 };
