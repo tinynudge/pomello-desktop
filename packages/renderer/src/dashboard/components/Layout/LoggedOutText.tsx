@@ -1,3 +1,4 @@
+import { ButtonLink } from '@/ui/dashboard/ButtonLink';
 import { Translate } from '@/ui/shared/Translate';
 import { Component } from 'solid-js';
 import styles from './LoggedOutText.module.scss';
@@ -15,14 +16,14 @@ export const LoggedOutText: Component = () => {
       <Translate
         components={{
           logIn: props => (
-            <button class={styles.button} onClick={() => handleAuthButtonClick('authorize')}>
+            <ButtonLink onClick={() => handleAuthButtonClick('authorize')}>
               {props.children}
-            </button>
+            </ButtonLink>
           ),
           signUp: props => (
-            <button class={styles.button} onClick={() => handleAuthButtonClick('register')}>
+            <ButtonLink onClick={() => handleAuthButtonClick('register')}>
               {props.children}
-            </button>
+            </ButtonLink>
           ),
         }}
         key="trackProductivityMessage"

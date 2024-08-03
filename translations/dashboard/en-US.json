@@ -19,5 +19,6 @@
   "routeServices": "Services",
   "routeSettings": "Settings",
   "routeSounds": "Sounds",
+  "settingsSyncDisabled": "Syncing is disabled. <logIn>Log in</logIn> to Pomello to sync your settings.",
   "trackProductivityMessage": "<logIn>Log in</logIn> or <signUp>sign up</signUp> to track your productivity."
 }
