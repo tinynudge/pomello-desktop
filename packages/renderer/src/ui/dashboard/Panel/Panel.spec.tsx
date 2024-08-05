@@ -38,7 +38,7 @@ describe('UI - Panel', () => {
     ));
 
     expect(screen.getByText('Name')).toBeInTheDocument();
-    expect(screen.getByLabelText('Name')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
     expect(screen.getByText("What's in a name?")).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Show more options' })).not.toBeInTheDocument();
   });

@@ -1,13 +1,14 @@
 .layout {
   display: flex;
-  width: 100vw;
-  height: 100vh;
   color: var(--dashboard-text-default);
 }
 
 .sidebar {
+  position: sticky;
+  top: 0;
   display: flex;
   width: 240px;
+  height: 100vh;
   flex-direction: column;
   border-right: 1px solid var(--dashboard-border);
   background: var(--dashboard-sidebar-background-default);
