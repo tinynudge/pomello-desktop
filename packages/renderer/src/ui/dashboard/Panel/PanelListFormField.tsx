@@ -17,6 +17,7 @@ export const PanelListFormField: ParentComponent<PanelListFormFieldProps> = prop
 
   return (
     <PanelListItem
+      aria-label={props.label}
       class={cc({
         [styles.panelListFormField]: true,
         [styles.hasActions]: !!props.actions,
@@ -25,7 +26,11 @@ export const PanelListFormField: ParentComponent<PanelListFormFieldProps> = prop
       <div>
         <label for={props.for}>{props.label}</label>
         <Show when={props.description}>
-          {getDescription => <div class={styles.description}>{getDescription()}</div>}
+          {getDescription => (
+            <div class={styles.description} data-testid="form-field-description">
+              {getDescription()}
+            </div>
+          )}
         </Show>
       </div>
       <div class={styles.content}>

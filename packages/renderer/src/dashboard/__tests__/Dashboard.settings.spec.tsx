@@ -58,4 +58,160 @@ describe('Dashboard - Settings', () => {
       action: 'authorize',
     });
   });
+
+  it('should render the general settings', () => {
+    renderDashboard({
+      route: DashboardRoute.Settings,
+    });
+
+    const list = screen.getByRole('list', { name: 'General settings' });
+
+    expect(screen.getByRole('heading', { name: 'General', level: 2 })).toBeInTheDocument();
+    expect(list).toBeInTheDocument();
+    expect(within(list).getAllByRole('listitem')).toHaveLength(8);
+  });
+
+  it.each([
+    {
+      defaultValue: true,
+      index: 0,
+      label: 'Always on top',
+      setting: 'alwaysOnTop',
+    },
+    {
+      defaultValue: false,
+      index: 1,
+      label: 'Snap to screen edge',
+      setting: 'snapEdges',
+    },
+    {
+      defaultValue: true,
+      index: 3,
+      label: 'Overtime',
+      setting: 'overtime',
+    },
+    {
+      defaultValue: true,
+      index: 5,
+      label: 'Check Pomello account login status',
+      setting: 'checkPomelloStatus',
+    },
+    {
+      defaultValue: true,
+      index: 6,
+      label: 'Warn before canceling task',
+      setting: 'warnBeforeTaskCancel',
+    },
+    {
+      defaultValue: true,
+      index: 7,
+      label: 'Warn before quitting app',
+      setting: 'warnBeforeAppQuit',
+    },
+  ])(
+    'should update the toggle setting for "$label"',
+    async ({ defaultValue, index, label, setting }) => {
+      const { appApi, userEvent } = renderDashboard({
+        route: DashboardRoute.Settings,
+        settings: {
+          [setting]: defaultValue,
+        },
+      });
+
+      const main = screen.getByRole('main');
+      const listItems = within(main).getAllByRole('listitem');
+      const listItem = within(main).getByRole('listitem', { name: label });
+
+      expect(listItem).toBe(listItems.at(index));
+      expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('checkbox', { name: label }));
+
+      expect(appApi.updateSetting).toHaveBeenCalledTimes(1);
+      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, !defaultValue);
+
+      await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+      await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+
+      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, defaultValue);
+    }
+  );
+
+  it.each([
+    {
+      defaultValue: { id: 'focus', label: 'Focus' },
+      index: 2,
+      label: 'Time expired notification',
+      newValue: { id: 'flash', label: 'Flash' },
+      setting: 'timeExpiredNotification',
+    },
+  ])(
+    'should update select setting for "$label"',
+    async ({ defaultValue, index, label, newValue, setting }) => {
+      const { appApi, userEvent } = renderDashboard({
+        route: DashboardRoute.Settings,
+        settings: {
+          [setting]: defaultValue.id,
+        },
+      });
+
+      const main = screen.getByRole('main');
+      const listItems = within(main).getAllByRole('listitem');
+      const listItem = within(main).getByRole('listitem', { name: label });
+
+      expect(listItem).toBe(listItems.at(index));
+      expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+
+      await userEvent.selectOptions(screen.getByRole('combobox', { name: label }), newValue.label);
+
+      expect(appApi.updateSetting).toHaveBeenCalledTimes(1);
+      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, newValue.id);
+
+      await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+      await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+
+      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, defaultValue.id);
+    }
+  );
+
+  it.each([
+    {
+      defaultValue: 60,
+      index: 4,
+      label: 'Overtime delay',
+      newValue: 13 * 60,
+      setting: 'overtimeDelay',
+    },
+  ])(
+    'should update time setting for "$label"',
+    async ({ defaultValue, index, label, newValue, setting }) => {
+      const { appApi, userEvent } = renderDashboard({
+        route: DashboardRoute.Settings,
+        settings: {
+          [setting]: defaultValue,
+        },
+      });
+
+      const main = screen.getByRole('main');
+      const listItems = within(main).getAllByRole('listitem');
+      const listItem = within(main).getByRole('listitem', { name: label });
+
+      expect(listItem).toBe(listItems.at(index));
+      expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+      expect(within(listItem).getByText('min')).toBeInTheDocument();
+
+      await userEvent.selectOptions(
+        screen.getByRole('combobox', { name: label }),
+        `${newValue / 60}`
+      );
+
+      expect(appApi.updateSetting).toHaveBeenCalledTimes(1);
+      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, newValue);
+
+      await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+      await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+
+      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, defaultValue);
+    }
+  );
 });

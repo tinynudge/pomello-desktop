@@ -4,7 +4,7 @@ import { CustomSound } from './CustomSound';
 export type Settings = {
   alwaysOnTop: boolean;
   snapEdges: boolean;
-  timeExpiredNotification: string;
+  timeExpiredNotification: 'flash' | 'focus';
   overtime: boolean;
   overtimeDelay: number;
   checkPomelloStatus: boolean;
