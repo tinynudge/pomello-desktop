@@ -108,6 +108,24 @@ describe('Dashboard - Settings', () => {
       label: 'Warn before quitting app',
       setting: 'warnBeforeAppQuit',
     },
+    {
+      defaultValue: true,
+      index: 11,
+      label: 'Reset pomodoro set',
+      setting: 'resetPomodoroSet',
+    },
+    {
+      defaultValue: false,
+      index: 12,
+      label: 'Auto start tasks',
+      setting: 'autoStartTasks',
+    },
+    {
+      defaultValue: false,
+      index: 13,
+      label: 'Auto start breaks',
+      setting: 'autoStartBreaks',
+    },
   ])(
     'should update the toggle setting for "$label"',
     async ({ defaultValue, index, label, setting }) => {
@@ -181,6 +199,27 @@ describe('Dashboard - Settings', () => {
       label: 'Overtime delay',
       newValue: 13 * 60,
       setting: 'overtimeDelay',
+    },
+    {
+      defaultValue: 25 * 60,
+      index: 8,
+      label: 'Task time',
+      newValue: 13 * 60,
+      setting: 'taskTime',
+    },
+    {
+      defaultValue: 5 * 60,
+      index: 9,
+      label: 'Short break time',
+      newValue: 2 * 60,
+      setting: 'shortBreakTime',
+    },
+    {
+      defaultValue: 15 * 60,
+      index: 10,
+      label: 'Long break time',
+      newValue: 20 * 60,
+      setting: 'longBreakTime',
     },
   ])(
     'should update time setting for "$label"',

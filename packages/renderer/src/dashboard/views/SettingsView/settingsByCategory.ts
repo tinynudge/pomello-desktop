@@ -85,4 +85,46 @@ export const settingsByCategory: SettingsByCategory[] = [
       },
     ],
   },
+  {
+    headingKey: 'pomodoroSettingsHeader',
+    listLabelKey: 'pomodoroSettingsLabel',
+    settings: [
+      {
+        default: 1500,
+        id: 'taskTime',
+        max: 60,
+        min: 1,
+        type: 'time',
+      },
+      {
+        default: 300,
+        id: 'shortBreakTime',
+        max: 30,
+        min: 1,
+        type: 'time',
+      },
+      {
+        default: 900,
+        id: 'longBreakTime',
+        max: 60,
+        min: 1,
+        type: 'time',
+      },
+      {
+        default: true,
+        id: 'resetPomodoroSet',
+        type: 'toggle',
+      },
+      {
+        default: false,
+        id: 'autoStartTasks',
+        type: 'toggle',
+      },
+      {
+        default: false,
+        id: 'autoStartBreaks',
+        type: 'toggle',
+      },
+    ],
+  },
 ];
