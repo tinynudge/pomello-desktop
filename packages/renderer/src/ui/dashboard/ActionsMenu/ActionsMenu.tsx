@@ -187,8 +187,8 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
           {(action, getIndex) => (
             <li
               class={styles.action}
-              onClick={() => handleActionClick(action.onClick)}
-              onMouseOver={() => setActiveAction(action)}
+              onClick={[handleActionClick, action.onClick]}
+              onMouseOver={[setActiveAction, action]}
               ref={element => setActionMeta(action, element, getIndex())}
               role="menuitem"
               tabIndex={getActiveAction() === action ? 0 : -1}

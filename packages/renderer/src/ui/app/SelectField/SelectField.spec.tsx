@@ -79,7 +79,7 @@ describe('UI - Select Field', () => {
 
       return (
         <>
-          <button onClick={() => setIsVisible(false)}>Hide select</button>
+          <button onClick={[setIsVisible, false]}>Hide select</button>
           {getIsVisible() && <SelectField items={[]} onChange={vi.fn()} />}
         </>
       );
