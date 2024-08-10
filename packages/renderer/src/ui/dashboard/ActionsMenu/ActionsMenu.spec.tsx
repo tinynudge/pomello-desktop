@@ -1,18 +1,24 @@
+import { createSignal } from 'solid-js';
 import { renderDashboardComponent, screen } from '../__fixtures__/renderDashboardComponent';
 import { ActionsMenu } from './ActionsMenu';
 
 describe('UI - ActionsMenu', () => {
   it('should show the menu when the button is clicked', async () => {
-    const { userEvent } = renderDashboardComponent(() => (
-      <ActionsMenu
-        actions={[
-          {
-            content: 'One',
-            onClick: () => {},
-          },
-        ]}
-      />
-    ));
+    const { userEvent } = renderDashboardComponent(() => {
+      // Make sure the actions work in a reactive context
+      const [getLabel] = createSignal('One');
+
+      return (
+        <ActionsMenu
+          actions={[
+            {
+              onClick: () => {},
+              text: getLabel(),
+            },
+          ]}
+        />
+      );
+    });
 
     expect(screen.queryByRole('menu', { name: 'More actions' })).not.toBeInTheDocument();
 
@@ -28,7 +34,7 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
         ]}
@@ -53,7 +59,7 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: handleItemClick,
           },
         ]}
@@ -73,7 +79,7 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: handleItemClick,
           },
         ]}
@@ -91,7 +97,7 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
         ]}
@@ -110,7 +116,7 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
         ]}
@@ -128,11 +134,11 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
           {
-            content: 'Two',
+            text: 'Two',
             onClick: () => {},
           },
         ]}
@@ -150,11 +156,11 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
           {
-            content: 'Two',
+            text: 'Two',
             onClick: () => {},
           },
         ]}
@@ -173,15 +179,15 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
           {
-            content: 'Two',
+            text: 'Two',
             onClick: () => {},
           },
           {
-            content: 'Three',
+            text: 'Three',
             onClick: () => {},
           },
         ]}
@@ -200,15 +206,15 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
           {
-            content: 'Two',
+            text: 'Two',
             onClick: () => {},
           },
           {
-            content: 'Three',
+            text: 'Three',
             onClick: () => {},
           },
         ]}
@@ -226,15 +232,15 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
           {
-            content: 'Two',
+            text: 'Two',
             onClick: () => {},
           },
           {
-            content: 'Three',
+            text: 'Three',
             onClick: () => {},
           },
         ]}
@@ -253,15 +259,15 @@ describe('UI - ActionsMenu', () => {
       <ActionsMenu
         actions={[
           {
-            content: 'One',
+            text: 'One',
             onClick: () => {},
           },
           {
-            content: 'Two',
+            text: 'Two',
             onClick: () => {},
           },
           {
-            content: 'Three',
+            text: 'Three',
             onClick: () => {},
           },
         ]}
