@@ -27,17 +27,6 @@ export const AccountDetails: Component<AccountDetailsProps> = props => {
     pomelloConfig.actions.userInvalidated();
   };
 
-  const accountActions = [
-    {
-      content: t('accountDetailsEditProfile'),
-      onClick: handleEditProfileClick,
-    },
-    {
-      content: t('accountDetailsLogOut'),
-      onClick: handleLogOutClick,
-    },
-  ];
-
   return (
     <div class={styles.accountDetails}>
       <div class={styles.user}>
@@ -48,7 +37,16 @@ export const AccountDetails: Component<AccountDetailsProps> = props => {
         <p class={styles.userDetail}>{props.user.email}</p>
       </div>
       <ActionsMenu
-        actions={accountActions}
+        actions={[
+          {
+            onClick: handleEditProfileClick,
+            text: t('accountDetailsEditProfile'),
+          },
+          {
+            onClick: handleLogOutClick,
+            text: t('accountDetailsLogOut'),
+          },
+        ]}
         menuLabel={t('accountActionsMenuLabel')}
         tooltip={t('accountActionsTooltip')}
         triggerLabel={t('accountActionsTriggerLabel')}

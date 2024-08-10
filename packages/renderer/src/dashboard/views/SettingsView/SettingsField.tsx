@@ -22,8 +22,8 @@ export const SettingsField: ParentComponent<SettingsFieldProps> = props => {
       actions={[
         ...(props.additionalActions ?? []),
         {
-          content: t('restoreDefault', { value: props.defaultValue }),
           onClick: handleRestoreDefaultClick,
+          text: t('restoreDefault', { value: props.defaultValue }),
         },
       ]}
       description={t(`settings.${props.setting.id}.description`)}

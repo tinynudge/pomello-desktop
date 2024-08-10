@@ -50,8 +50,8 @@ describe('UI - Panel', () => {
           <Panel.List.FormField
             actions={[
               {
-                content: 'Reset',
                 onClick: () => {},
+                text: 'Reset',
               },
             ]}
             label="Name"

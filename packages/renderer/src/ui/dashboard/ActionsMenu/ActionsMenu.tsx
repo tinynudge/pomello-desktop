@@ -1,12 +1,12 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import cc from 'classcat';
-import { Component, For, JSX, createEffect, createMemo, createSignal } from 'solid-js';
+import { Accessor, Component, For, JSX, createEffect, createSignal } from 'solid-js';
 import styles from './ActionsMenu.module.scss';
 import MoreIcon from './assets/more.svg';
 
 export type Action = {
-  content: string;
   onClick(): void;
+  text: string;
 };
 
 type ActionsMenuProps = {
@@ -20,28 +20,26 @@ type ActionsMenuProps = {
 export const ActionsMenu: Component<ActionsMenuProps> = props => {
   const t = useTranslate();
 
-  const actionMetaMap: WeakMap<Action, { element: HTMLLIElement; index: number }> = new WeakMap();
+  const actionElements: HTMLElement[] = [];
 
   const [getIsExpanded, setIsExpanded] = createSignal(false);
-  const [getActiveAction, setActiveAction] = createSignal<Action | undefined>(undefined);
-
-  const getActiveActionMeta = createMemo(() => {
-    const activeAction = getActiveAction();
-
-    return activeAction ? actionMetaMap.get(activeAction) : undefined;
-  });
+  const [getActiveIndex, setActiveIndex] = createSignal<number | null>(null);
 
   createEffect(() => {
-    getActiveActionMeta()?.element.focus();
+    const activeIndex = getActiveIndex();
+
+    if (activeIndex !== null) {
+      actionElements.at(activeIndex)?.focus();
+    }
   });
 
   createEffect(() => {
     if (getIsExpanded()) {
-      setActiveAction(props.actions.at(0));
+      setActiveIndex(0);
 
       document.body.addEventListener('click', handleOutsideClick);
     } else {
-      setActiveAction(undefined);
+      setActiveIndex(null);
 
       document.body.removeEventListener('click', handleOutsideClick);
     }
@@ -67,23 +65,33 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
 
   const handleListKeyDown: JSX.EventHandler<HTMLUListElement, KeyboardEvent> = event => {
     if (event.key === 'ArrowDown') {
+      event.preventDefault();
       highlightNextAction();
     } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
       highlightPreviousAction();
-    } else if (event.key === 'Escape' || event.key === 'Tab') {
-      closeMenu(true);
     } else if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();
       triggerActiveAction();
     } else if (event.key === 'Home') {
+      event.preventDefault();
       highlightFirstAction();
     } else if (event.key === 'End') {
+      event.preventDefault();
       highlightLastAction();
+    } else if (event.key === 'Escape') {
+      closeMenu(true);
+    } else if (event.key === 'Tab') {
+      closeMenu();
     }
   };
 
-  const handleActionClick = (callback: () => void) => {
-    callback();
+  const handleActionMouseOver = (getIndex: Accessor<number>) => {
+    setActiveIndex(getIndex());
+  };
+
+  const handleActionClick = (action: Action) => {
+    action.onClick();
     closeMenu();
   };
 
@@ -96,38 +104,37 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
   };
 
   const triggerActiveAction = () => {
-    const activeAction = getActiveAction();
+    const activeIndex = getActiveIndex();
 
-    if (activeAction) {
-      activeAction.onClick();
+    if (activeIndex !== null) {
+      props.actions.at(activeIndex)?.onClick();
+
       closeMenu(true);
     }
   };
 
   const highlightFirstAction = () => {
-    const firstAction = props.actions.at(0);
-
-    if (firstAction) {
-      setActiveAction(firstAction);
+    if (props.actions.at(0)) {
+      setActiveIndex(0);
     }
   };
 
   const highlightLastAction = () => {
-    const lastAction = props.actions.at(-1);
+    const lastIndex = props.actions.length - 1;
 
-    if (lastAction) {
-      setActiveAction(lastAction);
+    if (props.actions.at(lastIndex)) {
+      setActiveIndex(lastIndex);
     }
   };
 
   const highlightNextAction = () => {
-    const actionMeta = getActiveActionMeta();
+    const activeIndex = getActiveIndex();
 
-    if (actionMeta) {
-      const nextAction = props.actions.at(actionMeta.index + 1);
+    if (activeIndex !== null) {
+      const nextIndex = activeIndex + 1;
 
-      if (nextAction) {
-        setActiveAction(nextAction);
+      if (props.actions.at(nextIndex)) {
+        setActiveIndex(nextIndex);
       } else {
         highlightFirstAction();
       }
@@ -135,21 +142,25 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
   };
 
   const highlightPreviousAction = () => {
-    const actionMeta = getActiveActionMeta();
+    const activeIndex = getActiveIndex();
 
-    if (actionMeta) {
-      const previousAction = props.actions.at(actionMeta.index - 1);
+    if (activeIndex !== null) {
+      const previousIndex = activeIndex - 1;
 
-      if (previousAction) {
-        setActiveAction(previousAction);
+      if (props.actions.at(previousIndex)) {
+        setActiveIndex(previousIndex);
       } else {
         highlightLastAction();
       }
     }
   };
 
-  const setActionMeta = (action: Action, element: HTMLLIElement, index: number) => {
-    actionMetaMap.set(action, { element, index });
+  const setActionMeta = (element: HTMLLIElement, index: number) => {
+    if (index === 0) {
+      actionElements.length = 0;
+    }
+
+    actionElements.push(element);
   };
 
   let buttonRef: HTMLButtonElement;
@@ -187,13 +198,13 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
           {(action, getIndex) => (
             <li
               class={styles.action}
-              onClick={[handleActionClick, action.onClick]}
-              onMouseOver={[setActiveAction, action]}
-              ref={element => setActionMeta(action, element, getIndex())}
+              onClick={[handleActionClick, action]}
+              onMouseOver={[handleActionMouseOver, getIndex]}
+              ref={element => setActionMeta(element, getIndex())}
               role="menuitem"
-              tabIndex={getActiveAction() === action ? 0 : -1}
+              tabIndex={getActiveIndex() === getIndex() ? 0 : -1}
             >
-              {action.content}
+              {action.text}
             </li>
           )}
         </For>
