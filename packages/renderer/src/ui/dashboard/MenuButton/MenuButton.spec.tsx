@@ -32,6 +32,30 @@ describe('UI - MenuButton', () => {
     expect(screen.getByRole('menuitem', { name: 'One' })).toHaveFocus();
   });
 
+  it('should use the button label as the menu label if provided', async () => {
+    const { userEvent } = renderDashboardComponent(() => {
+      return (
+        <MenuButton
+          aria-label="Secret menu"
+          menuItems={[
+            {
+              onClick: () => {},
+              text: 'Click me',
+            },
+          ]}
+        >
+          Click me
+        </MenuButton>
+      );
+    });
+
+    expect(screen.queryByRole('menu', { name: 'Secret menu' })).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Secret menu' }));
+
+    expect(screen.getByRole('menu', { name: 'Secret menu' })).toBeInTheDocument();
+  });
+
   it('should trigger the menu item when Space is pressed', async () => {
     const handleItemClick = vi.fn();
 
