@@ -11,12 +11,18 @@
 
 .dropdown {
   padding: 6px 32px 6px 12px;
-  border: 1px solid var(--dashboard-border);
+  border: 1px solid var(--dashboard-button-default-border);
   border-radius: 4px;
   appearance: none;
+  background-color: var(--dashboard-button-default-background-default);
 
   &:focus-visible {
     outline: 4px solid var(--dashboard-focus);
     outline-offset: 0;
+  }
+
+  &:hover {
+    background-color: var(--dashboard-button-default-background-hover);
+    cursor: pointer;
   }
 }

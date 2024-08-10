@@ -11,6 +11,10 @@
     outline-offset: 0;
   }
 
+  &:hover {
+    cursor: pointer;
+  }
+
   &::after {
     display: block;
     width: 22px;

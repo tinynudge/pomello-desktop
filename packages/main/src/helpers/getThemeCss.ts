@@ -187,14 +187,32 @@ const defaultTheme: ThemeConfig = {
       },
     },
     border: [opacity(colors.dark, 24), colors.dark],
+    button: {
+      default: {
+        border: [opacity(colors.dark, 24), colors.dark],
+        background: {
+          active: [opacity(colors.dark, 6), opacity(colors.white, 6)],
+          default: ['transparent', opacity(colors.white, 4)],
+          hover: [opacity(colors.dark, 4), opacity(colors.white, 8)],
+        },
+      },
+      link: {
+        active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
+        default: [colors.blue, colors.blueDark],
+      },
+      primary: {
+        text: [colors.white, darken(colors.primaryDark, 72)],
+        background: {
+          active: [darken(colors.primary, 8), lighten(colors.primaryDark, 20)],
+          default: [colors.primary, colors.primaryDark],
+          hover: [darken(colors.primary, 4), lighten(colors.primaryDark, 12)],
+        },
+      },
+    },
     content: {
       background: [colors.lightAlt, colors.dark],
     },
     focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
-    link: {
-      active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
-      default: [colors.blue, colors.blueDark],
-    },
     panel: {
       background: [colors.white, colors.darkAlt],
       divider: [opacity(colors.black, 12), colors.dark],
