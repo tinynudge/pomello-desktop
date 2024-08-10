@@ -24,7 +24,7 @@ export const PanelListFormField: ParentComponent<PanelListFormFieldProps> = prop
         [styles.hasActions]: !!props.actions,
       })}
     >
-      <div>
+      <div class={styles.label}>
         <label for={props.for}>{props.label}</label>
         <Show when={props.description}>
           {getDescription => (

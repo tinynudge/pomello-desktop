@@ -2,6 +2,7 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Component, For, Match, Switch } from 'solid-js';
 import { MainHeader } from '../../components/MainHeader';
+import { PomodoroSetSettingField } from './PomodoroSetSettingField';
 import { SelectSettingField } from './SelectSettingField';
 import { SyncDetails } from './SyncDetails';
 import { TimeSettingField } from './TimeSettingField';
@@ -23,6 +24,9 @@ export const SettingsView: Component = () => {
               <For each={category.settings}>
                 {setting => (
                   <Switch>
+                    <Match when={setting.type === 'pomodoroSet' && setting}>
+                      {getSetting => <PomodoroSetSettingField setting={getSetting()} />}
+                    </Match>
                     <Match when={setting.type === 'select' && setting}>
                       {getSetting => <SelectSettingField setting={getSetting()} />}
                     </Match>

@@ -1,6 +1,12 @@
 import { Settings } from '@pomello-desktop/domain';
 
-export type Setting = SelectSetting | TimeSetting | ToggleSetting;
+export type Setting = PomodoroSetSetting | SelectSetting | TimeSetting | ToggleSetting;
+
+export type PomodoroSetSetting = {
+  default: NonNullable<Settings['pomodoroSet']>;
+  id: 'pomodoroSet';
+  type: 'pomodoroSet';
+};
 
 export type SelectSetting<TSetting = keyof Settings> = TSetting extends keyof Settings
   ? {
@@ -109,6 +115,11 @@ export const settingsByCategory: SettingsByCategory[] = [
         max: 60,
         min: 1,
         type: 'time',
+      },
+      {
+        default: 4,
+        id: 'pomodoroSet',
+        type: 'pomodoroSet',
       },
       {
         default: true,

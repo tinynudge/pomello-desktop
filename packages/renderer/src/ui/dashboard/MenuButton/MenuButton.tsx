@@ -181,7 +181,7 @@ export const MenuButton: Component<MenuButtonProps> = allProps => {
       />
       <ul
         aria-hidden={!getIsExpanded()}
-        aria-label={props.menuLabel}
+        aria-label={props.menuLabel ?? buttonProps['aria-label']}
         class={styles.menu}
         id={menuId}
         onKeyDown={handleListKeyDown}

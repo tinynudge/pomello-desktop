@@ -110,19 +110,19 @@ describe('Dashboard - Settings', () => {
     },
     {
       defaultValue: true,
-      index: 11,
+      index: 12,
       label: 'Reset pomodoro set',
       setting: 'resetPomodoroSet',
     },
     {
       defaultValue: false,
-      index: 12,
+      index: 13,
       label: 'Auto start tasks',
       setting: 'autoStartTasks',
     },
     {
       defaultValue: false,
-      index: 13,
+      index: 14,
       label: 'Auto start breaks',
       setting: 'autoStartBreaks',
     },
@@ -253,4 +253,254 @@ describe('Dashboard - Settings', () => {
       expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, defaultValue);
     }
   );
+
+  it('should render a simple pomodoroSet count', async () => {
+    renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: 3,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+
+    expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+    expect(within(listItem).getByRole('combobox', { name: 'Pomodoro set' })).toBeInTheDocument();
+  });
+
+  it('should update a simple pomodoroSet count', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: 3,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+
+    await userEvent.selectOptions(
+      within(listItem).getByRole('combobox', { name: 'Pomodoro set' }),
+      '6'
+    );
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', 6);
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', 4);
+  });
+
+  it('should render a custom pomodoroSet', async () => {
+    renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: ['task', 'longBreak', 'shortBreak'],
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+    const timerButtons = within(listItem).getAllByRole('button', { name: /Edit .+ timer$/ });
+
+    expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+    expect(within(listItem).getByRole('button', { name: 'Add timer' })).toBeInTheDocument();
+    expect(timerButtons).toHaveLength(3);
+    expect(timerButtons.at(0)).toHaveAccessibleName('1. Edit task timer');
+    expect(timerButtons.at(1)).toHaveAccessibleName('2. Edit long break timer');
+    expect(timerButtons.at(2)).toHaveAccessibleName('3. Edit short break timer');
+  });
+
+  it('should update a custom pomodoroSet', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: ['task', 'longBreak', 'shortBreak'],
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: '1. Edit task timer' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to short break timer' })
+    );
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
+      'shortBreak',
+      'longBreak',
+      'shortBreak',
+    ]);
+
+    await userEvent.click(
+      within(listItem).getByRole('button', { name: '2. Edit long break timer' })
+    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to task timer' }));
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
+      'shortBreak',
+      'task',
+      'shortBreak',
+    ]);
+
+    await userEvent.click(
+      within(listItem).getByRole('button', { name: '3. Edit short break timer' })
+    );
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to long break timer' })
+    );
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
+      'shortBreak',
+      'task',
+      'longBreak',
+    ]);
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Add timer' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Add task timer' }));
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
+      'shortBreak',
+      'task',
+      'longBreak',
+      'task',
+    ]);
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Add timer' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Add short break timer' })
+    );
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
+      'shortBreak',
+      'task',
+      'longBreak',
+      'task',
+      'shortBreak',
+    ]);
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Add timer' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Add long break timer' }));
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
+      'shortBreak',
+      'task',
+      'longBreak',
+      'task',
+      'shortBreak',
+      'longBreak',
+    ]);
+
+    await userEvent.click(
+      within(listItem).getByRole('button', { name: '5. Edit short break timer' })
+    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Remove timer' }));
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
+      'shortBreak',
+      'task',
+      'longBreak',
+      'task',
+      'longBreak',
+    ]);
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+
+    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', 4);
+  });
+
+  it('should switch from a simple set pomodoroSet count to a custom one', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: 3,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' })
+    );
+
+    expect(appApi.updateSetting).toHaveBeenCalledWith('pomodoroSet', [
+      'task',
+      'shortBreak',
+      'task',
+      'shortBreak',
+      'task',
+      'longBreak',
+    ]);
+    expect(within(listItem).getAllByRole('button', { name: /Edit .+ timer$/ })).toHaveLength(6);
+  });
+
+  it('should switch from a custom pomodoroSet to a simple count', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: ['task', 'shortBreak', 'task', 'longBreak'],
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
+    );
+
+    expect(appApi.updateSetting).toHaveBeenCalledWith('pomodoroSet', 2);
+    expect(within(listItem).getByRole('combobox', { name: 'Pomodoro set' })).toBeInTheDocument();
+  });
+
+  it('should show a warning if unable to switch from a custom pomodoroSet to a simple count', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: ['task', 'shortBreak', 'task'],
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
+    );
+
+    const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
+
+    expect(modal).toBeInTheDocument();
+    expect(
+      within(modal).getByRole('heading', { name: 'Incompatible setting' })
+    ).toBeInTheDocument();
+    expect(
+      within(modal).getByText(
+        'Your custom pomodoro set cannot be converted to a basic task count. Click "Reset" to use the default task count. Otherwise, click "Cancel" to continue using your custom pomodoro set.'
+      )
+    ).toBeInTheDocument();
+    expect(within(modal).getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+    expect(within(modal).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+  });
+
+  it('should restore the default pomodoroSet from the warning modal', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        pomodoroSet: ['task', 'shortBreak', 'task'],
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
+
+    expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
+    expect(appApi.updateSetting).toHaveBeenCalledWith('pomodoroSet', 4);
+  });
 });

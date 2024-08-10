@@ -1,0 +1,38 @@
+.pomodoroSetAdvancedInput {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.button {
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.timerIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+
+  &[data-timer='task'] {
+    background-color: var(--dashboard-timer-task);
+  }
+
+  &[data-timer='shortBreak'] {
+    background-color: var(--dashboard-timer-short-break);
+  }
+
+  &[data-timer='longBreak'] {
+    background-color: var(--dashboard-timer-long-break);
+  }
+}
+
+.addIcon {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 4px;
+  color: var(--dashboard-text-hint);
+}

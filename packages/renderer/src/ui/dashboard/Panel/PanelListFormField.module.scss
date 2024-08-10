@@ -13,6 +13,10 @@
   }
 }
 
+.label {
+  flex: 1 0 auto;
+}
+
 .description {
   margin-top: 4px;
   color: var(--dashboard-text-hint);
@@ -22,5 +26,6 @@
 .content {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
 }

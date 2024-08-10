@@ -226,6 +226,11 @@ const defaultTheme: ThemeConfig = {
       default: [colors.darkAlt, opacity(colors.white, 84)],
       hint: [opacity(colors.darkAlt, 84), opacity(colors.white, 60)],
     },
+    timer: {
+      'long-break': [colors.longBreak, colors.longBreakDark],
+      'short-break': [colors.shortBreak, colors.shortBreakDark],
+      task: [colors.task, colors.taskDark],
+    },
     'toggle-switch': {
       background: {
         default: [opacity(colors.black, 38), colors.dark],
