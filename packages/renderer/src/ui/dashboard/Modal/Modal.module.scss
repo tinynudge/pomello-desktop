@@ -1,0 +1,28 @@
+@import '@/shared/styles/global';
+
+.modal {
+  max-width: 48vw;
+  padding: 24px;
+  border: 0;
+  border-radius: 8px;
+  background-color: var(--dashboard-modal-background);
+  box-shadow: $z4-shadow;
+
+  &::backdrop {
+    backdrop-filter: blur(4px);
+    background-color: var(--dashboard-modal-overlay);
+  }
+}
+
+.heading {
+  margin-bottom: 16px;
+  font-size: inherit;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  margin-top: 24px;
+  gap: 12px;
+}

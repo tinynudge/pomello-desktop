@@ -213,6 +213,10 @@ const defaultTheme: ThemeConfig = {
       background: [colors.lightAlt, colors.dark],
     },
     focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
+    modal: {
+      background: [colors.white, colors.darkAlt],
+      overlay: [opacity(colors.black, 24), opacity(colors.black, 48)],
+    },
     panel: {
       background: [colors.white, colors.darkAlt],
       divider: [opacity(colors.black, 12), colors.dark],
