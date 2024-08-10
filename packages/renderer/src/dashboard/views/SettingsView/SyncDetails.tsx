@@ -1,5 +1,5 @@
 import { usePomelloConfig, useSettings, useTranslate } from '@/shared/context/RuntimeContext';
-import { ButtonLink } from '@/ui/dashboard/ButtonLink';
+import { Button } from '@/ui/dashboard/Button';
 import { Translate } from '@/ui/shared/Translate';
 import { Component, Show } from 'solid-js';
 import styles from './SyncDetails.module.scss';
@@ -28,7 +28,9 @@ export const SyncDetails: Component = () => {
           <Translate
             components={{
               logIn: props => (
-                <ButtonLink onClick={handleLogInButtonClick}>{props.children}</ButtonLink>
+                <Button onClick={handleLogInButtonClick} variant="text">
+                  {props.children}
+                </Button>
               ),
             }}
             key="settingsSyncDisabled"

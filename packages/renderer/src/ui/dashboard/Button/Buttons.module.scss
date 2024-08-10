@@ -1,0 +1,53 @@
+.button {
+  padding: 6px 14px;
+  border: 1px solid var(--dashboard-button-default-border);
+  border-radius: 4px;
+  background-color: var(--dashboard-button-default-background-default);
+
+  &:focus-visible {
+    outline: 4px solid var(--dashboard-focus);
+    outline-offset: 0;
+  }
+
+  &:hover {
+    background-color: var(--dashboard-button-default-background-hover);
+    cursor: pointer;
+  }
+
+  &:active {
+    background-color: var(--dashboard-button-default-background-active);
+  }
+
+  &[data-variant='primary'] {
+    border-color: var(--dashboard-button-primary-background-default);
+    background-color: var(--dashboard-button-primary-background-default);
+    color: var(--dashboard-button-primary-text);
+
+    &:hover {
+      border-color: var(--dashboard-button-primary-background-hover);
+      background-color: var(--dashboard-button-primary-background-hover);
+    }
+
+    &:active {
+      border-color: var(--dashboard-button-primary-background-active);
+      background-color: var(--dashboard-button-primary-background-active);
+    }
+  }
+
+  &[data-variant='text'] {
+    padding: 0 2px;
+    border: 0;
+    background-color: transparent;
+    color: var(--dashboard-button-link-default);
+    outline-offset: 1px;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:active {
+      color: var(--dashboard-button-link-active);
+    }
+  }
+}

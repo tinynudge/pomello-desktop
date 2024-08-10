@@ -1,9 +1,9 @@
 import { renderDashboardComponent, screen } from '../__fixtures__/renderDashboardComponent';
-import { ButtonLink } from './ButtonLink';
+import { Button } from './Button';
 
-describe('UI - ButtonLink', () => {
+describe('UI - Button', () => {
   it('should render the button link', async () => {
-    renderDashboardComponent(() => <ButtonLink data-foo>Hello world</ButtonLink>);
+    renderDashboardComponent(() => <Button data-foo>Hello world</Button>);
 
     expect(screen.getByRole('button', { name: 'Hello world' })).toBeInTheDocument();
     expect(screen.getByRole('button')).toHaveAttribute('data-foo');
