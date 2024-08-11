@@ -30,7 +30,7 @@
     "browserslist": "^4.23.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
-    "electron": "^29.4.0",
+    "electron": "^31.3.1",
     "electron-builder": "^24.13.3",
     "electron-devtools-installer": "^3.2.0",
     "eslint": "^8.57.0",
