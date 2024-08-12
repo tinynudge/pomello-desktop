@@ -1,0 +1,26 @@
+@import '@/shared/styles/global';
+
+.tooltip {
+  padding: 8px;
+  border: 0;
+  border-radius: 4px;
+  margin: 0 0 8px;
+  background-color: var(--dashboard-tooltip-background);
+  box-shadow: $z1-shadow;
+  color: var(--dashboard-tooltip-text);
+  inset-area: top;
+  position-try-options: --left, --right;
+  white-space: nowrap;
+
+  &.isForceHidden {
+    display: none;
+  }
+}
+
+@position-try --left {
+  inset-area: top span-right;
+}
+
+@position-try --right {
+  inset-area: top span-left;
+}

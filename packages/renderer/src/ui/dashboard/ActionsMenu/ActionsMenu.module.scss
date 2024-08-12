@@ -17,38 +17,12 @@
   color: var(--dashboard-actions-menu-button-icon-default);
   outline: 0;
 
-  &::after {
-    position: absolute;
-    bottom: 100%;
-    display: none;
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    background-color: var(--dashboard-actions-menu-tooltip-background);
-    box-shadow: $z1-shadow;
-    color: var(--dashboard-actions-menu-tooltip-text);
-    content: attr(data-tooltip);
-    white-space: nowrap;
-  }
-
-  &[data-tooltip-position='left']::after {
-    left: 0;
-  }
-
-  &[data-tooltip-position='right']::after {
-    right: 0;
-  }
-
   &.active,
   &:hover,
   &:focus-within {
     border-color: var(--dashboard-actions-menu-button-border-hover);
     color: var(--dashboard-actions-menu-button-icon-hover);
     cursor: pointer;
-
-    &:not(.active)::after {
-      display: block;
-    }
   }
 
   &.active {
