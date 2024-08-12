@@ -1,6 +1,7 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import cc from 'classcat';
 import { Accessor, Component, For, JSX, createEffect, createSignal } from 'solid-js';
+import { Tooltip } from '../Tooltip';
 import styles from './ActionsMenu.module.scss';
 import MoreIcon from './assets/more.svg';
 
@@ -13,7 +14,6 @@ type ActionsMenuProps = {
   actions: Action[];
   menuLabel?: string;
   tooltip?: string;
-  tooltipPosition?: 'center' | 'left' | 'right';
   triggerLabel?: string;
 };
 
@@ -168,21 +168,23 @@ export const ActionsMenu: Component<ActionsMenuProps> = props => {
 
   return (
     <div class={styles.actionsMenu}>
-      <button
-        aria-expanded={getIsExpanded()}
-        aria-haspopup
-        aria-label={props.triggerLabel ?? t('moreActionsLabel')}
-        class={cc({
-          [styles.button]: true,
-          [styles.active]: getIsExpanded(),
-        })}
-        data-tooltip={props.tooltip ?? t('moreActionsShortLabel')}
-        data-tooltip-position={props.tooltipPosition ?? 'center'}
-        onClick={handleButtonClick}
-        ref={buttonRef!}
-      >
-        <MoreIcon />
-      </button>
+      <Tooltip text={props.tooltip ?? t('moreActionsShortLabel')} isForceHidden={getIsExpanded()}>
+        {tooltipTargetRef => (
+          <button
+            aria-expanded={getIsExpanded()}
+            aria-haspopup
+            aria-label={props.triggerLabel ?? t('moreActionsLabel')}
+            class={cc({
+              [styles.button]: true,
+              [styles.active]: getIsExpanded(),
+            })}
+            onClick={handleButtonClick}
+            ref={element => (buttonRef = element) && tooltipTargetRef(element)}
+          >
+            <MoreIcon />
+          </button>
+        )}
+      </Tooltip>
       <ul
         aria-hidden={!getIsExpanded()}
         aria-label={props.menuLabel ?? t('moreActionsShortLabel')}

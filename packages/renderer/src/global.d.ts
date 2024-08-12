@@ -5,3 +5,7 @@ declare module '*.svg' {
 
   export default svgComponent;
 }
+
+interface CSSStyleDeclaration {
+  anchorName: string;
+}

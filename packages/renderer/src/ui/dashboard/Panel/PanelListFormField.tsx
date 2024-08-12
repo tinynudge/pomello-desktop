@@ -41,7 +41,6 @@ export const PanelListFormField: ParentComponent<PanelListFormFieldProps> = prop
               actions={getActions()}
               menuLabel={t('formFieldMoreOptionsMenuLabel')}
               tooltip={t('formFieldMoreOptionsTooltip')}
-              tooltipPosition="right"
               triggerLabel={t('formFieldMoreOptionsTriggerLabel')}
             />
           )}

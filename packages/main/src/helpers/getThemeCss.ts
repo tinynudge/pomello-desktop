@@ -167,10 +167,6 @@ const defaultTheme: ThemeConfig = {
           hover: [opacity(colors.black, 12), opacity(colors.white, 12)],
         },
       },
-      tooltip: {
-        background: colors.black,
-        text: colors.white,
-      },
       menu: {
         default: [colors.white, colors.darkAlt],
         hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
@@ -238,6 +234,10 @@ const defaultTheme: ThemeConfig = {
         active: [colors.primary, colors.primaryDark],
       },
       dot: colors.white,
+    },
+    tooltip: {
+      background: colors.black,
+      text: colors.white,
     },
   },
 };

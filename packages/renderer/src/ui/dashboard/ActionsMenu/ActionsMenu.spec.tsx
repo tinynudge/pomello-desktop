@@ -46,9 +46,12 @@ describe('UI - ActionsMenu', () => {
 
     const button = screen.getByRole('button', { name: 'Do not press' });
 
+    await userEvent.hover(button);
+
+    expect(screen.getByRole('tooltip', { name: 'Nothing to see here' }));
+
     await userEvent.click(button);
 
-    expect(button).toHaveAttribute('data-tooltip', 'Nothing to see here');
     expect(screen.getByRole('menu', { name: 'Secret menu' })).toBeInTheDocument();
   });
 

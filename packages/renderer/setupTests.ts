@@ -1,18 +1,21 @@
 import '@testing-library/jest-dom/vitest';
 import { mockServer } from './src/__fixtures__/mockServer';
 
-window.HTMLMediaElement.prototype.load = () => {};
-window.HTMLMediaElement.prototype.pause = () => {};
-window.HTMLMediaElement.prototype.play = async () => {};
+global.HTMLElement.prototype.hidePopover = () => {};
+global.HTMLElement.prototype.showPopover = () => {};
 
-HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {
+global.HTMLMediaElement.prototype.load = () => {};
+global.HTMLMediaElement.prototype.pause = () => {};
+global.HTMLMediaElement.prototype.play = async () => {};
+
+global.HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {
   this.open = true;
 });
-HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
+global.HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
   this.open = false;
 });
 
-window.scrollTo = () => {};
+global.scrollTo = () => {};
 
 beforeAll(() => {
   mockServer.listen();
