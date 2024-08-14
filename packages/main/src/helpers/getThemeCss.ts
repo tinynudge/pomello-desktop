@@ -157,19 +157,13 @@ const defaultTheme: ThemeConfig = {
   },
   dashboard: {
     'actions-menu': {
-      button: {
-        icon: {
-          default: [opacity(colors.black, 38), opacity(colors.white, 40)],
-          hover: [opacity(colors.black, 60), opacity(colors.white, 60)],
-        },
-        border: {
-          active: [opacity(colors.black, 24), opacity(colors.white, 24)],
-          hover: [opacity(colors.black, 12), opacity(colors.white, 12)],
-        },
+      icon: {
+        default: [opacity(colors.black, 38), opacity(colors.white, 40)],
+        hover: [opacity(colors.black, 60), opacity(colors.white, 60)],
       },
-      menu: {
-        default: [colors.white, colors.darkAlt],
-        hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
+      border: {
+        active: [opacity(colors.black, 24), opacity(colors.white, 24)],
+        hover: [opacity(colors.black, 12), opacity(colors.white, 12)],
       },
     },
     badge: {
@@ -209,6 +203,10 @@ const defaultTheme: ThemeConfig = {
       background: [colors.lightAlt, colors.dark],
     },
     focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
+    menu: {
+      default: [colors.white, colors.darkAlt],
+      hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
+    },
     modal: {
       background: [colors.white, colors.darkAlt],
       overlay: [opacity(colors.black, 24), opacity(colors.black, 48)],
