@@ -1,12 +1,13 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import cc from 'classcat';
 import { ParentComponent, Show } from 'solid-js';
-import { Action, ActionsMenu } from '../ActionsMenu';
+import { ActionsMenu } from '../ActionsMenu';
+import { MenuItem } from '../MenuButton';
 import styles from './PanelListFormField.module.scss';
 import { PanelListItem } from './PanelListItem';
 
 type PanelListFormFieldProps = {
-  actions?: Action[];
+  actions?: MenuItem[];
   description?: string;
   for: string;
   label: string;
@@ -38,7 +39,7 @@ export const PanelListFormField: ParentComponent<PanelListFormFieldProps> = prop
         <Show when={props.actions}>
           {getActions => (
             <ActionsMenu
-              actions={getActions()}
+              menuItems={getActions()}
               menuLabel={t('formFieldMoreOptionsMenuLabel')}
               tooltip={t('formFieldMoreOptionsTooltip')}
               triggerLabel={t('formFieldMoreOptionsTriggerLabel')}

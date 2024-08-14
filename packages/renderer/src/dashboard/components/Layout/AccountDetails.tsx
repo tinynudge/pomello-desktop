@@ -37,7 +37,7 @@ export const AccountDetails: Component<AccountDetailsProps> = props => {
         <p class={styles.userDetail}>{props.user.email}</p>
       </div>
       <ActionsMenu
-        actions={[
+        menuItems={[
           {
             onClick: handleEditProfileClick,
             text: t('accountDetailsEditProfile'),

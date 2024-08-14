@@ -1,11 +1,9 @@
-import cc from 'classcat';
 import { nanoid } from 'nanoid';
 import { Component, JSX, createSignal, onCleanup } from 'solid-js';
 import styles from './Tooltip.module.scss';
 
 type TooltipProps = {
   children(tooltipTargetRef: TooltipTargetRef): JSX.Element;
-  isForceHidden?: boolean;
   text: string;
 };
 
@@ -54,11 +52,8 @@ export const Tooltip: Component<TooltipProps> = props => {
     <>
       {props.children(tooltipTargetRef)}
       <span
-        aria-hidden={!getIsVisible() || props.isForceHidden}
-        class={cc({
-          [styles.tooltip]: true,
-          [styles.isForceHidden]: props.isForceHidden,
-        })}
+        aria-hidden={!getIsVisible()}
+        class={styles.tooltip}
         popover="manual"
         ref={tooltipRef!}
         role="tooltip"

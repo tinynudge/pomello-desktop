@@ -1,11 +1,11 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
-import { Action } from '@/ui/dashboard/ActionsMenu';
+import { MenuItem } from '@/ui/dashboard/MenuButton';
 import { Panel } from '@/ui/dashboard/Panel';
 import { ParentComponent } from 'solid-js';
 import { Setting } from './settingsByCategory';
 
 type SettingsFieldProps = {
-  additionalActions?: Action[];
+  additionalActions?: MenuItem[];
   defaultValue: string;
   setting: Setting;
 };

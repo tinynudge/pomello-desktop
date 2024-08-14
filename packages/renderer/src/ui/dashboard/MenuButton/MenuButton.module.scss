@@ -1,0 +1,43 @@
+@import '@/shared/styles/global';
+
+@position-try --menu-bottom-right {
+  inset-area: bottom span-left;
+}
+
+@position-try --menu-top-left {
+  margin: 0 0 8px;
+  inset-area: top span-right;
+}
+
+@position-try --menu-top-right {
+  margin: 0 0 8px;
+  inset-area: top span-left;
+}
+
+.menu {
+  padding: 6px 0;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 8px;
+  margin: 8px 0 0;
+  background-color: var(--dashboard-menu-default);
+  box-shadow: $z2-shadow;
+  inset-area: bottom span-right;
+  list-style: none;
+  position-try-options: --menu-bottom-right, --menu-top-left, --menu-top-right;
+  white-space: nowrap;
+}
+
+.menuItem {
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  outline: 0;
+  text-align: left;
+
+  &:focus-within {
+    background-color: var(--dashboard-menu-hover);
+  }
+}
