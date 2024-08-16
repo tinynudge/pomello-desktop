@@ -71,6 +71,30 @@ describe('Dashboard - Settings', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(8);
   });
 
+  it('should render the pomodoro settings', () => {
+    renderDashboard({
+      route: DashboardRoute.Settings,
+    });
+
+    const list = screen.getByRole('list', { name: 'Pomodoro settings' });
+
+    expect(screen.getByRole('heading', { name: 'Pomodoro', level: 2 })).toBeInTheDocument();
+    expect(list).toBeInTheDocument();
+    expect(within(list).getAllByRole('listitem')).toHaveLength(7);
+  });
+
+  it('should render the tasks settings', () => {
+    renderDashboard({
+      route: DashboardRoute.Settings,
+    });
+
+    const list = screen.getByRole('list', { name: 'Tasks settings' });
+
+    expect(screen.getByRole('heading', { name: 'Tasks', level: 2 })).toBeInTheDocument();
+    expect(list).toBeInTheDocument();
+    expect(within(list).getAllByRole('listitem')).toHaveLength(4);
+  });
+
   it.each([
     {
       defaultValue: true,
@@ -162,6 +186,34 @@ describe('Dashboard - Settings', () => {
       label: 'Time expired notification',
       newValue: { id: 'flash', label: 'Flash' },
       setting: 'timeExpiredNotification',
+    },
+    {
+      defaultValue: { id: '🍅', label: '🍅' },
+      index: 15,
+      label: 'Card title Pomodoro marker',
+      newValue: { id: '✓', label: '✓' },
+      setting: 'titleMarker',
+    },
+    {
+      defaultValue: { id: 'fraction', label: 'Fraction' },
+      index: 16,
+      label: 'Card title marker format',
+      newValue: { id: 'decimal', label: 'Decimal' },
+      setting: 'titleFormat',
+    },
+    {
+      defaultValue: { id: 'top', label: 'Top' },
+      index: 17,
+      label: 'Moved task list position',
+      newValue: { id: 'bottom', label: 'Bottom' },
+      setting: 'completedTaskPosition',
+    },
+    {
+      defaultValue: { id: 'top', label: 'Top' },
+      index: 18,
+      label: 'Created task list position',
+      newValue: { id: 'bottom', label: 'Bottom' },
+      setting: 'createdTaskPosition',
     },
   ])(
     'should update select setting for "$label"',

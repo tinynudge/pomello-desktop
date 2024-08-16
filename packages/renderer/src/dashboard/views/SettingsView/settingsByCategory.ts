@@ -138,4 +138,34 @@ export const settingsByCategory: SettingsByCategory[] = [
       },
     ],
   },
+  {
+    headingKey: 'tasksSettingsHeader',
+    listLabelKey: 'tasksSettingsLabel',
+    settings: [
+      {
+        default: '🍅',
+        id: 'titleMarker',
+        options: ['🍅', '✓'],
+        type: 'select',
+      },
+      {
+        default: 'fraction',
+        id: 'titleFormat',
+        options: ['fraction', 'decimal'],
+        type: 'select',
+      },
+      {
+        default: 'top',
+        id: 'completedTaskPosition',
+        options: ['top', 'bottom'],
+        type: 'select',
+      },
+      {
+        default: 'top',
+        id: 'createdTaskPosition',
+        options: ['top', 'bottom'],
+        type: 'select',
+      },
+    ],
+  },
 ];
