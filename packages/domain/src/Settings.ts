@@ -17,10 +17,10 @@ export type Settings = {
   resetPomodoroSet: boolean;
   autoStartTasks: boolean;
   autoStartBreaks: boolean;
-  titleMarker: string;
-  titleFormat: string;
-  completedTaskPosition: string;
-  createdTaskPosition: string;
+  titleMarker: '🍅' | '✓';
+  titleFormat: 'decimal' | 'fraction';
+  completedTaskPosition: 'top' | 'bottom';
+  createdTaskPosition: 'top' | 'bottom';
   productivityChartType: string;
   productivityChartDays: string[];
   betweenTasksGracePeriod: number;
