@@ -1,4 +1,5 @@
-import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Select } from '@/ui/dashboard/Select';
 import { Component, createMemo } from 'solid-js';
 import { SettingsField } from './SettingsField';
@@ -9,7 +10,7 @@ type SelectSettingFieldProps = {
 };
 
 export const SelectSettingField: Component<SelectSettingFieldProps> = props => {
-  const settings = useSettings();
+  const { getSetting, stageSetting } = useDashboardSettings();
   const t = useTranslate();
 
   const getOptions = createMemo(() =>
@@ -20,7 +21,7 @@ export const SelectSettingField: Component<SelectSettingFieldProps> = props => {
   );
 
   const handleSettingChange = (value: string) => {
-    window.app.updateSetting(props.setting.id, value);
+    stageSetting(props.setting.id, value);
   };
 
   return (
@@ -32,7 +33,7 @@ export const SelectSettingField: Component<SelectSettingFieldProps> = props => {
         id={props.setting.id}
         onChange={handleSettingChange}
         options={getOptions()}
-        value={settings[props.setting.id] as string | undefined}
+        value={getSetting(props.setting.id) as string | undefined}
       />
     </SettingsField>
   );

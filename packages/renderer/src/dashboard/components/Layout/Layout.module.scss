@@ -5,13 +5,14 @@
 
 .sidebar {
   position: sticky;
+  z-index: 10;
   top: 0;
   display: flex;
   width: 240px;
   height: 100vh;
   flex-direction: column;
   border-right: 1px solid var(--dashboard-border);
-  background: var(--dashboard-sidebar-background-default);
+  background-color: var(--dashboard-sidebar-background-default);
 }
 
 .menu {
@@ -44,10 +45,13 @@
   }
 }
 
+.main {
+  flex: 1;
+}
+
 .content {
   --content-padding: 32px;
 
-  flex: 1;
   padding: var(--content-padding);
   background-color: var(--dashboard-content-background);
 }

@@ -1,4 +1,5 @@
-import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Select } from '@/ui/dashboard/Select';
 import { Component, createMemo } from 'solid-js';
 import { SettingsField } from './SettingsField';
@@ -10,7 +11,7 @@ type TimeSettingFieldProps = {
 };
 
 export const TimeSettingField: Component<TimeSettingFieldProps> = props => {
-  const settings = useSettings();
+  const { getSetting, stageSetting } = useDashboardSettings();
   const t = useTranslate();
 
   const getOptions = createMemo(() => {
@@ -23,7 +24,7 @@ export const TimeSettingField: Component<TimeSettingFieldProps> = props => {
   });
 
   const handleSettingChange = (value: string) => {
-    window.app.updateSetting(props.setting.id, +value);
+    stageSetting(props.setting.id, +value);
   };
 
   return (
@@ -36,7 +37,7 @@ export const TimeSettingField: Component<TimeSettingFieldProps> = props => {
           id={props.setting.id}
           onChange={handleSettingChange}
           options={getOptions()}
-          value={settings[props.setting.id]?.toString()}
+          value={getSetting(props.setting.id)?.toString()}
         />
         {t('timeSelectSuffix')}
       </span>

@@ -25,6 +25,7 @@ import { handleShowSelect } from '@/events/handleShowSelect';
 import { handleThemeUpdate } from '@/events/handleThemeUpdate';
 import { handleUnsetStoreItem } from '@/events/handleUnsetStoreItem';
 import { handleUpdateSetting } from '@/events/handleUpdateSetting';
+import { handleUpdateSettings } from '@/events/handleUpdateSettings';
 import { AppEvent, AppProtocol } from '@pomello-desktop/domain';
 import { ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 
@@ -51,6 +52,7 @@ export const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.ShowSelect, handleShowSelect);
   ipcMain.handle(AppEvent.UnsetStoreItem, handleUnsetStoreItem);
   ipcMain.handle(AppEvent.UpdateSetting, handleUpdateSetting);
+  ipcMain.handle(AppEvent.UpdateSettings, handleUpdateSettings);
 
   ipcMain.on(AppEvent.DecryptValue, handleDecryptValue);
   ipcMain.on(AppEvent.EncryptValue, handleEncryptValue);

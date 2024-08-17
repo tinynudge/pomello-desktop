@@ -1,3 +1,4 @@
+import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { A } from '@solidjs/router';
@@ -5,9 +6,11 @@ import { For, ParentComponent, Show } from 'solid-js';
 import { AccountDetails } from './AccountDetails';
 import styles from './Layout.module.scss';
 import { LoggedOutText } from './LoggedOutText';
+import { SaveSettingsBanner } from './SaveSettingsBanner';
 
 export const Layout: ParentComponent = props => {
   const { store } = usePomelloConfig();
+  const { getHasStagedChanges } = useDashboardSettings();
   const t = useTranslate();
 
   const routes: [DashboardRoute, label: string][] = [
@@ -40,7 +43,12 @@ export const Layout: ParentComponent = props => {
           </Show>
         </div>
       </div>
-      <main class={styles.content}>{props.children}</main>
+      <main class={styles.main}>
+        <div class={styles.content}>{props.children}</div>
+        <Show when={getHasStagedChanges()}>
+          <SaveSettingsBanner />
+        </Show>
+      </main>
     </div>
   );
 };
