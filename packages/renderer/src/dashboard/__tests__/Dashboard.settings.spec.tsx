@@ -95,6 +95,46 @@ describe('Dashboard - Settings', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(4);
   });
 
+  it('should undo staged changes', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        alwaysOnTop: true,
+        timeExpiredNotification: 'flash',
+        taskTime: 60,
+        pomodoroSet: ['task', 'shortBreak'],
+      },
+    });
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Always on top' }));
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Time expired notification' }),
+      'Focus'
+    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Task time' }), '5');
+    await userEvent.click(screen.getByRole('button', { name: '1. Edit task timer' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Switch to short break timer' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+    expect(screen.getByRole('checkbox', { name: 'Always on top' })).not.toBeChecked();
+    expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue(
+      'focus'
+    );
+    expect(screen.getByRole('button', { name: '1. Edit short break timer' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(appApi.updateSettings).not.toHaveBeenCalled();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: 'Always on top' })).toBeChecked();
+    expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue(
+      'flash'
+    );
+    expect(screen.getByRole('button', { name: '1. Edit task timer' })).toBeInTheDocument();
+  });
+
   it.each([
     {
       defaultValue: true,
@@ -169,13 +209,20 @@ describe('Dashboard - Settings', () => {
 
       await userEvent.click(screen.getByRole('checkbox', { name: label }));
 
-      expect(appApi.updateSetting).toHaveBeenCalledTimes(1);
-      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, !defaultValue);
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Your pending changes have not been saved yet.'
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+      expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
+      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: !defaultValue });
 
       await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
       await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, defaultValue);
+      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue });
     }
   );
 
@@ -234,13 +281,20 @@ describe('Dashboard - Settings', () => {
 
       await userEvent.selectOptions(screen.getByRole('combobox', { name: label }), newValue.label);
 
-      expect(appApi.updateSetting).toHaveBeenCalledTimes(1);
-      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, newValue.id);
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Your pending changes have not been saved yet.'
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+      expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
+      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: newValue.id });
 
       await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
       await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, defaultValue.id);
+      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue.id });
     }
   );
 
@@ -296,13 +350,20 @@ describe('Dashboard - Settings', () => {
         `${newValue / 60}`
       );
 
-      expect(appApi.updateSetting).toHaveBeenCalledTimes(1);
-      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, newValue);
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Your pending changes have not been saved yet.'
+      );
+
+      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+      expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
+      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: newValue });
 
       await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
       await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSetting).toHaveBeenLastCalledWith(setting, defaultValue);
+      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue });
     }
   );
 
@@ -335,12 +396,19 @@ describe('Dashboard - Settings', () => {
       '6'
     );
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', 6);
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ pomodoroSet: 6 });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', 4);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ pomodoroSet: 4 });
   });
 
   it('should render a custom pomodoroSet', async () => {
@@ -377,22 +445,25 @@ describe('Dashboard - Settings', () => {
       within(listItem).getByRole('menuitem', { name: 'Switch to short break timer' })
     );
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
-      'shortBreak',
-      'longBreak',
-      'shortBreak',
-    ]);
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({
+      pomodoroSet: ['shortBreak', 'longBreak', 'shortBreak'],
+    });
 
     await userEvent.click(
       within(listItem).getByRole('button', { name: '2. Edit long break timer' })
     );
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to task timer' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
-      'shortBreak',
-      'task',
-      'shortBreak',
-    ]);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({
+      pomodoroSet: ['shortBreak', 'task', 'shortBreak'],
+    });
 
     await userEvent.click(
       within(listItem).getByRole('button', { name: '3. Edit short break timer' })
@@ -400,65 +471,53 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(
       within(listItem).getByRole('menuitem', { name: 'Switch to long break timer' })
     );
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
-      'shortBreak',
-      'task',
-      'longBreak',
-    ]);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({
+      pomodoroSet: ['shortBreak', 'task', 'longBreak'],
+    });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Add timer' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Add task timer' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
-      'shortBreak',
-      'task',
-      'longBreak',
-      'task',
-    ]);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({
+      pomodoroSet: ['shortBreak', 'task', 'longBreak', 'task'],
+    });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Add timer' }));
     await userEvent.click(
       within(listItem).getByRole('menuitem', { name: 'Add short break timer' })
     );
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
-      'shortBreak',
-      'task',
-      'longBreak',
-      'task',
-      'shortBreak',
-    ]);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({
+      pomodoroSet: ['shortBreak', 'task', 'longBreak', 'task', 'shortBreak'],
+    });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Add timer' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Add long break timer' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
-      'shortBreak',
-      'task',
-      'longBreak',
-      'task',
-      'shortBreak',
-      'longBreak',
-    ]);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({
+      pomodoroSet: ['shortBreak', 'task', 'longBreak', 'task', 'shortBreak', 'longBreak'],
+    });
 
     await userEvent.click(
       within(listItem).getByRole('button', { name: '5. Edit short break timer' })
     );
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Remove timer' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', [
-      'shortBreak',
-      'task',
-      'longBreak',
-      'task',
-      'longBreak',
-    ]);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({
+      pomodoroSet: ['shortBreak', 'task', 'longBreak', 'task', 'longBreak'],
+    });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(appApi.updateSetting).toHaveBeenLastCalledWith('pomodoroSet', 4);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ pomodoroSet: 4 });
   });
 
   it('should switch from a simple set pomodoroSet count to a custom one', async () => {
@@ -475,15 +534,15 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(
       within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' })
     );
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
 
-    expect(appApi.updateSetting).toHaveBeenCalledWith('pomodoroSet', [
-      'task',
-      'shortBreak',
-      'task',
-      'shortBreak',
-      'task',
-      'longBreak',
-    ]);
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({
+      pomodoroSet: ['task', 'shortBreak', 'task', 'shortBreak', 'task', 'longBreak'],
+    });
     expect(within(listItem).getAllByRole('button', { name: /Edit .+ timer$/ })).toHaveLength(6);
   });
 
@@ -502,7 +561,13 @@ describe('Dashboard - Settings', () => {
       within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
     );
 
-    expect(appApi.updateSetting).toHaveBeenCalledWith('pomodoroSet', 2);
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({ pomodoroSet: 2 });
     expect(within(listItem).getByRole('combobox', { name: 'Pomodoro set' })).toBeInTheDocument();
   });
 
@@ -552,7 +617,13 @@ describe('Dashboard - Settings', () => {
     );
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
 
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
     expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
-    expect(appApi.updateSetting).toHaveBeenCalledWith('pomodoroSet', 4);
+    expect(appApi.updateSettings).toHaveBeenCalledWith({ pomodoroSet: 4 });
   });
 });

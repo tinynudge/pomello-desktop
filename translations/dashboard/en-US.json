@@ -22,6 +22,7 @@
   "menuLabel": "Main menu",
   "moreActionsLabel": "Show more actions",
   "moreActionsShortLabel": "More actions",
+  "pendingChangesBanner": "Your pending changes have not been saved yet.",
   "pomodoroSetSimpleSelectSuffix": "tasks per set",
   "pomodoroSettingsHeader": "Pomodoro",
   "pomodoroSettingsLabel": "Pomodoro settings",
@@ -35,6 +36,8 @@
   "routeServices": "Services",
   "routeSettings": "Settings",
   "routeSounds": "Sounds",
+  "saveChanges": "Save",
+  "saveChangesLabel": "Save changes",
   "settings.alwaysOnTop.description": "Force the window to always remain on top of other windows.",
   "settings.alwaysOnTop.label": "Always on top",
   "settings.autoStartBreaks.description": "Automatically selects the \"Continue after break\" option when the task timer ends.",
@@ -97,5 +100,7 @@
   "timeSelectSuffix": "min",
   "toggleDefault.false": "Off",
   "toggleDefault.true": "On",
-  "trackProductivityMessage": "<logIn>Log in</logIn> or <signUp>sign up</signUp> to track your productivity."
+  "trackProductivityMessage": "<logIn>Log in</logIn> or <signUp>sign up</signUp> to track your productivity.",
+  "undoChanges": "Undo",
+  "undoChangesLabel": "Undo changes"
 }

@@ -31,6 +31,7 @@ import { showDashboardWindow } from './showDashboardWindow';
 import { showMessageBox } from './showMessageBox';
 import { showSelect } from './showSelect';
 import { updateSetting } from './updateSetting';
+import { updateSettings } from './updateSettings';
 import { writeClipboardText } from './writeClipboardText';
 
 export const api = {
@@ -66,6 +67,7 @@ export const api = {
   showMessageBox,
   showSelect,
   updateSetting,
+  updateSettings,
   writeClipboardText,
 };
 

@@ -1,3 +1,4 @@
+import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { MenuItem } from '@/ui/dashboard/MenuButton';
 import { Panel } from '@/ui/dashboard/Panel';
@@ -11,10 +12,11 @@ type SettingsFieldProps = {
 };
 
 export const SettingsField: ParentComponent<SettingsFieldProps> = props => {
+  const { stageSetting } = useDashboardSettings();
   const t = useTranslate();
 
   const handleRestoreDefaultClick = () => {
-    window.app.updateSetting(props.setting.id, props.setting.default);
+    stageSetting(props.setting.id, props.setting.default);
   };
 
   return (

@@ -7,6 +7,7 @@ import { HashRouter } from '@solidjs/router';
 import { render } from 'solid-js/web';
 import { Layout } from './components/Layout';
 import { Routes } from './components/Routes';
+import { DashboardSettingsProvider } from './context/DashboardSettingsContext';
 
 const renderDashboard = async () => {
   const container = document.getElementById('root');
@@ -35,9 +36,11 @@ const renderDashboard = async () => {
         initialSettings={settings}
         initialTranslations={translations}
       >
-        <HashRouter root={Layout}>
-          <Routes />
-        </HashRouter>
+        <DashboardSettingsProvider>
+          <HashRouter root={Layout}>
+            <Routes />
+          </HashRouter>
+        </DashboardSettingsProvider>
       </RuntimeProvider>
     ),
     container

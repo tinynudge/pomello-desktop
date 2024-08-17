@@ -1,10 +1,10 @@
-import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Modal } from '@/ui/dashboard/Modal';
-import { Select } from '@/ui/dashboard/Select';
 import { SetItem } from '@tinynudge/pomello-service';
 import { Component, Match, Switch } from 'solid-js';
 import { PomodoroSetAdvancedInput } from './PomodoroSetAdvancedInput';
-import styles from './PomodoroSetSettingField.module.scss';
+import { PomodoroSetSimpleInput } from './PomodoroSetSimpleInput';
 import { SettingsField } from './SettingsField';
 import { PomodoroSetSetting } from './settingsByCategory';
 
@@ -17,14 +17,16 @@ const hasSetItems = (pomodoroSet: number | SetItem[]): pomodoroSet is SetItem[] 
 };
 
 export const PomodoroSetSettingField: Component<PomodoroSetSettingFieldProps> = props => {
-  const settings = useSettings();
+  const { getSetting, stageSetting } = useDashboardSettings();
   const t = useTranslate();
 
   const handleViewChange = () => {
-    if (hasSetItems(settings.pomodoroSet)) {
+    const pomodoroSet = getSetting('pomodoroSet');
+
+    if (hasSetItems(pomodoroSet)) {
       let count = 0;
 
-      const isSimpleCountCompatible = settings.pomodoroSet.toReversed().every((setItem, index) => {
+      const isTaskCountCompatible = pomodoroSet.toReversed().every((setItem, index) => {
         if (setItem === 'task') {
           count += 1;
         }
@@ -40,35 +42,36 @@ export const PomodoroSetSettingField: Component<PomodoroSetSettingFieldProps> = 
             : setItem === 'shortBreak';
       });
 
-      if (!isSimpleCountCompatible) {
+      if (!isTaskCountCompatible) {
         incompatibleSettingModalRef.showModal();
         return;
       }
 
-      window.app.updateSetting('pomodoroSet', count);
+      stageSetting('pomodoroSet', count);
     } else {
-      const length = settings.pomodoroSet - 1;
-
-      const updatedPomodoroSet = Array.from({ length })
+      const updatedPomodoroSet = Array.from({ length: pomodoroSet - 1 })
         .flatMap<SetItem>(() => ['task', 'shortBreak'])
         .concat('task', 'longBreak');
 
-      window.app.updateSetting('pomodoroSet', updatedPomodoroSet);
+      stageSetting('pomodoroSet', updatedPomodoroSet);
     }
   };
 
   const handleResetClick = () => {
-    window.app.updateSetting('pomodoroSet', props.setting.default);
+    stageSetting('pomodoroSet', props.setting.default);
   };
 
-  const handleSettingChange = (value: string) => {
-    window.app.updateSetting(props.setting.id, +value);
+  const getMaybeSetItems = () => {
+    const pomodoroSet = getSetting('pomodoroSet');
+
+    return hasSetItems(pomodoroSet) ? pomodoroSet : null;
   };
 
-  const simpleOptions = Array.from({ length: 8 }).map((_, index) => ({
-    id: (index + 1).toString(),
-    label: (index + 1).toString(),
-  }));
+  const getMaybeTaskCount = () => {
+    const pomodoroSet = getSetting('pomodoroSet');
+
+    return !hasSetItems(pomodoroSet) ? pomodoroSet : null;
+  };
 
   let incompatibleSettingModalRef: HTMLDialogElement;
 
@@ -77,29 +80,17 @@ export const PomodoroSetSettingField: Component<PomodoroSetSettingFieldProps> = 
       additionalActions={[
         {
           onClick: handleViewChange,
-          text: hasSetItems(settings.pomodoroSet)
-            ? t('switchSimpleViewAction')
-            : t('switchAdvancedViewAction'),
+          text: getMaybeSetItems() ? t('switchSimpleViewAction') : t('switchAdvancedViewAction'),
         },
       ]}
       defaultValue={props.setting.default.toString()}
       setting={props.setting}
     >
       <Switch>
-        <Match when={!hasSetItems(settings.pomodoroSet) && settings.pomodoroSet}>
-          {getPomodoroSet => (
-            <span class={styles.selectContainer}>
-              <Select
-                id={props.setting.id}
-                onChange={handleSettingChange}
-                options={simpleOptions}
-                value={getPomodoroSet().toString()}
-              />
-              {t('pomodoroSetSimpleSelectSuffix')}
-            </span>
-          )}
+        <Match when={getMaybeTaskCount()}>
+          {getTaskCount => <PomodoroSetSimpleInput taskCount={getTaskCount()} />}
         </Match>
-        <Match when={hasSetItems(settings.pomodoroSet) && settings.pomodoroSet}>
+        <Match when={getMaybeSetItems()}>
           {getSetItems => <PomodoroSetAdvancedInput setItems={getSetItems()} />}
         </Match>
       </Switch>

@@ -98,6 +98,9 @@ export const createMockAppApi = ({
     updateSetting: vi.fn(async (setting, value) =>
       emit('onSettingsChange', { ...settings, [setting]: value })
     ),
+    updateSettings: vi.fn(async updateSettings =>
+      emit('onSettingsChange', { ...settings, ...updateSettings })
+    ),
     writeClipboardText: vi.fn(),
   };
 

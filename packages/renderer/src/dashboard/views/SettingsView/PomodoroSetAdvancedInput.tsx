@@ -1,3 +1,4 @@
+import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { MenuButton, MenuItem } from '@/ui/dashboard/MenuButton';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
@@ -11,22 +12,23 @@ type PomodoroSetAdvancedInputProps = {
 };
 
 export const PomodoroSetAdvancedInput: Component<PomodoroSetAdvancedInputProps> = props => {
+  const { stageSetting } = useDashboardSettings();
   const t = useTranslate();
 
   const handleSwitchTimerClick = (setItem: SetItem, index: number) => {
     const updatedPomodoroSet = props.setItems.toSpliced(index, 1, setItem);
 
-    window.app.updateSetting('pomodoroSet', updatedPomodoroSet);
+    stageSetting('pomodoroSet', updatedPomodoroSet);
   };
 
   const handleRemoveTimerClick = (index: number) => {
     const updatedPomodoroSet = props.setItems.toSpliced(index, 1);
 
-    window.app.updateSetting('pomodoroSet', updatedPomodoroSet);
+    stageSetting('pomodoroSet', updatedPomodoroSet);
   };
 
   const handleAddTimerClick = (setItem: SetItem) => {
-    window.app.updateSetting('pomodoroSet', [...props.setItems, setItem]);
+    stageSetting('pomodoroSet', [...props.setItems, setItem]);
   };
 
   const createEditTimerOptions = (setItem: SetItem, index: number) => {

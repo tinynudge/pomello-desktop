@@ -17,6 +17,7 @@ import userEvent from '@testing-library/user-event';
 import translations from '../../../../../translations/dashboard/en-US.json';
 import { Layout } from '../components/Layout';
 import { Routes } from '../components/Routes';
+import { DashboardSettingsProvider } from '../context/DashboardSettingsContext';
 
 export * from '@solidjs/testing-library';
 
@@ -73,9 +74,11 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
       initialSettings={settings}
       initialTranslations={translations}
     >
-      <MemoryRouter history={history} root={Layout}>
-        <Routes />
-      </MemoryRouter>
+      <DashboardSettingsProvider>
+        <MemoryRouter history={history} root={Layout}>
+          <Routes />
+        </MemoryRouter>
+      </DashboardSettingsProvider>
     </RuntimeProvider>
   ));
 

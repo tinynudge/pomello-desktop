@@ -1,4 +1,5 @@
-import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
 import { ToggleSwitch } from '@/ui/dashboard/ToggleSwitch';
 import { Component } from 'solid-js';
 import { SettingsField } from './SettingsField';
@@ -9,11 +10,11 @@ type ToggleSettingFieldProps = {
 };
 
 export const ToggleSettingField: Component<ToggleSettingFieldProps> = props => {
-  const settings = useSettings();
+  const { getSetting, stageSetting } = useDashboardSettings();
   const t = useTranslate();
 
   const handleSettingChange = (checked: boolean) => {
-    window.app.updateSetting(props.setting.id, checked);
+    stageSetting(props.setting.id, checked);
   };
 
   return (
@@ -22,7 +23,7 @@ export const ToggleSettingField: Component<ToggleSettingFieldProps> = props => {
       setting={props.setting}
     >
       <ToggleSwitch
-        checked={settings[props.setting.id] as boolean | undefined}
+        checked={getSetting(props.setting.id) as boolean | undefined}
         id={props.setting.id}
         onChange={handleSettingChange}
       />
