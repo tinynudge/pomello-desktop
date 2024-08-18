@@ -3,8 +3,8 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Modal } from '@/ui/dashboard/Modal';
 import { SetItem } from '@tinynudge/pomello-service';
 import { Component, Match, Switch } from 'solid-js';
-import { PomodoroSetAdvancedInput } from './PomodoroSetAdvancedInput';
-import { PomodoroSetSimpleInput } from './PomodoroSetSimpleInput';
+import { PomodoroSetSettingAdvancedInput } from './PomodoroSetSettingAdvancedInput';
+import { PomodoroSetSettingSimpleInput } from './PomodoroSetSettingSimpleInput';
 import { SettingsField } from './SettingsField';
 import { PomodoroSetSetting } from './settingsByCategory';
 
@@ -88,10 +88,10 @@ export const PomodoroSetSettingField: Component<PomodoroSetSettingFieldProps> = 
     >
       <Switch>
         <Match when={getMaybeTaskCount()}>
-          {getTaskCount => <PomodoroSetSimpleInput taskCount={getTaskCount()} />}
+          {getTaskCount => <PomodoroSetSettingSimpleInput taskCount={getTaskCount()} />}
         </Match>
         <Match when={getMaybeSetItems()}>
-          {getSetItems => <PomodoroSetAdvancedInput setItems={getSetItems()} />}
+          {getSetItems => <PomodoroSetSettingAdvancedInput setItems={getSetItems()} />}
         </Match>
       </Switch>
       <Modal
