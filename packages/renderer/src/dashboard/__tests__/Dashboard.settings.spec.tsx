@@ -367,6 +367,272 @@ describe('Dashboard - Settings', () => {
     }
   );
 
+  it('should render a custom time setting', async () => {
+    renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        taskTime: 25,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Task time' });
+
+    expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+    expect(within(listItem).getByRole('textbox', { name: 'Task time' })).toBeInTheDocument();
+  });
+
+  it('should update a custom time setting', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        overtimeDelay: 66,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Overtime delay' });
+    const textbox = within(listItem).getByRole('textbox', { name: 'Overtime delay' });
+
+    await userEvent.clear(textbox);
+    await userEvent.type(textbox, '80');
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ overtimeDelay: 80 });
+  });
+
+  it('should show a validation error if typing an invalid custom time', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        longBreakTime: 66,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Long break time' });
+    const textbox = within(listItem).getByRole('textbox', { name: 'Long break time' });
+
+    await userEvent.type(textbox, 'abc');
+
+    expect(
+      screen.queryByText('Your pending changes have not been saved yet.')
+    ).not.toBeInTheDocument();
+    expect(within(listItem).getByText('A valid number is required')).toBeInTheDocument();
+
+    await userEvent.clear(textbox);
+    await userEvent.type(textbox, '80');
+
+    expect(within(listItem).queryByText('A valid number is required')).not.toBeInTheDocument();
+  });
+
+  it('should remove the validation error if undoing the pending changes', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        taskTime: 304,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Task time' });
+    const textbox = within(listItem).getByRole('textbox', { name: 'Task time' });
+
+    await userEvent.clear(textbox);
+    await userEvent.type(textbox, '200');
+    await userEvent.type(textbox, 'abc');
+
+    expect(within(listItem).getByText('A valid number is required')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(within(listItem).queryByText('A valid number is required')).not.toBeInTheDocument();
+    expect(textbox).toHaveValue('304');
+  });
+
+  it('should switch from a simple time input to a custom one', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        shortBreakTime: 300,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Short break time' });
+
+    expect(
+      within(listItem).getByRole('combobox', { name: 'Short break time' })
+    ).toBeInTheDocument();
+    expect(
+      within(listItem).queryByRole('textbox', { name: 'Short break time' })
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' })
+    );
+
+    expect(
+      within(listItem).queryByRole('combobox', { name: 'Short break time' })
+    ).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('textbox', { name: 'Short break time' })).toBeInTheDocument();
+  });
+
+  it('should show a warning when switching to a simple time input if the time does not evenly divide into a whole minute', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        longBreakTime: 310,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Long break time' });
+
+    expect(
+      within(listItem).queryByRole('combobox', { name: 'Long break time' })
+    ).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('textbox', { name: 'Long break time' })).toBeInTheDocument();
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
+    );
+
+    const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
+
+    expect(modal).toBeInTheDocument();
+    expect(
+      within(modal).getByRole('heading', { name: 'Incompatible setting' })
+    ).toBeInTheDocument();
+    expect(
+      within(modal).getByText(
+        'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time. Otherwise, click "Cancel" to continue using your current time.'
+      )
+    ).toBeInTheDocument();
+    expect(within(modal).getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+    expect(within(modal).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+
+    await userEvent.click(within(modal).getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
+    expect(
+      within(listItem).queryByRole('combobox', { name: 'Long break time' })
+    ).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('textbox', { name: 'Long break time' })).toBeInTheDocument();
+  });
+
+  it('should show a warning when switching to a simple time input if the time is greater the simple select max value', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        taskTime: 3660,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Task time' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
+    );
+
+    const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
+
+    expect(modal).toBeInTheDocument();
+    expect(
+      within(modal).getByRole('heading', { name: 'Incompatible setting' })
+    ).toBeInTheDocument();
+    expect(
+      within(modal).getByText(
+        'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time. Otherwise, click "Cancel" to continue using your current time.'
+      )
+    ).toBeInTheDocument();
+    expect(within(modal).getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+    expect(within(modal).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+
+    await userEvent.click(within(modal).getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
+    expect(within(listItem).queryByRole('combobox', { name: 'Task time' })).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('textbox', { name: 'Task time' })).toBeInTheDocument();
+  });
+
+  it('should reset to the default value from the warning modal', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        taskTime: 500,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Task time' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
+    );
+
+    const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
+
+    await userEvent.click(within(modal).getByRole('button', { name: 'Reset' }));
+
+    expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
+    expect(within(listItem).queryByRole('textbox', { name: 'Task time' })).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('combobox', { name: 'Task time' })).toHaveValue('1500');
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+  });
+
+  it('should return to the original simple time input when undoing pending changes', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        overtimeDelay: 300,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Overtime delay' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' })
+    );
+
+    const textbox = within(listItem).getByRole('textbox', { name: 'Overtime delay' });
+
+    await userEvent.clear(textbox);
+    await userEvent.type(textbox, '600');
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(
+      within(listItem).queryByRole('textbox', { name: 'Overtime delay' })
+    ).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('combobox', { name: 'Overtime delay' })).toHaveValue('300');
+  });
+
+  it('should return to the original advanced time input when undoing pending changes', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        taskTime: 606,
+      },
+    });
+
+    const listItem = screen.getByRole('listitem', { name: 'Task time' });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(
+      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(within(listItem).queryByRole('combobox', { name: 'Task time' })).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('textbox', { name: 'Task time' })).toHaveValue('606');
+  });
+
   it('should render a simple pomodoroSet count', async () => {
     renderDashboard({
       route: DashboardRoute.Settings,

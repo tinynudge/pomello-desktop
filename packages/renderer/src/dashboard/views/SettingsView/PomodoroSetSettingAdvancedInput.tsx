@@ -4,14 +4,16 @@ import { MenuButton, MenuItem } from '@/ui/dashboard/MenuButton';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
 import { SetItem } from '@tinynudge/pomello-service';
 import { Component, Index } from 'solid-js';
-import styles from './PomodoroSetAdvancedInput.module.scss';
+import styles from './PomodoroSetSettingAdvancedInput.module.scss';
 import AddIcon from './assets/add.svg';
 
-type PomodoroSetAdvancedInputProps = {
+type PomodoroSetSettingAdvancedInputProps = {
   setItems: SetItem[];
 };
 
-export const PomodoroSetAdvancedInput: Component<PomodoroSetAdvancedInputProps> = props => {
+export const PomodoroSetSettingAdvancedInput: Component<
+  PomodoroSetSettingAdvancedInputProps
+> = props => {
   const { stageSetting } = useDashboardSettings();
   const t = useTranslate();
 

@@ -2,13 +2,15 @@ import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsConte
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Select } from '@/ui/dashboard/Select';
 import { Component } from 'solid-js';
-import styles from './PomodoroSetSimpleInput.module.scss';
+import styles from './PomodoroSetSettingSimpleInput.module.scss';
 
-type PomodoroSetSimpleInputProps = {
+type PomodoroSetSettingSimpleInputProps = {
   taskCount: number;
 };
 
-export const PomodoroSetSimpleInput: Component<PomodoroSetSimpleInputProps> = props => {
+export const PomodoroSetSettingSimpleInput: Component<
+  PomodoroSetSettingSimpleInputProps
+> = props => {
   const { stageSetting } = useDashboardSettings();
   const t = useTranslate();
 

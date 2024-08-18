@@ -1,9 +1,10 @@
 import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
-import { Select } from '@/ui/dashboard/Select';
-import { Component, createMemo } from 'solid-js';
+import { Modal } from '@/ui/dashboard/Modal';
+import { Component, Show, createSignal, onCleanup, onMount } from 'solid-js';
 import { SettingsField } from './SettingsField';
-import styles from './TimeSettingField.module.scss';
+import { TimeSettingAdvancedInput } from './TimeSettingAdvancedInput';
+import { TimeSettingSimpleInput } from './TimeSettingSimpleInput';
 import { TimeSetting } from './settingsByCategory';
 
 type TimeSettingFieldProps = {
@@ -11,36 +12,101 @@ type TimeSettingFieldProps = {
 };
 
 export const TimeSettingField: Component<TimeSettingFieldProps> = props => {
-  const { getSetting, stageSetting } = useDashboardSettings();
+  const { getSetting, stageSetting, onStagedSettingsClear } = useDashboardSettings();
   const t = useTranslate();
 
-  const getOptions = createMemo(() => {
-    const length = props.setting.max - props.setting.min + 1;
+  const getValue = () => getSetting(props.setting.id) as number;
 
-    return Array.from({ length }).map((_, index) => ({
-      id: `${(props.setting.min + index) * 60}`,
-      label: `${props.setting.min + index}`,
-    }));
+  const isSimpleViewCompatible = (value: number) =>
+    value >= 60 && value <= props.setting.max * 60 && value % 60 === 0;
+
+  const [getView, setView] = createSignal<'advanced' | 'simple'>(
+    isSimpleViewCompatible(getValue()) ? 'simple' : 'advanced'
+  );
+
+  onMount(() => {
+    const unsubscribeOnSettingsClear = onStagedSettingsClear(() => {
+      if (previousView) {
+        setView(previousView);
+
+        previousView = null;
+      }
+    });
+
+    onCleanup(unsubscribeOnSettingsClear);
   });
 
-  const handleSettingChange = (value: string) => {
-    stageSetting(props.setting.id, +value);
+  const handleViewChange = () => {
+    const currentView = getView();
+
+    if (!previousView) {
+      previousView = currentView;
+    }
+
+    if (currentView === 'advanced') {
+      if (!isSimpleViewCompatible(getValue())) {
+        incompatibleSettingModalRef.showModal();
+        return;
+      }
+
+      setView('simple');
+    } else {
+      setView('advanced');
+    }
   };
+
+  const handleResetClick = () => {
+    stageSetting(props.setting.id, props.setting.default);
+
+    setView('simple');
+  };
+
+  const handleSettingChange = (value: number) => {
+    stageSetting(props.setting.id, value);
+  };
+
+  let previousView: 'advanced' | 'simple' | null = null;
+
+  let incompatibleSettingModalRef: HTMLDialogElement;
 
   return (
     <SettingsField
+      additionalActions={[
+        {
+          onClick: handleViewChange,
+          text:
+            getView() === 'advanced' ? t('switchSimpleViewAction') : t('switchAdvancedViewAction'),
+        },
+      ]}
       defaultValue={t('timeLength', { count: `${+props.setting.default / 60}` })}
       setting={props.setting}
     >
-      <span class={styles.select}>
-        <Select
-          id={props.setting.id}
-          onChange={handleSettingChange}
-          options={getOptions()}
-          value={getSetting(props.setting.id)?.toString()}
+      <Show
+        when={getView() === 'simple'}
+        fallback={
+          <TimeSettingAdvancedInput
+            id={props.setting.id}
+            onSettingChange={handleSettingChange}
+            value={getValue()}
+          />
+        }
+      >
+        <TimeSettingSimpleInput
+          onSettingChange={handleSettingChange}
+          setting={props.setting}
+          value={getValue()}
         />
-        {t('timeSelectSuffix')}
-      </span>
+      </Show>
+      <Modal
+        buttons={[
+          { children: t('reset'), onClick: handleResetClick, variant: 'primary' },
+          { children: t('cancel'), autofocus: true },
+        ]}
+        heading={t('incompatibleSetting')}
+        ref={incompatibleSettingModalRef!}
+      >
+        <p>{t('incompatibleTime')}</p>
+      </Modal>
     </SettingsField>
   );
 };

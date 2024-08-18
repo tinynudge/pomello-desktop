@@ -1,6 +1,6 @@
 import { useSettings } from '@/shared/context/RuntimeContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
-import { Settings } from '@pomello-desktop/domain';
+import { Settings, Unsubscribe } from '@pomello-desktop/domain';
 import { ParentComponent, createContext, useContext } from 'solid-js';
 import { createStore, reconcile, unwrap } from 'solid-js/store';
 
@@ -9,6 +9,7 @@ type DashboardSettingsContextValue = {
   commitStagedSettings(): Promise<void>;
   getHasStagedChanges(): boolean;
   getSetting<TSetting extends keyof Settings>(key: TSetting): Settings[TSetting];
+  onStagedSettingsClear(subscriber: () => void): Unsubscribe;
   stageSetting<TSetting extends keyof Settings>(key: TSetting, value: Settings[TSetting]): void;
 };
 
@@ -30,6 +31,10 @@ export const DashboardSettingsProvider: ParentComponent = props => {
 
   const clearStagedSettings = () => {
     setStagedSettings(reconcile({}));
+
+    for (const subscriber of subscribers) {
+      subscriber();
+    }
   };
 
   const commitStagedSettings = async () => {
@@ -39,13 +44,21 @@ export const DashboardSettingsProvider: ParentComponent = props => {
 
     await window.app.updateSettings({ ...unwrap(stagedSettings) });
 
-    clearStagedSettings();
+    setStagedSettings(reconcile({}));
   };
 
   const getHasStagedChanges = () => !!Object.keys(stagedSettings).length;
 
   const getSetting = <TSetting extends keyof Settings>(setting: TSetting) =>
     stagedSettings[setting] ?? settings[setting];
+
+  const onStagedSettingsClear = (subscriber: () => void) => {
+    subscribers.add(subscriber);
+
+    return () => {
+      subscribers.delete(subscriber);
+    };
+  };
 
   const stageSetting = <TSetting extends keyof Settings>(
     setting: TSetting,
@@ -54,6 +67,8 @@ export const DashboardSettingsProvider: ParentComponent = props => {
     setStagedSettings(setting, value);
   };
 
+  const subscribers = new Set<() => void>();
+
   return (
     <DashboardSettingsContext.Provider
       value={{
@@ -61,6 +76,7 @@ export const DashboardSettingsProvider: ParentComponent = props => {
         commitStagedSettings,
         getHasStagedChanges,
         getSetting,
+        onStagedSettingsClear,
         stageSetting,
       }}
     >
