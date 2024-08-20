@@ -57,7 +57,7 @@ export const Tooltip: Component<TooltipProps> = props => {
         popover="manual"
         ref={tooltipRef!}
         role="tooltip"
-        style={{ 'position-anchor': tooltipId } as JSX.CSSProperties}
+        style={{ 'position-anchor': tooltipId }}
       >
         {props.text}
       </span>

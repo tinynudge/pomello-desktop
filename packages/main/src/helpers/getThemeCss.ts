@@ -13,6 +13,7 @@ const colors = {
   longBreakDark: 'rgb(67 157 71)',
   primary: 'rgb(0 194 193)',
   primaryDark: 'rgb(19 175 174)',
+  red: 'rgb(255 102 133)',
   shortBreak: 'rgb(32 149 242)',
   shortBreakDark: 'rgb(27 125 203)',
   task: 'rgb(243 66 53)',
@@ -178,14 +179,6 @@ const defaultTheme: ThemeConfig = {
     },
     border: [opacity(colors.dark, 24), colors.dark],
     button: {
-      default: {
-        border: [opacity(colors.dark, 24), colors.dark],
-        background: {
-          active: [opacity(colors.dark, 6), opacity(colors.white, 6)],
-          default: ['transparent', opacity(colors.white, 4)],
-          hover: [opacity(colors.dark, 4), opacity(colors.white, 8)],
-        },
-      },
       link: {
         active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
         default: [colors.blue, colors.blueDark],
@@ -203,6 +196,24 @@ const defaultTheme: ThemeConfig = {
       background: [colors.lightAlt, colors.dark],
     },
     focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
+    input: {
+      default: {
+        border: [opacity(colors.dark, 24), colors.dark],
+        background: {
+          active: [opacity(colors.dark, 6), opacity(colors.white, 6)],
+          default: ['transparent', opacity(colors.white, 4)],
+          hover: [opacity(colors.dark, 4), opacity(colors.white, 8)],
+        },
+      },
+      error: {
+        border: colors.red,
+        outline: opacity(colors.red, 30),
+        tooltip: {
+          background: colors.red,
+          text: darken(colors.red, 72),
+        },
+      },
+    },
     menu: {
       default: [colors.white, colors.darkAlt],
       hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
