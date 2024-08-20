@@ -188,7 +188,7 @@ export const MenuButton: Component<MenuButtonProps> = allProps => {
         popover
         ref={attachMenuRef}
         role="menu"
-        style={{ 'position-anchor': anchorId } as JSX.CSSProperties}
+        style={{ 'position-anchor': anchorId }}
       >
         <For each={props.menuItems}>
           {(item, getIndex) => (

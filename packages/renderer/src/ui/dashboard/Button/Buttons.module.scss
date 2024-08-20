@@ -1,8 +1,8 @@
 .button {
   padding: 6px 14px;
-  border: 1px solid var(--dashboard-button-default-border);
+  border: 1px solid var(--dashboard-input-default-border);
   border-radius: 4px;
-  background-color: var(--dashboard-button-default-background-default);
+  background-color: var(--dashboard-input-default-background-default);
 
   &:focus-visible {
     outline: 3px solid var(--dashboard-focus);
@@ -10,12 +10,12 @@
   }
 
   &:hover {
-    background-color: var(--dashboard-button-default-background-hover);
+    background-color: var(--dashboard-input-default-background-hover);
     cursor: pointer;
   }
 
   &:active {
-    background-color: var(--dashboard-button-default-background-active);
+    background-color: var(--dashboard-input-default-background-active);
   }
 
   &[data-variant='primary'] {
