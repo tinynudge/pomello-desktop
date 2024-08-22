@@ -1,11 +1,12 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
-import { HotkeyCommand, Hotkeys, LabeledHotkeys, Unsubscribe } from '@pomello-desktop/domain';
-import Mousetrap from 'mousetrap';
-import { ParentComponent, createContext, onCleanup, onMount, useContext } from 'solid-js';
+import { HotkeyCommand, Hotkeys, LabeledHotkeys } from '@pomello-desktop/domain';
+import mousetrap from 'mousetrap';
+import { ParentComponent, createContext, createEffect, onCleanup, useContext } from 'solid-js';
+import { createStore, reconcile } from 'solid-js/store';
 
 type HotkeysProviderProps = {
-  hotkeys: LabeledHotkeys;
+  initialHotkeys: LabeledHotkeys;
 };
 
 type HotkeysContextValue = {
@@ -31,8 +32,14 @@ export const useHotkeys = () => {
 export const HotkeysProvider: ParentComponent<HotkeysProviderProps> = props => {
   const t = useTranslate();
 
+  const [hotkeys, setHotkeys] = createStore(props.initialHotkeys);
+
+  const unsubscribe = window.app.onHotkeysChange(hotkeys => setHotkeys(reconcile(hotkeys)));
+
+  onCleanup(unsubscribe);
+
   const getHotkeyLabel = (command: keyof Hotkeys) => {
-    return props.hotkeys[command]?.label;
+    return hotkeys[command]?.label;
   };
 
   const getTitleWithHotkey = (titleKey: string, command: HotkeyCommand) => {
@@ -45,21 +52,17 @@ export const HotkeysProvider: ParentComponent<HotkeysProviderProps> = props => {
   };
 
   const registerHotkeys = (registry: HotkeysRegistry) => {
-    onMount(() => {
-      const unregisterHotkeys: Unsubscribe[] = [];
+    Object.entries(registry).forEach(([command, handler]) => {
+      createEffect(() => {
+        const binding = hotkeys[command as keyof Hotkeys]?.binding;
 
-      Object.entries(registry).forEach(([command, handler]) => {
-        const hotkey = props.hotkeys[command as keyof Hotkeys];
+        if (binding) {
+          mousetrap.bind(binding, handler);
 
-        if (hotkey) {
-          Mousetrap.bind(hotkey.binding, handler);
-
-          unregisterHotkeys.push(() => Mousetrap.unbind(hotkey.binding));
+          onCleanup(() => {
+            mousetrap.unbind(binding);
+          });
         }
-      });
-
-      onCleanup(() => {
-        unregisterHotkeys.forEach(unregisterHotkey => unregisterHotkey());
       });
     });
   };

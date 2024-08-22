@@ -5,6 +5,7 @@ export type LabeledHotkeys = Partial<
     HotkeyCommand,
     {
       binding: string;
+      keys: string[][];
       label: string;
     }
   >

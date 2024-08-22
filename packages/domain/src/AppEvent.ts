@@ -9,6 +9,7 @@ export enum AppEvent {
   GetThemeCss = 'get-theme-css',
   GetTranslations = 'get-translations',
   HideSelect = 'hide-select',
+  HotkeysChange = 'hotkeys-change',
   LogMessage = 'log-message',
   OpenUrl = 'open-url',
   PowerMonitorChange = 'power-monitor-change',
@@ -27,6 +28,7 @@ export enum AppEvent {
   StoreChange = 'store-change',
   ThemeCssChange = 'theme-css-change',
   UnsetStoreItem = 'unset-store-item',
+  UpdateHotkeys = 'update-hotkeys',
   UpdateSetting = 'update-setting',
   UpdateSettings = 'update-settings',
 }

@@ -1,4 +1,4 @@
-import { ServiceConfigActions, Settings } from '@pomello-desktop/domain';
+import { LabeledHotkeys, ServiceConfigActions, Settings } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 import { mockHotkeys } from './mockHotkeys';
 import { mockRegisterServiceConfig } from './mockRegisterServiceConfig';
@@ -10,6 +10,7 @@ type CallbackFunction = (...args: any[]) => any;
 
 type CreateMockAppApiOptions = {
   appApi?: Partial<AppApi>;
+  hotkeys?: LabeledHotkeys;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceConfigs?: Record<string, ServiceConfigActions<any>>;
   settings: Settings;
@@ -17,6 +18,7 @@ type CreateMockAppApiOptions = {
 
 export const createMockAppApi = ({
   appApi = {},
+  hotkeys = mockHotkeys,
   serviceConfigs = {},
   settings,
 }: CreateMockAppApiOptions): [AppApi, MockAppEventEmitter] => {
@@ -54,6 +56,9 @@ export const createMockAppApi = ({
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),
     logMessage: vi.fn(),
     onAppWindowFocus: vi.fn(),
+    onHotkeysChange: vi.fn(
+      appApi.onHotkeysChange ?? (callback => addListener('onHotkeysChange', callback))
+    ),
     onPowerMonitorChange: vi.fn(() => () => {}),
     onSelectChange: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectChange', callback))
@@ -95,11 +100,14 @@ export const createMockAppApi = ({
       appApi.showMessageBox ?? (() => Promise.resolve({ checkboxChecked: false, response: 0 }))
     ),
     showSelect: vi.fn(appApi.showSelect ?? (() => Promise.resolve())),
+    updateHotkeys: vi.fn(async updatedHotkeys =>
+      emit('onHotkeysChange', { ...hotkeys, ...updatedHotkeys })
+    ),
     updateSetting: vi.fn(async (setting, value) =>
       emit('onSettingsChange', { ...settings, [setting]: value })
     ),
-    updateSettings: vi.fn(async updateSettings =>
-      emit('onSettingsChange', { ...settings, ...updateSettings })
+    updateSettings: vi.fn(async updatedSettings =>
+      emit('onSettingsChange', { ...settings, ...updatedSettings })
     ),
     writeClipboardText: vi.fn(),
   };

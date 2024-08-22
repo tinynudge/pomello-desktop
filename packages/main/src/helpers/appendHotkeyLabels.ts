@@ -9,19 +9,14 @@ const osxTransforms: Record<string, string> = {
   shift: '⇧',
 };
 
-const humanizeBinding = (binding: string): string =>
-  binding
-    .split('+')
-    .map(key => {
-      let value = key;
+const humanizeBinding = (binding: string): string[] =>
+  binding.split('+').map(key => {
+    if (isOsx && osxTransforms[key]) {
+      return osxTransforms[key];
+    }
 
-      if (isOsx && osxTransforms[key]) {
-        value = osxTransforms[key];
-      }
-
-      return value.charAt(0).toUpperCase() + value.slice(1);
-    })
-    .join(' ');
+    return key.charAt(0).toUpperCase() + key.slice(1);
+  });
 
 export const appendHotkeyLabels = (hotkeys: Hotkeys): LabeledHotkeys => {
   return Object.keys(hotkeys).reduce((labeledHotkeys, command) => {
@@ -31,12 +26,15 @@ export const appendHotkeyLabels = (hotkeys: Hotkeys): LabeledHotkeys => {
       return labeledHotkeys;
     }
 
-    const label = binding.split(' ').map(humanizeBinding).join(' ');
+    const keys = binding.split(' ').map(humanizeBinding);
+
+    const label = keys.map(chord => chord.join(' ')).join(' • ');
 
     return {
       ...labeledHotkeys,
       [command]: {
         binding,
+        keys,
         label,
       },
     };
