@@ -24,6 +24,7 @@ import { handleShowMessageBox } from '@/events/handleShowMessageBox';
 import { handleShowSelect } from '@/events/handleShowSelect';
 import { handleThemeUpdate } from '@/events/handleThemeUpdate';
 import { handleUnsetStoreItem } from '@/events/handleUnsetStoreItem';
+import { handleUpdateHotkeys } from '@/events/handleUpdateHotkeys';
 import { handleUpdateSetting } from '@/events/handleUpdateSetting';
 import { handleUpdateSettings } from '@/events/handleUpdateSettings';
 import { AppEvent, AppProtocol } from '@pomello-desktop/domain';
@@ -51,6 +52,7 @@ export const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.ShowMessageBox, handleShowMessageBox);
   ipcMain.handle(AppEvent.ShowSelect, handleShowSelect);
   ipcMain.handle(AppEvent.UnsetStoreItem, handleUnsetStoreItem);
+  ipcMain.handle(AppEvent.UpdateHotkeys, handleUpdateHotkeys);
   ipcMain.handle(AppEvent.UpdateSetting, handleUpdateSetting);
   ipcMain.handle(AppEvent.UpdateSettings, handleUpdateSettings);
 

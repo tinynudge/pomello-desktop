@@ -56,7 +56,7 @@ const renderApp = async () => {
             >
               <PomelloApiProvider initialPomelloApi={pomelloApi}>
                 <ServiceProvider initialServiceId={serviceId}>
-                  <HotkeysProvider hotkeys={hotkeys}>
+                  <HotkeysProvider initialHotkeys={hotkeys}>
                     <App />
                   </HotkeysProvider>
                 </ServiceProvider>

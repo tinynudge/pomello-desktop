@@ -9,6 +9,7 @@ import { getTranslations } from './getTranslations';
 import { hideSelect } from './hideSelect';
 import { logMessage } from './logMessage';
 import { onAppWindowFocus } from './onAppWindowFocus';
+import { onHotkeysChange } from './onHotkeysChange';
 import { onPowerMonitorChange } from './onPowerMonitorChange';
 import { onSelectChange } from './onSelectChange';
 import { onSelectHide } from './onSelectHide';
@@ -30,6 +31,7 @@ import { showAuthWindow } from './showAuthWindow';
 import { showDashboardWindow } from './showDashboardWindow';
 import { showMessageBox } from './showMessageBox';
 import { showSelect } from './showSelect';
+import { updateHotkeys } from './updateHotkeys';
 import { updateSetting } from './updateSetting';
 import { updateSettings } from './updateSettings';
 import { writeClipboardText } from './writeClipboardText';
@@ -45,6 +47,7 @@ export const api = {
   hideSelect,
   logMessage,
   onAppWindowFocus,
+  onHotkeysChange,
   onPowerMonitorChange,
   onSelectChange,
   onSelectHide,
@@ -66,6 +69,7 @@ export const api = {
   showDashboardWindow,
   showMessageBox,
   showSelect,
+  updateHotkeys,
   updateSetting,
   updateSettings,
   writeClipboardText,

@@ -74,8 +74,14 @@ export const renderApp = (options: RenderAppOptions = {}) => {
     }
   );
 
+  const hotkeys: LabeledHotkeys = {
+    ...mockHotkeys,
+    ...options.hotkeys,
+  };
+
   const [appApi, emitAppApiEvent] = createMockAppApi({
     appApi: options.appApi,
+    hotkeys,
     serviceConfigs: {
       pomello: pomelloConfigActions,
       ...options.serviceConfigs,
@@ -98,11 +104,6 @@ export const renderApp = (options: RenderAppOptions = {}) => {
   const services =
     options.createServiceRegistry?.(defaultServiceRegistry) ?? defaultServiceRegistry;
 
-  const hotkeys: LabeledHotkeys = {
-    ...mockHotkeys,
-    ...options.hotkeys,
-  };
-
   const pomelloApi = createMockPomelloApi(pomelloConfig, options.pomelloApi);
 
   render(() => (
@@ -118,7 +119,7 @@ export const renderApp = (options: RenderAppOptions = {}) => {
           >
             <PomelloApiProvider initialPomelloApi={pomelloApi}>
               <ServiceProvider initialServiceId={serviceId}>
-                <HotkeysProvider hotkeys={hotkeys}>
+                <HotkeysProvider initialHotkeys={hotkeys}>
                   <App />
                 </HotkeysProvider>
               </ServiceProvider>
