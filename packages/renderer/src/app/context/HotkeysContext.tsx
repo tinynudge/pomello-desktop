@@ -1,12 +1,12 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
-import { HotkeyCommand, Hotkeys, LabeledHotkeys } from '@pomello-desktop/domain';
+import { HotkeyCommand, Hotkeys, FormattedHotkeys } from '@pomello-desktop/domain';
 import mousetrap from 'mousetrap';
 import { ParentComponent, createContext, createEffect, onCleanup, useContext } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
 
 type HotkeysProviderProps = {
-  initialHotkeys: LabeledHotkeys;
+  initialHotkeys: FormattedHotkeys;
 };
 
 type HotkeysContextValue = {

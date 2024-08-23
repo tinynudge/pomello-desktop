@@ -1,4 +1,4 @@
-import { AppEvent, LabeledHotkeys } from '@pomello-desktop/domain';
+import { AppEvent, FormattedHotkeys } from '@pomello-desktop/domain';
 import { ipcRenderer } from 'electron';
 
-export const getHotkeys = (): Promise<LabeledHotkeys> => ipcRenderer.invoke(AppEvent.GetHotkeys);
+export const getHotkeys = (): Promise<FormattedHotkeys> => ipcRenderer.invoke(AppEvent.GetHotkeys);

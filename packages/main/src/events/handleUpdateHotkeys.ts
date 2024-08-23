@@ -1,4 +1,4 @@
-import { appendHotkeyLabels } from '@/helpers/appendHotkeyLabels';
+import { formatHotkeys } from '@/helpers/formatHotkeys';
 import { getHotkeys } from '@/helpers/getHotkeys';
 import { runtime } from '@/runtime';
 import { AppEvent, Hotkeys } from '@pomello-desktop/domain';
@@ -12,9 +12,9 @@ export const handleUpdateHotkeys = async (
 
   hotkeys.set(updatedHotkeys);
 
-  const labeledHotkeys = appendHotkeyLabels(hotkeys.all());
+  const formattedHotkeys = formatHotkeys(hotkeys.all());
 
   runtime.windowManager.getAllWindows().forEach(browserWindow => {
-    browserWindow.webContents.send(AppEvent.HotkeysChange, labeledHotkeys);
+    browserWindow.webContents.send(AppEvent.HotkeysChange, formattedHotkeys);
   });
 };
