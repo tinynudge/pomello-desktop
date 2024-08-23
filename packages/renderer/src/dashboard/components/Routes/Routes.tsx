@@ -1,3 +1,4 @@
+import { KeyboardShortcutsView } from '@/dashboard/views/KeyboardShortcutsView';
 import { SettingsView } from '@/dashboard/views/SettingsView';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
@@ -19,6 +20,7 @@ export const Routes: Component = () => {
 
   return (
     <>
+      <Route path={DashboardRoute.KeyboardShortcuts} component={KeyboardShortcutsView} />
       <Route path={DashboardRoute.Settings} component={SettingsView} />
       <For each={Object.values(DashboardRoute)}>
         {route => <Route path={route} component={() => <MainHeader heading={routes[route]} />} />}
