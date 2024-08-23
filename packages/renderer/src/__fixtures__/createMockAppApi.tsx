@@ -1,4 +1,4 @@
-import { LabeledHotkeys, ServiceConfigActions, Settings } from '@pomello-desktop/domain';
+import { FormattedHotkeys, ServiceConfigActions, Settings } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 import { mockHotkeys } from './mockHotkeys';
 import { mockRegisterServiceConfig } from './mockRegisterServiceConfig';
@@ -10,7 +10,7 @@ type CallbackFunction = (...args: any[]) => any;
 
 type CreateMockAppApiOptions = {
   appApi?: Partial<AppApi>;
-  hotkeys?: LabeledHotkeys;
+  hotkeys?: FormattedHotkeys;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceConfigs?: Record<string, ServiceConfigActions<any>>;
   settings: Settings;

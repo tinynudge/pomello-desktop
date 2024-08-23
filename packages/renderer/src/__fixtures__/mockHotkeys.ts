@@ -1,89 +1,89 @@
-import { LabeledHotkeys } from '@pomello-desktop/domain';
+import { CompleteFormattedHotkeys } from '@pomello-desktop/domain';
 
-export const mockHotkeys: LabeledHotkeys = {
+export const mockHotkeys: CompleteFormattedHotkeys = {
   addNote: {
     binding: 'command+shift+a',
-    keys: [['command', 'shift', 'a']],
+    keys: [['⌘', '⇧', 'A']],
     label: 'Add note label',
   },
   completeTaskEarly: {
     binding: 'command+shift+b',
-    keys: [['command', 'shift', 'b']],
+    keys: [['⌘', '⇧', 'B']],
     label: 'Complete task early label',
   },
   continueTask: {
     binding: 'command+shift+c',
-    keys: [['command', 'shift', 'c']],
+    keys: [['⌘', '⇧', 'C']],
     label: 'Continue task label',
   },
   createTask: {
     binding: 'command+shift+d',
-    keys: [['command', 'shift', 'd']],
+    keys: [['⌘', '⇧', 'D']],
     label: 'Create task label',
   },
   externalDistraction: {
     binding: 'command+shift+e',
-    keys: [['command', 'shift', 'e']],
+    keys: [['⌘', '⇧', 'E']],
     label: 'External distraction label',
   },
   internalDistraction: {
     binding: 'command+shift+f',
-    keys: [['command', 'shift', 'f']],
+    keys: [['⌘', '⇧', 'F']],
     label: 'Internal distraction label',
   },
   moveTask: {
     binding: 'command+shift+g',
-    keys: [['command', 'shift', 'g']],
+    keys: [['⌘', '⇧', 'G']],
     label: 'Move task label',
   },
   openInBrowser: {
     binding: 'command+shift+h',
-    keys: [['command', 'shift', 'h']],
+    keys: [['⌘', '⇧', 'H']],
     label: 'Open in browser label',
   },
   pauseTimer: {
     binding: 'command+shift+i',
-    keys: [['command', 'shift', 'i']],
+    keys: [['⌘', '⇧', 'I']],
     label: 'Pause timer label',
   },
   routeHome: {
     binding: 'command+shift+j',
-    keys: [['command', 'shift', 'j']],
+    keys: [['⌘', '⇧', 'J']],
     label: 'Route home label',
   },
   routeProductivity: {
     binding: 'command+shift+k',
-    keys: [['command', 'shift', 'k']],
+    keys: [['⌘', '⇧', 'K']],
     label: 'Route productivity label',
   },
   routeSettings: {
     binding: 'command+shift+l',
-    keys: [['command', 'shift', 'l']],
+    keys: [['⌘', '⇧', 'L']],
     label: 'Route settings label',
   },
   skipBreak: {
     binding: 'command+shift+m',
-    keys: [['command', 'shift', 'm']],
+    keys: [['⌘', '⇧', 'M']],
     label: 'Skip break label',
   },
   startTimer: {
     binding: 'command+shift+n',
-    keys: [['command', 'shift', 'n']],
+    keys: [['⌘', '⇧', 'N']],
     label: 'Start timer label',
   },
   switchTask: {
     binding: 'command+shift+o',
-    keys: [['command', 'shift', 'o']],
+    keys: [['⌘', '⇧', 'O']],
     label: 'Switch task label',
   },
   toggleMenu: {
     binding: 'command+shift+p',
-    keys: [['command', 'shift', 'p']],
+    keys: [['⌘', '⇧', 'P']],
     label: 'Toggle menu label',
   },
   voidTask: {
     binding: 'command+shift+q',
-    keys: [['command', 'shift', 'q']],
+    keys: [['⌘', '⇧', 'Q']],
     label: 'Void task label',
   },
 };

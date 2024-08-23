@@ -10,7 +10,7 @@ import { RuntimeProvider } from '@/shared/context/RuntimeContext';
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import { bindContext } from '@/shared/helpers/bindContext';
 import {
-  LabeledHotkeys,
+  FormattedHotkeys,
   PomelloServiceConfig,
   Service,
   ServiceConfigActions,
@@ -38,7 +38,7 @@ export type RenderAppOptions = {
     defaultRegistry: ServiceRegistry
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Record<string, ServiceFactory<void> | ServiceFactory<any>>;
-  hotkeys?: Partial<LabeledHotkeys>;
+  hotkeys?: FormattedHotkeys;
   mockService?: {
     config?: ServiceConfigStore;
     service?: Partial<Service>;
@@ -74,7 +74,7 @@ export const renderApp = (options: RenderAppOptions = {}) => {
     }
   );
 
-  const hotkeys: LabeledHotkeys = {
+  const hotkeys: FormattedHotkeys = {
     ...mockHotkeys,
     ...options.hotkeys,
   };

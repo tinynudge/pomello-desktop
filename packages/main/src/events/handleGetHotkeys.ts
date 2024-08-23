@@ -1,9 +1,9 @@
-import { appendHotkeyLabels } from '@/helpers/appendHotkeyLabels';
+import { formatHotkeys } from '@/helpers/formatHotkeys';
 import { getHotkeys } from '@/helpers/getHotkeys';
-import { LabeledHotkeys } from '@pomello-desktop/domain';
+import { FormattedHotkeys } from '@pomello-desktop/domain';
 
-export const handleGetHotkeys = async (): Promise<LabeledHotkeys> => {
+export const handleGetHotkeys = async (): Promise<FormattedHotkeys> => {
   const hotkeys = getHotkeys();
 
-  return appendHotkeyLabels(hotkeys.all());
+  return formatHotkeys(hotkeys.all());
 };
