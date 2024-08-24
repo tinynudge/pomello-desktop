@@ -16,13 +16,15 @@ const renderDashboard = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [pomelloConfig, hotkeys, settings, themeCss, translations] = await Promise.all([
-    getPomelloServiceConfig(),
-    window.app.getHotkeys(),
-    window.app.getSettings(),
-    window.app.getThemeCss(),
-    window.app.getTranslations('dashboard'),
-  ]);
+  const [pomelloConfig, defaultHotkeys, hotkeys, settings, themeCss, translations] =
+    await Promise.all([
+      getPomelloServiceConfig(),
+      window.app.getDefaultHotkeys(),
+      window.app.getHotkeys(),
+      window.app.getSettings(),
+      window.app.getThemeCss(),
+      window.app.getTranslations('dashboard'),
+    ]);
 
   const logger = createLogger();
 
@@ -37,7 +39,7 @@ const renderDashboard = async () => {
         initialSettings={settings}
         initialTranslations={translations}
       >
-        <DashboardProvider initialHotkeys={hotkeys}>
+        <DashboardProvider initialDefaultHotkeys={defaultHotkeys} initialHotkeys={hotkeys}>
           <HashRouter root={Layout}>
             <Routes />
           </HashRouter>

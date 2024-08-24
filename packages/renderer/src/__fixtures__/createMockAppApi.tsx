@@ -49,6 +49,7 @@ export const createMockAppApi = ({
     decryptValue: vi.fn(appApi.decryptValue ?? (value => value)),
     encryptValue: vi.fn(appApi.encryptValue ?? (value => value)),
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
+    getDefaultHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve({ css: '', theme: 'light' }))),

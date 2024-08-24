@@ -82,7 +82,7 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
       initialSettings={settings}
       initialTranslations={translations}
     >
-      <DashboardProvider initialHotkeys={hotkeys}>
+      <DashboardProvider initialDefaultHotkeys={mockHotkeys} initialHotkeys={hotkeys}>
         <MemoryRouter history={history} root={Layout}>
           <Routes />
         </MemoryRouter>

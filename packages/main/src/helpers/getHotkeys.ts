@@ -1,11 +1,11 @@
 import { runtime } from '@/runtime';
-import { Hotkeys, Store } from '@pomello-desktop/domain';
+import { HotkeyCommand, Hotkeys, Store } from '@pomello-desktop/domain';
 
 type HotkeyDefaults = Record<keyof Hotkeys, PlatformValue | string>;
 
 type PlatformValue = Record<'linux' | 'mac' | 'windows', string>;
 
-const hotkeyDefaults: HotkeyDefaults = {
+const defaultHotkeysByPlatform: HotkeyDefaults = {
   addNote: {
     linux: 'meta+n',
     mac: 'command+n',
@@ -76,18 +76,18 @@ const hotkeyDefaults: HotkeyDefaults = {
 const platform =
   process.platform === 'darwin' ? 'mac' : process.platform === 'win32' ? 'windows' : 'linux';
 
-const platformDefaults = Object.entries(hotkeyDefaults).reduce(
+export const defaultHotkeys = Object.entries(defaultHotkeysByPlatform).reduce(
   (hotkeys, [command, hotkey]) => ({
     ...hotkeys,
     [command]: typeof hotkey === 'string' ? hotkey : hotkey[platform],
   }),
-  {} as Hotkeys
+  {} as Record<HotkeyCommand, string>
 );
 
 export const getHotkeys = (): Store<Hotkeys> => {
   return runtime.storeManager.registerStore<Hotkeys>({
     path: 'bindings',
-    defaults: platformDefaults,
+    defaults: defaultHotkeys,
     schema: {
       type: 'object',
       properties: {

@@ -1,9 +1,11 @@
 import { useSettings } from '@/shared/context/RuntimeContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
 import {
+  CompleteFormattedHotkeys,
   FormattedHotkey,
   FormattedHotkeys,
   HotkeyCommand,
+  Hotkeys,
   Settings,
   Unsubscribe,
 } from '@pomello-desktop/domain';
@@ -13,16 +15,21 @@ import { createStore, reconcile, unwrap } from 'solid-js/store';
 type DashboardContextValue = {
   clearStagedSettings(): void;
   commitStagedSettings(): Promise<void>;
+  getDefaultHotkey(command: HotkeyCommand): FormattedHotkey;
   getHasStagedChanges(): boolean;
-  getHotkey(command: HotkeyCommand): FormattedHotkey | undefined;
+  getHotkey(command: HotkeyCommand): FormattedHotkey | false;
   getSetting<TSetting extends keyof Settings>(key: TSetting): Settings[TSetting];
   onStagedSettingsClear(subscriber: () => void): Unsubscribe;
+  stageHotkey(command: HotkeyCommand, hotkey: FormattedHotkey | false): void;
   stageSetting<TSetting extends keyof Settings>(key: TSetting, value: Settings[TSetting]): void;
 };
 
 type DashboardProviderProps = {
+  initialDefaultHotkeys: CompleteFormattedHotkeys;
   initialHotkeys: FormattedHotkeys;
 };
+
+type StagedHotkeys = Partial<Record<HotkeyCommand, FormattedHotkey | false>>;
 
 const DashboardContext = createContext<DashboardContextValue | undefined>(undefined);
 
@@ -39,6 +46,7 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   const [stagedSettings, setStagedSettings] = createStore<Partial<Settings>>({});
 
   const [hotkeys, setHotkeys] = createStore(props.initialHotkeys);
+  const [stagedHotkeys, setStagedHotkeys] = createStore<StagedHotkeys>({});
 
   onMount(() => {
     const unsubscribe = window.app.onHotkeysChange(hotkeys => setHotkeys(reconcile(hotkeys)));
@@ -47,6 +55,7 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   });
 
   const clearStagedSettings = () => {
+    setStagedHotkeys(reconcile({}));
     setStagedSettings(reconcile({}));
 
     for (const subscriber of subscribers) {
@@ -55,18 +64,36 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   };
 
   const commitStagedSettings = async () => {
-    if (!getHasStagedChanges()) {
-      return;
+    if (getHasStagedHotkeys()) {
+      const updatedHotkeys = Object.entries(stagedHotkeys).reduce(
+        (hotkeys, [command, formattedHotkey]) => ({
+          ...hotkeys,
+          [command]: formattedHotkey ? formattedHotkey.binding : false,
+        }),
+        {} as Hotkeys
+      );
+
+      await window.app.updateHotkeys(updatedHotkeys);
+
+      setStagedHotkeys(reconcile({}));
     }
 
-    await window.app.updateSettings({ ...unwrap(stagedSettings) });
+    if (getHasStagedSettings()) {
+      await window.app.updateSettings({ ...unwrap(stagedSettings) });
 
-    setStagedSettings(reconcile({}));
+      setStagedSettings(reconcile({}));
+    }
   };
 
-  const getHasStagedChanges = () => !!Object.keys(stagedSettings).length;
+  const getDefaultHotkey = (command: HotkeyCommand) => props.initialDefaultHotkeys[command];
 
-  const getHotkey = (command: HotkeyCommand) => hotkeys[command];
+  const getHasStagedChanges = () => getHasStagedHotkeys() || getHasStagedSettings();
+
+  const getHasStagedHotkeys = () => !!Object.keys(stagedHotkeys).length;
+
+  const getHasStagedSettings = () => !!Object.keys(stagedSettings).length;
+
+  const getHotkey = (command: HotkeyCommand) => stagedHotkeys[command] ?? hotkeys[command] ?? false;
 
   const getSetting = <TSetting extends keyof Settings>(setting: TSetting) =>
     stagedSettings[setting] ?? settings[setting];
@@ -77,6 +104,10 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
     return () => {
       subscribers.delete(subscriber);
     };
+  };
+
+  const stageHotkey = (command: HotkeyCommand, hotkey: FormattedHotkey | false) => {
+    setStagedHotkeys(command, hotkey);
   };
 
   const stageSetting = <TSetting extends keyof Settings>(
@@ -93,10 +124,12 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
       value={{
         clearStagedSettings,
         commitStagedSettings,
+        getDefaultHotkey,
         getHasStagedChanges,
         getHotkey,
         getSetting,
         onStagedSettingsClear,
+        stageHotkey,
         stageSetting,
       }}
     >

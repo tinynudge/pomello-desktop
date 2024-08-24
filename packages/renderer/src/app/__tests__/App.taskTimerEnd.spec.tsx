@@ -37,10 +37,10 @@ describe('App - Task Timer End', () => {
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
         items: [
-          { hint: 'Continue task label', id: 'continueTask', label: 'Continue after break' },
-          { hint: 'Move task label', id: 'switchTask', label: 'Switch tasks after break' },
-          { hint: 'Void task label', id: 'voidTask', label: 'Void this pomodoro' },
-          { hint: 'Add note label', id: 'addNote', label: 'Add a note first' },
+          { hint: '⌘ ⇧ C', id: 'continueTask', label: 'Continue after break' },
+          { hint: '⌘ ⇧ G', id: 'switchTask', label: 'Switch tasks after break' },
+          { hint: '⌘ ⇧ Q', id: 'voidTask', label: 'Void this pomodoro' },
+          { hint: '⌘ ⇧ A', id: 'addNote', label: 'Add a note first' },
         ],
       })
     );
@@ -93,11 +93,11 @@ describe('App - Task Timer End', () => {
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
         items: [
-          { hint: 'Continue task label', id: 'continueTask', label: 'Continue after break' },
+          { hint: '⌘ ⇧ C', id: 'continueTask', label: 'Continue after break' },
           { id: 'switchTask', label: 'Switch tasks after break' },
-          { hint: 'Void task label', id: 'voidTask', label: 'Void this pomodoro' },
-          { hint: 'Add note label', id: 'addNote', label: 'Add a note first' },
-          { hint: 'Move task label', id: 'foo', label: 'Foobar' },
+          { hint: '⌘ ⇧ Q', id: 'voidTask', label: 'Void this pomodoro' },
+          { hint: '⌘ ⇧ A', id: 'addNote', label: 'Add a note first' },
+          { hint: '⌘ ⇧ G', id: 'foo', label: 'Foobar' },
         ],
       })
     );
@@ -132,13 +132,13 @@ describe('App - Task Timer End', () => {
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
         items: [
-          { hint: 'Continue task label', id: 'continueTask', label: 'Continue after break' },
+          { hint: '⌘ ⇧ C', id: 'continueTask', label: 'Continue after break' },
           { id: 'switchTask', label: 'Switch tasks after break' },
-          { hint: 'Void task label', id: 'voidTask', label: 'Void this pomodoro' },
-          { hint: 'Add note label', id: 'addNote', label: 'Add a note first' },
+          { hint: '⌘ ⇧ Q', id: 'voidTask', label: 'Void this pomodoro' },
+          { hint: '⌘ ⇧ A', id: 'addNote', label: 'Add a note first' },
           {
             id: 'foo-group',
-            items: [{ hint: 'Move task label', id: 'foo', label: 'Foo' }],
+            items: [{ hint: '⌘ ⇧ G', id: 'foo', label: 'Foo' }],
             label: 'Foobar',
             type: 'group',
           },
