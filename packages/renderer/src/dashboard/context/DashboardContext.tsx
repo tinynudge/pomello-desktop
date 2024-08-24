@@ -1,33 +1,50 @@
 import { useSettings } from '@/shared/context/RuntimeContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
-import { Settings, Unsubscribe } from '@pomello-desktop/domain';
-import { ParentComponent, createContext, useContext } from 'solid-js';
+import {
+  FormattedHotkey,
+  FormattedHotkeys,
+  HotkeyCommand,
+  Settings,
+  Unsubscribe,
+} from '@pomello-desktop/domain';
+import { ParentComponent, createContext, onCleanup, onMount, useContext } from 'solid-js';
 import { createStore, reconcile, unwrap } from 'solid-js/store';
 
-type DashboardSettingsContextValue = {
+type DashboardContextValue = {
   clearStagedSettings(): void;
   commitStagedSettings(): Promise<void>;
   getHasStagedChanges(): boolean;
+  getHotkey(command: HotkeyCommand): FormattedHotkey | undefined;
   getSetting<TSetting extends keyof Settings>(key: TSetting): Settings[TSetting];
   onStagedSettingsClear(subscriber: () => void): Unsubscribe;
   stageSetting<TSetting extends keyof Settings>(key: TSetting, value: Settings[TSetting]): void;
 };
 
-const DashboardSettingsContext = createContext<DashboardSettingsContextValue | undefined>(
-  undefined
-);
+type DashboardProviderProps = {
+  initialHotkeys: FormattedHotkeys;
+};
 
-export const useDashboardSettings = () => {
-  const context = useContext(DashboardSettingsContext);
+const DashboardContext = createContext<DashboardContextValue | undefined>(undefined);
 
-  assertNonNullish(context, 'useDashboardSettings must be used inside <DashboardSettingsProvider>');
+export const useDashboard = () => {
+  const context = useContext(DashboardContext);
+
+  assertNonNullish(context, 'useDashboard must be used inside <DashboardProvider>');
 
   return context;
 };
 
-export const DashboardSettingsProvider: ParentComponent = props => {
+export const DashboardProvider: ParentComponent<DashboardProviderProps> = props => {
   const settings = useSettings();
   const [stagedSettings, setStagedSettings] = createStore<Partial<Settings>>({});
+
+  const [hotkeys, setHotkeys] = createStore(props.initialHotkeys);
+
+  onMount(() => {
+    const unsubscribe = window.app.onHotkeysChange(hotkeys => setHotkeys(reconcile(hotkeys)));
+
+    onCleanup(unsubscribe);
+  });
 
   const clearStagedSettings = () => {
     setStagedSettings(reconcile({}));
@@ -48,6 +65,8 @@ export const DashboardSettingsProvider: ParentComponent = props => {
   };
 
   const getHasStagedChanges = () => !!Object.keys(stagedSettings).length;
+
+  const getHotkey = (command: HotkeyCommand) => hotkeys[command];
 
   const getSetting = <TSetting extends keyof Settings>(setting: TSetting) =>
     stagedSettings[setting] ?? settings[setting];
@@ -70,17 +89,18 @@ export const DashboardSettingsProvider: ParentComponent = props => {
   const subscribers = new Set<() => void>();
 
   return (
-    <DashboardSettingsContext.Provider
+    <DashboardContext.Provider
       value={{
         clearStagedSettings,
         commitStagedSettings,
         getHasStagedChanges,
+        getHotkey,
         getSetting,
         onStagedSettingsClear,
         stageSetting,
       }}
     >
       {props.children}
-    </DashboardSettingsContext.Provider>
+    </DashboardContext.Provider>
   );
 };

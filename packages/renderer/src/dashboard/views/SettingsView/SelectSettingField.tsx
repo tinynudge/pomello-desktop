@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Select } from '@/ui/dashboard/Select';
 import { Component, createMemo } from 'solid-js';
@@ -10,7 +10,7 @@ type SelectSettingFieldProps = {
 };
 
 export const SelectSettingField: Component<SelectSettingFieldProps> = props => {
-  const { getSetting, stageSetting } = useDashboardSettings();
+  const { getSetting, stageSetting } = useDashboard();
   const t = useTranslate();
 
   const getOptions = createMemo(() =>

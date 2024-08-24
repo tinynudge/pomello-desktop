@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { MenuItem } from '@/ui/dashboard/MenuButton';
 import { Panel } from '@/ui/dashboard/Panel';
@@ -12,7 +12,7 @@ type SettingsFieldProps = {
 };
 
 export const SettingsField: ParentComponent<SettingsFieldProps> = props => {
-  const { stageSetting } = useDashboardSettings();
+  const { stageSetting } = useDashboard();
   const t = useTranslate();
 
   const handleRestoreDefaultClick = () => {

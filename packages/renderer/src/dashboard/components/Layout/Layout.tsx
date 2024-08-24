@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { A } from '@solidjs/router';
@@ -10,7 +10,7 @@ import { SaveSettingsBanner } from './SaveSettingsBanner';
 
 export const Layout: ParentComponent = props => {
   const { store } = usePomelloConfig();
-  const { getHasStagedChanges } = useDashboardSettings();
+  const { getHasStagedChanges } = useDashboard();
   const t = useTranslate();
 
   const routes: [DashboardRoute, label: string][] = [
