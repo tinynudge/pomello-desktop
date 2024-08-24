@@ -76,7 +76,7 @@ describe('Trello service - Task timer end', () => {
       expect.objectContaining({
         items: [
           {
-            hint: 'Continue task label',
+            hint: '⌘ ⇧ C',
             id: 'continueTask',
             label: 'Continue after break',
           },
@@ -85,12 +85,12 @@ describe('Trello service - Task timer end', () => {
             label: 'Switch tasks after break',
           },
           {
-            hint: 'Void task label',
+            hint: '⌘ ⇧ Q',
             id: 'voidTask',
             label: 'Void this pomodoro',
           },
           {
-            hint: 'Add note label',
+            hint: '⌘ ⇧ A',
             id: 'addNote',
             label: 'Add a note first',
           },
@@ -100,7 +100,7 @@ describe('Trello service - Task timer end', () => {
               { id: 'PHASE_ONE', label: 'Phase one' },
               { id: 'PHASE_TWO', label: 'Phase two' },
               { id: 'PHASE_THREE', label: 'Phase three' },
-              { hint: 'Move task label', id: 'DONE', label: 'Done' },
+              { hint: '⌘ ⇧ G', id: 'DONE', label: 'Done' },
             ],
             label: 'Move task to...',
             type: 'group',
@@ -141,7 +141,7 @@ describe('Trello service - Task timer end', () => {
       expect.objectContaining({
         items: [
           {
-            hint: 'Continue task label',
+            hint: '⌘ ⇧ C',
             id: 'continueTask',
             label: 'Continue after break',
           },
@@ -150,17 +150,17 @@ describe('Trello service - Task timer end', () => {
             label: 'Switch tasks after break',
           },
           {
-            hint: 'Void task label',
+            hint: '⌘ ⇧ Q',
             id: 'voidTask',
             label: 'Void this pomodoro',
           },
           {
-            hint: 'Add note label',
+            hint: '⌘ ⇧ A',
             id: 'addNote',
             label: 'Add a note first',
           },
           {
-            hint: 'Move task label',
+            hint: '⌘ ⇧ G',
             id: 'check-item-complete',
             label: 'Mark item complete',
           },

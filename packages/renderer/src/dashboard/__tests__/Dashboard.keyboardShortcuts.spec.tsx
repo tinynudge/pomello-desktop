@@ -92,4 +92,66 @@ describe('Dashboard - Keyboard shortcuts', () => {
     );
     expect(toggleMenuButton).toHaveTextContent('None');
   });
+
+  it('should restore a binding to its default', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      hotkeys: {
+        routeSettings: {
+          binding: 's s',
+          keys: [['s'], ['s']],
+          label: 'S S',
+        },
+      },
+      route: DashboardRoute.KeyboardShortcuts,
+    });
+
+    const viewSettingsItem = screen.getByRole('listitem', { name: 'View settings' });
+
+    await userEvent.click(
+      within(viewSettingsItem).getByRole('button', { name: 'Show more options' })
+    );
+    await userEvent.click(screen.getByRole('menuitem', { name: /Restore default/ }));
+
+    expect(within(viewSettingsItem).getByRole('button', { name: /Edit/ })).toHaveTextContent('⌘⇧L');
+    expect(appApi.updateHotkeys).not.toHaveBeenCalled();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateHotkeys).toHaveBeenCalledOnce();
+    expect(appApi.updateHotkeys).toHaveBeenCalledWith({ routeSettings: 'command+shift+l' });
+  });
+
+  it('should unset a binding', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      hotkeys: {
+        routeSettings: {
+          binding: 's s',
+          keys: [['s'], ['s']],
+          label: 'S S',
+        },
+      },
+      route: DashboardRoute.KeyboardShortcuts,
+    });
+
+    const viewSettingsItem = screen.getByRole('listitem', { name: 'View settings' });
+
+    await userEvent.click(
+      within(viewSettingsItem).getByRole('button', { name: 'Show more options' })
+    );
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Unset keyboard shortcut' }));
+
+    expect(within(viewSettingsItem).getByRole('button', { name: /Set/ })).toHaveTextContent('None');
+    expect(appApi.updateHotkeys).not.toHaveBeenCalled();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateHotkeys).toHaveBeenCalledOnce();
+    expect(appApi.updateHotkeys).toHaveBeenCalledWith({ routeSettings: false });
+  });
 });

@@ -150,5 +150,6 @@
   "trackProductivityMessage": "<logIn>Log in</logIn> or <signUp>sign up</signUp> to track your productivity.",
   "unboundKeyboardShortcut": "None",
   "undoChanges": "Undo",
-  "undoChangesLabel": "Undo changes"
+  "undoChangesLabel": "Undo changes",
+  "unsetHotkey": "Unset keyboard shortcut"
 }

@@ -73,7 +73,7 @@ describe('Trello service - Complete task', () => {
               { id: 'PHASE_ONE', label: 'Phase one' },
               { id: 'PHASE_TWO', label: 'Phase two' },
               { id: 'PHASE_THREE', label: 'Phase three' },
-              { hint: 'Move task label', id: 'DONE', label: 'Done' },
+              { hint: '⌘ ⇧ G', id: 'DONE', label: 'Done' },
             ],
             label: 'Move task to...',
             type: 'group',

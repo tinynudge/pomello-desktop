@@ -2,6 +2,7 @@ import { contextBridge } from 'electron';
 import { decryptValue } from './decryptValue';
 import { encryptValue } from './encryptValue';
 import { getActiveServiceId } from './getActiveServiceId';
+import { getDefaultHotkeys } from './getDefaultHotkeys';
 import { getHotkeys } from './getHotkeys';
 import { getSettings } from './getSettings';
 import { getThemeCss } from './getThemeCss';
@@ -40,6 +41,7 @@ export const api = {
   decryptValue,
   encryptValue,
   getActiveServiceId,
+  getDefaultHotkeys,
   getHotkeys,
   getSettings,
   getThemeCss,

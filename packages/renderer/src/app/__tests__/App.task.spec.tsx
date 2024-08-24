@@ -94,22 +94,19 @@ describe('App - Task', () => {
     const completeTaskButton = screen.getByRole('button', { name: 'Complete task' });
 
     expect(pauseButton).toBeInTheDocument();
-    expect(pauseButton).toHaveAttribute('title', 'Pause timer (Pause timer label)');
+    expect(pauseButton).toHaveAttribute('title', 'Pause timer (⌘ ⇧ I)');
 
     expect(addNoteButton).toBeInTheDocument();
-    expect(addNoteButton).toHaveAttribute('title', 'Add note (Add note label)');
+    expect(addNoteButton).toHaveAttribute('title', 'Add note (⌘ ⇧ A)');
 
     expect(switchTaskButton).toBeInTheDocument();
-    expect(switchTaskButton).toHaveAttribute('title', 'Switch task (Switch task label)');
+    expect(switchTaskButton).toHaveAttribute('title', 'Switch task (⌘ ⇧ O)');
 
     expect(voidTaskButton).toBeInTheDocument();
-    expect(voidTaskButton).toHaveAttribute('title', 'Void task (Void task label)');
+    expect(voidTaskButton).toHaveAttribute('title', 'Void task (⌘ ⇧ Q)');
 
     expect(completeTaskButton).toBeInTheDocument();
-    expect(completeTaskButton).toHaveAttribute(
-      'title',
-      'Complete task (Complete task early label)'
-    );
+    expect(completeTaskButton).toHaveAttribute('title', 'Complete task (⌘ ⇧ B)');
   });
 
   it('should pause the timer', async () => {

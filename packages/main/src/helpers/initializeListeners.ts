@@ -4,6 +4,7 @@ import { handleClipboardTextWrite } from '@/events/handleClipboardTextWrite';
 import { handleDecryptValue } from '@/events/handleDecryptValue';
 import { handleEncryptValue } from '@/events/handleEncryptValue';
 import { handleGetActiveServiceId } from '@/events/handleGetActiveServiceId';
+import { handleGetDefaultHotkeys } from '@/events/handleGetDefaultHotkeys';
 import { handleGetHotkeys } from '@/events/handleGetHotkeys';
 import { handleGetSettings } from '@/events/handleGetSettings';
 import { handleGetThemeCss } from '@/events/handleGetThemeCss';
@@ -33,6 +34,7 @@ import { ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 export const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.ClipboardTextWrite, handleClipboardTextWrite);
   ipcMain.handle(AppEvent.GetActiveServiceId, handleGetActiveServiceId);
+  ipcMain.handle(AppEvent.GetDefaultHotkeys, handleGetDefaultHotkeys);
   ipcMain.handle(AppEvent.GetHotkeys, handleGetHotkeys);
   ipcMain.handle(AppEvent.GetSettings, handleGetSettings);
   ipcMain.handle(AppEvent.GetThemeCss, handleGetThemeCss);

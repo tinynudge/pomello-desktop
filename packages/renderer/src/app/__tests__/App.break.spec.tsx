@@ -126,7 +126,7 @@ describe('App - Break', () => {
 
     expect(screen.getByRole('button', { name: 'Skip break' })).toHaveAttribute(
       'title',
-      'Skip break (Skip break label)'
+      'Skip break (⌘ ⇧ M)'
     );
   });
 });
