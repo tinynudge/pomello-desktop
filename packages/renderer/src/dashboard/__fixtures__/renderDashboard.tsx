@@ -3,9 +3,11 @@ import { createMockLogger } from '@/__fixtures__/createMockLogger';
 import { createMockServiceFactory } from '@/__fixtures__/createMockService';
 import { createMockServiceConfig } from '@/__fixtures__/createMockServiceConfig';
 import { createMockSettings } from '@/__fixtures__/createMockSettings';
+import { mockHotkeys } from '@/__fixtures__/mockHotkeys';
 import { RuntimeProvider } from '@/shared/context/RuntimeContext';
 import {
   DashboardRoute,
+  FormattedHotkeys,
   PomelloServiceConfig,
   Service,
   ServiceRegistry,
@@ -17,12 +19,13 @@ import userEvent from '@testing-library/user-event';
 import translations from '../../../../../translations/dashboard/en-US.json';
 import { Layout } from '../components/Layout';
 import { Routes } from '../components/Routes';
-import { DashboardSettingsProvider } from '../context/DashboardSettingsContext';
+import { DashboardProvider } from '../context/DashboardContext';
 
 export * from '@solidjs/testing-library';
 
 type RenderDashboardOptions = {
   appApi?: Partial<AppApi>;
+  hotkeys?: FormattedHotkeys;
   pomelloConfig?: Partial<PomelloServiceConfig>;
   route?: DashboardRoute;
   service?: Partial<Service>;
@@ -47,6 +50,11 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
       ...options.pomelloConfig,
     }
   );
+
+  const hotkeys: FormattedHotkeys = {
+    ...mockHotkeys,
+    ...options.hotkeys,
+  };
 
   const [appApi, emitAppApiEvent] = createMockAppApi({
     appApi: options.appApi,
@@ -74,11 +82,11 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
       initialSettings={settings}
       initialTranslations={translations}
     >
-      <DashboardSettingsProvider>
+      <DashboardProvider initialHotkeys={hotkeys}>
         <MemoryRouter history={history} root={Layout}>
           <Routes />
         </MemoryRouter>
-      </DashboardSettingsProvider>
+      </DashboardProvider>
     </RuntimeProvider>
   ));
 

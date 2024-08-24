@@ -11,6 +11,8 @@
   "breakHotkeysHeader": "Break timer",
   "breakHotkeysLabel": "Break timer keyboard shortcuts",
   "cancel": "Cancel",
+  "editKeyboardShortcutLabel": "Edit keyboard shortcut for: {{command}}. Current keyboard shortcut: {{binding}}.",
+  "editKeyboardShortcutText": "Edit keyboard shortcut",
   "formFieldMoreOptionsMenuLabel": "More options",
   "formFieldMoreOptionsTooltip": "More",
   "formFieldMoreOptionsTriggerLabel": "Show more options",
@@ -78,6 +80,8 @@
   "routeSounds": "Sounds",
   "saveChanges": "Save",
   "saveChangesLabel": "Save changes",
+  "setKeyboardShortcutLabel": "No keyboard shortcut set for: {{command}}. Set keyboard shortcut.",
+  "setKeyboardShortcutText": "Set keyboard shortcut",
   "settings.alwaysOnTop.description": "Force the window to always remain on top of other windows.",
   "settings.alwaysOnTop.label": "Always on top",
   "settings.autoStartBreaks.description": "Automatically selects the \"Continue after break\" option when the task timer ends.",
@@ -144,6 +148,7 @@
   "toggleDefault.false": "Off",
   "toggleDefault.true": "On",
   "trackProductivityMessage": "<logIn>Log in</logIn> or <signUp>sign up</signUp> to track your productivity.",
+  "unboundKeyboardShortcut": "None",
   "undoChanges": "Undo",
   "undoChangesLabel": "Undo changes"
 }

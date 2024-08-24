@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Modal } from '@/ui/dashboard/Modal';
 import { SetItem } from '@tinynudge/pomello-service';
@@ -17,7 +17,7 @@ const hasSetItems = (pomodoroSet: number | SetItem[]): pomodoroSet is SetItem[] 
 };
 
 export const PomodoroSetSettingField: Component<PomodoroSetSettingFieldProps> = props => {
-  const { getSetting, stageSetting } = useDashboardSettings();
+  const { getSetting, stageSetting } = useDashboard();
   const t = useTranslate();
 
   const handleViewChange = () => {

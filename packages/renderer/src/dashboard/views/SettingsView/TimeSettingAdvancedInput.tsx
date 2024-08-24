@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Input } from '@/ui/dashboard/Input';
 import { Component, JSX, createSignal, onCleanup, onMount } from 'solid-js';
@@ -11,7 +11,7 @@ type TimeSettingAdvancedInputProps = {
 };
 
 export const TimeSettingAdvancedInput: Component<TimeSettingAdvancedInputProps> = props => {
-  const { onStagedSettingsClear } = useDashboardSettings();
+  const { onStagedSettingsClear } = useDashboard();
   const t = useTranslate();
 
   const [getHasValidationError, setHasValidationError] = createSignal(false);

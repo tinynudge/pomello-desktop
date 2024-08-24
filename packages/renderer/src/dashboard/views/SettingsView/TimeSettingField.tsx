@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Modal } from '@/ui/dashboard/Modal';
 import { Component, Show, createSignal, onCleanup, onMount } from 'solid-js';
@@ -12,7 +12,7 @@ type TimeSettingFieldProps = {
 };
 
 export const TimeSettingField: Component<TimeSettingFieldProps> = props => {
-  const { getSetting, stageSetting, onStagedSettingsClear } = useDashboardSettings();
+  const { getSetting, stageSetting, onStagedSettingsClear } = useDashboard();
   const t = useTranslate();
 
   const getValue = () => getSetting(props.setting.id) as number;

@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Select } from '@/ui/dashboard/Select';
 import { Component } from 'solid-js';
@@ -11,7 +11,7 @@ type PomodoroSetSettingSimpleInputProps = {
 export const PomodoroSetSettingSimpleInput: Component<
   PomodoroSetSettingSimpleInputProps
 > = props => {
-  const { stageSetting } = useDashboardSettings();
+  const { stageSetting } = useDashboard();
   const t = useTranslate();
 
   const handleSettingChange = (value: string) => {

@@ -48,4 +48,48 @@ describe('Dashboard - Keyboard shortcuts', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(1);
     expect(within(list).getAllByTestId('form-field-description')).toHaveLength(1);
   });
+
+  it('should show the binding for the given command', async () => {
+    renderDashboard({
+      hotkeys: {
+        addNote: {
+          binding: 'command+shift+a',
+          keys: [['⌘', '⇧', 'A']],
+          label: '⌘ ⇧ A',
+        },
+        createTask: {
+          binding: 'command+k control+z',
+          keys: [
+            ['⌘', 'K'],
+            ['⌃', 'Z'],
+          ],
+          label: '⌘ K • ⌃ Z',
+        },
+        toggleMenu: undefined,
+      },
+      route: DashboardRoute.KeyboardShortcuts,
+    });
+
+    const addNoteListItem = screen.getByRole('listitem', { name: 'Add note' });
+    const addNoteButton = within(addNoteListItem).getByRole('button', { name: /Edit/ });
+    const createTaskListItem = screen.getByRole('listitem', { name: 'Create task' });
+    const createTaskButton = within(createTaskListItem).getByRole('button', { name: /Edit/ });
+    const toggleMenuListItem = screen.getByRole('listitem', { name: 'Toggle menu' });
+    const toggleMenuButton = within(toggleMenuListItem).getByRole('button', { name: /Set/ });
+
+    expect(addNoteButton).toHaveAccessibleName(
+      'Edit keyboard shortcut for: Add note. Current keyboard shortcut: ⌘ ⇧ A.'
+    );
+    expect(addNoteButton).toHaveTextContent('⌘⇧A');
+
+    expect(createTaskButton).toHaveAccessibleName(
+      'Edit keyboard shortcut for: Create task. Current keyboard shortcut: ⌘ K • ⌃ Z.'
+    );
+    expect(createTaskButton).toHaveTextContent('⌘K•⌃Z');
+
+    expect(toggleMenuButton).toHaveAccessibleName(
+      'No keyboard shortcut set for: Toggle menu. Set keyboard shortcut.'
+    );
+    expect(toggleMenuButton).toHaveTextContent('None');
+  });
 });

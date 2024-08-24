@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { ToggleSwitch } from '@/ui/dashboard/ToggleSwitch';
 import { Component } from 'solid-js';
@@ -10,7 +10,7 @@ type ToggleSettingFieldProps = {
 };
 
 export const ToggleSettingField: Component<ToggleSettingFieldProps> = props => {
-  const { getSetting, stageSetting } = useDashboardSettings();
+  const { getSetting, stageSetting } = useDashboard();
   const t = useTranslate();
 
   const handleSettingChange = (checked: boolean) => {

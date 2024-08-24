@@ -1,10 +1,14 @@
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
-import { Component, For } from 'solid-js';
+import { Component, For, Show } from 'solid-js';
 import { MainHeader } from '../../components/MainHeader';
+import { Hotkey } from './Hotkey';
+import { UnboundHotkey } from './UnboundHotkey';
 import { hotkeysByCategory } from './hotkeysByCategory';
 
 export const KeyboardShortcutsView: Component = () => {
+  const { getHotkey } = useDashboard();
   const t = useTranslate();
 
   return (
@@ -20,7 +24,16 @@ export const KeyboardShortcutsView: Component = () => {
                     description={t(`hotkeys.${hotkeyCommand}.description`)}
                     for={hotkeyCommand}
                     label={t(`hotkeys.${hotkeyCommand}.label`)}
-                  />
+                  >
+                    <Show
+                      fallback={<UnboundHotkey command={hotkeyCommand} />}
+                      when={getHotkey(hotkeyCommand)}
+                    >
+                      {getFormattedHotkey => (
+                        <Hotkey command={hotkeyCommand} hotkey={getFormattedHotkey()} />
+                      )}
+                    </Show>
+                  </Panel.List.FormField>
                 )}
               </For>
             </Panel.List>

@@ -7,7 +7,7 @@ import { HashRouter } from '@solidjs/router';
 import { render } from 'solid-js/web';
 import { Layout } from './components/Layout';
 import { Routes } from './components/Routes';
-import { DashboardSettingsProvider } from './context/DashboardSettingsContext';
+import { DashboardProvider } from './context/DashboardContext';
 
 const renderDashboard = async () => {
   const container = document.getElementById('root');
@@ -16,11 +16,12 @@ const renderDashboard = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [themeCss, translations, pomelloConfig, settings] = await Promise.all([
+  const [pomelloConfig, hotkeys, settings, themeCss, translations] = await Promise.all([
+    getPomelloServiceConfig(),
+    window.app.getHotkeys(),
+    window.app.getSettings(),
     window.app.getThemeCss(),
     window.app.getTranslations('dashboard'),
-    getPomelloServiceConfig(),
-    window.app.getSettings(),
   ]);
 
   const logger = createLogger();
@@ -36,11 +37,11 @@ const renderDashboard = async () => {
         initialSettings={settings}
         initialTranslations={translations}
       >
-        <DashboardSettingsProvider>
+        <DashboardProvider initialHotkeys={hotkeys}>
           <HashRouter root={Layout}>
             <Routes />
           </HashRouter>
-        </DashboardSettingsProvider>
+        </DashboardProvider>
       </RuntimeProvider>
     ),
     container

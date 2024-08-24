@@ -1,4 +1,4 @@
-import { useDashboardSettings } from '@/dashboard/context/DashboardSettingsContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { MenuButton, MenuItem } from '@/ui/dashboard/MenuButton';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
@@ -14,7 +14,7 @@ type PomodoroSetSettingAdvancedInputProps = {
 export const PomodoroSetSettingAdvancedInput: Component<
   PomodoroSetSettingAdvancedInputProps
 > = props => {
-  const { stageSetting } = useDashboardSettings();
+  const { stageSetting } = useDashboard();
   const t = useTranslate();
 
   const handleSwitchTimerClick = (setItem: SetItem, index: number) => {
