@@ -44,6 +44,8 @@ global.HTMLDialogElement.prototype.showModal = function () {
   this.open = true;
 };
 global.HTMLDialogElement.prototype.close = function () {
+  this.dispatchEvent(new Event('close'));
+
   this.open = false;
 };
 

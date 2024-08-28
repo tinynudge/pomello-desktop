@@ -25,13 +25,13 @@ export const Hotkey: Component<HotkeyProps> = props => {
           ref={tooltipTargetRef}
         >
           <For each={props.hotkey.keys}>
-            {(chord, getIndex) => (
+            {(sequence, getIndex) => (
               <>
                 <Show when={getIndex() !== 0}>
                   <span class={styles.separator}>&bull;</span>
                 </Show>
-                <span class={styles.chord}>
-                  <For each={chord}>{key => <kbd class={styles.key}>{key}</kbd>}</For>
+                <span class={styles.sequence}>
+                  <For each={sequence}>{key => <kbd class={styles.key}>{key}</kbd>}</For>
                 </span>
               </>
             )}

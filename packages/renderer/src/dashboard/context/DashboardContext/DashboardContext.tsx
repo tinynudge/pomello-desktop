@@ -11,6 +11,7 @@ import {
 } from '@pomello-desktop/domain';
 import { ParentComponent, createContext, onCleanup, onMount, useContext } from 'solid-js';
 import { createStore, reconcile, unwrap } from 'solid-js/store';
+import { HotkeyConflictError } from './HotkeyConflictError';
 
 type DashboardContextValue = {
   clearStagedSettings(): void;
@@ -53,6 +54,34 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
 
     onCleanup(unsubscribe);
   });
+
+  const checkForHotkeyConflict = (command: HotkeyCommand, hotkey: FormattedHotkey) => {
+    let conflictingCommand = Object.keys(stagedHotkeys).find(stagedCommand => {
+      const stagedHotkey = stagedHotkeys[stagedCommand as HotkeyCommand];
+
+      return command !== stagedCommand && stagedHotkey && hotkey.binding === stagedHotkey.binding;
+    });
+
+    if (!conflictingCommand) {
+      conflictingCommand = Object.keys(hotkeys).find(storedCommand => {
+        const storedHotkey = hotkeys[storedCommand as HotkeyCommand];
+
+        return (
+          !(storedCommand in stagedHotkeys) &&
+          command !== storedCommand &&
+          hotkey.binding === storedHotkey?.binding
+        );
+      });
+    }
+
+    if (conflictingCommand) {
+      throw new HotkeyConflictError({
+        currentCommand: conflictingCommand as HotkeyCommand,
+        hotkey,
+        incomingCommand: command,
+      });
+    }
+  };
 
   const clearStagedSettings = () => {
     setStagedHotkeys(reconcile({}));
@@ -107,6 +136,10 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   };
 
   const stageHotkey = (command: HotkeyCommand, hotkey: FormattedHotkey | false) => {
+    if (hotkey !== false) {
+      checkForHotkeyConflict(command, hotkey);
+    }
+
     setStagedHotkeys(command, hotkey);
   };
 

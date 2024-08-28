@@ -507,7 +507,7 @@ describe('Dashboard - Settings', () => {
     ).toBeInTheDocument();
     expect(
       within(modal).getByText(
-        'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time. Otherwise, click "Cancel" to continue using your current time.'
+        'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time, or click "Cancel" to continue using your current time.'
       )
     ).toBeInTheDocument();
     expect(within(modal).getByRole('button', { name: 'Reset' })).toBeInTheDocument();
@@ -545,7 +545,7 @@ describe('Dashboard - Settings', () => {
     ).toBeInTheDocument();
     expect(
       within(modal).getByText(
-        'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time. Otherwise, click "Cancel" to continue using your current time.'
+        'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time, or click "Cancel" to continue using your current time.'
       )
     ).toBeInTheDocument();
     expect(within(modal).getByRole('button', { name: 'Reset' })).toBeInTheDocument();
@@ -860,7 +860,7 @@ describe('Dashboard - Settings', () => {
     ).toBeInTheDocument();
     expect(
       within(modal).getByText(
-        'Your custom pomodoro set cannot be converted to a basic task count. Click "Reset" to use the default task count. Otherwise, click "Cancel" to continue using your custom pomodoro set.'
+        'Your custom pomodoro set cannot be converted to a basic task count. Click "Reset" to use the default task count, or click "Cancel" to continue using your custom pomodoro set.'
       )
     ).toBeInTheDocument();
     expect(within(modal).getByRole('button', { name: 'Reset' })).toBeInTheDocument();
