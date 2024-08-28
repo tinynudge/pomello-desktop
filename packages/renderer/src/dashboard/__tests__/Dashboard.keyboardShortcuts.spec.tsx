@@ -154,4 +154,54 @@ describe('Dashboard - Keyboard shortcuts', () => {
     expect(appApi.updateHotkeys).toHaveBeenCalledOnce();
     expect(appApi.updateHotkeys).toHaveBeenCalledWith({ routeSettings: false });
   });
+
+  it('should show the conflict modal when restoring a default binding', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      hotkeys: {
+        skipBreak: {
+          binding: 's b',
+          keys: [['S'], ['B']],
+          label: 'S•B',
+        },
+        startTimer: {
+          binding: 'command+shift+m',
+          keys: [['⌘', '⇧', 'M']],
+          label: '⌘ ⇧ M',
+        },
+      },
+      route: DashboardRoute.KeyboardShortcuts,
+    });
+
+    const skipBreakItem = screen.getByRole('listitem', { name: 'Skip break' });
+
+    await userEvent.click(within(skipBreakItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: /Restore default/ }));
+
+    const hotkeyConflictModal = screen.getByRole('dialog', {
+      name: 'Conflicting keyboard shortcut',
+    });
+
+    expect(hotkeyConflictModal).toBeInTheDocument();
+    expect(
+      within(hotkeyConflictModal).getByRole('heading', { name: 'Conflicting keyboard shortcut' })
+    ).toBeInTheDocument();
+    expect(within(hotkeyConflictModal).getByRole('paragraph')).toHaveTextContent(
+      '"⌘ ⇧ M" is currently assigned to "Start timer." Click "Overwrite" to reassign it to "Skip break," or click "Cancel" to keep your existing keyboard shortcuts.'
+    );
+    expect(appApi.updateHotkeys).not.toHaveBeenCalled();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(within(skipBreakItem).getByRole('button', { name: /Edit/ })).toHaveTextContent('S•B');
+
+    await userEvent.click(within(skipBreakItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: /Restore default/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Overwrite' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(within(skipBreakItem).getByRole('button', { name: /Edit/ })).toHaveTextContent('⌘⇧M');
+    expect(screen.getByRole('button', { name: /Start timer/ })).toHaveTextContent('None');
+  });
 });

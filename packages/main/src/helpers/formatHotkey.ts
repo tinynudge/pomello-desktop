@@ -23,7 +23,7 @@ const humanizeBinding = (binding: string): string[] => {
 export const formatHotkey = (binding: string): FormattedHotkey => {
   const keys = binding.split(' ').map(humanizeBinding);
 
-  const label = keys.map(chord => chord.join(' ')).join(' • ');
+  const label = keys.map(sequence => sequence.join(' ')).join(' • ');
 
   return {
     binding,

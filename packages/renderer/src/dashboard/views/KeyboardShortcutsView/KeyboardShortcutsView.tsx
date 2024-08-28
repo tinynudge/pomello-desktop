@@ -1,10 +1,11 @@
-import { useDashboard } from '@/dashboard/context/DashboardContext';
+import { HotkeyConflictError, useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
 import { HotkeyCommand } from '@pomello-desktop/domain';
-import { Component, For, Show } from 'solid-js';
+import { Component, For, Show, createSignal } from 'solid-js';
 import { MainHeader } from '../../components/MainHeader';
 import { Hotkey } from './Hotkey';
+import { HotkeyConflictModal } from './HotkeyConflictModal';
 import { UnboundHotkey } from './UnboundHotkey';
 import { hotkeysByCategory } from './hotkeysByCategory';
 
@@ -12,12 +13,26 @@ export const KeyboardShortcutsView: Component = () => {
   const { getDefaultHotkey, getHotkey, stageHotkey } = useDashboard();
   const t = useTranslate();
 
+  const [getHotkeyConflict, setHotkeyConflict] = createSignal<HotkeyConflictError | null>(null);
+
   const handleHotkeyClear = (command: HotkeyCommand) => {
     stageHotkey(command, false);
   };
 
   const handleHotkeyReset = (command: HotkeyCommand) => {
-    stageHotkey(command, getDefaultHotkey(command));
+    try {
+      stageHotkey(command, getDefaultHotkey(command));
+    } catch (error) {
+      if (error instanceof HotkeyConflictError) {
+        setHotkeyConflict(error);
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  const clearHotkeyConflictError = () => {
+    setHotkeyConflict(null);
   };
 
   return (
@@ -59,6 +74,11 @@ export const KeyboardShortcutsView: Component = () => {
           </Panel>
         )}
       </For>
+      <Show when={getHotkeyConflict()}>
+        {getError => (
+          <HotkeyConflictModal error={getError()} clearError={clearHotkeyConflictError} />
+        )}
+      </Show>
     </>
   );
 };
