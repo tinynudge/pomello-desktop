@@ -1,43 +1,51 @@
-import { useTranslate } from '@/shared/context/RuntimeContext';
-import { Button } from '@/ui/dashboard/Button';
-import { Tooltip } from '@/ui/dashboard/Tooltip';
-import { FormattedHotkey } from '@pomello-desktop/domain';
-import { Component, For, Show } from 'solid-js';
-import styles from './Hotkey.module.scss';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
+import { FormattedHotkey, HotkeyCommand } from '@pomello-desktop/domain';
+import { Component, Match, Switch, createSignal } from 'solid-js';
+import { BoundHotkey } from './BoundHotkey';
+import { HotkeyRecorder } from './HotkeyRecorder';
+import { UnboundHotkey } from './UnboundHotkey';
 
 type HotkeyProps = {
-  command: string;
-  hotkey: FormattedHotkey;
+  command: HotkeyCommand;
+  onHotkeyChange(command: HotkeyCommand, hotkey: FormattedHotkey): void;
 };
 
 export const Hotkey: Component<HotkeyProps> = props => {
-  const t = useTranslate();
+  const { getHotkey } = useDashboard();
+
+  const [getIsRecording, setIsRecording] = createSignal(false);
+
+  const handleHotkeyUpdate = () => {
+    setIsRecording(true);
+  };
+
+  const handleRecordingCancel = () => {
+    setIsRecording(false);
+  };
+
+  const handleRecordingComplete = (hotkey: FormattedHotkey) => {
+    setIsRecording(false);
+
+    props.onHotkeyChange(props.command, hotkey);
+  };
 
   return (
-    <Tooltip text={t('editKeyboardShortcutText')}>
-      {tooltipTargetRef => (
-        <Button
-          aria-label={t('editKeyboardShortcutLabel', {
-            binding: props.hotkey.label,
-            command: t(`hotkeys.${props.command}.label`),
-          })}
-          class={styles.hotkey}
-          ref={tooltipTargetRef}
-        >
-          <For each={props.hotkey.keys}>
-            {(sequence, getIndex) => (
-              <>
-                <Show when={getIndex() !== 0}>
-                  <span class={styles.separator}>&bull;</span>
-                </Show>
-                <span class={styles.sequence}>
-                  <For each={sequence}>{key => <kbd class={styles.key}>{key}</kbd>}</For>
-                </span>
-              </>
-            )}
-          </For>
-        </Button>
-      )}
-    </Tooltip>
+    <Switch fallback={<UnboundHotkey command={props.command} onClick={handleHotkeyUpdate} />}>
+      <Match when={getIsRecording()}>
+        <HotkeyRecorder
+          onRecordingCancel={handleRecordingCancel}
+          onRecordingComplete={handleRecordingComplete}
+        />
+      </Match>
+      <Match when={getHotkey(props.command)}>
+        {getFormattedHotkey => (
+          <BoundHotkey
+            command={props.command}
+            hotkey={getFormattedHotkey()}
+            onClick={handleHotkeyUpdate}
+          />
+        )}
+      </Match>
+    </Switch>
   );
 };

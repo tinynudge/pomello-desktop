@@ -56,10 +56,15 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   });
 
   const checkForHotkeyConflict = (command: HotkeyCommand, hotkey: FormattedHotkey) => {
+    const normalizeBinding = (hotkey?: FormattedHotkey | false) =>
+      hotkey ? hotkey.binding.replaceAll('command', 'meta') : null;
+
+    const hotkeyBinding = normalizeBinding(hotkey);
+
     let conflictingCommand = Object.keys(stagedHotkeys).find(stagedCommand => {
       const stagedHotkey = stagedHotkeys[stagedCommand as HotkeyCommand];
 
-      return command !== stagedCommand && stagedHotkey && hotkey.binding === stagedHotkey.binding;
+      return command !== stagedCommand && hotkeyBinding === normalizeBinding(stagedHotkey);
     });
 
     if (!conflictingCommand) {
@@ -69,7 +74,7 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
         return (
           !(storedCommand in stagedHotkeys) &&
           command !== storedCommand &&
-          hotkey.binding === storedHotkey?.binding
+          hotkeyBinding === normalizeBinding(storedHotkey)
         );
       });
     }

@@ -135,6 +135,9 @@ importers:
       mousetrap:
         specifier: ^1.6.5
         version: 1.6.5
+      mousetrap-record:
+        specifier: github:brrian/mousetrap-record#10e485946d2e16e0018215a82b3da198297d8035
+        version: https://codeload.github.com/brrian/mousetrap-record/tar.gz/10e485946d2e16e0018215a82b3da198297d8035(mousetrap@1.6.5)
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -2756,6 +2759,12 @@ packages:
   modify-values@1.0.1:
     resolution: {integrity: sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==}
     engines: {node: '>=0.10.0'}
+
+  mousetrap-record@https://codeload.github.com/brrian/mousetrap-record/tar.gz/10e485946d2e16e0018215a82b3da198297d8035:
+    resolution: {tarball: https://codeload.github.com/brrian/mousetrap-record/tar.gz/10e485946d2e16e0018215a82b3da198297d8035}
+    version: 1.0.1
+    peerDependencies:
+      mousetrap: ^1.6.5
 
   mousetrap@1.6.5:
     resolution: {integrity: sha512-QNo4kEepaIBwiT8CDhP98umTetp+JNfQYBWvC1pc6/OAibuXtRcxZ58Qz8skvEHYvURne/7R8T5VoOI7rDsEUA==}
@@ -6905,6 +6914,10 @@ snapshots:
       ufo: 1.5.3
 
   modify-values@1.0.1: {}
+
+  mousetrap-record@https://codeload.github.com/brrian/mousetrap-record/tar.gz/10e485946d2e16e0018215a82b3da198297d8035(mousetrap@1.6.5):
+    dependencies:
+      mousetrap: 1.6.5
 
   mousetrap@1.6.5: {}
 

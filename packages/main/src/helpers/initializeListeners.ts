@@ -3,6 +3,7 @@ import { handleAudioFileProtocol } from '@/events/handleAudioFileProtocol';
 import { handleClipboardTextWrite } from '@/events/handleClipboardTextWrite';
 import { handleDecryptValue } from '@/events/handleDecryptValue';
 import { handleEncryptValue } from '@/events/handleEncryptValue';
+import { handleFormatHotkey } from '@/events/handleFormatHotkey';
 import { handleGetActiveServiceId } from '@/events/handleGetActiveServiceId';
 import { handleGetDefaultHotkeys } from '@/events/handleGetDefaultHotkeys';
 import { handleGetHotkeys } from '@/events/handleGetHotkeys';
@@ -60,6 +61,7 @@ export const initializeListeners = (): void => {
 
   ipcMain.on(AppEvent.DecryptValue, handleDecryptValue);
   ipcMain.on(AppEvent.EncryptValue, handleEncryptValue);
+  ipcMain.on(AppEvent.FormatHotkey, handleFormatHotkey);
 
   nativeTheme.on('updated', handleThemeUpdate);
 
