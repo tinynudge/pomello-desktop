@@ -1,5 +1,6 @@
 import { FormattedHotkeys, ServiceConfigActions, Settings } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
+import { formatHotkey } from '../../../main/src/helpers/formatHotkey';
 import { mockHotkeys } from './mockHotkeys';
 import { mockRegisterServiceConfig } from './mockRegisterServiceConfig';
 
@@ -48,6 +49,7 @@ export const createMockAppApi = ({
   const api: AppApi = {
     decryptValue: vi.fn(appApi.decryptValue ?? (value => value)),
     encryptValue: vi.fn(appApi.encryptValue ?? (value => value)),
+    formatHotkey: vi.fn(appApi.formatHotkey ?? formatHotkey),
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getDefaultHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),

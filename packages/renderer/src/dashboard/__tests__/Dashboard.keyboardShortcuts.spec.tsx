@@ -1,7 +1,15 @@
 import { DashboardRoute } from '@pomello-desktop/domain';
-import { renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
+import { fireEvent, renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
 
 describe('Dashboard - Keyboard shortcuts', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('should render the keyboard shortcuts', () => {
     renderDashboard({ route: DashboardRoute.KeyboardShortcuts });
 
@@ -203,5 +211,67 @@ describe('Dashboard - Keyboard shortcuts', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(within(skipBreakItem).getByRole('button', { name: /Edit/ })).toHaveTextContent('⌘⇧M');
     expect(screen.getByRole('button', { name: /Start timer/ })).toHaveTextContent('None');
+  });
+
+  it('should record a new keyboard shortcut', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.KeyboardShortcuts,
+    });
+
+    const voidTaskItem = screen.getByRole('listitem', { name: 'Void task' });
+
+    await userEvent.click(within(voidTaskItem).getByRole('button', { name: /Void task/ }));
+
+    const recordingInput = screen.getByRole('textbox', { name: 'Keyboard shortcut recorder' });
+    expect(recordingInput).toHaveFocus();
+
+    // Mousetrap uses the deprecated event.which so we can't use userEvent.type here
+    fireEvent(recordingInput, new KeyboardEvent('keydown', { which: 76 })); // L
+    fireEvent(recordingInput, new KeyboardEvent('keyup'));
+
+    vi.runOnlyPendingTimers();
+
+    expect(within(voidTaskItem).getByRole('button', { name: /Void task/ })).toHaveTextContent('L');
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+  });
+
+  it('should show the conflict modal when recording a keyboard shortcut', async () => {
+    const { userEvent } = renderDashboard({
+      hotkeys: {
+        toggleMenu: {
+          binding: 'm',
+          keys: [['M']],
+          label: 'M',
+        },
+      },
+      route: DashboardRoute.KeyboardShortcuts,
+    });
+
+    const moveTaskItem = screen.getByRole('listitem', { name: 'Move task' });
+
+    await userEvent.click(within(moveTaskItem).getByRole('button', { name: /Move task/ }));
+
+    const recordingInput = screen.getByRole('textbox', { name: 'Keyboard shortcut recorder' });
+    expect(recordingInput).toHaveFocus();
+
+    // Mousetrap uses the deprecated event.which so we can't use userEvent.type here
+    fireEvent(recordingInput, new KeyboardEvent('keydown', { which: 77 })); // M
+    fireEvent(recordingInput, new KeyboardEvent('keyup'));
+
+    vi.runOnlyPendingTimers();
+
+    const hotkeyConflictModal = screen.getByRole('dialog', {
+      name: 'Conflicting keyboard shortcut',
+    });
+
+    expect(hotkeyConflictModal).toBeInTheDocument();
+    expect(
+      within(hotkeyConflictModal).getByRole('heading', { name: 'Conflicting keyboard shortcut' })
+    ).toBeInTheDocument();
+    expect(within(hotkeyConflictModal).getByRole('paragraph')).toHaveTextContent(
+      '"M" is currently assigned to "Toggle menu." Click "Overwrite" to reassign it to "Move task," or click "Cancel" to keep your existing keyboard shortcuts.'
+    );
   });
 });

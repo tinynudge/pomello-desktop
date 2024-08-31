@@ -1,16 +1,15 @@
 import { HotkeyConflictError, useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
-import { HotkeyCommand } from '@pomello-desktop/domain';
+import { FormattedHotkey, HotkeyCommand } from '@pomello-desktop/domain';
 import { Component, For, Show, createSignal } from 'solid-js';
 import { MainHeader } from '../../components/MainHeader';
 import { Hotkey } from './Hotkey';
 import { HotkeyConflictModal } from './HotkeyConflictModal';
-import { UnboundHotkey } from './UnboundHotkey';
 import { hotkeysByCategory } from './hotkeysByCategory';
 
 export const KeyboardShortcutsView: Component = () => {
-  const { getDefaultHotkey, getHotkey, stageHotkey } = useDashboard();
+  const { getDefaultHotkey, stageHotkey } = useDashboard();
   const t = useTranslate();
 
   const [getHotkeyConflict, setHotkeyConflict] = createSignal<HotkeyConflictError | null>(null);
@@ -19,9 +18,9 @@ export const KeyboardShortcutsView: Component = () => {
     stageHotkey(command, false);
   };
 
-  const handleHotkeyReset = (command: HotkeyCommand) => {
+  const handleHotkeyChange = (command: HotkeyCommand, hotkey: FormattedHotkey) => {
     try {
-      stageHotkey(command, getDefaultHotkey(command));
+      stageHotkey(command, hotkey);
     } catch (error) {
       if (error instanceof HotkeyConflictError) {
         setHotkeyConflict(error);
@@ -43,30 +42,23 @@ export const KeyboardShortcutsView: Component = () => {
           <Panel heading={t(category.headingKey)} isPaddingDisabled>
             <Panel.List aria-label={t(category.listLabelKey)}>
               <For each={category.hotkeyCommands}>
-                {hotkeyCommand => (
+                {command => (
                   <Panel.List.FormField
                     actions={[
                       {
-                        onClick: () => handleHotkeyReset(hotkeyCommand),
-                        text: t('restoreDefault', { value: getDefaultHotkey(hotkeyCommand).label }),
+                        onClick: () => handleHotkeyChange(command, getDefaultHotkey(command)),
+                        text: t('restoreDefault', { value: getDefaultHotkey(command).label }),
                       },
                       {
-                        onClick: () => handleHotkeyClear(hotkeyCommand),
+                        onClick: () => handleHotkeyClear(command),
                         text: t('unsetHotkey'),
                       },
                     ]}
-                    description={t(`hotkeys.${hotkeyCommand}.description`)}
-                    for={hotkeyCommand}
-                    label={t(`hotkeys.${hotkeyCommand}.label`)}
+                    description={t(`hotkeys.${command}.description`)}
+                    for={command}
+                    label={t(`hotkeys.${command}.label`)}
                   >
-                    <Show
-                      fallback={<UnboundHotkey command={hotkeyCommand} />}
-                      when={getHotkey(hotkeyCommand)}
-                    >
-                      {getFormattedHotkey => (
-                        <Hotkey command={hotkeyCommand} hotkey={getFormattedHotkey()} />
-                      )}
-                    </Show>
+                    <Hotkey command={command} onHotkeyChange={handleHotkeyChange} />
                   </Panel.List.FormField>
                 )}
               </For>

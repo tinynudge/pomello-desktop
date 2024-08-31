@@ -3,6 +3,7 @@ export enum AppEvent {
   ClipboardTextWrite = 'clipboard-text-write',
   DecryptValue = 'decrypt-value',
   EncryptValue = 'encrypt-value',
+  FormatHotkey = 'format-hotkey',
   GetActiveServiceId = 'get-active-service-id',
   GetDefaultHotkeys = 'get-default-hotkeys',
   GetHotkeys = 'get-hotkeys',
