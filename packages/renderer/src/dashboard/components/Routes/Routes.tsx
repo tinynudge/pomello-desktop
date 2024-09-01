@@ -1,5 +1,6 @@
 import { KeyboardShortcutsView } from '@/dashboard/views/KeyboardShortcutsView';
 import { SettingsView } from '@/dashboard/views/SettingsView';
+import { SoundsView } from '@/dashboard/views/SoundsView';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { Route } from '@solidjs/router';
@@ -22,6 +23,7 @@ export const Routes: Component = () => {
     <>
       <Route path={DashboardRoute.KeyboardShortcuts} component={KeyboardShortcutsView} />
       <Route path={DashboardRoute.Settings} component={SettingsView} />
+      <Route path={DashboardRoute.Sounds} component={SoundsView} />
       <For each={Object.values(DashboardRoute)}>
         {route => <Route path={route} component={() => <MainHeader heading={routes[route]} />} />}
       </For>
