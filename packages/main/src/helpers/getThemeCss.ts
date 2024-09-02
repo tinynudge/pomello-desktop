@@ -233,6 +233,11 @@ const defaultTheme: ThemeConfig = {
         hover: [opacity(colors.lightAlt, 60), opacity(colors.dark, 38)],
       },
     },
+    slider: {
+      dot: colors.white,
+      progress: [colors.primary, colors.primaryDark],
+      track: [opacity(colors.black, 12), colors.dark],
+    },
     text: {
       default: [colors.darkAlt, opacity(colors.white, 84)],
       hint: [opacity(colors.darkAlt, 84), opacity(colors.white, 60)],
