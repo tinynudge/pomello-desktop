@@ -1,5 +1,5 @@
 import { DashboardRoute } from '@pomello-desktop/domain';
-import { renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
+import { fireEvent, renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
 
 describe('Dashboard - Sounds', () => {
   it('should render the sounds', () => {
@@ -44,25 +44,27 @@ describe('Dashboard - Sounds', () => {
   });
 
   it.each([
-    'task timer start sound',
-    'task timer tick sound',
-    'task timer end sound',
-    'short break timer start sound',
-    'short break timer tick sound',
-    'short break timer end sound',
-    'long break timer start sound',
-    'long break timer tick sound',
-    'long break timer end sound',
-  ])('should show contain the default sound options for the %s', async name => {
+    'Task timer start',
+    'Task timer tick',
+    'Task timer end',
+    'Short break timer start',
+    'Short break timer tick',
+    'Short break timer end',
+    'Long break timer start',
+    'Long break timer tick',
+    'Long break timer end',
+  ])('should show contain the default sound options and the volume slider for "%s"', async name => {
     const { userEvent } = renderDashboard({ route: DashboardRoute.Sounds });
 
-    await userEvent.click(screen.getByRole('combobox', { name: new RegExp(name, 'i') }));
+    await userEvent.click(screen.getByRole('combobox', { name: `${name} sound` }));
 
     const options = screen.getAllByRole('option');
 
     expect(options.at(0)).toHaveTextContent('Wind up');
     expect(options.at(1)).toHaveTextContent('Egg timer');
     expect(options.at(2)).toHaveTextContent('Ding');
+
+    expect(screen.getByRole('slider', { name: `${name} volume` }));
   });
 
   it('should be able to update a sound', async () => {
@@ -96,5 +98,40 @@ describe('Dashboard - Sounds', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
     expect(appApi.updateSettings).toHaveBeenCalledWith({ taskTimerTickSound: 'wind-up' });
+  });
+
+  it('should be able to update the volume', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        shortBreakTimerEndVol: 0.8,
+      },
+    });
+
+    fireEvent.input(screen.getByRole('slider', { name: 'Short break timer end volume' }), {
+      target: {
+        value: '0.2',
+      },
+    });
+
+    expect(screen.getByRole('slider', { name: 'Short break timer end volume' })).toHaveValue('0.2');
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(screen.getByRole('slider', { name: 'Short break timer end volume' })).toHaveValue('0.8');
+
+    fireEvent.input(screen.getByRole('slider', { name: 'Short break timer end volume' }), {
+      target: {
+        value: '.2',
+      },
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({ shortBreakTimerEndVol: 0.2 });
   });
 });

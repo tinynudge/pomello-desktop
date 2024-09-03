@@ -1,5 +1,5 @@
 import cc from 'classcat';
-import { Component, JSX, onCleanup, onMount, splitProps } from 'solid-js';
+import { Component, JSX, createEffect, on, onCleanup, onMount, splitProps } from 'solid-js';
 import styles from './Slider.module.scss';
 
 type SliderProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type'>;
@@ -16,6 +16,13 @@ export const Slider: Component<SliderProps> = allProps => {
       inputRef.removeEventListener('input', updateProgress);
     });
   });
+
+  createEffect(
+    on(
+      () => remainingProps.value,
+      () => updateProgress()
+    )
+  );
 
   const attachRef = (element: HTMLInputElement) => {
     inputRef = element;
