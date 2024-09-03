@@ -3,7 +3,9 @@ import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Select } from '@/ui/dashboard/Select';
+import { Slider } from '@/ui/dashboard/Slider';
 import { Component, For } from 'solid-js';
+import styles from './SoundsView.module.scss';
 
 type TimerType = (typeof timerTypes)[number];
 
@@ -19,6 +21,10 @@ export const SoundsView: Component = () => {
 
   const handleSoundChange = (type: TimerType, phase: TimerPhase, sound: string) => {
     stageSetting(`${type}Timer${phase}Sound`, sound);
+  };
+
+  const handleVolumeChange = (type: TimerType, phase: TimerPhase, volume: number) => {
+    stageSetting(`${type}Timer${phase}Vol`, volume);
   };
 
   const defaultSoundOptions = [
@@ -49,8 +55,17 @@ export const SoundsView: Component = () => {
                     for={`${type}-${phase}`}
                     label={t(`sounds.${phase.toLowerCase()}`)}
                   >
+                    <Slider
+                      aria-label={t(`sounds.${type}${phase}.volume`)}
+                      class={styles.volumeSlider}
+                      max={1}
+                      min={0}
+                      onInput={event => handleVolumeChange(type, phase, +event.currentTarget.value)}
+                      step={0.1}
+                      value={getSetting(`${type}Timer${phase}Vol`) ?? 1}
+                    />
                     <Select
-                      aria-label={t(`sounds.${type}${phase}`)}
+                      aria-label={t(`sounds.${type}${phase}.sound`)}
                       id={`${type}${phase}`}
                       onChange={sound => handleSoundChange(type, phase, sound)}
                       options={defaultSoundOptions}
