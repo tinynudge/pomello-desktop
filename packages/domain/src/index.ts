@@ -6,6 +6,7 @@ export type { CompleteFormattedHotkeys } from './CompleteFormattedHotkeys';
 export type { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 export type { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
 export { DashboardRoute } from './DashboardRoute';
+export type { DefaultSoundId } from './DefaultSoundId';
 export type { DialAction } from './DialAction';
 export type { ErrorHandler } from './ErrorHandler';
 export type { FindOrCreateWindowOptions } from './FindOrCreateWindowOptions';
@@ -67,7 +68,7 @@ export type { TaskTimerEndPromptHandledResponse } from './TaskTimerEndPromptHand
 export type { ThemeConfig } from './ThemeConfig';
 export type { ThemeCss } from './ThemeCss';
 export type { TimerPhase } from './TimerPhase';
-export type { TimerSounds } from './TimerSounds';
+export type { TimerSettingKey } from './TimerSettingKey';
 export { TimerType } from './TimerType';
 export type { Translate } from './Translate';
 export type { TranslationLocation } from './TranslationLocation';

@@ -54,6 +54,7 @@ export const createMockAppApi = ({
     getDefaultHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
+    getSoundPath: vi.fn(appApi.getSoundPath ?? (soundId => `sounds/${soundId}.mp3`)),
     getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve({ css: '', theme: 'light' }))),
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),

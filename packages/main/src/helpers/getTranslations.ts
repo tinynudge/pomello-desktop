@@ -1,16 +1,15 @@
 import { TranslationLocation, TranslationsDictionary } from '@pomello-desktop/domain';
 import { app } from 'electron';
 import fs from 'fs';
-import { join, resolve } from 'path';
+import { resolve } from 'path';
+import { getResourcesPath } from './getResourcesPath';
 
 const cachedTranslations: Record<string, TranslationsDictionary> = {};
 
 const defaultLocale = 'en-US';
 
-const basePath = import.meta.env.DEV ? join(__dirname, '../../..') : process.resourcesPath;
-
 const loadTranslations = (locale: string, directory: string) => {
-  const filePath = resolve(basePath, directory, `${locale}.json`);
+  const filePath = resolve(getResourcesPath(), directory, `${locale}.json`);
 
   try {
     const contents = fs.readFileSync(filePath, 'utf8');
