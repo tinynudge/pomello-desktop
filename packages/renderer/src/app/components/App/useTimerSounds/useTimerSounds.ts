@@ -1,9 +1,8 @@
 import { usePomelloService } from '@/app/context/PomelloContext';
 import { useSettings } from '@/shared/context/RuntimeContext';
-import { TimerSounds } from '@pomello-desktop/domain';
 import { PomelloEvent } from '@tinynudge/pomello-service';
 import { createMemo, onCleanup, onMount } from 'solid-js';
-import { createTimerSounds } from './createTimerSounds';
+import { TimerSounds, createTimerSounds } from './createTimerSounds';
 
 export const useTimerSounds = (): void => {
   const pomelloService = usePomelloService();

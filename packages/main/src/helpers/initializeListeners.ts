@@ -8,6 +8,7 @@ import { handleGetActiveServiceId } from '@/events/handleGetActiveServiceId';
 import { handleGetDefaultHotkeys } from '@/events/handleGetDefaultHotkeys';
 import { handleGetHotkeys } from '@/events/handleGetHotkeys';
 import { handleGetSettings } from '@/events/handleGetSettings';
+import { handleGetSoundPath } from '@/events/handleGetSoundPath';
 import { handleGetThemeCss } from '@/events/handleGetThemeCss';
 import { handleGetTranslations } from '@/events/handleGetTranslations';
 import { handleLogMessage } from '@/events/handleLogMessage';
@@ -62,6 +63,7 @@ export const initializeListeners = (): void => {
   ipcMain.on(AppEvent.DecryptValue, handleDecryptValue);
   ipcMain.on(AppEvent.EncryptValue, handleEncryptValue);
   ipcMain.on(AppEvent.FormatHotkey, handleFormatHotkey);
+  ipcMain.on(AppEvent.GetSoundPath, handleGetSoundPath);
 
   nativeTheme.on('updated', handleThemeUpdate);
 

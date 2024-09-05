@@ -8,16 +8,14 @@ describe('App - Timer sounds', () => {
     vi.mock('howler');
     const MockHowl = vi.mocked(Howl);
 
-    const assetPath = '/src/app/components/App/useTimerSounds/assets';
-
     const { simulate } = renderApp();
 
     await simulate.waitForSelectTaskView();
 
     expect(MockHowl).toHaveBeenCalledTimes(3);
-    expect(MockHowl).toHaveBeenCalledWith({ src: `${assetPath}/ding.mp3` });
-    expect(MockHowl).toHaveBeenCalledWith({ src: `${assetPath}/egg-timer.ogg` });
-    expect(MockHowl).toHaveBeenCalledWith({ src: `${assetPath}/wind-up.mp3` });
+    expect(MockHowl).toHaveBeenCalledWith({ src: 'audio://sounds/wind-up.mp3' });
+    expect(MockHowl).toHaveBeenCalledWith({ src: 'audio://sounds/egg-timer.mp3' });
+    expect(MockHowl).toHaveBeenCalledWith({ src: 'audio://sounds/ding.mp3' });
   });
 
   it('should load custom sounds', async () => {

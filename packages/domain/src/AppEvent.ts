@@ -8,6 +8,7 @@ export enum AppEvent {
   GetDefaultHotkeys = 'get-default-hotkeys',
   GetHotkeys = 'get-hotkeys',
   GetSettings = 'get-settings',
+  GetSoundPath = 'get-sound-path',
   GetThemeCss = 'get-theme-css',
   GetTranslations = 'get-translations',
   HideSelect = 'hide-select',

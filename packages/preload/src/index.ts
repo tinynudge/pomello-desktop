@@ -6,6 +6,7 @@ import { getActiveServiceId } from './getActiveServiceId';
 import { getDefaultHotkeys } from './getDefaultHotkeys';
 import { getHotkeys } from './getHotkeys';
 import { getSettings } from './getSettings';
+import { getSoundPath } from './getSoundPath';
 import { getThemeCss } from './getThemeCss';
 import { getTranslations } from './getTranslations';
 import { hideSelect } from './hideSelect';
@@ -46,6 +47,7 @@ export const api = {
   getDefaultHotkeys,
   getHotkeys,
   getSettings,
+  getSoundPath,
   getThemeCss,
   getTranslations,
   hideSelect,

@@ -1,45 +1,24 @@
-import { AppProtocol, Settings, TimerPhase, TimerSounds, TimerType } from '@pomello-desktop/domain';
+import { getTimerSettingKey } from '@/shared/helpers/getTimerSettingKey';
+import {
+  AppProtocol,
+  DefaultSoundId,
+  Settings,
+  Sound,
+  TimerPhase,
+  TimerType,
+} from '@pomello-desktop/domain';
 import { Howl } from 'howler';
-import ding from './assets/ding.mp3';
-import eggTimer from './assets/egg-timer.ogg';
-import windUp from './assets/wind-up.mp3';
 import { createSound } from './createSound';
 
-type TimerSettingKey =
-  | 'taskTimerStart'
-  | 'taskTimerTick'
-  | 'taskTimerEnd'
-  | 'shortBreakTimerStart'
-  | 'shortBreakTimerTick'
-  | 'shortBreakTimerEnd'
-  | 'longBreakTimerStart'
-  | 'longBreakTimerTick'
-  | 'longBreakTimerEnd';
+export type TimerSounds = Record<TimerType, Record<TimerPhase, Sound | null>>;
 
 type AudioCache = Map<string, Howl>;
 
-const timerTypeMap: Record<TimerType, string> = {
-  [TimerType.task]: 'task',
-  [TimerType.shortBreak]: 'shortBreak',
-  [TimerType.longBreak]: 'longBreak',
-};
-
-const timerPhaseMap: Record<TimerPhase, string> = {
-  start: 'TimerStart',
-  tick: 'TimerTick',
-  end: 'TimerEnd',
-};
-
-const defaultSounds: Record<string, string | undefined> = {
-  'egg-timer': eggTimer,
-  'wind-up': windUp,
-  ding,
-};
-
 let audioCache: AudioCache = new Map();
 
-const getSettingKey = (timerType: TimerType, phase: TimerPhase): TimerSettingKey =>
-  `${timerTypeMap[timerType]}${timerPhaseMap[phase]}` as TimerSettingKey;
+const isDefaultSoundId = (soundId: string): soundId is DefaultSoundId => {
+  return soundId === 'ding' || soundId === 'egg-timer' || soundId === 'wind-up';
+};
 
 export const createTimerSounds = (
   settings: Settings,
@@ -57,7 +36,7 @@ export const createTimerSounds = (
 
   Object.values(TimerType).forEach(type => {
     phases.forEach(phase => {
-      const settingKey = getSettingKey(type, phase);
+      const settingKey = getTimerSettingKey(type, phase);
 
       const soundId = settings[`${settingKey}Sound`];
       const volume = Number(settings[`${settingKey}Vol`]);
@@ -72,14 +51,12 @@ export const createTimerSounds = (
       }
 
       if (soundId) {
-        let soundSource = defaultSounds[soundId];
+        let soundSource = isDefaultSoundId(soundId)
+          ? window.app.getSoundPath(soundId)
+          : settings.sounds[soundId]?.path;
 
-        if (!soundSource) {
-          const customSource = settings.sounds[soundId]?.path;
-
-          if (customSource) {
-            soundSource = `${AppProtocol.Audio}${customSource}`;
-          }
+        if (soundSource) {
+          soundSource = `${AppProtocol.Audio}${soundSource}`;
         }
 
         if (soundSource) {
