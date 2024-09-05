@@ -134,4 +134,32 @@ describe('Dashboard - Sounds', () => {
 
     expect(appApi.updateSettings).toHaveBeenCalledWith({ shortBreakTimerEndVol: 0.2 });
   });
+
+  it('should be able to restore the default sound', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        longBreakTimerTickSound: 'ding',
+        longBreakTimerTickVol: 0.5,
+      },
+    });
+
+    const longBreakList = screen.getByRole('list', { name: 'Long break timer sounds' });
+    const tickItem = within(longBreakList).getByRole('listitem', { name: 'Tick sound' });
+
+    await userEvent.click(within(tickItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Restore default: Egg timer' }));
+
+    expect(
+      screen.getByRole('combobox', { name: 'Long break timer tick sound' })
+    ).toHaveDisplayValue('Egg timer');
+    expect(screen.getByRole('slider', { name: 'Long break timer tick volume' })).toHaveValue('1');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({
+      longBreakTimerTickSound: 'egg-timer',
+      longBreakTimerTickVol: 1,
+    });
+  });
 });
