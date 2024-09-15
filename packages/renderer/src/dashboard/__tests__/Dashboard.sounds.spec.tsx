@@ -53,16 +53,32 @@ describe('Dashboard - Sounds', () => {
     'Long break timer start',
     'Long break timer tick',
     'Long break timer end',
-  ])('should show contain the default sound options and the volume slider for "%s"', async name => {
-    const { userEvent } = renderDashboard({ route: DashboardRoute.Sounds });
+  ])('should show contain the sound options and the volume slider for "%s"', async name => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          gong1234: {
+            name: 'Gong',
+            path: 'path/to/gong.mp3',
+          },
+        },
+      },
+    });
 
-    await userEvent.click(screen.getByRole('combobox', { name: `${name} sound` }));
+    const select = screen.getByRole('combobox', { name: `${name} sound` });
 
-    const options = screen.getAllByRole('option');
+    await userEvent.click(select);
 
+    const options = within(select).getAllByRole('option');
+
+    expect(options).toHaveLength(4);
     expect(options.at(0)).toHaveTextContent('Wind up');
     expect(options.at(1)).toHaveTextContent('Egg timer');
     expect(options.at(2)).toHaveTextContent('Ding');
+    expect(options.at(3)).toHaveTextContent('Gong');
+
+    expect(within(select).getByRole('group', { name: 'Custom sounds' })).toBeInTheDocument();
 
     expect(screen.getByRole('slider', { name: `${name} volume` }));
   });

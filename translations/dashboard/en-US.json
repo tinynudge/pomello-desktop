@@ -13,6 +13,7 @@
   "cancel": "Cancel",
   "conflictingHotkeyHeading": "Conflicting keyboard shortcut",
   "conflictingHotkeyText": "\"{{binding}}\" is currently assigned to \"{{currentCommand}}.\" Click \"Overwrite\" to reassign it to \"{{incomingCommand}},\" or click \"Cancel\" to keep your existing keyboard shortcuts.",
+  "customSoundsGroup": "Custom sounds",
   "editKeyboardShortcutLabel": "Edit keyboard shortcut for: {{command}}. Current keyboard shortcut: {{binding}}.",
   "editKeyboardShortcutText": "Edit keyboard shortcut",
   "formFieldMoreOptionsMenuLabel": "More options",
