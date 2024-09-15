@@ -50,6 +50,6 @@ export type Settings = {
   taskTimerStartVol: number | string;
   taskTimerTickSound: string | null;
   taskTimerTickVol: number | string;
-  sounds: Record<string, CustomSound | undefined>;
+  sounds: Record<string, CustomSound>;
   timestamp?: number;
 };

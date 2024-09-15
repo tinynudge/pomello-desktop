@@ -2,7 +2,7 @@ import { MainHeader } from '@/dashboard/components/MainHeader';
 import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
-import { Select } from '@/ui/dashboard/Select';
+import { Option, Select } from '@/ui/dashboard/Select';
 import { Slider } from '@/ui/dashboard/Slider';
 import { Component, For, createMemo } from 'solid-js';
 import styles from './SoundsView.module.scss';
@@ -36,11 +36,28 @@ export const SoundsView: Component = () => {
     },
   }));
 
-  const getDefaultSoundOptions = createMemo(() => [
-    getDefaultSounds().start,
-    getDefaultSounds().tick,
-    getDefaultSounds().end,
-  ]);
+  const getSoundOptions = createMemo(() => {
+    const options: Option[] = [
+      getDefaultSounds().start,
+      getDefaultSounds().tick,
+      getDefaultSounds().end,
+    ];
+
+    const customSounds = getSetting('sounds');
+    const customSoundOptions = Object.entries(customSounds).map(([id, { name }]) => ({
+      id,
+      label: name,
+    }));
+
+    if (customSoundOptions.length) {
+      options.push({
+        items: customSoundOptions,
+        label: t('customSoundsGroup'),
+      });
+    }
+
+    return options;
+  });
 
   const handleSoundChange = (timerName: TimerName, sound: string) => {
     stageSetting(`${timerName}Sound`, sound);
@@ -93,7 +110,7 @@ export const SoundsView: Component = () => {
                         aria-label={t(`sounds.${type}.${phase}.sound`)}
                         id={`${type}-${phase}`}
                         onChange={sound => handleSoundChange(timerName, sound)}
-                        options={getDefaultSoundOptions()}
+                        options={getSoundOptions()}
                         value={getSetting(`${timerName}Sound`) ?? undefined}
                       />
                     </Panel.List.FormField>
