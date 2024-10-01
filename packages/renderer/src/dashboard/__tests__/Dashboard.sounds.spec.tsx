@@ -1,5 +1,15 @@
 import { DashboardRoute } from '@pomello-desktop/domain';
+import { Howl } from 'howler';
 import { fireEvent, renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
+
+vi.mock('howler', () => {
+  const Howl = vi.fn(() => ({
+    on: vi.fn(),
+    play: vi.fn(),
+  }));
+
+  return { Howl };
+});
 
 describe('Dashboard - Sounds', () => {
   it('should render the sounds', () => {
@@ -53,7 +63,7 @@ describe('Dashboard - Sounds', () => {
     'Long break timer start',
     'Long break timer tick',
     'Long break timer end',
-  ])('should show contain the sound options and the volume slider for "%s"', async name => {
+  ])('should contain the sound options and the volume slider for "%s"', async name => {
     const { userEvent } = renderDashboard({
       route: DashboardRoute.Sounds,
       settings: {
@@ -83,7 +93,7 @@ describe('Dashboard - Sounds', () => {
     expect(screen.getByRole('slider', { name: `${name} volume` }));
   });
 
-  it('should be able to update a sound', async () => {
+  it('should update a sound', async () => {
     const { appApi, userEvent } = renderDashboard({
       route: DashboardRoute.Sounds,
       settings: {
@@ -116,7 +126,7 @@ describe('Dashboard - Sounds', () => {
     expect(appApi.updateSettings).toHaveBeenCalledWith({ taskTimerTickSound: 'wind-up' });
   });
 
-  it('should be able to update the volume', async () => {
+  it('should update the volume', async () => {
     const { appApi, userEvent } = renderDashboard({
       route: DashboardRoute.Sounds,
       settings: {
@@ -151,7 +161,7 @@ describe('Dashboard - Sounds', () => {
     expect(appApi.updateSettings).toHaveBeenCalledWith({ shortBreakTimerEndVol: 0.2 });
   });
 
-  it('should be able to restore the default sound', async () => {
+  it('should restore the default sound', async () => {
     const { appApi, userEvent } = renderDashboard({
       route: DashboardRoute.Sounds,
       settings: {
@@ -177,5 +187,61 @@ describe('Dashboard - Sounds', () => {
       longBreakTimerTickSound: 'egg-timer',
       longBreakTimerTickVol: 1,
     });
+  });
+
+  it('should preview a default sound', async () => {
+    const MockHowl = vi.mocked(Howl);
+
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        shortBreakTimerTickSound: 'egg-timer',
+        shortBreakTimerTickVol: 0.5,
+      },
+    });
+
+    const shortBreakList = screen.getByRole('list', { name: 'Short break timer sounds' });
+    const tickItem = within(shortBreakList).getByRole('listitem', { name: 'Tick sound' });
+
+    await userEvent.click(within(tickItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(within(tickItem).getByRole('menuitem', { name: 'Preview sound' }));
+
+    expect(MockHowl).toHaveBeenCalledWith({
+      src: 'audio://sounds/egg-timer.mp3',
+      volume: 0.5,
+    });
+
+    expect(MockHowl.mock.results[0].value.play).toHaveBeenCalled();
+  });
+
+  it('should preview a custom sound', async () => {
+    const MockHowl = vi.mocked(Howl);
+
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        taskTimerTickSound: 'custom-sound',
+        taskTimerTickVol: 0.8,
+        sounds: {
+          'custom-sound': {
+            name: 'My custom sound',
+            path: 'path/to/custom/sound.mp3',
+          },
+        },
+      },
+    });
+
+    const taskList = screen.getByRole('list', { name: 'Task timer sounds' });
+    const tickItem = within(taskList).getByRole('listitem', { name: 'Tick sound' });
+
+    await userEvent.click(within(tickItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(within(tickItem).getByRole('menuitem', { name: 'Preview sound' }));
+
+    expect(MockHowl).toHaveBeenCalledWith({
+      src: 'audio://path/to/custom/sound.mp3',
+      volume: 0.8,
+    });
+
+    expect(MockHowl.mock.results[0].value.play).toHaveBeenCalled();
   });
 });

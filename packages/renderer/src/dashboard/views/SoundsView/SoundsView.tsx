@@ -2,26 +2,18 @@ import { MainHeader } from '@/dashboard/components/MainHeader';
 import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
-import { Option, Select } from '@/ui/dashboard/Select';
-import { Slider } from '@/ui/dashboard/Slider';
+import { Option, OptionItem } from '@/ui/dashboard/Select';
+import { TimerPhase, TimerType } from '@pomello-desktop/domain';
 import { Component, For, createMemo } from 'solid-js';
-import styles from './SoundsView.module.scss';
+import { SoundField } from './SoundField';
 
-type TimerType = (typeof timerTypes)[number];
-
-type TimerPhase = (typeof timerPhases)[number];
-
-type TimerName = `${TimerType}Timer${Capitalize<TimerPhase>}`;
-
-const timerTypes = ['task', 'shortBreak', 'longBreak'] as const;
-
-const timerPhases = ['start', 'tick', 'end'] as const;
+const timerPhases: TimerPhase[] = ['start', 'tick', 'end'];
 
 export const SoundsView: Component = () => {
-  const { getSetting, stageSetting } = useDashboard();
+  const { getSetting } = useDashboard();
   const t = useTranslate();
 
-  const getDefaultSounds = createMemo(() => ({
+  const getDefaultSounds = createMemo<Record<TimerPhase, OptionItem>>(() => ({
     start: {
       id: 'wind-up',
       label: t('sound.windUp'),
@@ -59,63 +51,22 @@ export const SoundsView: Component = () => {
     return options;
   });
 
-  const handleSoundChange = (timerName: TimerName, sound: string) => {
-    stageSetting(`${timerName}Sound`, sound);
-  };
-
-  const handleVolumeChange = (timerName: TimerName, volume: number) => {
-    stageSetting(`${timerName}Vol`, volume);
-  };
-
-  const handleRestoreDefaultClick = (timerName: TimerName, phase: TimerPhase) => {
-    stageSetting(`${timerName}Sound`, getDefaultSounds()[phase].id);
-    stageSetting(`${timerName}Vol`, 1);
-  };
-
-  const getTimerName = (type: TimerType, phase: TimerPhase): TimerName =>
-    `${type}Timer${phase.charAt(0).toUpperCase()}${phase.slice(1)}` as TimerName;
-
   return (
     <>
       <MainHeader heading={t('routeSounds')} />
-      <For each={timerTypes}>
-        {type => (
-          <Panel heading={t(`${type}SoundsHeader`)} isPaddingDisabled>
-            <Panel.List aria-label={t(`${type}SoundsLabel`)}>
+      <For each={Object.entries(TimerType)}>
+        {([formattedType, type]) => (
+          <Panel heading={t(`${formattedType}SoundsHeader`)} isPaddingDisabled>
+            <Panel.List aria-label={t(`${formattedType}SoundsLabel`)}>
               <For each={timerPhases}>
-                {phase => {
-                  const timerName = getTimerName(type, phase);
-
-                  return (
-                    <Panel.List.FormField
-                      actions={[
-                        {
-                          onClick: () => handleRestoreDefaultClick(timerName, phase),
-                          text: t('restoreDefault', { value: getDefaultSounds()[phase].label }),
-                        },
-                      ]}
-                      for={`${type}-${phase}`}
-                      label={t(`sounds.${phase}`)}
-                    >
-                      <Slider
-                        aria-label={t(`sounds.${type}.${phase}.volume`)}
-                        class={styles.volumeSlider}
-                        max={1}
-                        min={0}
-                        onInput={event => handleVolumeChange(timerName, +event.currentTarget.value)}
-                        step={0.1}
-                        value={getSetting(`${timerName}Vol`) ?? 1}
-                      />
-                      <Select
-                        aria-label={t(`sounds.${type}.${phase}.sound`)}
-                        id={`${type}-${phase}`}
-                        onChange={sound => handleSoundChange(timerName, sound)}
-                        options={getSoundOptions()}
-                        value={getSetting(`${timerName}Sound`) ?? undefined}
-                      />
-                    </Panel.List.FormField>
-                  );
-                }}
+                {phase => (
+                  <SoundField
+                    defaultSound={getDefaultSounds()[phase]}
+                    soundOptions={getSoundOptions()}
+                    staticTimerPhase={phase}
+                    staticTimerType={type}
+                  />
+                )}
               </For>
             </Panel.List>
           </Panel>
