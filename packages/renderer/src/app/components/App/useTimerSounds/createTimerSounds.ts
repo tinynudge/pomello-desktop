@@ -1,12 +1,6 @@
 import { getTimerSettingKey } from '@/shared/helpers/getTimerSettingKey';
-import {
-  AppProtocol,
-  DefaultSoundId,
-  Settings,
-  Sound,
-  TimerPhase,
-  TimerType,
-} from '@pomello-desktop/domain';
+import { isDefaultSoundId } from '@/shared/helpers/isDefaultSoundId';
+import { AppProtocol, Settings, Sound, TimerPhase, TimerType } from '@pomello-desktop/domain';
 import { Howl } from 'howler';
 import { createSound } from './createSound';
 
@@ -15,10 +9,6 @@ export type TimerSounds = Record<TimerType, Record<TimerPhase, Sound | null>>;
 type AudioCache = Map<string, Howl>;
 
 let audioCache: AudioCache = new Map();
-
-const isDefaultSoundId = (soundId: string): soundId is DefaultSoundId => {
-  return soundId === 'ding' || soundId === 'egg-timer' || soundId === 'wind-up';
-};
 
 export const createTimerSounds = (
   settings: Settings,

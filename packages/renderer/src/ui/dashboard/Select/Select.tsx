@@ -5,12 +5,12 @@ import CaretIcon from './assets/caret.svg';
 
 export type Option = OptionGroup | OptionItem;
 
-type OptionGroup = {
+export type OptionGroup = {
   label: string;
   items: OptionItem[];
 };
 
-type OptionItem = {
+export type OptionItem = {
   id: string;
   label: string;
 };
