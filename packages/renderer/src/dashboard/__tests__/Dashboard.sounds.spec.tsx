@@ -189,7 +189,7 @@ describe('Dashboard - Sounds', () => {
     });
   });
 
-  it('should preview a default sound', async () => {
+  it('should preview a selected default sound', async () => {
     const MockHowl = vi.mocked(Howl);
 
     const { userEvent } = renderDashboard({
@@ -214,7 +214,7 @@ describe('Dashboard - Sounds', () => {
     expect(MockHowl.mock.results[0].value.play).toHaveBeenCalled();
   });
 
-  it('should preview a custom sound', async () => {
+  it('should preview a selected custom sound', async () => {
     const MockHowl = vi.mocked(Howl);
 
     const { userEvent } = renderDashboard({
@@ -243,5 +243,182 @@ describe('Dashboard - Sounds', () => {
     });
 
     expect(MockHowl.mock.results[0].value.play).toHaveBeenCalled();
+  });
+
+  it('should render the custom sounds section', () => {
+    renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          foo: {
+            name: 'Foo',
+            path: '/fake/path/foo.mp3',
+          },
+        },
+      },
+    });
+
+    const customSoundsList = screen.getByRole('list', { name: 'Custom sounds' });
+    const customSoundItem = within(customSoundsList).getByRole('listitem', {
+      name: 'Custom sound: Foo',
+    });
+
+    expect(within(customSoundItem).getByLabelText('Name')).toHaveValue('Foo');
+    expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue(
+      '/fake/path/foo.mp3'
+    );
+  });
+
+  it('should preview a custom sound', async () => {
+    const MockHowl = vi.mocked(Howl);
+
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          'custom-sound': {
+            name: 'My custom sound',
+            path: 'path/to/custom/sound.mp3',
+          },
+        },
+      },
+    });
+
+    const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: My custom sound' });
+
+    await userEvent.click(
+      within(customSoundItem).getByRole('button', { name: 'Show more options' })
+    );
+    await userEvent.click(within(customSoundItem).getByRole('menuitem', { name: 'Preview sound' }));
+
+    expect(MockHowl).toHaveBeenCalledWith({
+      src: 'audio://path/to/custom/sound.mp3',
+      volume: 1,
+    });
+
+    expect(MockHowl.mock.results[0].value.play).toHaveBeenCalled();
+  });
+
+  it('should update a custom sound name', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          foo: {
+            name: 'Foo',
+            path: '/fake/path/foo.mp3',
+          },
+        },
+      },
+    });
+
+    const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
+
+    await userEvent.type(within(customSoundItem).getByLabelText('Name'), 'Bar');
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(within(customSoundItem).getByLabelText('Name')).toHaveValue('Foo');
+
+    await userEvent.type(within(customSoundItem).getByLabelText('Name'), 'Bar');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({
+      sounds: {
+        foo: {
+          name: 'FooBar',
+          path: '/fake/path/foo.mp3',
+        },
+      },
+    });
+  });
+
+  it('should update a custom sound path', async () => {
+    const newSound = new File([], 'johnny-be-good.mp3', { type: 'audio/mp3' });
+    newSound.path = '/johnny-be-good.mp3';
+
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          foo: {
+            name: 'Foo',
+            path: '/fake/path/foo.mp3',
+          },
+        },
+      },
+    });
+
+    const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
+
+    await userEvent.upload(within(customSoundItem).getByLabelText('Path'), newSound);
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue(
+      '/fake/path/foo.mp3'
+    );
+
+    await userEvent.upload(within(customSoundItem).getByLabelText('Path'), newSound);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({
+      sounds: {
+        foo: {
+          name: 'Foo',
+          path: '/johnny-be-good.mp3',
+        },
+      },
+    });
+  });
+
+  it('should delete a custom sound', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          foo: {
+            name: 'Foo',
+            path: '/fake/path/foo.mp3',
+          },
+        },
+      },
+    });
+
+    let customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
+
+    await userEvent.click(
+      within(customSoundItem).getByRole('button', { name: 'Show more options' })
+    );
+    await userEvent.click(within(customSoundItem).getByRole('menuitem', { name: 'Delete sound' }));
+
+    expect(screen.queryByRole('listitem', { name: 'Custom sound: Foo' })).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
+
+    await userEvent.click(
+      within(customSoundItem).getByRole('button', { name: 'Show more options' })
+    );
+    await userEvent.click(within(customSoundItem).getByRole('menuitem', { name: 'Delete sound' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({
+      sounds: {},
+    });
   });
 });
