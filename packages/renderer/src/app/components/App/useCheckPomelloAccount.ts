@@ -61,10 +61,14 @@ export const useCheckPomelloAccount = () => {
     try {
       const user = await fetchPomelloUser()
         .catch(error => retryFetchPomelloUser(error, 2000))
-        .catch(error => retryFetchPomelloUser(error, 3000));
+        .catch(error => retryFetchPomelloUser(error, 8000));
 
       config.actions.userFetched(user);
     } catch (error) {
+      if (!navigator.onLine) {
+        return;
+      }
+
       if (error instanceof SerializableHttpError && error.response.status === 500) {
         new Notification(t('pomelloApiUnresponsiveTitle'));
 
