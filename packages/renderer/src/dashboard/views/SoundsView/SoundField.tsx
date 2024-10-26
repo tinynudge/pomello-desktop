@@ -7,7 +7,7 @@ import { Option, OptionItem, Select } from '@/ui/dashboard/Select';
 import { Slider } from '@/ui/dashboard/Slider';
 import { AppProtocol, TimerPhase, TimerType } from '@pomello-desktop/domain';
 import { Howl } from 'howler';
-import { Component, JSX, createSignal } from 'solid-js';
+import { Component, JSX, createEffect, createMemo, createSignal, on } from 'solid-js';
 import styles from './SoundField.module.scss';
 
 type SoundFieldProps = {
@@ -18,14 +18,28 @@ type SoundFieldProps = {
 };
 
 export const SoundField: Component<SoundFieldProps> = props => {
+  const timerSettingKey = getTimerSettingKey(props.staticTimerType, props.staticTimerPhase);
+
   const { getSetting, stageSetting } = useDashboard();
   const t = useTranslate();
 
   const [getIsPlaying, setIsPlaying] = createSignal(false);
 
-  let sound: Howl | null = null;
+  const getSoundId = createMemo(() => getSetting(`${timerSettingKey}Sound`));
 
-  const timerSettingKey = getTimerSettingKey(props.staticTimerType, props.staticTimerPhase);
+  createEffect(
+    on(
+      getSoundId,
+      () => {
+        if (sound?.playing) {
+          sound.stop();
+        }
+      },
+      { defer: true }
+    )
+  );
+
+  let sound: Howl | null = null;
 
   const handleSoundChange = (sound: string) => {
     stageSetting(`${timerSettingKey}Sound`, sound);
@@ -38,14 +52,10 @@ export const SoundField: Component<SoundFieldProps> = props => {
   const handleRestoreDefaultClick = () => {
     stageSetting(`${timerSettingKey}Sound`, props.defaultSound.id);
     stageSetting(`${timerSettingKey}Vol`, 1);
-
-    if (sound?.playing) {
-      sound.stop();
-    }
   };
 
   const handlePreviewSoundClick = () => {
-    const soundId = getSetting(`${timerSettingKey}Sound`);
+    const soundId = getSoundId();
     const volume = getSetting(`${timerSettingKey}Vol`);
 
     if (!soundId) {
@@ -120,7 +130,7 @@ export const SoundField: Component<SoundFieldProps> = props => {
         id={timerSettingKey}
         onChange={handleSoundChange}
         options={props.soundOptions}
-        value={getSetting(`${timerSettingKey}Sound`) ?? undefined}
+        value={getSoundId() ?? undefined}
       />
     </Panel.List.FormField>
   );

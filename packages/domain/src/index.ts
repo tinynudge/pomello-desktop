@@ -5,6 +5,7 @@ export type { AuthWindowType } from './AuthWindowType';
 export type { CompleteFormattedHotkeys } from './CompleteFormattedHotkeys';
 export type { CustomSelectGroupComponent } from './CustomSelectGroupComponent';
 export type { CustomSelectOptionComponent } from './CustomSelectOptionComponent';
+export type { CustomSound } from './CustomSound';
 export { DashboardRoute } from './DashboardRoute';
 export type { DefaultSoundId } from './DefaultSoundId';
 export type { DialAction } from './DialAction';

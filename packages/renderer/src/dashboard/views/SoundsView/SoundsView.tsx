@@ -4,7 +4,8 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Option, OptionItem } from '@/ui/dashboard/Select';
 import { TimerPhase, TimerType } from '@pomello-desktop/domain';
-import { Component, For, createMemo } from 'solid-js';
+import { Component, For, Index, createMemo } from 'solid-js';
+import { CustomSoundListItem } from './CustomSoundListItem';
 import { SoundField } from './SoundField';
 
 const timerPhases: TimerPhase[] = ['start', 'tick', 'end'];
@@ -72,6 +73,18 @@ export const SoundsView: Component = () => {
           </Panel>
         )}
       </For>
+      <Panel heading={t('customSoundsHeader')} isPaddingDisabled>
+        <Panel.List aria-label={t('customSoundsHeader')}>
+          <Index each={Object.keys(getSetting('sounds'))}>
+            {getSoundId => (
+              <CustomSoundListItem
+                sound={getSetting('sounds')[getSoundId()]}
+                soundId={getSoundId()}
+              />
+            )}
+          </Index>
+        </Panel.List>
+      </Panel>
     </>
   );
 };
