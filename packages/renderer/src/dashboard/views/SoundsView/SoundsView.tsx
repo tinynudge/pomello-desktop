@@ -5,6 +5,7 @@ import { Panel } from '@/ui/dashboard/Panel';
 import { Option, OptionItem } from '@/ui/dashboard/Select';
 import { TimerPhase, TimerType } from '@pomello-desktop/domain';
 import { Component, For, Index, createMemo } from 'solid-js';
+import { AddCustomSoundButton } from './AddCustomSoundButton';
 import { CustomSoundListItem } from './CustomSoundListItem';
 import { SoundField } from './SoundField';
 
@@ -85,6 +86,7 @@ export const SoundsView: Component = () => {
           </Index>
         </Panel.List>
       </Panel>
+      <AddCustomSoundButton />
     </>
   );
 };

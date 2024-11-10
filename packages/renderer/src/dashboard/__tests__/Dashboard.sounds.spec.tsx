@@ -1,5 +1,6 @@
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { Howl } from 'howler';
+import { nanoid } from 'nanoid';
 import { fireEvent, renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
 
 vi.mock('howler', () => {
@@ -11,7 +12,20 @@ vi.mock('howler', () => {
   return { Howl };
 });
 
+vi.mock('nanoid', async importOriginal => {
+  const original = await importOriginal<{ nanoid: typeof nanoid }>();
+
+  return {
+    ...original,
+    nanoid: vi.fn(original.nanoid),
+  };
+});
+
 describe('Dashboard - Sounds', () => {
+  afterAll(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should render the sounds', () => {
     renderDashboard({ route: DashboardRoute.Sounds });
 
@@ -419,6 +433,47 @@ describe('Dashboard - Sounds', () => {
 
     expect(appApi.updateSettings).toHaveBeenCalledWith({
       sounds: {},
+    });
+  });
+
+  it('should add a custom sound', async () => {
+    const newSound = new File([], 'moo.mp3', { type: 'audio/mp3' });
+    newSound.path = '/moo.mp3';
+
+    const { appApi, userEvent } = renderDashboard({ route: DashboardRoute.Sounds });
+
+    expect(screen.getByRole('button', { name: 'Add new sound' })).toBeInTheDocument();
+
+    await userEvent.upload(screen.getByTestId('add-sound-input'), newSound);
+
+    const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: moo.mp3' });
+
+    expect(within(customSoundItem).getByLabelText('Name')).toHaveValue('moo.mp3');
+    expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue('/moo.mp3');
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(
+      screen.queryByRole('listitem', {
+        name: 'Custom sound: moo.mp3',
+      })
+    ).not.toBeInTheDocument();
+
+    vi.mocked(nanoid).mockReturnValue('abc');
+
+    await userEvent.upload(screen.getByTestId('add-sound-input'), newSound);
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(appApi.updateSettings).toHaveBeenCalledWith({
+      sounds: {
+        abc: {
+          name: 'moo.mp3',
+          path: '/moo.mp3',
+        },
+      },
     });
   });
 });
