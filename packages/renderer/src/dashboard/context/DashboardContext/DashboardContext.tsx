@@ -13,6 +13,10 @@ import { ParentComponent, createContext, onCleanup, onMount, useContext } from '
 import { createStore, reconcile, unwrap } from 'solid-js/store';
 import { HotkeyConflictError } from './HotkeyConflictError';
 
+type SetSettingFunction<TSetting extends keyof Settings> = (
+  state: Settings[TSetting]
+) => Settings[TSetting];
+
 type DashboardContextValue = {
   clearStagedSettings(): void;
   commitStagedSettings(): Promise<void>;
@@ -22,7 +26,10 @@ type DashboardContextValue = {
   getSetting<TSetting extends keyof Settings>(key: TSetting): Settings[TSetting];
   onStagedSettingsClear(subscriber: () => void): Unsubscribe;
   stageHotkey(command: HotkeyCommand, hotkey: FormattedHotkey | false): void;
-  stageSetting<TSetting extends keyof Settings>(key: TSetting, value: Settings[TSetting]): void;
+  stageSetting<TSetting extends keyof Settings>(
+    key: TSetting,
+    value: Settings[TSetting] | SetSettingFunction<TSetting>
+  ): void;
 };
 
 type DashboardProviderProps = {

@@ -86,11 +86,23 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
   };
 
   const handleDeleteSoundClick = () => {
-    const sounds = { ...getSetting('sounds') };
+    const soundId = props.soundId;
 
-    delete sounds[props.soundId];
+    stageSetting('sounds', stagedSounds => {
+      // If there are sounds staged, then we need to explicitly set the sound
+      // to "undefined" due to SolidJS store's shallow merging.
+      if (stagedSounds) {
+        return {
+          [soundId]: undefined!,
+        };
+      }
 
-    stageSetting('sounds', sounds);
+      const sounds = { ...getSetting('sounds') };
+
+      delete sounds[soundId];
+
+      return sounds;
+    });
   };
 
   const stageSound = (sound: Partial<CustomSound>) => {
