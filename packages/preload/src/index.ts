@@ -4,6 +4,7 @@ import { encryptValue } from './encryptValue';
 import { formatHotkey } from './formatHotkey';
 import { getActiveServiceId } from './getActiveServiceId';
 import { getDefaultHotkeys } from './getDefaultHotkeys';
+import { getFilePath } from './getFilePath';
 import { getHotkeys } from './getHotkeys';
 import { getSettings } from './getSettings';
 import { getSoundPath } from './getSoundPath';
@@ -45,6 +46,7 @@ export const api = {
   formatHotkey,
   getActiveServiceId,
   getDefaultHotkeys,
+  getFilePath,
   getHotkeys,
   getSettings,
   getSoundPath,

@@ -73,7 +73,7 @@ export const PomodoroSetSettingField: Component<PomodoroSetSettingFieldProps> = 
     return !hasSetItems(pomodoroSet) ? pomodoroSet : null;
   };
 
-  let incompatibleSettingModalRef: HTMLDialogElement;
+  let incompatibleSettingModalRef!: HTMLDialogElement;
 
   return (
     <SettingsField
@@ -100,7 +100,7 @@ export const PomodoroSetSettingField: Component<PomodoroSetSettingFieldProps> = 
           { children: t('cancel'), autofocus: true },
         ]}
         heading={t('incompatibleSetting')}
-        ref={incompatibleSettingModalRef!}
+        ref={incompatibleSettingModalRef}
       >
         <p>{t('incompatiblePomodoroSet')}</p>
       </Modal>

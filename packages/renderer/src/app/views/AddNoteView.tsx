@@ -28,7 +28,7 @@ export const AddNoteView: Component<AddNoteViewProps> = props => {
 
   const [getNote, setNote] = createSignal('');
 
-  let inputRef: HTMLInputElement;
+  let inputRef!: HTMLInputElement;
 
   const handleInputChange: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
     setNote(event.currentTarget.value);
@@ -97,7 +97,7 @@ export const AddNoteView: Component<AddNoteViewProps> = props => {
         onKeyDown={handleInputKeyDown}
         onSubmit={handleInputSubmit}
         placeholder={t('addNotePlaceholder')}
-        ref={inputRef!}
+        ref={inputRef}
         value={getNote()}
       />
     </Content>

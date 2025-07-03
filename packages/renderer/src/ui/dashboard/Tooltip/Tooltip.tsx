@@ -46,7 +46,7 @@ export const Tooltip: Component<TooltipProps> = props => {
 
   const tooltipId = `--${nanoid()}`;
 
-  let tooltipRef: HTMLDivElement;
+  let tooltipRef!: HTMLDivElement;
 
   return (
     <>
@@ -55,8 +55,9 @@ export const Tooltip: Component<TooltipProps> = props => {
         aria-hidden={!getIsVisible()}
         class={styles.tooltip}
         popover="manual"
-        ref={tooltipRef!}
+        ref={tooltipRef}
         role="tooltip"
+        // eslint-disable-next-line solid/style-prop
         style={{ 'position-anchor': tooltipId }}
       >
         {props.text}

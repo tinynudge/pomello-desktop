@@ -51,7 +51,9 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
       return;
     }
 
-    stageSound({ path: file.path });
+    const path = window.app.getFilePath(file);
+
+    stageSound({ path });
 
     // Clear the file input after updating the path. Otherwise if the user undoes
     // their changes and then re-adds the same file, it won't trigger an update.
@@ -117,7 +119,7 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
     });
   };
 
-  let fileInputRef: HTMLInputElement;
+  let fileInputRef!: HTMLInputElement;
 
   return (
     <Panel.List.Item
@@ -153,7 +155,7 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
             id={`${props.soundId}-path`}
             name="path"
             onInput={handlePathInput}
-            ref={fileInputRef!}
+            ref={fileInputRef}
             type="file"
           />
         </div>

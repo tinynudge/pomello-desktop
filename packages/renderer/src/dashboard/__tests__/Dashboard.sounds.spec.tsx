@@ -354,9 +354,11 @@ describe('Dashboard - Sounds', () => {
 
   it('should update a custom sound path', async () => {
     const newSound = new File([], 'johnny-be-good.mp3', { type: 'audio/mp3' });
-    newSound.path = '/johnny-be-good.mp3';
 
     const { appApi, userEvent } = renderDashboard({
+      appApi: {
+        getFilePath: () => '/johnny-be-good.mp3',
+      },
       route: DashboardRoute.Sounds,
       settings: {
         sounds: {
@@ -438,9 +440,13 @@ describe('Dashboard - Sounds', () => {
 
   it('should add a custom sound', async () => {
     const newSound = new File([], 'moo.mp3', { type: 'audio/mp3' });
-    newSound.path = '/moo.mp3';
 
-    const { appApi, userEvent } = renderDashboard({ route: DashboardRoute.Sounds });
+    const { appApi, userEvent } = renderDashboard({
+      appApi: {
+        getFilePath: () => '/moo.mp3',
+      },
+      route: DashboardRoute.Sounds,
+    });
 
     expect(screen.getByRole('button', { name: 'Add new sound' })).toBeInTheDocument();
 

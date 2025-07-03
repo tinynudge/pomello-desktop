@@ -10,8 +10,6 @@ export const ZenSelectTaskView: SelectTaskView = props => {
 
   const [getTask, setTask] = createSignal('');
 
-  let inputRef: HTMLInputElement;
-
   onMount(() => {
     inputRef.focus();
   });
@@ -28,12 +26,14 @@ export const ZenSelectTaskView: SelectTaskView = props => {
     props.selectTask(task);
   };
 
+  let inputRef!: HTMLInputElement;
+
   return (
     <InputField
       onInput={handleInputChange}
       onSubmit={handleInputSubmit}
       placeholder={t('service:selectTaskPlaceholder')}
-      ref={inputRef!}
+      ref={inputRef}
     />
   );
 };

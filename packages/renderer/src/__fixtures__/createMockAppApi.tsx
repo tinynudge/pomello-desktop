@@ -52,6 +52,7 @@ export const createMockAppApi = ({
     formatHotkey: vi.fn(appApi.formatHotkey ?? formatHotkey),
     getActiveServiceId: vi.fn(appApi.getActiveServiceId ?? (() => Promise.resolve('mock'))),
     getDefaultHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
+    getFilePath: vi.fn(appApi.getFilePath ?? (() => '/mock/path/to/file')),
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getSoundPath: vi.fn(appApi.getSoundPath ?? (soundId => `sounds/${soundId}.mp3`)),

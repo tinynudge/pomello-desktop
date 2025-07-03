@@ -16,6 +16,7 @@ export const Input: Component<InputProps> = allProps => {
     <>
       <Show when={props.errorMessage}>
         {getErrorMessage => (
+          // eslint-disable-next-line solid/style-prop
           <small class={styles.error} role="status" style={{ 'position-anchor': anchorId }}>
             {getErrorMessage()}
           </small>

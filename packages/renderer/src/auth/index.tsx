@@ -34,7 +34,7 @@ const renderAuth = async () => {
 
     authWindow = JSON.parse(authParm ?? '');
   } catch (error) {
-    throw new Error('Unable to parse "auth" param from URL');
+    throw new Error(`Unable to parse "auth" param from URL: "${error}"`);
   }
 
   const serviceId = authWindow.type === 'service' ? authWindow.serviceId : undefined;
