@@ -10,7 +10,7 @@ jobs:
       commit-hash: ${{ steps.commit-hash.outputs.hash }}
 
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.2
 
       - name: Create Alpha Release
         if: github.ref == 'refs/heads/main'

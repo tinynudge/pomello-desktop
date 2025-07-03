@@ -1,17 +1,17 @@
 @import '@/shared/styles/global';
 
 @position-try --menu-bottom-right {
-  inset-area: bottom span-left;
+  position-area: bottom span-left;
 }
 
 @position-try --menu-top-left {
   margin: 0 0 8px;
-  inset-area: top span-right;
+  position-area: top span-right;
 }
 
 @position-try --menu-top-right {
   margin: 0 0 8px;
-  inset-area: top span-left;
+  position-area: top span-left;
 }
 
 .menu {
@@ -21,9 +21,9 @@
   margin: 8px 0 0;
   background-color: var(--dashboard-menu-default);
   box-shadow: $z2-shadow;
-  inset-area: bottom span-right;
   list-style: none;
-  position-try-options: --menu-bottom-right, --menu-top-left, --menu-top-right;
+  position-area: bottom span-right;
+  position-try-fallbacks: --menu-bottom-right, --menu-top-left, --menu-top-right;
   white-space: nowrap;
 }
 

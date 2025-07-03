@@ -52,7 +52,7 @@ export type RenderAppOptions = {
 };
 
 export const renderApp = (options: RenderAppOptions = {}) => {
-  const serviceId = options.serviceId === null ? undefined : options.serviceId ?? 'mock';
+  const serviceId = options.serviceId === null ? undefined : (options.serviceId ?? 'mock');
 
   const logger = createMockLogger();
   const settings = createMockSettings(options.settings);

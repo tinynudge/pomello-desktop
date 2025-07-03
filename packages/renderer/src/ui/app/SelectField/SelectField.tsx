@@ -14,8 +14,6 @@ type SelectFieldProps = {
 export const SelectField: Component<SelectFieldProps> = props => {
   const t = useTranslate();
 
-  let buttonRef: HTMLButtonElement;
-
   createEffect(() => {
     window.app.setSelectItems({
       items: props.items,
@@ -69,8 +67,10 @@ export const SelectField: Component<SelectFieldProps> = props => {
     setTimeout(showSelectWindow, 5);
   }
 
+  let buttonRef!: HTMLButtonElement;
+
   return (
-    <button class={styles.button} onClick={handleButtonClick} ref={buttonRef!}>
+    <button class={styles.button} onClick={handleButtonClick} ref={buttonRef}>
       {getPlaceholder()}
     </button>
   );

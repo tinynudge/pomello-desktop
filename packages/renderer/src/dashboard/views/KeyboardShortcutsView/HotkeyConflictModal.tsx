@@ -31,7 +31,7 @@ export const HotkeyConflictModal: Component<HotkeyConflictModalProps> = props =>
     stageHotkey(props.error.incomingCommand, props.error.hotkey);
   };
 
-  let conflictingHotkeyModalRef: HTMLDialogElement;
+  let conflictingHotkeyModalRef!: HTMLDialogElement;
 
   return (
     <Modal
@@ -47,7 +47,7 @@ export const HotkeyConflictModal: Component<HotkeyConflictModalProps> = props =>
         },
       ]}
       heading={t('conflictingHotkeyHeading')}
-      ref={conflictingHotkeyModalRef!}
+      ref={conflictingHotkeyModalRef}
     >
       <p>
         {t('conflictingHotkeyText', {

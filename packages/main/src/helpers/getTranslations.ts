@@ -15,7 +15,7 @@ const loadTranslations = (locale: string, directory: string) => {
     const contents = fs.readFileSync(filePath, 'utf8');
 
     return JSON.parse(contents);
-  } catch (error) {
+  } catch {
     return {};
   }
 };

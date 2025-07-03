@@ -20,11 +20,13 @@ export const AddCustomSoundButton: Component = () => {
       return;
     }
 
+    const path = window.app.getFilePath(file);
+
     stageSetting('sounds', {
       ...getSetting('sounds'),
       [nanoid()]: {
         name: file.name,
-        path: file.path,
+        path,
       },
     });
 
@@ -33,7 +35,7 @@ export const AddCustomSoundButton: Component = () => {
     event.currentTarget.value = '';
   };
 
-  let fileInputRef: HTMLInputElement;
+  let fileInputRef!: HTMLInputElement;
 
   return (
     <>
@@ -49,7 +51,7 @@ export const AddCustomSoundButton: Component = () => {
         class={styles.fileInput}
         data-testid="add-sound-input"
         onInput={handleSoundInput}
-        ref={fileInputRef!}
+        ref={fileInputRef}
         type="file"
       />
     </>

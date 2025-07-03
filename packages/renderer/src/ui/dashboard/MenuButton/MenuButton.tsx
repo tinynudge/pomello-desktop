@@ -188,6 +188,7 @@ export const MenuButton: Component<MenuButtonProps> = allProps => {
         popover
         ref={attachMenuRef}
         role="menu"
+        // eslint-disable-next-line solid/style-prop
         style={{ 'position-anchor': anchorId }}
       >
         <For each={props.menuItems}>

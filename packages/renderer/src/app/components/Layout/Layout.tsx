@@ -22,7 +22,7 @@ export const Layout: ParentComponent<LayoutProps> = props => {
   const { pomelloState } = useStore();
   const t = useTranslate();
 
-  let menuRef: HTMLElement;
+  let menuRef!: HTMLElement;
 
   const [getMenuOffset, setMenuOffset] = createSignal(0);
   const [getIsMenuOpen, setIsMenuOpen] = createSignal(false);
@@ -112,7 +112,7 @@ export const Layout: ParentComponent<LayoutProps> = props => {
         onCreateTaskClick={handleCreateTaskClick}
         onHomeClick={handleHomeButtonClick}
         onSettingsClick={handleSettingsClick}
-        ref={menuRef!}
+        ref={menuRef}
       />
 
       <main

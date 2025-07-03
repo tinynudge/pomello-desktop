@@ -9,7 +9,7 @@ describe('UI - Slider', () => {
   });
 
   it('should attach the ref', async () => {
-    let sliderRef: HTMLInputElement;
+    let sliderRef!: HTMLInputElement;
 
     renderDashboardComponent(() => <Slider ref={sliderRef} />);
 

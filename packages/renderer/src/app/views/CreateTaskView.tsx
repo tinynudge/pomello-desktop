@@ -15,7 +15,7 @@ export const CreateTaskView: Component = () => {
 
   const [getText, setText] = createSignal('');
 
-  let inputRef: HTMLInputElement;
+  let inputRef!: HTMLInputElement;
 
   onMount(() => {
     inputRef?.focus();
@@ -81,7 +81,7 @@ export const CreateTaskView: Component = () => {
         onInput={handleInputChange}
         onSubmit={handleInputSubmit}
         placeholder={t('createTaskPlaceholder')}
-        ref={inputRef!}
+        ref={inputRef}
         value={getText()}
       />
     </Content>

@@ -47,23 +47,23 @@ jobs:
 
     steps:
       - name: Set up Node
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4.4.0
         with:
-          node-version: '20.13.1'
+          node-version: '22.17.0'
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4.0.0
+        uses: pnpm/action-setup@v4.1.0
         with:
-          version: 9
+          version: 10
 
       - name: Checkout branch
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.COMMIT_HASH }}
 
       - name: Cache node_modules
-        uses: actions/cache@v4.0.2
+        uses: actions/cache@v4.2.3
         env:
           cache-name: cache-node-modules
         with:

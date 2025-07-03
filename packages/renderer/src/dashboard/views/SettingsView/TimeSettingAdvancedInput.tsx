@@ -36,7 +36,7 @@ export const TimeSettingAdvancedInput: Component<TimeSettingAdvancedInputProps> 
     props.onSettingChange(+value);
   };
 
-  let inputRef: HTMLInputElement;
+  let inputRef!: HTMLInputElement;
 
   return (
     <span class={styles.timeSettingAdvancedInput}>
@@ -46,7 +46,7 @@ export const TimeSettingAdvancedInput: Component<TimeSettingAdvancedInputProps> 
         id={props.id}
         onInput={handleInput}
         pattern="^\d+$"
-        ref={inputRef!}
+        ref={inputRef}
         required
         type="text"
         value={props.value}

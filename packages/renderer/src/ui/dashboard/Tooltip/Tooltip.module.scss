@@ -1,26 +1,26 @@
 @import '@/shared/styles/global';
 
 @position-try --tooltip-top-left {
-  inset-area: top span-right;
+  position-area: top span-right;
 }
 
 @position-try --tooltip-top-right {
-  inset-area: top span-left;
+  position-area: top span-left;
 }
 
 @position-try --tooltip-bottom-center {
   margin: 8px 0 0;
-  inset-area: bottom;
+  position-area: bottom;
 }
 
 @position-try --tooltip-bottom-left {
   margin: 8px 0 0;
-  inset-area: bottom span-right;
+  position-area: bottom span-right;
 }
 
 @position-try --tooltip-bottom-right {
   margin: 8px 0 0;
-  inset-area: bottom span-left;
+  position-area: bottom span-left;
 }
 
 .tooltip {
@@ -31,8 +31,9 @@
   background-color: var(--dashboard-tooltip-background);
   box-shadow: $z1-shadow;
   color: var(--dashboard-tooltip-text);
-  inset-area: top;
-  position-try-options: --tooltip-top-left, --tooltip-top-right, --tooltip-bottom-center,
-    --tooltip-bottom-left, --tooltip-bottom-right;
+  position-area: top;
+  position-try-fallbacks:
+    --tooltip-top-left, --tooltip-top-right, --tooltip-bottom-center, --tooltip-bottom-left,
+    --tooltip-bottom-right;
   white-space: nowrap;
 }

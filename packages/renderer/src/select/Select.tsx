@@ -153,8 +153,8 @@ export const Select = () => {
     highlightAdjacentOption('previous');
   };
 
-  let listRef: HTMLUListElement;
-  let inputRef: HTMLInputElement;
+  let listRef!: HTMLUListElement;
+  let inputRef!: HTMLInputElement;
 
   const listboxId = 'select-listbox';
 
@@ -172,7 +172,7 @@ export const Select = () => {
         onPreviousOptionSelect={handlePreviousOptionSelect}
         placeholder={getPlaceholder() ?? t('selectPlaceholder')}
         query={getQuery()}
-        ref={inputRef!}
+        ref={inputRef}
       />
       <DropdownList
         activeOptionId={getActiveOptionId()}
@@ -181,7 +181,7 @@ export const Select = () => {
         items={serviceResource.state !== 'ready' ? [] : getFilteredItems()}
         onOptionHover={handleOptionHover}
         onOptionSelect={handleOptionSelect}
-        ref={listRef!}
+        ref={listRef}
         role="listbox"
         service={serviceResource.latest?.service}
       >

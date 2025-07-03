@@ -67,7 +67,7 @@ export const TimeSettingField: Component<TimeSettingFieldProps> = props => {
 
   let previousView: 'advanced' | 'simple' | null = null;
 
-  let incompatibleSettingModalRef: HTMLDialogElement;
+  let incompatibleSettingModalRef!: HTMLDialogElement;
 
   return (
     <SettingsField
@@ -103,7 +103,7 @@ export const TimeSettingField: Component<TimeSettingFieldProps> = props => {
           { children: t('cancel'), autofocus: true },
         ]}
         heading={t('incompatibleSetting')}
-        ref={incompatibleSettingModalRef!}
+        ref={incompatibleSettingModalRef}
       >
         <p>{t('incompatibleTime')}</p>
       </Modal>
