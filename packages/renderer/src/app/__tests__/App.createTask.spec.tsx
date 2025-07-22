@@ -192,7 +192,7 @@ describe('App - Create task', () => {
   });
 
   it('should be able to re-fetch tasks after creating a task', async () => {
-    const fetchTasks = vi.fn<SelectItem[]>(() => []);
+    const fetchTasks = vi.fn<() => Promise<SelectItem[]>>(() => Promise.resolve([]));
 
     const { simulate, userEvent } = renderApp({
       mockService: {

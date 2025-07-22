@@ -222,9 +222,9 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle the move task hotkey for a customized item', async () => {
-    const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledResponse>()
-      .mockReturnValue({ action: 'continueTask' });
+    const mockTaskTimerEndPromptHandler = vi.fn<() => TaskTimerEndPromptHandledResponse>(() => ({
+      action: 'continueTask',
+    }));
 
     const { simulate } = renderApp({
       mockService: {
@@ -344,9 +344,9 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle a custom continue task option', async () => {
-    const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledResponse>()
-      .mockReturnValue({ action: 'continueTask' });
+    const mockTaskTimerEndPromptHandler = vi.fn<() => TaskTimerEndPromptHandledResponse>(() => ({
+      action: 'continueTask',
+    }));
 
     const { simulate } = renderApp({
       settings: {
@@ -374,9 +374,9 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle a custom switch task option', async () => {
-    const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledResponse>()
-      .mockReturnValue({ action: 'switchTask' });
+    const mockTaskTimerEndPromptHandler = vi.fn<() => TaskTimerEndPromptHandledResponse>(() => ({
+      action: 'switchTask',
+    }));
 
     const { simulate } = renderApp({
       settings: {
@@ -403,9 +403,9 @@ describe('App - Task Timer End', () => {
   });
 
   it('should handle a custom void task option', async () => {
-    const mockTaskTimerEndPromptHandler = vi
-      .fn<never, TaskTimerEndPromptHandledResponse>()
-      .mockReturnValue({ action: 'voidTask' });
+    const mockTaskTimerEndPromptHandler = vi.fn<() => TaskTimerEndPromptHandledResponse>(() => ({
+      action: 'voidTask',
+    }));
 
     const { simulate } = renderApp({
       settings: {
