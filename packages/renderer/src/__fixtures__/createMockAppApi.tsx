@@ -1,4 +1,9 @@
-import { FormattedHotkeys, ServiceConfigActions, Settings } from '@pomello-desktop/domain';
+import {
+  FormattedHotkeys,
+  ServiceConfigActions,
+  Settings,
+  ThemeCss,
+} from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 import { formatHotkey } from '../../../main/src/helpers/formatHotkey';
 import { mockHotkeys } from './mockHotkeys';
@@ -56,7 +61,9 @@ export const createMockAppApi = ({
     getHotkeys: vi.fn(() => Promise.resolve(mockHotkeys)),
     getSettings: vi.fn(appApi.getSettings ?? (() => Promise.resolve(settings))),
     getSoundPath: vi.fn(appApi.getSoundPath ?? (soundId => `sounds/${soundId}.mp3`)),
-    getThemeCss: vi.fn(appApi.getThemeCss ?? (() => Promise.resolve({ css: '', theme: 'light' }))),
+    getThemeCss: vi.fn(
+      appApi.getThemeCss ?? (() => Promise.resolve<ThemeCss>({ css: '', theme: 'light' }))
+    ),
     getTranslations: vi.fn(appApi.getTranslations ?? (() => Promise.resolve({}))),
     hideSelect: vi.fn(appApi.hideSelect ?? (() => Promise.resolve(emit('onSelectHide')))),
     logMessage: vi.fn(),
@@ -93,7 +100,7 @@ export const createMockAppApi = ({
           Promise.resolve(
             serviceConfigs[serviceId] ?? mockRegisterServiceConfig(serviceId, defaults)
           ))
-    ),
+    ) as AppApi['registerServiceConfig'],
     resetSelect: vi.fn(),
     selectOption: vi.fn(appApi.selectOption ?? (() => Promise.resolve())),
     setActiveServiceId: vi.fn(),

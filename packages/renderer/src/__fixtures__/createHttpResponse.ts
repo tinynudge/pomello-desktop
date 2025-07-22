@@ -11,5 +11,8 @@ export const createHttpResponse = <
     return resolver as HttpResponseResolver<PathParams, TRequestBody, TResponseBody>;
   }
 
-  return () => HttpResponse.json(resolver ?? defaults);
+  return () =>
+    HttpResponse.json(resolver ?? defaults) as ReturnType<
+      HttpResponseResolver<PathParams, TRequestBody, TResponseBody>
+    >;
 };

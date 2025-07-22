@@ -1,4 +1,4 @@
-@import '@/shared/styles/global';
+@use '@/shared/styles/global' as *;
 
 body {
   background-color: var(--auth-background);
