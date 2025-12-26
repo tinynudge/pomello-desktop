@@ -41,7 +41,7 @@ jobs:
   create-artifacts:
     strategy:
       matrix:
-        os: [macos-13, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
