@@ -1,5 +1,10 @@
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
-import { usePomelloConfig, useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import {
+  usePomelloConfig,
+  useRuntime,
+  useSettings,
+  useTranslate,
+} from '@/shared/context/RuntimeContext';
 import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
 import { PomelloUser } from '@pomello-desktop/domain';
 import { useQueryClient } from '@tanstack/solid-query';
@@ -11,9 +16,10 @@ const sleep = (timeout: number): Promise<void> =>
   });
 
 export const useCheckPomelloAccount = () => {
-  const queryClient = useQueryClient();
+  const { logger } = useRuntime();
   const config = usePomelloConfig();
   const pomelloApi = usePomelloApi();
+  const queryClient = useQueryClient();
   const settings = useSettings();
   const t = useTranslate();
 
@@ -59,9 +65,13 @@ export const useCheckPomelloAccount = () => {
 
   const setPomelloUser = async (): Promise<void> => {
     try {
+      logger.debug('Will fetch Pomello user');
+
       const user = await fetchPomelloUser()
         .catch(error => retryFetchPomelloUser(error, 2000))
         .catch(error => retryFetchPomelloUser(error, 8000));
+
+      logger.debug('Did fetch Pomello user');
 
       config.actions.userFetched(user);
     } catch (error) {
@@ -100,6 +110,8 @@ export const useCheckPomelloAccount = () => {
   };
 
   const retryFetchPomelloUser = async (error: unknown, timeout: number): Promise<PomelloUser> => {
+    logger.error('Failed to fetch Pomello user', error);
+
     if (import.meta.env.MODE === 'test') {
       throw error;
     }
