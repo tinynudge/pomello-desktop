@@ -71,7 +71,9 @@ export const createMockAppApi = ({
     onHotkeysChange: vi.fn(
       appApi.onHotkeysChange ?? (callback => addListener('onHotkeysChange', callback))
     ),
-    onPowerMonitorChange: vi.fn(() => () => {}),
+    onPowerMonitorChange: vi.fn(
+      appApi.onPowerMonitorChange ?? (callback => addListener('onPowerMonitorChange', callback))
+    ),
     onSelectChange: vi.fn(
       appApi.onSelectChange ?? (callback => addListener('onSelectChange', callback))
     ),

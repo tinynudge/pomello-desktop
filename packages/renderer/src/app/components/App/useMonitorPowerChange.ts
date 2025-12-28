@@ -1,22 +1,35 @@
 import { usePomelloService } from '@/app/context/PomelloContext';
+import { useStore, useStoreActions } from '@/app/context/StoreContext';
 import { useRuntime } from '@/shared/context/RuntimeContext';
-import { onCleanup, onMount } from 'solid-js';
+import { createEffect, on, onCleanup, onMount } from 'solid-js';
 
 export const useMonitorPowerChange = () => {
   const { logger } = useRuntime();
+  const { setSuspensionState } = useStoreActions();
   const service = usePomelloService();
+  const store = useStore();
+
+  createEffect(
+    on(
+      () => store.isSuspended,
+      isSuspended => {
+        if (isSuspended) {
+          logger.debug('Will suspend Pomello service');
+
+          service.suspendService();
+        } else {
+          logger.debug('Will resume Pomello service');
+
+          service.resumeService();
+        }
+      },
+      { defer: true }
+    )
+  );
 
   onMount(() => {
     const unsubscribe = window.app.onPowerMonitorChange(status => {
-      if (status === 'suspend') {
-        logger.debug('Will suspend Pomello service');
-
-        service.suspendService();
-      } else if (status === 'resume') {
-        logger.debug('Will resume Pomello service');
-
-        service.resumeService();
-      }
+      setSuspensionState(status === 'suspend');
     });
 
     onCleanup(unsubscribe);

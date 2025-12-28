@@ -134,6 +134,7 @@ export const renderApp = (options: RenderAppOptions = {}) => {
     appApi,
     emitAppApiEvent,
     pomelloApi,
+    pomelloConfig,
     userEvent: userEvent.setup(),
   };
 
