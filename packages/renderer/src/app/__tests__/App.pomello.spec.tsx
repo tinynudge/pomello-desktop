@@ -281,4 +281,45 @@ describe('App - Pomello', () => {
       );
     });
   });
+
+  it('should not check the Pomello account status if the app is suspended', async () => {
+    vi.useFakeTimers({
+      shouldAdvanceTime: true,
+    });
+
+    let emitPowerMonitorEvent: (status: 'suspend' | 'resume') => void = () => {};
+
+    const { pomelloApi, pomelloConfig } = renderApp({
+      appApi: {
+        onPowerMonitorChange: callback => {
+          emitPowerMonitorEvent = callback;
+
+          return () => {};
+        },
+      },
+      pomelloConfig: {
+        user: undefined,
+      },
+      pomelloApi: {
+        fetchUser: generatePomelloUser(),
+      },
+      settings: {
+        checkPomelloStatus: true,
+      },
+    });
+
+    await waitFor(() => {
+      expect(pomelloConfig.get().user).toBeDefined();
+    });
+
+    expect(pomelloApi.fetchUser).toHaveBeenCalledTimes(1);
+
+    emitPowerMonitorEvent('suspend');
+
+    await vi.runOnlyPendingTimersAsync();
+
+    expect(pomelloApi.fetchUser).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
+  });
 });

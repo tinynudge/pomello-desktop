@@ -1,3 +1,4 @@
+import { useStore } from '@/app/context/StoreContext';
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
 import {
   usePomelloConfig,
@@ -8,7 +9,7 @@ import {
 import { SerializableHttpError } from '@/shared/helpers/SerializableHttpError';
 import { PomelloUser } from '@pomello-desktop/domain';
 import { useQueryClient } from '@tanstack/solid-query';
-import { createEffect, on } from 'solid-js';
+import { createEffect, on, onMount } from 'solid-js';
 
 const sleep = (timeout: number): Promise<void> =>
   new Promise(resolve => {
@@ -21,6 +22,7 @@ export const useCheckPomelloAccount = () => {
   const pomelloApi = usePomelloApi();
   const queryClient = useQueryClient();
   const settings = useSettings();
+  const store = useStore();
   const t = useTranslate();
 
   let timeoutId: number | undefined;
@@ -39,16 +41,16 @@ export const useCheckPomelloAccount = () => {
 
   createEffect(
     on(
-      () => config.store.token,
-      token => {
-        if (!token) {
-          return;
-        }
-
+      [() => config.store.token, () => store.isSuspended],
+      ([token, isSuspended]) => {
         if (timeoutId) {
-          clearTimeout(timeoutId);
+          window.clearTimeout(timeoutId);
 
           timeoutId = undefined;
+        }
+
+        if (!token || isSuspended) {
+          return;
         }
 
         checkPomelloAccount();
@@ -56,6 +58,10 @@ export const useCheckPomelloAccount = () => {
       { defer: true }
     )
   );
+
+  onMount(() => {
+    checkPomelloAccount();
+  });
 
   const checkPomelloAccount = async () => {
     await setPomelloUser();
@@ -75,6 +81,8 @@ export const useCheckPomelloAccount = () => {
 
       config.actions.userFetched(user);
     } catch (error) {
+      logger.error('Failed to fetch Pomello user', error);
+
       if (!navigator.onLine) {
         return;
       }
@@ -110,8 +118,6 @@ export const useCheckPomelloAccount = () => {
   };
 
   const retryFetchPomelloUser = async (error: unknown, timeout: number): Promise<PomelloUser> => {
-    logger.error('Failed to fetch Pomello user', error);
-
     if (import.meta.env.MODE === 'test') {
       throw error;
     }
@@ -146,6 +152,4 @@ export const useCheckPomelloAccount = () => {
       window.app.updateSetting('checkPomelloStatus', false);
     }
   };
-
-  checkPomelloAccount();
 };

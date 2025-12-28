@@ -9,6 +9,7 @@ type OverlayView = 'create-task' | NoteType;
 type Store = {
   dialActions: DialAction[];
   isQuickTaskSelectEnabled: boolean;
+  isSuspended: boolean;
   isUpdatingTasks: boolean;
   overlayView: OverlayView | null;
   pomelloState: PomelloState;
@@ -20,6 +21,7 @@ type StoreActions = {
   overlayViewSet(type: OverlayView): void;
   quickTaskEnabled(): void;
   quickTaskReset(): void;
+  setSuspensionState(isSuspended: boolean): void;
   updateTasksFinished(): void;
   updateTasksStarted(): void;
 };
@@ -52,6 +54,7 @@ export const StoreProvider: ParentComponent = props => {
   const [store, setStore] = createStore<Store>({
     dialActions: [],
     isQuickTaskSelectEnabled: false,
+    isSuspended: false,
     isUpdatingTasks: false,
     overlayView: null,
     pomelloState: pomelloService.getState(),
@@ -91,6 +94,10 @@ export const StoreProvider: ParentComponent = props => {
     setStore('isQuickTaskSelectEnabled', false);
   };
 
+  const setSuspensionState = (isSuspended: boolean) => {
+    setStore('isSuspended', isSuspended);
+  };
+
   const updateTasksFinished = () => {
     setStore('isUpdatingTasks', false);
   };
@@ -105,6 +112,7 @@ export const StoreProvider: ParentComponent = props => {
     overlayViewSet,
     quickTaskEnabled,
     quickTaskReset,
+    setSuspensionState,
     updateTasksFinished,
     updateTasksStarted,
   };
