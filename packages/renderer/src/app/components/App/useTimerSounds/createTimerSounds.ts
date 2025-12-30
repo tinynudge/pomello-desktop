@@ -40,7 +40,7 @@ export const createTimerSounds = (
         previousSound.pause();
       }
 
-      if (soundId) {
+      if (soundId && volume) {
         let soundSource = isDefaultSoundId(soundId)
           ? window.app.getSoundPath(soundId)
           : settings.sounds[soundId]?.path;
