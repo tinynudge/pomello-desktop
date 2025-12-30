@@ -8,15 +8,15 @@ export const useTimerSounds = (): void => {
   const pomelloService = usePomelloService();
   const settings = useSettings();
 
-  const timerSounds = createMemo<TimerSounds>(previousSound =>
+  const getTimerSounds = createMemo<TimerSounds>(previousSound =>
     createTimerSounds(settings, previousSound)
   );
 
   onMount(() => {
     const handleTimerStart = ({ timer }: PomelloEvent) => {
       if (timer) {
-        const startSound = timerSounds()[timer.type].start;
-        const tickSound = timerSounds()[timer.type].tick;
+        const startSound = getTimerSounds()[timer.type].start;
+        const tickSound = getTimerSounds()[timer.type].tick;
 
         if (startSound) {
           startSound.play().then(tickSound?.play);
@@ -28,19 +28,19 @@ export const useTimerSounds = (): void => {
 
     const handleTimerPause = ({ timer }: PomelloEvent) => {
       if (timer) {
-        timerSounds()[timer.type].tick?.pause();
+        getTimerSounds()[timer.type].tick?.pause();
       }
     };
 
     const handleTimerResume = ({ timer }: PomelloEvent) => {
       if (timer) {
-        timerSounds()[timer.type].tick?.play();
+        getTimerSounds()[timer.type].tick?.play();
       }
     };
 
     const handleTimerEnd = ({ timer }: PomelloEvent) => {
       if (timer) {
-        const { end, tick } = timerSounds()[timer.type];
+        const { end, tick } = getTimerSounds()[timer.type];
 
         tick?.stop();
         end?.play();
@@ -49,7 +49,7 @@ export const useTimerSounds = (): void => {
 
     const handleTimerDestroy = ({ timer }: PomelloEvent) => {
       if (timer) {
-        const { tick } = timerSounds()[timer.type];
+        const { tick } = getTimerSounds()[timer.type];
 
         tick?.stop();
       }
