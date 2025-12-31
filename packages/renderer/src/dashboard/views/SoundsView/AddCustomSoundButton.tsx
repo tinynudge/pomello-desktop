@@ -5,7 +5,11 @@ import { nanoid } from 'nanoid';
 import { Component, JSX } from 'solid-js';
 import styles from './AddCustomSoundButton.module.scss';
 
-export const AddCustomSoundButton: Component = () => {
+type AddCustomSoundButtonProps = {
+  class?: string;
+};
+
+export const AddCustomSoundButton: Component<AddCustomSoundButtonProps> = props => {
   const { getSetting, stageSetting } = useDashboard();
   const t = useTranslate();
 
@@ -39,11 +43,7 @@ export const AddCustomSoundButton: Component = () => {
 
   return (
     <>
-      <Button
-        class={styles.addCustomSoundButton}
-        onClick={handleAddSoundButtonClick}
-        variant="primary"
-      >
+      <Button class={props.class} onClick={handleAddSoundButtonClick} variant="primary">
         {t('addCustomSound')}
       </Button>
       <input

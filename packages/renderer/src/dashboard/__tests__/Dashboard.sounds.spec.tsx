@@ -259,6 +259,18 @@ describe('Dashboard - Sounds', () => {
     expect(MockHowl.mock.results[0].value.play).toHaveBeenCalled();
   });
 
+  it('should show a message if there are no custom sounds', () => {
+    renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {},
+      },
+    });
+
+    expect(screen.getByText('No custom sounds have been added yet.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add new sound' })).toBeInTheDocument();
+  });
+
   it('should render the custom sounds section', () => {
     renderDashboard({
       route: DashboardRoute.Sounds,

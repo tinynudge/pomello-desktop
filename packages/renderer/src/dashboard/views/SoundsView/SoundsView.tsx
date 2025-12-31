@@ -4,10 +4,12 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Option, OptionItem } from '@/ui/dashboard/Select';
 import { TimerPhase, TimerType } from '@pomello-desktop/domain';
-import { Component, For, Index, createMemo } from 'solid-js';
+import { Component, For, Index, Show, createMemo } from 'solid-js';
 import { AddCustomSoundButton } from './AddCustomSoundButton';
 import { CustomSoundListItem } from './CustomSoundListItem';
+import { NoCustomSoundsItem } from './NoCustomSoundsItem';
 import { SoundField } from './SoundField';
+import styles from './SoundsView.module.scss';
 
 const timerPhases: TimerPhase[] = ['start', 'tick', 'end'];
 
@@ -30,7 +32,7 @@ export const SoundsView: Component = () => {
     },
   }));
 
-  const getSoundOptions = createMemo(() => {
+  const getSoundOptions = createMemo<Option[]>(() => {
     const options: Option[] = [
       getDefaultSounds().start,
       getDefaultSounds().tick,
@@ -52,6 +54,10 @@ export const SoundsView: Component = () => {
 
     return options;
   });
+
+  const getHasCustomSounds = createMemo<boolean>(
+    () => Object.keys(getSetting('sounds')).length > 0
+  );
 
   return (
     <>
@@ -76,17 +82,21 @@ export const SoundsView: Component = () => {
       </For>
       <Panel heading={t('customSoundsHeader')} isPaddingDisabled>
         <Panel.List aria-label={t('customSoundsHeader')}>
-          <Index each={Object.keys(getSetting('sounds'))}>
-            {getSoundId => (
-              <CustomSoundListItem
-                sound={getSetting('sounds')[getSoundId()]}
-                soundId={getSoundId()}
-              />
-            )}
-          </Index>
+          <Show when={getHasCustomSounds()} fallback={<NoCustomSoundsItem />}>
+            <Index each={Object.keys(getSetting('sounds'))}>
+              {getSoundId => (
+                <CustomSoundListItem
+                  sound={getSetting('sounds')[getSoundId()]}
+                  soundId={getSoundId()}
+                />
+              )}
+            </Index>
+          </Show>
         </Panel.List>
       </Panel>
-      <AddCustomSoundButton />
+      <Show when={getHasCustomSounds()}>
+        <AddCustomSoundButton class={styles.addCustomSoundButton} />
+      </Show>
     </>
   );
 };
