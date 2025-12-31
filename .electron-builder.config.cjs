@@ -22,6 +22,10 @@ const config = {
   mac: {
     entitlements: './build/entitlements.mac.plist',
     hardenedRuntime: true,
+    target: {
+      arch: 'universal',
+      target: 'dmg',
+    },
   },
   generateUpdatesFilesForAllChannels: true,
   publish: {
