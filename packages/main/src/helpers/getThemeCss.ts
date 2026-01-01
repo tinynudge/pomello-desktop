@@ -192,6 +192,15 @@ const defaultTheme: ThemeConfig = {
           hover: [darken(colors.primary, 4), lighten(colors.primaryDark, 12)],
         },
       },
+      warning: {
+        text: darken(colors.yellow, 72),
+        background: {
+          active: [darken(colors.yellow, 8), lighten(colors.yellow, 20)],
+          default: [colors.yellow, colors.yellow],
+          hover: [darken(colors.yellow, 4), lighten(colors.yellow, 12)],
+        },
+        outline: opacity(colors.yellow, 30),
+      },
     },
     content: {
       background: [colors.lightAlt, colors.dark],

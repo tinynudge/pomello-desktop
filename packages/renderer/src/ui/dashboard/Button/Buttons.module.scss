@@ -18,6 +18,11 @@
     background-color: var(--dashboard-input-default-background-active);
   }
 
+  &[data-size='small'] {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+
   &[data-variant='primary'] {
     border-color: var(--dashboard-button-primary-background-default);
     background-color: var(--dashboard-button-primary-background-default);
@@ -31,6 +36,26 @@
     &:active {
       border-color: var(--dashboard-button-primary-background-active);
       background-color: var(--dashboard-button-primary-background-active);
+    }
+  }
+
+  &[data-variant='warning'] {
+    border-color: var(--dashboard-button-warning-background-default);
+    background-color: var(--dashboard-button-warning-background-default);
+    color: var(--dashboard-button-warning-text);
+
+    &:focus-visible {
+      outline-color: var(--dashboard-button-warning-outline);
+    }
+
+    &:hover {
+      border-color: var(--dashboard-button-warning-background-hover);
+      background-color: var(--dashboard-button-warning-background-hover);
+    }
+
+    &:active {
+      border-color: var(--dashboard-button-warning-background-active);
+      background-color: var(--dashboard-button-warning-background-active);
     }
   }
 
