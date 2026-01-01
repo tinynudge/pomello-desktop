@@ -21,14 +21,30 @@
       outline-color: var(--dashboard-input-error-outline);
     }
   }
+
+  &.hasWarning {
+    border-color: var(--dashboard-input-warning-border);
+
+    &:focus-visible {
+      outline-color: var(--dashboard-input-warning-outline);
+    }
+  }
 }
 
-.error {
+.message {
   position: absolute;
   padding: 4px 8px;
   border-radius: 4px;
   margin-bottom: 8px;
-  background-color: var(--dashboard-input-error-tooltip-background);
-  color: var(--dashboard-input-error-tooltip-text);
   position-area: top;
+
+  &[data-message-type='error'] {
+    background-color: var(--dashboard-input-error-tooltip-background);
+    color: var(--dashboard-input-error-tooltip-text);
+  }
+
+  &[data-message-type='warning'] {
+    background-color: var(--dashboard-input-warning-tooltip-background);
+    color: var(--dashboard-input-warning-tooltip-text);
+  }
 }

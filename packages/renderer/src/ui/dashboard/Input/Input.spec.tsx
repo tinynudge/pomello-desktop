@@ -9,8 +9,18 @@ describe('UI - Input', () => {
   });
 
   it('should render an error', async () => {
-    renderDashboardComponent(() => <Input errorMessage="You shall not pass" value="two" />);
+    renderDashboardComponent(() => (
+      <Input message={{ type: 'error', text: 'You shall not pass' }} value="two" />
+    ));
 
     expect(screen.getByRole('status')).toHaveTextContent('You shall not pass');
+  });
+
+  it('should render a warning', async () => {
+    renderDashboardComponent(() => (
+      <Input message={{ type: 'warning', text: 'This is a warning' }} value="three" />
+    ));
+
+    expect(screen.getByRole('status')).toHaveTextContent('This is a warning');
   });
 });

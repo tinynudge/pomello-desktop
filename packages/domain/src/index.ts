@@ -18,9 +18,9 @@ export type { GetTrackingEventServiceDataResponse } from './GetTrackingEventServ
 export type { HotkeyCommand } from './HotkeyCommand';
 export type { Hotkeys } from './Hotkeys';
 export type { InitializingView } from './InitializingView';
+export type { Logger } from './Logger';
 export type { LogLevel } from './LogLevel';
 export type { LogMessage } from './LogMessage';
-export type { Logger } from './Logger';
 export type { Note } from './Note';
 export type { OnNoteCreate } from './OnNoteCreate';
 export type { OnTaskCreate } from './OnTaskCreate';
@@ -76,5 +76,6 @@ export type { TranslationLocation } from './TranslationLocation';
 export type { Translations } from './Translations';
 export type { TranslationsDictionary } from './TranslationsDictionary';
 export type { Unsubscribe } from './Unsubscribe';
+export type { ValidationMessage } from './ValidationMessage';
 export { WindowId } from './WindowId';
 export type { WindowManager } from './WindowManager';

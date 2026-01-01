@@ -1,7 +1,8 @@
 import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Input } from '@/ui/dashboard/Input';
-import { Component, JSX, createSignal, onCleanup, onMount } from 'solid-js';
+import { ValidationMessage } from '@pomello-desktop/domain';
+import { Component, JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
 import styles from './TimeSettingAdvancedInput.module.scss';
 
 type TimeSettingAdvancedInputProps = {
@@ -24,6 +25,15 @@ export const TimeSettingAdvancedInput: Component<TimeSettingAdvancedInputProps> 
     onCleanup(unsubscribeOnSettingsClear);
   });
 
+  const getValidationMessage = createMemo<ValidationMessage | undefined>(() =>
+    getHasValidationError()
+      ? {
+          text: t('invalidTime'),
+          type: 'error',
+        }
+      : undefined
+  );
+
   const handleInput: JSX.InputEventHandler<HTMLInputElement, InputEvent> = event => {
     const { validity, value } = event.currentTarget;
 
@@ -42,8 +52,8 @@ export const TimeSettingAdvancedInput: Component<TimeSettingAdvancedInputProps> 
     <span class={styles.timeSettingAdvancedInput}>
       <Input
         class={styles.input}
-        errorMessage={getHasValidationError() ? t('invalidTime') : undefined}
         id={props.id}
+        message={getValidationMessage()}
         onInput={handleInput}
         pattern="^\d+$"
         ref={inputRef}
