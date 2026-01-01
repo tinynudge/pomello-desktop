@@ -1,13 +1,15 @@
+import { PremiumFeatureModal } from '@/dashboard/components/PremiumFeatureModal';
 import { useDashboard } from '@/dashboard/context/DashboardContext';
-import { useTranslate } from '@/shared/context/RuntimeContext';
+import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { getTimerSettingKey } from '@/shared/helpers/getTimerSettingKey';
 import { isDefaultSoundId } from '@/shared/helpers/isDefaultSoundId';
+import { Button } from '@/ui/dashboard/Button';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Option, OptionItem, Select } from '@/ui/dashboard/Select';
 import { Slider } from '@/ui/dashboard/Slider';
 import { AppProtocol, TimerPhase, TimerType } from '@pomello-desktop/domain';
 import { Howl } from 'howler';
-import { Component, JSX, createEffect, createMemo, createSignal, on } from 'solid-js';
+import { Component, JSX, Show, createEffect, createMemo, createSignal, on } from 'solid-js';
 import styles from './SoundField.module.scss';
 
 type SoundFieldProps = {
@@ -21,11 +23,18 @@ export const SoundField: Component<SoundFieldProps> = props => {
   const timerSettingKey = getTimerSettingKey(props.staticTimerType, props.staticTimerPhase);
 
   const { getSetting, stageSetting } = useDashboard();
+  const pomelloConfig = usePomelloConfig();
   const t = useTranslate();
 
   const [getIsPlaying, setIsPlaying] = createSignal(false);
 
   const getSoundId = createMemo(() => getSetting(`${timerSettingKey}Sound`));
+
+  const getIsSoundDisabled = createMemo<boolean>(() => {
+    const soundId = getSoundId();
+
+    return !!soundId && !isDefaultSoundId(soundId) && pomelloConfig.store.user?.type !== 'premium';
+  });
 
   createEffect(
     on(
@@ -96,6 +105,8 @@ export const SoundField: Component<SoundFieldProps> = props => {
     sound?.stop();
   };
 
+  let premiumFeatureModalRef!: HTMLDialogElement;
+
   return (
     <Panel.List.FormField
       actions={[
@@ -116,6 +127,15 @@ export const SoundField: Component<SoundFieldProps> = props => {
       for={timerSettingKey}
       label={t(`sounds.${props.staticTimerPhase}`)}
     >
+      <Show when={getIsSoundDisabled()}>
+        <Button size="small" variant="warning" onClick={() => premiumFeatureModalRef.showModal()}>
+          {t('issueFound')}
+        </Button>
+        <PremiumFeatureModal
+          ref={premiumFeatureModalRef}
+          text={t('premiumFeatureModalCustomSoundText')}
+        />
+      </Show>
       <Slider
         aria-label={t(`sounds.${timerSettingKey}.volume`)}
         class={styles.volumeSlider}

@@ -22,6 +22,10 @@ vi.mock('nanoid', async importOriginal => {
 });
 
 describe('Dashboard - Sounds', () => {
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   afterAll(() => {
     vi.restoreAllMocks();
   });
@@ -493,5 +497,45 @@ describe('Dashboard - Sounds', () => {
         },
       },
     });
+  });
+
+  it('should show a warning if using a custom sound on a free account', async () => {
+    const { userEvent } = renderDashboard({
+      pomelloConfig: {
+        user: {
+          email: 'thomas@tester.com',
+          name: 'Thomas Tester',
+          timezone: 'America/New_York',
+          type: 'free',
+        },
+      },
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          'custom-sound': {
+            name: 'My custom sound',
+            path: '/fake/path/custom-sound.mp3',
+          },
+        },
+        taskTimerTickSound: 'custom-sound',
+      },
+    });
+
+    const taskList = screen.getByRole('list', { name: 'Task timer sounds' });
+    const tickItem = within(taskList).getByRole('listitem', { name: 'Tick sound' });
+    const issueFoundButton = within(tickItem).getByRole('button', { name: 'Issue found' });
+
+    expect(issueFoundButton).toBeInTheDocument();
+
+    await userEvent.click(issueFoundButton);
+
+    const premiumFeatureModal = screen.getByRole('dialog', { name: 'Premium feature' });
+
+    expect(premiumFeatureModal).toBeInTheDocument();
+    expect(
+      within(premiumFeatureModal).getByText(
+        'Custom sounds are a premium feature and are not available on free accounts. Select a standard sound from the list or click "Upgrade" to update your account and gain access to this feature.'
+      )
+    ).toBeInTheDocument();
   });
 });
