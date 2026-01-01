@@ -1,37 +1,43 @@
+import { ValidationMessage } from '@pomello-desktop/domain';
 import cc from 'classcat';
 import { nanoid } from 'nanoid';
 import { Component, JSX, Show, splitProps } from 'solid-js';
 import styles from './Input.module.scss';
 
 type InputProps = JSX.InputHTMLAttributes<HTMLInputElement> & {
-  errorMessage?: string;
+  message?: ValidationMessage;
 };
 
 export const Input: Component<InputProps> = allProps => {
-  const [props, remainingProps] = splitProps(allProps, ['class', 'errorMessage', 'style']);
-
+  const [props, remainingProps] = splitProps(allProps, ['class', 'message', 'style']);
   const anchorId = `--${nanoid()}`;
 
   return (
     <>
-      <Show when={props.errorMessage}>
-        {getErrorMessage => (
-          // eslint-disable-next-line solid/style-prop
-          <small class={styles.error} role="status" style={{ 'position-anchor': anchorId }}>
-            {getErrorMessage()}
+      <Show when={props.message}>
+        {getMessage => (
+          <small
+            class={styles.message}
+            data-message-type={getMessage().type}
+            role="status"
+            // eslint-disable-next-line solid/style-prop
+            style={{ 'position-anchor': anchorId }}
+          >
+            {getMessage().text}
           </small>
         )}
       </Show>
       <input
+        {...remainingProps}
         class={cc([
           props.class,
           {
+            [styles.hasError]: props.message?.type === 'error',
+            [styles.hasWarning]: props.message?.type === 'warning',
             [styles.input]: true,
-            [styles.hasError]: !!props.errorMessage,
           },
         ])}
         style={{ 'anchor-name': anchorId }}
-        {...remainingProps}
       />
     </>
   );

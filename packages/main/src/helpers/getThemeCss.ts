@@ -19,6 +19,7 @@ const colors = {
   task: 'rgb(243 66 53)',
   taskDark: 'rgb(204 55 45)',
   white: 'rgb(255 255 255)',
+  yellow: 'rgb(255 193 7)',
 };
 
 const darken = (color: string, percent: number) => {
@@ -211,6 +212,14 @@ const defaultTheme: ThemeConfig = {
         tooltip: {
           background: colors.red,
           text: darken(colors.red, 72),
+        },
+      },
+      warning: {
+        border: colors.yellow,
+        outline: opacity(colors.yellow, 30),
+        tooltip: {
+          background: colors.yellow,
+          text: darken(colors.yellow, 72),
         },
       },
     },
