@@ -1,6 +1,13 @@
 import { getTimerSettingKey } from '@/shared/helpers/getTimerSettingKey';
 import { isDefaultSoundId } from '@/shared/helpers/isDefaultSoundId';
-import { AppProtocol, Settings, Sound, TimerPhase, TimerType } from '@pomello-desktop/domain';
+import {
+  AppProtocol,
+  PomelloUser,
+  Settings,
+  Sound,
+  TimerPhase,
+  TimerType,
+} from '@pomello-desktop/domain';
 import { Howl } from 'howler';
 import { createSound } from './createSound';
 
@@ -12,7 +19,8 @@ let audioCache: AudioCache = new Map();
 
 export const createTimerSounds = (
   settings: Settings,
-  previousTimerSounds?: TimerSounds
+  previousTimerSounds?: TimerSounds,
+  user?: PomelloUser
 ): TimerSounds => {
   const phases: TimerPhase[] = ['start', 'tick', 'end'];
 
@@ -40,7 +48,7 @@ export const createTimerSounds = (
         previousSound.pause();
       }
 
-      if (soundId && volume) {
+      if (soundId && volume && (isDefaultSoundId(soundId) || user?.type === 'premium')) {
         let soundSource = isDefaultSoundId(soundId)
           ? window.app.getSoundPath(soundId)
           : settings.sounds[soundId]?.path;
