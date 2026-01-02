@@ -538,4 +538,70 @@ describe('Dashboard - Sounds', () => {
       )
     ).toBeInTheDocument();
   });
+
+  it('should not let a free user add a custom sound', async () => {
+    const { userEvent } = renderDashboard({
+      pomelloConfig: {
+        user: {
+          email: 'thomas@tester.com',
+          name: 'Thomas Tester',
+          timezone: 'America/New_York',
+          type: 'free',
+        },
+      },
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {},
+      },
+    });
+
+    expect(screen.getByText('No custom sounds have been added yet.')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add new sound' }));
+
+    expect(screen.getByRole('dialog', { name: 'Premium feature' })).toBeInTheDocument();
+  });
+
+  it('should not let a free user edit a custom sound', async () => {
+    const { userEvent } = renderDashboard({
+      pomelloConfig: {
+        user: {
+          email: 'thomas@tester.com',
+          name: 'Thomas Tester',
+          timezone: 'America/New_York',
+          type: 'free',
+        },
+      },
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          'custom-sound': {
+            name: 'My custom sound',
+            path: '/fake/path/custom-sound.mp3',
+          },
+        },
+      },
+    });
+
+    const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: My custom sound' });
+
+    await userEvent.type(within(customSoundItem).getByLabelText('Name'), ' Edited');
+
+    expect(screen.getByRole('dialog', { name: 'Premium feature' })).toBeInTheDocument();
+    expect(within(customSoundItem).getByLabelText('Name')).toHaveValue('My custom sound');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+    await userEvent.click(within(customSoundItem).getByRole('button', { name: 'Change' }));
+
+    expect(screen.getByRole('dialog', { name: 'Premium feature' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+    await userEvent.click(
+      within(customSoundItem).getByRole('button', { name: 'Show more options' })
+    );
+
+    expect(screen.getByRole('dialog', { name: 'Premium feature' })).toBeInTheDocument();
+  });
 });

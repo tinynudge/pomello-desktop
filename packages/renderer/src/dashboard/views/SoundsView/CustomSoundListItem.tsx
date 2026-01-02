@@ -1,5 +1,5 @@
 import { useDashboard } from '@/dashboard/context/DashboardContext';
-import { useTranslate } from '@/shared/context/RuntimeContext';
+import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { ActionsMenu } from '@/ui/dashboard/ActionsMenu';
 import { Button } from '@/ui/dashboard/Button';
 import { Input } from '@/ui/dashboard/Input';
@@ -15,7 +15,8 @@ type CustomSoundListItemProps = {
 };
 
 export const CustomSoundListItem: Component<CustomSoundListItemProps> = props => {
-  const { getSetting, stageSetting } = useDashboard();
+  const { getSetting, showPremiumFeatureModal, stageSetting } = useDashboard();
+  const pomelloConfig = usePomelloConfig();
   const t = useTranslate();
 
   const [getIsPlaying, setIsPlaying] = createSignal(false);
@@ -107,6 +108,18 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
     });
   };
 
+  const handlePanelFocusIn: JSX.EventHandler<HTMLLIElement, FocusEvent> = event => {
+    if (pomelloConfig.store.user?.type === 'premium') {
+      return;
+    }
+
+    showPremiumFeatureModal();
+
+    if (event.target instanceof HTMLElement) {
+      event.target.blur();
+    }
+  };
+
   const stageSound = (sound: Partial<CustomSound>) => {
     const sounds = getSetting('sounds');
 
@@ -125,6 +138,7 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
     <Panel.List.Item
       aria-label={t('customSoundItem', { name: props.sound.name })}
       class={styles.customSoundListItem}
+      onFocusIn={handlePanelFocusIn}
     >
       <div class={styles.content}>
         <div class={styles.nameField}>
