@@ -6,6 +6,7 @@ import { For, ParentComponent, Show } from 'solid-js';
 import { AccountDetails } from './AccountDetails';
 import styles from './Layout.module.scss';
 import { LoggedOutText } from './LoggedOutText';
+import { PremiumFeatureModal } from './PremiumFeatureModal';
 import { SaveSettingsBanner } from './SaveSettingsBanner';
 
 export const Layout: ParentComponent = props => {
@@ -49,6 +50,7 @@ export const Layout: ParentComponent = props => {
           <SaveSettingsBanner />
         </Show>
       </main>
+      <PremiumFeatureModal />
     </div>
   );
 };

@@ -10,6 +10,7 @@ export type ModalButton = Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'chi
 type ModalProps = {
   buttons?: ButtonProps[];
   heading: string;
+  onHide?(): void;
   ref?: HTMLDialogElement;
 };
 
@@ -25,6 +26,8 @@ export const Modal: ParentComponent<ModalProps> = props => {
     }
 
     modalRef.close();
+
+    props.onHide?.();
   };
 
   const mergeRefs = (element: HTMLDialogElement) => {

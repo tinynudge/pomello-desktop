@@ -1,4 +1,3 @@
-import { PremiumFeatureModal } from '@/dashboard/components/PremiumFeatureModal';
 import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { getTimerSettingKey } from '@/shared/helpers/getTimerSettingKey';
@@ -22,7 +21,7 @@ type SoundFieldProps = {
 export const SoundField: Component<SoundFieldProps> = props => {
   const timerSettingKey = getTimerSettingKey(props.staticTimerType, props.staticTimerPhase);
 
-  const { getSetting, stageSetting } = useDashboard();
+  const { getSetting, showPremiumFeatureModal, stageSetting } = useDashboard();
   const pomelloConfig = usePomelloConfig();
   const t = useTranslate();
 
@@ -105,7 +104,9 @@ export const SoundField: Component<SoundFieldProps> = props => {
     sound?.stop();
   };
 
-  let premiumFeatureModalRef!: HTMLDialogElement;
+  const handleIssueFoundClick = () => {
+    showPremiumFeatureModal(t('premiumFeatureModalCustomSoundText'));
+  };
 
   return (
     <Panel.List.FormField
@@ -128,13 +129,9 @@ export const SoundField: Component<SoundFieldProps> = props => {
       label={t(`sounds.${props.staticTimerPhase}`)}
     >
       <Show when={getIsSoundDisabled()}>
-        <Button size="small" variant="warning" onClick={() => premiumFeatureModalRef.showModal()}>
+        <Button size="small" variant="warning" onClick={handleIssueFoundClick}>
           {t('issueFound')}
         </Button>
-        <PremiumFeatureModal
-          ref={premiumFeatureModalRef}
-          text={t('premiumFeatureModalCustomSoundText')}
-        />
       </Show>
       <Slider
         aria-label={t(`sounds.${timerSettingKey}.volume`)}
