@@ -1,5 +1,5 @@
 import { useDashboard } from '@/dashboard/context/DashboardContext';
-import { useTranslate } from '@/shared/context/RuntimeContext';
+import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { nanoid } from 'nanoid';
 import { Component, JSX } from 'solid-js';
@@ -10,10 +10,17 @@ type AddCustomSoundButtonProps = {
 };
 
 export const AddCustomSoundButton: Component<AddCustomSoundButtonProps> = props => {
-  const { getSetting, stageSetting } = useDashboard();
+  const { getSetting, showPremiumFeatureModal, stageSetting } = useDashboard();
+  const pomelloConfig = usePomelloConfig();
   const t = useTranslate();
 
   const handleAddSoundButtonClick = () => {
+    if (pomelloConfig.store.user?.type !== 'premium') {
+      showPremiumFeatureModal();
+
+      return;
+    }
+
     fileInputRef.click();
   };
 
