@@ -9,7 +9,14 @@ import {
   Settings,
   Unsubscribe,
 } from '@pomello-desktop/domain';
-import { ParentComponent, createContext, onCleanup, onMount, useContext } from 'solid-js';
+import {
+  ParentComponent,
+  createContext,
+  createSignal,
+  onCleanup,
+  onMount,
+  useContext,
+} from 'solid-js';
 import { createStore, reconcile, unwrap } from 'solid-js/store';
 import { HotkeyConflictError } from './HotkeyConflictError';
 
@@ -23,8 +30,11 @@ type DashboardContextValue = {
   getDefaultHotkey(command: HotkeyCommand): FormattedHotkey;
   getHasStagedChanges(): boolean;
   getHotkey(command: HotkeyCommand): FormattedHotkey | false;
+  getPremiumFeatureModal(): boolean | string;
   getSetting<TSetting extends keyof Settings>(key: TSetting): Settings[TSetting];
+  onPremiumFeatureModalClose(): void;
   onStagedSettingsClear(subscriber: () => void): Unsubscribe;
+  showPremiumFeatureModal(customText?: string): void;
   stageHotkey(command: HotkeyCommand, hotkey: FormattedHotkey | false): void;
   stageSetting<TSetting extends keyof Settings>(
     key: TSetting,
@@ -55,6 +65,8 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
 
   const [hotkeys, setHotkeys] = createStore(props.initialHotkeys);
   const [stagedHotkeys, setStagedHotkeys] = createStore<StagedHotkeys>({});
+
+  const [getPremiumFeatureModal, setPremiumFeatureModal] = createSignal<boolean | string>(false);
 
   onMount(() => {
     const unsubscribe = window.app.onHotkeysChange(hotkeys => setHotkeys(reconcile(hotkeys)));
@@ -139,12 +151,20 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   const getSetting = <TSetting extends keyof Settings>(setting: TSetting) =>
     stagedSettings[setting] ?? settings[setting];
 
+  const onPremiumFeatureModalClose = () => {
+    setPremiumFeatureModal(false);
+  };
+
   const onStagedSettingsClear = (subscriber: () => void) => {
     subscribers.add(subscriber);
 
     return () => {
       subscribers.delete(subscriber);
     };
+  };
+
+  const showPremiumFeatureModal = (customText?: string) => {
+    setPremiumFeatureModal(customText ?? true);
   };
 
   const stageHotkey = (command: HotkeyCommand, hotkey: FormattedHotkey | false) => {
@@ -172,8 +192,11 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
         getDefaultHotkey,
         getHasStagedChanges,
         getHotkey,
+        getPremiumFeatureModal,
         getSetting,
+        onPremiumFeatureModalClose,
         onStagedSettingsClear,
+        showPremiumFeatureModal,
         stageHotkey,
         stageSetting,
       }}
