@@ -11,4 +11,5 @@ export const createZenService: ServiceFactory = () => {
 };
 
 createZenService.displayName = 'Zen mode';
+createZenService.hasConfigureView = false;
 createZenService.id = 'zen';

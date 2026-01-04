@@ -22,6 +22,7 @@ import { Unsubscribe } from './Unsubscribe';
 
 export type Service = {
   AuthView?: Component;
+  ConfigureView?: Component;
   Container?: ServiceContainer;
   CustomSelectGroup?: CustomSelectGroupComponent;
   CustomSelectOption?: CustomSelectOptionComponent;

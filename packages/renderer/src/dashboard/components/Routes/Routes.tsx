@@ -1,7 +1,9 @@
 import { KeyboardShortcutsView } from '@/dashboard/views/KeyboardShortcutsView';
+import { ServicesView, ServiceView } from '@/dashboard/views/ServicesView';
 import { SettingsView } from '@/dashboard/views/SettingsView';
 import { SoundsView } from '@/dashboard/views/SoundsView';
 import { useTranslate } from '@/shared/context/RuntimeContext';
+import { ServiceProvider } from '@/shared/context/ServiceContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { Route } from '@solidjs/router';
 import { Component, For } from 'solid-js';
@@ -24,6 +26,17 @@ export const Routes: Component = () => {
       <Route path={DashboardRoute.KeyboardShortcuts} component={KeyboardShortcutsView} />
       <Route path={DashboardRoute.Settings} component={SettingsView} />
       <Route path={DashboardRoute.Sounds} component={SoundsView} />
+      <Route path={DashboardRoute.Services}>
+        <Route path="/" component={ServicesView} />
+        <Route
+          path={'/:serviceId'}
+          component={props => (
+            <ServiceProvider initialServiceId={props.params.serviceId} freezeServiceId>
+              <ServiceView />
+            </ServiceProvider>
+          )}
+        />
+      </Route>
       <For each={Object.values(DashboardRoute)}>
         {route => <Route path={route} component={() => <MainHeader heading={routes[route]} />} />}
       </For>
