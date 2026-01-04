@@ -185,6 +185,7 @@ describe('App - Pomello', () => {
       };
     };
     fooService.displayName = 'Foo';
+    fooService.hasConfigureView = false;
     fooService.id = 'foo';
 
     const { appApi } = renderApp({
@@ -241,6 +242,7 @@ describe('App - Pomello', () => {
       };
     };
     fooService.displayName = 'Foo';
+    fooService.hasConfigureView = false;
     fooService.id = 'foo';
 
     const { appApi } = renderApp({

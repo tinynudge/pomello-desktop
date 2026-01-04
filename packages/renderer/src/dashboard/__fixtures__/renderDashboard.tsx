@@ -28,13 +28,12 @@ type RenderDashboardOptions = {
   hotkeys?: FormattedHotkeys;
   pomelloConfig?: Partial<PomelloServiceConfig>;
   route?: DashboardRoute;
-  service?: Partial<Service>;
+  services?: Partial<Service>[];
   settings?: Partial<Settings>;
 };
 
 export const renderDashboard = (options: RenderDashboardOptions = {}) => {
   const logger = createMockLogger();
-  const mockServiceFactory = createMockServiceFactory({ service: options.service });
   const settings = createMockSettings(options.settings);
   const [pomelloConfig, pomelloConfigActions] = createMockServiceConfig<PomelloServiceConfig>(
     'pomello',
@@ -64,9 +63,14 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
     settings,
   });
 
-  const services: ServiceRegistry = {
-    [mockServiceFactory.id]: mockServiceFactory,
-  };
+  const serviceRegistry: ServiceRegistry = {};
+  const services = options.services ?? [{}];
+
+  services.forEach(service => {
+    const serviceFactory = createMockServiceFactory({ service });
+
+    serviceRegistry[serviceFactory.id] = serviceFactory;
+  });
 
   const history = createMemoryHistory();
 
@@ -78,7 +82,7 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
     <RuntimeProvider
       initialLogger={logger}
       initialPomelloConfig={pomelloConfig}
-      initialServices={services}
+      initialServices={serviceRegistry}
       initialSettings={settings}
       initialTranslations={translations}
     >

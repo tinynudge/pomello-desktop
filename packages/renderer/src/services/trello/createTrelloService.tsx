@@ -56,6 +56,7 @@ export const createTrelloService: ServiceFactory<TrelloConfigStore> = runtime =>
 };
 
 createTrelloService.displayName = 'Trello';
+createTrelloService.hasConfigureView = true;
 createTrelloService.id = 'trello';
 
 createTrelloService.config = {

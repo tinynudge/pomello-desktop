@@ -293,6 +293,7 @@ describe('App', () => {
       };
     };
     fooService.displayName = 'Foo';
+    fooService.hasConfigureView = false;
     fooService.id = 'foo';
 
     const { simulate } = renderApp({

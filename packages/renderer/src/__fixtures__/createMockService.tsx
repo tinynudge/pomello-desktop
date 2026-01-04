@@ -27,6 +27,7 @@ export const createMockServiceFactory = ({
   };
 
   createMockService.displayName = service.displayName ?? 'Mock service';
+  createMockService.hasConfigureView = !!service.ConfigureView;
   createMockService.id = service.id ?? 'mock';
 
   if (config) {
