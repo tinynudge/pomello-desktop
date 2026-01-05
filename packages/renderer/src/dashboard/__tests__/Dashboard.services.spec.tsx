@@ -1,4 +1,7 @@
+import { createMockServiceFactory } from '@/__fixtures__/createMockService';
+import { useConfigureServiceConfig } from '@/shared/context/ConfigureServiceConfigContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
+import { JSX } from 'solid-js';
 import { renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
 
 describe('Dashboard - Services', () => {
@@ -12,14 +15,18 @@ describe('Dashboard - Services', () => {
     renderDashboard({
       route: DashboardRoute.Services,
       services: [
-        {
-          displayName: 'Service One',
-          id: 'service-one',
-        },
-        {
-          displayName: 'Service Two',
-          id: 'service-two',
-        },
+        createMockServiceFactory({
+          service: {
+            displayName: 'Service One',
+            id: 'service-one',
+          },
+        }),
+        createMockServiceFactory({
+          service: {
+            displayName: 'Service Two',
+            id: 'service-two',
+          },
+        }),
       ],
     });
 
@@ -39,15 +46,19 @@ describe('Dashboard - Services', () => {
     renderDashboard({
       route: DashboardRoute.Services,
       services: [
-        {
-          displayName: 'Cannot Configure This Service',
-          id: 'no-config-service',
-        },
-        {
-          ConfigureView: () => <div>Configure view</div>,
-          displayName: 'Configurable Service',
-          id: 'config-service',
-        },
+        createMockServiceFactory({
+          service: {
+            displayName: 'Cannot Configure This Service',
+            id: 'no-config-service',
+          },
+        }),
+        createMockServiceFactory({
+          service: {
+            ConfigureView: () => <div>Configure view</div>,
+            displayName: 'Configurable Service',
+            id: 'config-service',
+          },
+        }),
       ],
     });
 
@@ -64,11 +75,13 @@ describe('Dashboard - Services', () => {
     const { userEvent } = renderDashboard({
       route: DashboardRoute.Services,
       services: [
-        {
-          ConfigureView: () => <div>Configure view</div>,
-          displayName: 'Configurable Service',
-          id: 'config-service',
-        },
+        createMockServiceFactory({
+          service: {
+            ConfigureView: () => <div>Configure view</div>,
+            displayName: 'Configurable Service',
+            id: 'config-service',
+          },
+        }),
       ],
     });
 
@@ -80,5 +93,81 @@ describe('Dashboard - Services', () => {
     await userEvent.click(configureButton);
 
     expect(screen.getByText('Configure view')).toBeInTheDocument();
+  });
+
+  it('should allow a service config to be edited and saved', async () => {
+    const fooFactory = createMockServiceFactory({
+      config: {
+        defaults: {
+          text: 'Hello',
+        },
+        schema: {
+          type: 'object',
+          properties: {
+            text: { type: 'string', nullable: true },
+          },
+        },
+      },
+      service: {
+        ConfigureView: () => {
+          const { getServiceConfigValue, serviceConfig, stageServiceConfigValue } =
+            useConfigureServiceConfig<{ text: string }>();
+
+          const handleTextInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
+            stageServiceConfigValue('text', event.currentTarget.value);
+          };
+
+          return (
+            <>
+              <input
+                aria-label="Text Input"
+                onInput={handleTextInput}
+                value={getServiceConfigValue('text')}
+              />
+              <p data-testid="stored-value">{serviceConfig.text}</p>
+            </>
+          );
+        },
+        displayName: 'Foo Service',
+        id: 'foo-service',
+      },
+    });
+
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Services,
+      services: [fooFactory],
+    });
+
+    const listItem = screen.getByRole('listitem', { name: /Foo Service/i });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Configure' }));
+
+    expect(screen.getByLabelText('Text Input')).toHaveValue('Hello');
+    expect(screen.getByTestId('stored-value')).toHaveTextContent('Hello');
+
+    await userEvent.clear(screen.getByLabelText('Text Input'));
+    await userEvent.type(screen.getByLabelText('Text Input'), 'New Value');
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(screen.getByLabelText('Text Input')).toHaveValue('Hello');
+    expect(screen.getByTestId('stored-value')).toHaveTextContent('Hello');
+
+    await userEvent.clear(screen.getByLabelText('Text Input'));
+    await userEvent.type(screen.getByLabelText('Text Input'), 'New New Value');
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Text Input')).toHaveValue('New New Value');
+    expect(screen.getByTestId('stored-value')).toHaveTextContent('New New Value');
   });
 });

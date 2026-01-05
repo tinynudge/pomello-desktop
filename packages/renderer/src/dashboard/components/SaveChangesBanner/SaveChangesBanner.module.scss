@@ -1,9 +1,6 @@
 @use '@/shared/styles/global' as *;
 
-.saveSettingsBanner {
-  position: sticky;
-  z-index: 1;
-  bottom: 0;
+.saveChangesBanner {
   display: flex;
   align-items: center;
   justify-content: space-between;

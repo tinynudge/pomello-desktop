@@ -2,16 +2,19 @@ import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { A } from '@solidjs/router';
+import { nanoid } from 'nanoid';
 import { For, ParentComponent, Show } from 'solid-js';
+import { SaveChangesBanner } from '../SaveChangesBanner';
 import { AccountDetails } from './AccountDetails';
 import styles from './Layout.module.scss';
 import { LoggedOutText } from './LoggedOutText';
 import { PremiumFeatureModal } from './PremiumFeatureModal';
-import { SaveSettingsBanner } from './SaveSettingsBanner';
+
+export const saveSettingsBannerId = `save-settings-banner-${nanoid()}`;
 
 export const Layout: ParentComponent = props => {
   const { store } = usePomelloConfig();
-  const { getHasStagedChanges } = useDashboard();
+  const { clearStagedSettings, commitStagedSettings, getHasStagedChanges } = useDashboard();
   const t = useTranslate();
 
   const routes: [DashboardRoute, label: string][] = [
@@ -46,8 +49,9 @@ export const Layout: ParentComponent = props => {
       </div>
       <main class={styles.main}>
         <div class={styles.content}>{props.children}</div>
+        <div class={styles.saveChangesBanner} id={saveSettingsBannerId} />
         <Show when={getHasStagedChanges()}>
-          <SaveSettingsBanner />
+          <SaveChangesBanner onSaveClick={commitStagedSettings} onUndoClick={clearStagedSettings} />
         </Show>
       </main>
       <PremiumFeatureModal />
