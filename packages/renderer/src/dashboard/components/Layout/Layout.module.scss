@@ -58,3 +58,9 @@
   padding: var(--content-padding);
   background-color: var(--dashboard-content-background);
 }
+
+.saveChangesBanner {
+  position: sticky;
+  z-index: 1;
+  bottom: 0;
+}

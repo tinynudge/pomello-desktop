@@ -9,7 +9,7 @@ import {
   DashboardRoute,
   FormattedHotkeys,
   PomelloServiceConfig,
-  Service,
+  ServiceFactory,
   ServiceRegistry,
   Settings,
 } from '@pomello-desktop/domain';
@@ -28,7 +28,7 @@ type RenderDashboardOptions = {
   hotkeys?: FormattedHotkeys;
   pomelloConfig?: Partial<PomelloServiceConfig>;
   route?: DashboardRoute;
-  services?: Partial<Service>[];
+  services?: ServiceFactory[];
   settings?: Partial<Settings>;
 };
 
@@ -64,11 +64,9 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
   });
 
   const serviceRegistry: ServiceRegistry = {};
-  const services = options.services ?? [{}];
+  const services = options.services ?? [createMockServiceFactory()];
 
-  services.forEach(service => {
-    const serviceFactory = createMockServiceFactory({ service });
-
+  services.forEach(serviceFactory => {
     serviceRegistry[serviceFactory.id] = serviceFactory;
   });
 
