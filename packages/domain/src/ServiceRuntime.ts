@@ -10,6 +10,7 @@ export type ServiceRuntime<TConfig> = {
   getUser(): PomelloUser | undefined;
   logger: Logger;
   onServiceCleanUp(callback: ServiceCleanUpCallback): void;
+  reinitializePomelloService(): void;
   settings: Settings;
   translate: Translate;
 };

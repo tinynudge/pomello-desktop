@@ -1,4 +1,3 @@
-import { usePomelloActions } from '@/app/context/PomelloContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
 import { ServiceContainer } from '@pomello-desktop/domain';
 import { createContext, createEffect, useContext } from 'solid-js';
@@ -27,16 +26,11 @@ export const useTrelloConfig = (): TrelloRuntime['config'] => {
 };
 
 export const TrelloRuntimeProvider: TrelloRuntimeProviderProps = props => {
-  const { reset } = usePomelloActions();
-
   createEffect(() => {
-    const { config } = props.defaultRuntime;
+    const { config, reinitializePomelloService } = props.defaultRuntime;
 
     if (!config.store.currentList) {
-      reset({
-        preserveActiveTimer: true,
-        reinitialize: true,
-      });
+      reinitializePomelloService();
     }
   });
 
