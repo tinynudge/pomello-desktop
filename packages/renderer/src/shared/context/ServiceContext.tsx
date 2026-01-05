@@ -1,5 +1,6 @@
 import {
   ActiveService,
+  RendererEvent,
   Service,
   ServiceCleanUpCallback,
   Unsubscribe,
@@ -97,6 +98,10 @@ export const ServiceProvider: ParentComponent<ServiceProviderProps> = props => {
       window.app.getTranslations({ serviceId: createService.id }),
     ]);
 
+    const reinitializePomelloService = () => {
+      window.postMessage(RendererEvent.ReinitializePomelloService, window.location.origin);
+    };
+
     translations.addNamespace('service', serviceTranslations);
 
     const service = createService({
@@ -104,6 +109,7 @@ export const ServiceProvider: ParentComponent<ServiceProviderProps> = props => {
       getUser: () => pomelloConfig.store.user,
       logger,
       onServiceCleanUp,
+      reinitializePomelloService,
       settings,
       translate: (key, mappings) => translations.t(`service:${key}`, mappings),
     });

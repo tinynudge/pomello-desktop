@@ -1,6 +1,7 @@
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
+import { RendererEvent } from '@pomello-desktop/domain';
 import { PomelloService } from '@tinynudge/pomello-service';
-import { ParentComponent, createContext, useContext } from 'solid-js';
+import { ParentComponent, createContext, createEffect, onCleanup, useContext } from 'solid-js';
 
 type PomelloProviderProps = {
   defaultService: PomelloService;
@@ -28,6 +29,27 @@ export const usePomelloActions = () => {
 };
 
 export const PomelloProvider: ParentComponent<PomelloProviderProps> = props => {
+  createEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (import.meta.env.MODE !== 'test' && event.origin !== window.location.origin) {
+        return;
+      }
+
+      if (event.data === RendererEvent.ReinitializePomelloService) {
+        props.defaultService.reset({
+          preserveActiveTimer: true,
+          reinitialize: true,
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    onCleanup(() => {
+      window.removeEventListener('message', handleMessage);
+    });
+  });
+
   return (
     <PomelloContext.Provider value={props.defaultService}>{props.children}</PomelloContext.Provider>
   );
