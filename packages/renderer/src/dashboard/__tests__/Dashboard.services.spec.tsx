@@ -170,4 +170,27 @@ describe('Dashboard - Services', () => {
     expect(screen.getByLabelText('Text Input')).toHaveValue('New New Value');
     expect(screen.getByTestId('stored-value')).toHaveTextContent('New New Value');
   });
+
+  it('should wrap the service configure view in a service container if provided', async () => {
+    const barFactory = createMockServiceFactory({
+      service: {
+        ConfigureView: () => <div>Bar Configure View</div>,
+        Container: props => <section data-testid="container-view">{props.children}</section>,
+        displayName: 'Bar Service',
+        id: 'bar-service',
+      },
+    });
+
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Services,
+      services: [barFactory],
+    });
+
+    const listItem = screen.getByRole('listitem', { name: /Bar Service/i });
+
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Configure' }));
+
+    expect(screen.getByTestId('container-view')).toBeInTheDocument();
+    expect(screen.getByText('Bar Configure View')).toBeInTheDocument();
+  });
 });

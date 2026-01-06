@@ -1,7 +1,7 @@
+import { ServiceContainer } from '@/shared/components/ServiceContainer';
 import { useRuntime } from '@/shared/context/RuntimeContext';
 import { useMaybeService } from '@/shared/context/ServiceContext';
 import { ErrorBoundary as BaseErrorBoundary, JSX, ParentComponent } from 'solid-js';
-import { ServiceContainer } from '../ServiceContainer';
 import { ErrorOverlay } from './ErrorOverlay';
 
 type ErrorBoundaryProps = {

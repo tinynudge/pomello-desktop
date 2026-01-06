@@ -1,6 +1,6 @@
-import { useMaybeService } from '@/shared/context/ServiceContext';
 import { ParentComponent, Show } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
+import { useMaybeService } from '../context/ServiceContext';
 
 export const ServiceContainer: ParentComponent = props => {
   const getService = useMaybeService();
