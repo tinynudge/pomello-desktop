@@ -9,6 +9,7 @@ import {
   DashboardRoute,
   FormattedHotkeys,
   PomelloServiceConfig,
+  ServiceConfigActions,
   ServiceFactory,
   ServiceRegistry,
   Settings,
@@ -28,7 +29,10 @@ type RenderDashboardOptions = {
   hotkeys?: FormattedHotkeys;
   pomelloConfig?: Partial<PomelloServiceConfig>;
   route?: DashboardRoute;
-  services?: ServiceFactory[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  serviceConfigs?: Record<string, ServiceConfigActions<any>>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  services?: ServiceFactory[] | ServiceFactory<any>[];
   settings?: Partial<Settings>;
 };
 
@@ -59,6 +63,7 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
     appApi: options.appApi,
     serviceConfigs: {
       pomello: pomelloConfigActions,
+      ...options.serviceConfigs,
     },
     settings,
   });
@@ -67,13 +72,13 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
   const services = options.services ?? [createMockServiceFactory()];
 
   services.forEach(serviceFactory => {
-    serviceRegistry[serviceFactory.id] = serviceFactory;
+    serviceRegistry[serviceFactory.id] = serviceFactory as ServiceFactory;
   });
 
   const history = createMemoryHistory();
 
   history.set({
-    value: `/${options.route ?? 'productivity'}`,
+    value: `/${options.route ?? DashboardRoute.Productivity}`,
   });
 
   const result = render(() => (

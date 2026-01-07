@@ -2,7 +2,7 @@ import { createHttpResponse } from '@/__fixtures__/createHttpResponse';
 import { createMockServiceConfig } from '@/__fixtures__/createMockServiceConfig';
 import { mockServer } from '@/__fixtures__/mockServer';
 import { renderApp, RenderAppOptions } from '@/app/__fixtures__/renderApp';
-import { DefaultBodyType, http, HttpResponse, HttpResponseResolver, PathParams } from 'msw';
+import { DefaultBodyType, http, HttpResponseResolver, PathParams } from 'msw';
 import { createTrelloService } from '..';
 import { TRELLO_API_URL } from '../constants';
 import {
@@ -72,11 +72,6 @@ export const renderTrelloService = async ({
   cache = (await originalCreateTrelloCache)();
 
   mockServer.use(
-    http.get('foo', () => {
-      const foo = HttpResponse.json({ foo: 'bar' });
-
-      return foo;
-    }),
     http.get(
       `${TRELLO_API_URL}members/me`,
       createHttpResponse<TrelloMember>(generateTrelloMember(), trelloApi?.fetchBoardsAndLists)

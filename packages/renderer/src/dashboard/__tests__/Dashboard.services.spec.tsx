@@ -1,5 +1,5 @@
 import { createMockServiceFactory } from '@/__fixtures__/createMockService';
-import { useConfigureServiceConfig } from '@/shared/context/ConfigureServiceConfigContext';
+import { useConfigureService } from '@/shared/context/ConfigureServiceContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { JSX } from 'solid-js';
 import { renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
@@ -111,7 +111,7 @@ describe('Dashboard - Services', () => {
       service: {
         ConfigureView: () => {
           const { getServiceConfigValue, serviceConfig, stageServiceConfigValue } =
-            useConfigureServiceConfig<{ text: string }>();
+            useConfigureService<{ text: string }>();
 
           const handleTextInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
             stageServiceConfigValue('text', event.currentTarget.value);

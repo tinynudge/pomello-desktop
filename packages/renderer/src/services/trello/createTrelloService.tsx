@@ -1,8 +1,4 @@
 import { ServiceFactory } from '@pomello-desktop/domain';
-import { TrelloAuthView } from './TrelloAuthView';
-import { TrelloInitializingView } from './TrelloInitializingView';
-import { TrelloRuntimeProvider } from './TrelloRuntimeContext';
-import { TrelloSelectOption } from './TrelloSelectOption';
 import { createPomelloEventListeners } from './createPomelloEventListeners';
 import { createTrelloCache } from './createTrelloCache';
 import { createTrelloConfig } from './createTrelloConfig';
@@ -20,6 +16,11 @@ import { onTaskOpen } from './onTaskOpen';
 import { onTaskSelect } from './onTaskSelect';
 import { onTaskTimerEndPromptHandled } from './onTaskTimerEndPromptHandled';
 import { onTrelloServiceMount } from './onTrelloServiceMount';
+import { TrelloAuthView } from './TrelloAuthView';
+import { TrelloConfigureView } from './TrelloConfigureView';
+import { TrelloInitializingView } from './TrelloInitializingView';
+import { TrelloRuntimeProvider } from './TrelloRuntimeContext';
+import { TrelloSelectOption } from './TrelloSelectOption';
 
 export const createTrelloService: ServiceFactory<TrelloConfigStore> = runtime => {
   const trelloRuntime: TrelloRuntime = {
@@ -30,6 +31,7 @@ export const createTrelloService: ServiceFactory<TrelloConfigStore> = runtime =>
 
   return {
     AuthView: () => <TrelloAuthView setToken={trelloRuntime.config.actions.tokenSet} />,
+    ConfigureView: TrelloConfigureView,
     Container: props => (
       <TrelloRuntimeProvider defaultRuntime={trelloRuntime} children={props.children} />
     ),
