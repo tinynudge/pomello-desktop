@@ -1,6 +1,6 @@
 import { MainHeader } from '@/dashboard/components/MainHeader';
 import { ServiceContainer } from '@/shared/components/ServiceContainer';
-import { ConfigureServiceConfigProvider } from '@/shared/context/ConfigureServiceConfigContext';
+import { ConfigureServiceProvider } from '@/shared/context/ConfigureServiceContext';
 import { useServiceResource } from '@/shared/context/ServiceContext';
 import { ServiceConfig, StoreContents } from '@pomello-desktop/domain';
 import { Component, Show } from 'solid-js';
@@ -12,7 +12,7 @@ export const ServiceView: Component = () => {
   return (
     <Show when={getServiceResource()}>
       {getServiceResource => (
-        <ConfigureServiceConfigProvider
+        <ConfigureServiceProvider
           initialServiceConfig={getServiceResource().config as ServiceConfig<StoreContents> | null}
         >
           <ServiceContainer>
@@ -21,7 +21,7 @@ export const ServiceView: Component = () => {
               {getConfigureView => <Dynamic component={getConfigureView()} />}
             </Show>
           </ServiceContainer>
-        </ConfigureServiceConfigProvider>
+        </ConfigureServiceProvider>
       )}
     </Show>
   );

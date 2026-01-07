@@ -15,5 +15,6 @@ export type { TrelloLog } from './TrelloLog';
 export type { TrelloLogBuilder } from './TrelloLogBuilder';
 export type { TrelloLogTime } from './TrelloLogTime';
 export type { TrelloMember } from './TrelloMember';
+export type { TrelloPreferences } from './TrelloPreferences';
 export type { TrelloPreferencesMap } from './TrelloPreferencesMap';
 export type { TrelloRuntime } from './TrelloRuntime';

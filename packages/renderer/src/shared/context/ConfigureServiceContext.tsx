@@ -1,14 +1,14 @@
 import { SaveChangesBanner } from '@/dashboard/components/SaveChangesBanner';
 import { ServiceConfig, StoreContents } from '@pomello-desktop/domain';
 import { ParentComponent, Show, createContext, onCleanup, onMount, useContext } from 'solid-js';
-import { createStore, reconcile } from 'solid-js/store';
+import { createStore, reconcile, unwrap } from 'solid-js/store';
 import { assertNonNullish } from '../helpers/assertNonNullish';
 
 type SetServiceConfigFunction<TServiceConfig, TKey extends keyof TServiceConfig> = (
   state: TServiceConfig[TKey]
 ) => TServiceConfig[TKey];
 
-type ConfigureServiceConfigContextValue<TServiceConfig = StoreContents> = {
+type ConfigureServiceContextValue<TServiceConfig = StoreContents> = {
   getServiceConfigValue<TKey extends keyof TServiceConfig>(key: TKey): TServiceConfig[TKey];
   serviceConfig: TServiceConfig;
   stageServiceConfigValue<TKey extends keyof TServiceConfig>(
@@ -17,30 +17,23 @@ type ConfigureServiceConfigContextValue<TServiceConfig = StoreContents> = {
   ): void;
 };
 
-type ConfigureServiceConfigProviderProps = {
+type ConfigureServiceProviderProps = {
   initialServiceConfig: ServiceConfig<StoreContents> | null;
 };
 
-const ConfigureServiceConfigContext = createContext<ConfigureServiceConfigContextValue | undefined>(
-  undefined
-);
+const ConfigureServiceContext = createContext<ConfigureServiceContextValue | undefined>(undefined);
 
-export const useConfigureServiceConfig = <
+export const useConfigureService = <
   TServiceConfig = void,
->(): ConfigureServiceConfigContextValue<TServiceConfig> => {
-  const context = useContext(ConfigureServiceConfigContext);
+>(): ConfigureServiceContextValue<TServiceConfig> => {
+  const context = useContext(ConfigureServiceContext);
 
-  assertNonNullish(
-    context,
-    'useConfigureServiceConfig must be used inside <ConfigureServiceConfigProvider>'
-  );
+  assertNonNullish(context, 'useConfigureService must be used inside <ConfigureServiceProvider>');
 
-  return context as ConfigureServiceConfigContextValue<TServiceConfig>;
+  return context as ConfigureServiceContextValue<TServiceConfig>;
 };
 
-export const ConfigureServiceConfigProvider: ParentComponent<
-  ConfigureServiceConfigProviderProps
-> = props => {
+export const ConfigureServiceProvider: ParentComponent<ConfigureServiceProviderProps> = props => {
   const [serviceConfig, setServiceConfig] = createStore<StoreContents>(
     props.initialServiceConfig?.get() ?? {}
   );
@@ -65,7 +58,7 @@ export const ConfigureServiceConfigProvider: ParentComponent<
 
     if (getHasStagedChanges()) {
       for (const key of Object.keys(stagedServiceConfig)) {
-        props.initialServiceConfig.set(key, stagedServiceConfig[key]);
+        props.initialServiceConfig.set(key, unwrap(stagedServiceConfig[key]));
       }
 
       setStagedServiceConfig(reconcile({}));
@@ -82,7 +75,7 @@ export const ConfigureServiceConfigProvider: ParentComponent<
   };
 
   return (
-    <ConfigureServiceConfigContext.Provider
+    <ConfigureServiceContext.Provider
       value={{
         getServiceConfigValue,
         serviceConfig,
@@ -96,6 +89,6 @@ export const ConfigureServiceConfigProvider: ParentComponent<
           onUndoClick={clearStagedServiceConfig}
         />
       </Show>
-    </ConfigureServiceConfigContext.Provider>
+    </ConfigureServiceContext.Provider>
   );
 };
