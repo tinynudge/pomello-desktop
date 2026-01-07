@@ -10,6 +10,17 @@ describe('UI - Panel', () => {
     ).toBeInTheDocument();
   });
 
+  it('should render a subheading if provided', async () => {
+    renderDashboardComponent(() => (
+      <Panel
+        heading="Head shoulder knees and toes"
+        subHeading="And eyes and ears and mouth and nose"
+      />
+    ));
+
+    expect(screen.getByText('And eyes and ears and mouth and nose')).toBeInTheDocument();
+  });
+
   it('should render the panel list', async () => {
     renderDashboardComponent(() => (
       <Panel heading="H.S.K.T.">
