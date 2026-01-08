@@ -11,6 +11,10 @@ type SetServiceConfigFunction<TServiceConfig, TKey extends keyof TServiceConfig>
 type ConfigureServiceContextValue<TServiceConfig = StoreContents> = {
   getServiceConfigValue<TKey extends keyof TServiceConfig>(key: TKey): TServiceConfig[TKey];
   serviceConfig: TServiceConfig;
+  setServiceConfigValue<TKey extends keyof TServiceConfig>(
+    key: TKey,
+    value: TServiceConfig[TKey]
+  ): void;
   stageServiceConfigValue<TKey extends keyof TServiceConfig>(
     key: TKey,
     value: TServiceConfig[TKey] | SetServiceConfigFunction<TServiceConfig, TKey>
@@ -70,6 +74,10 @@ export const ConfigureServiceProvider: ParentComponent<ConfigureServiceProviderP
   const getServiceConfigValue = (value: string) =>
     stagedServiceConfig[value] ?? serviceConfig[value];
 
+  const setServiceConfigValue = (key: string, value: unknown) => {
+    props.initialServiceConfig?.set(key, value);
+  };
+
   const stageServiceConfigValue = (key: string, value: unknown) => {
     setStagedServiceConfig(key, value);
   };
@@ -79,6 +87,7 @@ export const ConfigureServiceProvider: ParentComponent<ConfigureServiceProviderP
       value={{
         getServiceConfigValue,
         serviceConfig,
+        setServiceConfigValue,
         stageServiceConfigValue,
       }}
     >

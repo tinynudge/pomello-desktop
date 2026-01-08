@@ -34,6 +34,7 @@ export { PomelloEventType } from './PomelloEventType';
 export type { PomelloServiceConfig } from './PomelloServiceConfig';
 export type { PomelloUser } from './PomelloUser';
 export type { RegisterStoreOptions } from './RegisterStoreOptions';
+export type { ReinitializePomelloServiceOptions } from './ReinitializePomelloServiceOptions';
 export type { RemoveTask } from './RemoveTask';
 export { RendererEvent } from './RendererEvent';
 export type { Runtime } from './Runtime';

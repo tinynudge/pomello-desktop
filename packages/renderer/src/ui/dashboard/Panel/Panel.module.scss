@@ -20,7 +20,19 @@
   margin: 0 calc(var(--content-padding) * -1);
   background-color: var(--dashboard-panel-background);
 
-  &:not(.isPaddingDisabled) {
+  &[data-padding='none'] {
+    padding: 0;
+  }
+
+  &[data-padding='small'] {
+    padding: 18px var(--content-padding);
+  }
+
+  &[data-padding='medium'] {
     padding: 24px var(--content-padding);
+  }
+
+  &[data-padding='large'] {
+    padding: 32px var(--content-padding);
   }
 }

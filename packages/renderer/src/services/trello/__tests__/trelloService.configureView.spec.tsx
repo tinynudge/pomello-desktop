@@ -8,6 +8,34 @@ describe('Trello service - Configure view', () => {
     expect(screen.getByRole('heading', { name: 'Trello', level: 1 })).toBeInTheDocument();
   });
 
+  it('should render the connection status', async () => {
+    const { appApi, config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        token: undefined,
+      },
+    });
+
+    const connectionSection = within(screen.getByRole('region', { name: 'Connection' }));
+
+    expect(
+      connectionSection.getByRole('heading', { name: 'Connection', level: 2 })
+    ).toBeInTheDocument();
+    expect(connectionSection.getByText('Trello account: Not connected')).toBeInTheDocument();
+    expect(connectionSection.getByRole('button', { name: 'Login' })).toBeInTheDocument();
+
+    await userEvent.click(connectionSection.getByRole('button', { name: 'Login' }));
+
+    expect(appApi.showAuthWindow).toHaveBeenCalledWith({
+      serviceId: 'trello',
+      type: 'service',
+    });
+
+    config.set('token', 'mock-token');
+
+    expect(connectionSection.getByText('Trello account: Connected')).toBeInTheDocument();
+    expect(connectionSection.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
+  });
+
   it('should render the global preferences with default values', async () => {
     await renderTrelloConfigureView({
       config: {

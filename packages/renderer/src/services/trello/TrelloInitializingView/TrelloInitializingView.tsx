@@ -46,7 +46,7 @@ export const TrelloInitializingView: InitializingView = props => {
   });
 
   createEffect(() => {
-    if (!config.store.currentList || !cache.store.lists) {
+    if (!config.store.token || !config.store.currentList || !cache.store.lists) {
       return;
     }
 

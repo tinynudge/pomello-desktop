@@ -1,5 +1,6 @@
 import {
   ActiveService,
+  ReinitializePomelloServiceOptions,
   RendererEvent,
   Service,
   ServiceCleanUpCallback,
@@ -98,8 +99,14 @@ export const ServiceProvider: ParentComponent<ServiceProviderProps> = props => {
       window.app.getTranslations({ serviceId: createService.id }),
     ]);
 
-    const reinitializePomelloService = () => {
-      window.postMessage(RendererEvent.ReinitializePomelloService, window.location.origin);
+    const reinitializePomelloService = (options: ReinitializePomelloServiceOptions) => {
+      window.postMessage(
+        {
+          type: RendererEvent.ReinitializePomelloService,
+          payload: options,
+        },
+        window.location.origin
+      );
     };
 
     translations.addNamespace('service', serviceTranslations);

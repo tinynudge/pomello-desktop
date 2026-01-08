@@ -19,7 +19,7 @@ export const ServicesView = () => {
   return (
     <>
       <MainHeader heading={t('routeServices')} />
-      <Panel heading={t('allServicesHeader')} isPaddingDisabled>
+      <Panel heading={t('allServicesHeader')} padding="none">
         <Panel.List aria-label={t('allServicesLabel')}>
           <For each={Object.values(services)}>
             {service => (

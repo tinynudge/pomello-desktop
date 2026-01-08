@@ -1,5 +1,6 @@
 import { Logger } from './Logger';
 import { PomelloUser } from './PomelloUser';
+import { ReinitializePomelloServiceOptions } from './ReinitializePomelloServiceOptions';
 import { ServiceCleanUpCallback } from './ServiceCleanUpCallback';
 import { ServiceConfig } from './ServiceConfig';
 import { Settings } from './Settings';
@@ -10,7 +11,7 @@ export type ServiceRuntime<TConfig> = {
   getUser(): PomelloUser | undefined;
   logger: Logger;
   onServiceCleanUp(callback: ServiceCleanUpCallback): void;
-  reinitializePomelloService(): void;
+  reinitializePomelloService(options?: ReinitializePomelloServiceOptions): void;
   settings: Settings;
   translate: Translate;
 };

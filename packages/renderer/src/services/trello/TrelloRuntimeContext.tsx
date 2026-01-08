@@ -29,8 +29,10 @@ export const TrelloRuntimeProvider: TrelloRuntimeProviderProps = props => {
   createEffect(() => {
     const { config, reinitializePomelloService } = props.defaultRuntime;
 
-    if (!config.store.currentList) {
-      reinitializePomelloService();
+    if (!config.store.currentList || !config.store.token) {
+      reinitializePomelloService({
+        preserveActiveTimer: !!config.store.token,
+      });
     }
   });
 

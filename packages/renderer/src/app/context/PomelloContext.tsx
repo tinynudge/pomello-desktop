@@ -35,9 +35,14 @@ export const PomelloProvider: ParentComponent<PomelloProviderProps> = props => {
         return;
       }
 
-      if (event.data === RendererEvent.ReinitializePomelloService) {
+      if (
+        event.data &&
+        typeof event.data === 'object' &&
+        'type' in event.data &&
+        event.data.type === RendererEvent.ReinitializePomelloService
+      ) {
         props.defaultService.reset({
-          preserveActiveTimer: true,
+          ...event.data.payload,
           reinitialize: true,
         });
       }
