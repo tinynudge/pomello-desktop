@@ -19,7 +19,7 @@ export const SettingsView: Component = () => {
       </MainHeader>
       <For each={settingsByCategory}>
         {category => (
-          <Panel heading={t(category.headingKey)} isPaddingDisabled>
+          <Panel heading={t(category.headingKey)} padding="none">
             <Panel.List aria-label={t(category.listLabelKey)}>
               <For each={category.settings}>
                 {setting => (

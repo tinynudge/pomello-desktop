@@ -64,7 +64,7 @@ export const SoundsView: Component = () => {
       <MainHeader heading={t('routeSounds')} />
       <For each={Object.entries(TimerType)}>
         {([formattedType, type]) => (
-          <Panel heading={t(`${formattedType}SoundsHeader`)} isPaddingDisabled>
+          <Panel heading={t(`${formattedType}SoundsHeader`)} padding="none">
             <Panel.List aria-label={t(`${formattedType}SoundsLabel`)}>
               <For each={timerPhases}>
                 {phase => (
@@ -80,7 +80,7 @@ export const SoundsView: Component = () => {
           </Panel>
         )}
       </For>
-      <Panel heading={t('customSoundsHeader')} isPaddingDisabled>
+      <Panel heading={t('customSoundsHeader')} padding="none">
         <Panel.List aria-label={t('customSoundsHeader')}>
           <Show when={getHasCustomSounds()} fallback={<NoCustomSoundsItem />}>
             <Index each={Object.keys(getSetting('sounds'))}>

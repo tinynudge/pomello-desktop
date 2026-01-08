@@ -39,7 +39,7 @@ export const KeyboardShortcutsView: Component = () => {
       <MainHeader heading={t('routeKeyboardShortcuts')} />
       <For each={hotkeysByCategory}>
         {category => (
-          <Panel heading={t(category.headingKey)} isPaddingDisabled>
+          <Panel heading={t(category.headingKey)} padding="none">
             <Panel.List aria-label={t(category.listLabelKey)}>
               <For each={category.hotkeyCommands}>
                 {command => (

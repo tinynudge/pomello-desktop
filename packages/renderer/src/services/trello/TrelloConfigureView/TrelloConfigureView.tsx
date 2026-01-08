@@ -4,6 +4,7 @@ import { Panel } from '@/ui/dashboard/Panel';
 import { ToggleSwitch } from '@/ui/dashboard/ToggleSwitch';
 import { Component, For } from 'solid-js';
 import { TrelloConfigStore, TrelloPreferences } from '../domain';
+import { ConnectionPanel } from './ConnectionPanel';
 
 const preferences = [
   { preference: 'addChecks', default: true },
@@ -31,9 +32,10 @@ export const TrelloConfigureView: Component = () => {
 
   return (
     <>
+      <ConnectionPanel />
       <Panel
         heading={t('service:defaultPreferencesHeading')}
-        isPaddingDisabled
+        padding="none"
         subHeading={t('service:defaultPreferencesSubheading')}
       >
         <Panel.List aria-label={t('service:defaultPreferencesLabel')}>

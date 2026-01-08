@@ -9,5 +9,9 @@ export const handleSetStoreItem = (
 ): void => {
   const store = runtime.storeManager.getOrFailStore(storeName);
 
-  store.set(key, value);
+  if (value === undefined) {
+    store.delete(key);
+  } else {
+    store.set(key, value);
+  }
 };
