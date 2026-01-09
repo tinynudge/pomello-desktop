@@ -3,20 +3,16 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Component, Show } from 'solid-js';
-import { createTrelloService } from '../createTrelloService';
 import { TrelloConfigStore } from '../domain';
 import styles from './ConnectionPanel.module.scss';
 
-export const ConnectionPanel: Component = () => {
+type ConnectionPanelProps = {
+  onLoginClick(): void;
+};
+
+export const ConnectionPanel: Component<ConnectionPanelProps> = props => {
   const { serviceConfig, setServiceConfigValue } = useConfigureService<TrelloConfigStore>();
   const t = useTranslate();
-
-  const handleLoginClick = () => {
-    window.app.showAuthWindow({
-      serviceId: createTrelloService.id,
-      type: 'service',
-    });
-  };
 
   const handleLogoutClick = () => {
     setServiceConfigValue('token', undefined);
@@ -36,7 +32,11 @@ export const ConnectionPanel: Component = () => {
         </span>
         <Show
           when={getIsConnected()}
-          fallback={<Button onClick={handleLoginClick}>{t('service:login')}</Button>}
+          fallback={
+            <Button onClick={props.onLoginClick} variant="primary">
+              {t('service:login')}
+            </Button>
+          }
         >
           <Button onClick={handleLogoutClick}>{t('service:logout')}</Button>
         </Show>
