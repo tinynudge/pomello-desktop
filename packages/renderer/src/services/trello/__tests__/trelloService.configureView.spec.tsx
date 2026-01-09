@@ -15,12 +15,12 @@ describe('Trello service - Configure view', () => {
       },
     });
 
-    const connectionSection = within(screen.getByRole('region', { name: 'Connection' }));
+    const connectionSection = within(screen.getByRole('region', { name: 'Account Connection' }));
 
     expect(
-      connectionSection.getByRole('heading', { name: 'Connection', level: 2 })
+      connectionSection.getByRole('heading', { name: 'Account Connection', level: 2 })
     ).toBeInTheDocument();
-    expect(connectionSection.getByText('Trello account: Not connected')).toBeInTheDocument();
+    expect(connectionSection.getByText('Status: Not connected')).toBeInTheDocument();
     expect(connectionSection.getByRole('button', { name: 'Login' })).toBeInTheDocument();
 
     await userEvent.click(connectionSection.getByRole('button', { name: 'Login' }));
@@ -32,7 +32,7 @@ describe('Trello service - Configure view', () => {
 
     config.set('token', 'mock-token');
 
-    expect(connectionSection.getByText('Trello account: Connected')).toBeInTheDocument();
+    expect(connectionSection.getByText('Status: Connected')).toBeInTheDocument();
     expect(connectionSection.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
   });
 
@@ -162,5 +162,43 @@ describe('Trello service - Configure view', () => {
 
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(config.get().preferences?.global?.keepLogs).toBe(true);
+  });
+
+  it('should show a login prompt in the board & list preferences panel when not connected', async () => {
+    const { appApi, config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        token: undefined,
+      },
+    });
+
+    const boardListPreferencesSection = within(
+      screen.getByRole('region', {
+        name: 'Board and List Preferences',
+      })
+    );
+
+    expect(
+      boardListPreferencesSection.getByText(
+        'You must connect your Trello account to view your board and list preferences.'
+      )
+    ).toBeInTheDocument();
+
+    const loginButton = boardListPreferencesSection.getByRole('button', { name: 'Login' });
+    expect(loginButton).toBeInTheDocument();
+
+    await userEvent.click(loginButton);
+
+    expect(appApi.showAuthWindow).toHaveBeenCalledWith({
+      serviceId: 'trello',
+      type: 'service',
+    });
+
+    config.set('token', 'mock-token');
+
+    expect(
+      boardListPreferencesSection.queryByText(
+        'You must connect your Trello account to view your board and list preferences.'
+      )
+    ).not.toBeInTheDocument();
   });
 });

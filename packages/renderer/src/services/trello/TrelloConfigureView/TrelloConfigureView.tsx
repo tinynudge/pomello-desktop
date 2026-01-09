@@ -4,7 +4,9 @@ import { Panel } from '@/ui/dashboard/Panel';
 import { ToggleSwitch } from '@/ui/dashboard/ToggleSwitch';
 import { Component, For } from 'solid-js';
 import { TrelloConfigStore, TrelloPreferences } from '../domain';
+import { BoardListPreferencesPanel } from './BoardListPreferencesPanel';
 import { ConnectionPanel } from './ConnectionPanel';
+import { createTrelloService } from '../createTrelloService';
 
 const preferences = [
   { preference: 'addChecks', default: true },
@@ -30,9 +32,16 @@ export const TrelloConfigureView: Component = () => {
     });
   };
 
+  const handleLoginClick = () => {
+    window.app.showAuthWindow({
+      serviceId: createTrelloService.id,
+      type: 'service',
+    });
+  };
+
   return (
     <>
-      <ConnectionPanel />
+      <ConnectionPanel onLoginClick={handleLoginClick} />
       <Panel
         heading={t('service:defaultPreferencesHeading')}
         padding="none"
@@ -65,6 +74,7 @@ export const TrelloConfigureView: Component = () => {
           </For>
         </Panel.List>
       </Panel>
+      <BoardListPreferencesPanel onLoginClick={handleLoginClick} />
     </>
   );
 };
