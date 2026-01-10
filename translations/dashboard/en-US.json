@@ -76,6 +76,7 @@
   "invalidTime": "A valid number is required",
   "issueFound": "Issue found",
   "lastSyncDate": "Last synced: {{date}}",
+  "loading": "Loading",
   "longBreakSoundsHeader": "Long break timer",
   "longBreakSoundsLabel": "Long break timer sounds",
   "longBreakTimerTooltip": "{{count}}. Edit long break timer",

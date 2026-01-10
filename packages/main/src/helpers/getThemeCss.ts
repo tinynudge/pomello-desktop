@@ -206,6 +206,7 @@ const defaultTheme: ThemeConfig = {
       background: [colors.lightAlt, colors.dark],
     },
     focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
+    'loading-dots': [colors.primary, colors.primaryDark],
     input: {
       default: {
         border: [opacity(colors.dark, 24), colors.dark],
