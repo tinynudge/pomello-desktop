@@ -1,0 +1,8 @@
+{
+      "errorDetails": "Details",
+      "errorDialogCancel": "Cancel",
+      "errorDialogCopyError": "Copy Error",
+      "errorMessage": "Something went wrong",
+      "errorRetry": "Retry",
+      "unexpectedErrorTitle": "An unexpected error occurred: {{message}}"
+}

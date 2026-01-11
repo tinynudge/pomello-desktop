@@ -7,7 +7,8 @@ import { PomelloServiceConfig, Settings } from '@pomello-desktop/domain';
 import { render } from '@solidjs/testing-library';
 import userEvent from '@testing-library/user-event';
 import { JSX } from 'solid-js';
-import translations from '../../../../../../translations/dashboard/en-US.json';
+import dashboardTranslations from '../../../../../../translations/dashboard/en-US.json';
+import sharedTranslations from '../../../../../../translations/shared/en-US.json';
 
 export * from '@solidjs/testing-library';
 
@@ -36,7 +37,7 @@ export const renderDashboardComponent = (
           initialPomelloConfig={pomelloConfig}
           initialServices={{}}
           initialSettings={settings}
-          initialTranslations={translations}
+          initialTranslations={{ ...sharedTranslations, ...dashboardTranslations }}
         >
           {props.children}
         </RuntimeProvider>

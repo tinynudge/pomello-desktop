@@ -22,7 +22,8 @@ import {
 import { render } from '@solidjs/testing-library';
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query';
 import userEvent from '@testing-library/user-event';
-import translations from '../../../../../translations/main/en-US.json';
+import mainTranslations from '../../../../../translations/main/en-US.json';
+import sharedTranslations from '../../../../../translations/shared/en-US.json';
 import { App } from '../components/App';
 import { HotkeysProvider } from '../context/HotkeysContext';
 import { PomelloProvider } from '../context/PomelloContext';
@@ -115,7 +116,7 @@ export const renderApp = (options: RenderAppOptions = {}) => {
             initialPomelloConfig={pomelloConfig}
             initialServices={services as ServiceRegistry}
             initialSettings={settings}
-            initialTranslations={translations}
+            initialTranslations={{ ...sharedTranslations, ...mainTranslations }}
           >
             <PomelloApiProvider initialPomelloApi={pomelloApi}>
               <ServiceProvider initialServiceId={serviceId}>

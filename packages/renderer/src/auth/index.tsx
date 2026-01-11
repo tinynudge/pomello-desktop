@@ -15,12 +15,14 @@ const renderAuth = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [pomelloConfig, settings, themeCss, translations] = await Promise.all([
-    getPomelloServiceConfig(),
-    window.app.getSettings(),
-    window.app.getThemeCss(),
-    window.app.getTranslations('main'),
-  ]);
+  const [pomelloConfig, settings, themeCss, sharedTranslations, mainTranslations] =
+    await Promise.all([
+      getPomelloServiceConfig(),
+      window.app.getSettings(),
+      window.app.getThemeCss(),
+      window.app.getTranslations('shared'),
+      window.app.getTranslations('main'),
+    ]);
 
   const logger = createLogger();
 
@@ -46,7 +48,7 @@ const renderAuth = async () => {
         initialPomelloConfig={pomelloConfig}
         initialServices={services}
         initialSettings={settings}
-        initialTranslations={translations}
+        initialTranslations={{ ...sharedTranslations, ...mainTranslations }}
       >
         <ServiceProvider freezeServiceId initialServiceId={serviceId}>
           <Auth authWindow={authWindow} />
