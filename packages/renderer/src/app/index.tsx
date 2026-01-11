@@ -27,9 +27,18 @@ const renderApp = async () => {
     throw new Error('Unable to find container with id "root"');
   }
 
-  const [hotkeys, themeCss, translations, pomelloConfig, serviceId, settings] = await Promise.all([
+  const [
+    hotkeys,
+    themeCss,
+    sharedTranslations,
+    mainTranslations,
+    pomelloConfig,
+    serviceId,
+    settings,
+  ] = await Promise.all([
     window.app.getHotkeys(),
     window.app.getThemeCss(),
+    window.app.getTranslations('shared'),
     window.app.getTranslations('main'),
     getPomelloServiceConfig(),
     window.app.getActiveServiceId(),
@@ -52,7 +61,7 @@ const renderApp = async () => {
               initialPomelloConfig={pomelloConfig}
               initialServices={services}
               initialSettings={settings}
-              initialTranslations={translations}
+              initialTranslations={{ ...sharedTranslations, ...mainTranslations }}
             >
               <PomelloApiProvider initialPomelloApi={pomelloApi}>
                 <ServiceProvider initialServiceId={serviceId}>

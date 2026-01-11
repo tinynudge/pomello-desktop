@@ -1,1 +1,1 @@
-export type TranslationLocation = 'main' | 'dashboard' | { serviceId: string };
+export type TranslationLocation = 'main' | 'dashboard' | 'shared' | { serviceId: string };

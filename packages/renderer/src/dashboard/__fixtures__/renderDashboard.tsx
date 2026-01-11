@@ -17,7 +17,8 @@ import {
 import { MemoryRouter, createMemoryHistory } from '@solidjs/router';
 import { render } from '@solidjs/testing-library';
 import userEvent from '@testing-library/user-event';
-import translations from '../../../../../translations/dashboard/en-US.json';
+import dashboardTranslations from '../../../../../translations/dashboard/en-US.json';
+import sharedTranslations from '../../../../../translations/shared/en-US.json';
 import { Layout } from '../components/Layout';
 import { Routes } from '../components/Routes';
 import { DashboardProvider } from '../context/DashboardContext';
@@ -87,7 +88,7 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
       initialPomelloConfig={pomelloConfig}
       initialServices={serviceRegistry}
       initialSettings={settings}
-      initialTranslations={translations}
+      initialTranslations={{ ...sharedTranslations, ...dashboardTranslations }}
     >
       <DashboardProvider initialDefaultHotkeys={mockHotkeys} initialHotkeys={hotkeys}>
         <MemoryRouter history={history} root={Layout}>
