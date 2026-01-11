@@ -1,0 +1,17 @@
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.illustration {
+  width: 220px;
+  color: var(--dashboard-illustration-stroke);
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
