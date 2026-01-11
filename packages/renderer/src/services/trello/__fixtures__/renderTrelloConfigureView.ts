@@ -4,13 +4,17 @@ import { DashboardRoute } from '@pomello-desktop/domain';
 import { createTrelloService } from '../createTrelloService';
 import { TrelloConfigStore } from '../domain';
 import translations from '../translations/en-US.json';
+import { mockTrelloApi, TrelloApiResponses } from './mockTrelloApi';
 
 type RenderTrelloConfigureViewOptions = {
   appApi?: Partial<AppApi>;
   config?: Partial<TrelloConfigStore>;
+  trelloApi?: Partial<TrelloApiResponses>;
 };
 
 export const renderTrelloConfigureView = async (options: RenderTrelloConfigureViewOptions = {}) => {
+  mockTrelloApi(options.trelloApi);
+
   const [config, configActions] = createMockServiceConfig(createTrelloService.id, {
     token: 'MY_TRELLO_TOKEN',
     currentList: 'TRELLO_LIST_ID',
