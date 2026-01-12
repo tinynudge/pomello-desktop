@@ -2,11 +2,13 @@ import { useConfigureService } from '@/shared/context/ConfigureServiceContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Panel } from '@/ui/dashboard/Panel';
 import { ToggleSwitch } from '@/ui/dashboard/ToggleSwitch';
+import { QueryClientProvider } from '@tanstack/solid-query';
 import { Component, For } from 'solid-js';
+import { createTrelloQueryClient } from '../createTrelloQueryClient';
+import { createTrelloService } from '../createTrelloService';
 import { TrelloConfigStore, TrelloPreferences } from '../domain';
 import { BoardListPreferencesPanel } from './BoardListPreferencesPanel';
 import { ConnectionPanel } from './ConnectionPanel';
-import { createTrelloService } from '../createTrelloService';
 
 const preferences = [
   { preference: 'addChecks', default: true },
@@ -40,7 +42,7 @@ export const TrelloConfigureView: Component = () => {
   };
 
   return (
-    <>
+    <QueryClientProvider client={createTrelloQueryClient()}>
       <ConnectionPanel onLoginClick={handleLoginClick} />
       <Panel
         heading={t('service:defaultPreferencesHeading')}
@@ -75,6 +77,6 @@ export const TrelloConfigureView: Component = () => {
         </Panel.List>
       </Panel>
       <BoardListPreferencesPanel onLoginClick={handleLoginClick} />
-    </>
+    </QueryClientProvider>
   );
 };
