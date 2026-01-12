@@ -1,8 +1,12 @@
 import { useConfigureService } from '@/shared/context/ConfigureServiceContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
+import { Error } from '@/ui/dashboard/Error';
+import { LoadingDots } from '@/ui/dashboard/LoadingDots/LoadingDots';
 import { Panel } from '@/ui/dashboard/Panel';
-import { Component, Show } from 'solid-js';
+import { useQuery } from '@tanstack/solid-query';
+import { Component, Match, Show, Switch } from 'solid-js';
+import { fetchBoardsAndLists } from '../api/fetchBoardsAndLists';
 import { TrelloConfigStore } from '../domain';
 import styles from './BoardListPreferencesPanel.module.scss';
 
@@ -14,10 +18,15 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
   const { getServiceConfigValue } = useConfigureService<TrelloConfigStore>();
   const t = useTranslate();
 
+  const boardsAndLists = useQuery(() => ({
+    queryFn: fetchBoardsAndLists,
+    queryKey: ['boardsAndLists'],
+  }));
+
   const getHasToken = () => !!getServiceConfigValue('token');
 
   return (
-    <Panel heading={t('service:boardListPreferencesHeading')} padding={'large'}>
+    <Panel heading={t('service:boardListPreferencesHeading')} padding="none">
       <Show
         when={getHasToken()}
         fallback={
@@ -29,7 +38,24 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
           </div>
         }
       >
-        <>{/* Placeholder */}</>
+        <Switch>
+          <Match when={boardsAndLists.isError && boardsAndLists.error}>
+            {getError => (
+              <div class={styles.fallbackContent}>
+                <Error
+                  error={getError()}
+                  message={t('service:fetchBoardsListsErrorHeading')}
+                  retry={boardsAndLists.refetch}
+                />
+              </div>
+            )}
+          </Match>
+          <Match when={boardsAndLists.isPending}>
+            <div class={styles.fallbackContent}>
+              <LoadingDots />
+            </div>
+          </Match>
+        </Switch>
       </Show>
     </Panel>
   );

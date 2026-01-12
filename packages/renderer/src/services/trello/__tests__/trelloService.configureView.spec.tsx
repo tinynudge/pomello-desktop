@@ -1,5 +1,23 @@
-import { screen, within } from '@/dashboard/__fixtures__/renderDashboard';
+import {
+  screen,
+  waitForElementToBeRemoved,
+  within,
+} from '@/dashboard/__fixtures__/renderDashboard';
+import { QueryClient } from '@tanstack/solid-query';
+import { HttpResponse } from 'msw';
+import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
 import { renderTrelloConfigureView } from '../__fixtures__/renderTrelloConfigureView';
+
+vi.mock('../createTrelloQueryClient', () => ({
+  createTrelloQueryClient: () =>
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    }),
+}));
 
 describe('Trello service - Configure view', () => {
   it('should render the configure view', async () => {
@@ -200,5 +218,64 @@ describe('Trello service - Configure view', () => {
         'You must connect your Trello account to view your board and list preferences.'
       )
     ).not.toBeInTheDocument();
+  });
+
+  it('should show a loading state in the board & list preferences panel', async () => {
+    let settlePromise = () => {};
+    const fetchBoardsAndListsPromise = new Promise<void>(resolve => (settlePromise = resolve));
+
+    await renderTrelloConfigureView({
+      trelloApi: {
+        fetchBoardsAndLists: async () => {
+          await fetchBoardsAndListsPromise;
+
+          return HttpResponse.json(generateTrelloMember());
+        },
+      },
+    });
+
+    const boardListPreferencesSection = within(
+      screen.getByRole('region', { name: 'Board and List Preferences' })
+    );
+
+    expect(
+      boardListPreferencesSection.getByRole('status', { name: 'Loading' })
+    ).toBeInTheDocument();
+
+    settlePromise();
+
+    await waitForElementToBeRemoved(() =>
+      boardListPreferencesSection.queryByRole('status', { name: 'Loading' })
+    );
+  });
+
+  it('should handle errors when loading the board & list preferences', async () => {
+    const fetchBoardsAndLists = vi.fn().mockRejectedValue(new Error('💣'));
+
+    const { appApi, userEvent } = await renderTrelloConfigureView({
+      trelloApi: {
+        fetchBoardsAndLists,
+      },
+    });
+
+    const boardListPreferencesSection = within(
+      screen.getByRole('region', { name: 'Board and List Preferences' })
+    );
+
+    expect(
+      boardListPreferencesSection.getByText('Unable to fetch Trello boards and lists')
+    ).toBeInTheDocument();
+    expect(boardListPreferencesSection.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    expect(
+      boardListPreferencesSection.getByRole('button', { name: 'Details' })
+    ).toBeInTheDocument();
+
+    await userEvent.click(boardListPreferencesSection.getByRole('button', { name: 'Retry' }));
+
+    expect(fetchBoardsAndLists).toHaveBeenCalledTimes(2);
+
+    await userEvent.click(boardListPreferencesSection.getByRole('button', { name: 'Details' }));
+
+    expect(appApi.showMessageBox).toHaveBeenCalled();
   });
 });

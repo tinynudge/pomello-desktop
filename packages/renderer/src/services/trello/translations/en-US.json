@@ -45,6 +45,7 @@
   "durationSingularHourSingularMinute": "1 hour and 1 minute",
   "durationSingularMinute": "1 minute",
   "durationUnderMinute": "Less than a minute",
+  "fetchBoardsListsErrorHeading": "Unable to fetch Trello boards and lists",
   "invalidListBody": "An issue occurred when loading your previously used list.",
   "invalidListHeading": "Please select a new list",
   "login": "Login",
