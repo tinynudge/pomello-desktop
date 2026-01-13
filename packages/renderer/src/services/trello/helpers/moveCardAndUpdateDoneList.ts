@@ -1,3 +1,4 @@
+import { unwrap } from 'solid-js/store';
 import { moveCardToList } from '../api/moveCardToList';
 import { TrelloCard, TrelloRuntime } from '../domain';
 
@@ -20,7 +21,7 @@ export const moveCardAndUpdateDoneList = async (
     }
   }
 
-  const updatedPreferences = { ...config.store.preferences };
+  const updatedPreferences = { ...unwrap(config.store.preferences) };
   updatedPreferences.lists = {
     ...updatedPreferences.lists,
     [currentList.id]: {
