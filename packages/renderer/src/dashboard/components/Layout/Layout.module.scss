@@ -51,6 +51,13 @@
   flex-direction: column;
 }
 
+.error {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  background-color: var(--dashboard-content-background);
+}
+
 .content {
   --content-padding: 32px;
 
