@@ -208,7 +208,7 @@ const defaultTheme: ThemeConfig = {
     focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
     'loading-dots': [colors.primary, colors.primaryDark],
     illustration: {
-      stroke: [opacity(colors.black, 24), colors.dark],
+      stroke: [opacity(colors.black, 24), darken(colors.dark, 36)],
     },
     input: {
       default: {

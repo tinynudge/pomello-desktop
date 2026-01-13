@@ -1,3 +1,5 @@
+import { createMockServiceFactory } from '@/__fixtures__/createMockService';
+import { DashboardRoute } from '@pomello-desktop/domain';
 import { renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
 
 describe('Dashboard', () => {
@@ -137,5 +139,43 @@ describe('Dashboard', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: 'Log out' }));
 
     expect(screen.getByRole('heading', { name: 'Productivity', level: 1 })).toBeInTheDocument();
+  });
+
+  it('should render an error screen when an unexpected error occurs', async () => {
+    let count = 0;
+
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Services,
+      services: [
+        createMockServiceFactory({
+          service: {
+            ConfigureView: () => {
+              if (count === 0) {
+                count += 1;
+                throw new Error('💣');
+              }
+
+              return <div>Success!</div>;
+            },
+            displayName: 'Error Service',
+            id: 'error-service',
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }));
+
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Details' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Details' }));
+
+    expect(appApi.showMessageBox).toHaveBeenCalledOnce();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
+
+    expect(screen.getByText('Success!')).toBeInTheDocument();
   });
 });

@@ -1,9 +1,10 @@
 import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
+import { Error } from '@/ui/dashboard/Error';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { A } from '@solidjs/router';
 import { nanoid } from 'nanoid';
-import { For, ParentComponent, Show } from 'solid-js';
+import { ErrorBoundary, For, ParentComponent, Show } from 'solid-js';
 import { SaveChangesBanner } from '../SaveChangesBanner';
 import { AccountDetails } from './AccountDetails';
 import styles from './Layout.module.scss';
@@ -48,11 +49,22 @@ export const Layout: ParentComponent = props => {
         </div>
       </div>
       <main class={styles.main}>
-        <div class={styles.content}>{props.children}</div>
-        <div class={styles.saveChangesBanner} id={saveSettingsBannerId} />
-        <Show when={getHasStagedChanges()}>
-          <SaveChangesBanner onSaveClick={commitStagedSettings} onUndoClick={clearStagedSettings} />
-        </Show>
+        <ErrorBoundary
+          fallback={(error, resetErrorBoundary) => (
+            <div class={styles.error}>
+              <Error error={error} retry={resetErrorBoundary} />
+            </div>
+          )}
+        >
+          <div class={styles.content}>{props.children}</div>
+          <div class={styles.saveChangesBanner} id={saveSettingsBannerId} />
+          <Show when={getHasStagedChanges()}>
+            <SaveChangesBanner
+              onSaveClick={commitStagedSettings}
+              onUndoClick={clearStagedSettings}
+            />
+          </Show>
+        </ErrorBoundary>
       </main>
       <PremiumFeatureModal />
     </div>
