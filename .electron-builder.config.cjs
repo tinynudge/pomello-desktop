@@ -24,7 +24,7 @@ const config = {
     hardenedRuntime: true,
     target: {
       arch: 'universal',
-      target: 'dmg',
+      target: 'default',
     },
   },
   generateUpdatesFilesForAllChannels: true,
