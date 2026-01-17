@@ -1,0 +1,64 @@
+.panelAccordionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1em;
+  font-weight: normal;
+  gap: 32px;
+
+  &:not(:first-child) {
+    border-top: 1px solid var(--dashboard-panel-divider);
+  }
+
+  &.hasExtras:not(.hasActions) {
+    padding-right: 42px;
+  }
+
+  &.hasActions {
+    padding-right: 12px;
+  }
+
+  &:has(.button:focus-visible) {
+    outline: 3px solid var(--dashboard-focus);
+    outline-offset: -3px;
+  }
+}
+
+.caret {
+  color: var(--dashboard-text-hint);
+}
+
+.button {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  padding: 24px var(--content-padding);
+  border: 0;
+  background: none;
+  cursor: pointer;
+  gap: 8px;
+  text-align: left;
+
+  &:focus-visible {
+    outline: 0;
+  }
+
+  &[aria-expanded='true'] .caret {
+    transform: rotate(180deg);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.content {
+  padding: var(--content-padding);
+  padding-top: 8px;
+
+  &.isPaddingDisabled {
+    padding: 0;
+  }
+}
