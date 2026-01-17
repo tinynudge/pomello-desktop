@@ -1,3 +1,4 @@
+import { useTranslate } from '@/shared/context/RuntimeContext';
 import cc from 'classcat';
 import { nanoid } from 'nanoid';
 import { createSignal, JSX, ParentComponent, Show } from 'solid-js';
@@ -14,6 +15,8 @@ type PanelAccordionItemProps = {
 };
 
 export const PanelAccordionItem: ParentComponent<PanelAccordionItemProps> = props => {
+  const t = useTranslate();
+
   const [getIsHidden, setIsHidden] = createSignal(true);
 
   const handleTitleClick = () => {
@@ -47,7 +50,13 @@ export const PanelAccordionItem: ParentComponent<PanelAccordionItemProps> = prop
           <div class={styles.actions}>
             {props.titleExtras}
             <Show when={props.actions}>
-              {getActions => <ActionsMenu menuItems={getActions()} />}
+              {getActions => (
+                <ActionsMenu
+                  menuItems={getActions()}
+                  menuLabel={t('panelMoreOptionsMenuLabel')}
+                  tooltip={t('panelMoreOptionsTooltip')}
+                />
+              )}
             </Show>
           </div>
         </Show>
