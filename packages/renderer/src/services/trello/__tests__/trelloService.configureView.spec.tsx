@@ -5,6 +5,8 @@ import {
 } from '@/dashboard/__fixtures__/renderDashboard';
 import { QueryClient } from '@tanstack/solid-query';
 import { HttpResponse } from 'msw';
+import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
+import { generateTrelloList } from '../__fixtures__/generateTrelloList';
 import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
 import { renderTrelloConfigureView } from '../__fixtures__/renderTrelloConfigureView';
 
@@ -182,7 +184,7 @@ describe('Trello service - Configure view', () => {
     expect(config.get().preferences?.global?.keepLogs).toBe(true);
   });
 
-  it('should show a login prompt in the board & list preferences panel when not connected', async () => {
+  it('should show a login prompt in the boards and lists preferences panel when not connected', async () => {
     const { appApi, config, userEvent } = await renderTrelloConfigureView({
       config: {
         token: undefined,
@@ -220,7 +222,7 @@ describe('Trello service - Configure view', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should show a loading state in the board & list preferences panel', async () => {
+  it('should show a loading state in the boards and lists preferences panel', async () => {
     let settlePromise = () => {};
     const fetchBoardsAndListsPromise = new Promise<void>(resolve => (settlePromise = resolve));
 
@@ -249,7 +251,7 @@ describe('Trello service - Configure view', () => {
     );
   });
 
-  it('should handle errors when loading the board & list preferences', async () => {
+  it('should handle errors when loading the boards and lists preferences', async () => {
     const fetchBoardsAndLists = vi.fn().mockRejectedValue(new Error('💣'));
 
     const { appApi, userEvent } = await renderTrelloConfigureView({
@@ -277,5 +279,61 @@ describe('Trello service - Configure view', () => {
     await userEvent.click(boardListPreferencesSection.getByRole('button', { name: 'Details' }));
 
     expect(appApi.showMessageBox).toHaveBeenCalled();
+  });
+
+  it('should render the boards and lists', async () => {
+    const member = generateTrelloMember({
+      boards: [
+        generateTrelloBoard({
+          id: 'become-a-billionaire',
+          name: 'Become a billionaire',
+          lists: [
+            generateTrelloList({ id: 'ideas', name: 'Ideas' }),
+            generateTrelloList({ id: 'done', name: 'Done' }),
+          ],
+        }),
+      ],
+    });
+
+    const { userEvent } = await renderTrelloConfigureView({
+      trelloApi: {
+        fetchBoardsAndLists: member,
+      },
+    });
+
+    const boardListPreferences = within(
+      screen.getByRole('region', { name: 'Board and List Preferences' })
+    );
+
+    const boardHeading = boardListPreferences.getByRole('heading', {
+      name: 'Become a billionaire',
+    });
+
+    expect(
+      within(boardHeading).getByRole('button', { name: 'Board preferences' })
+    ).toBeInTheDocument();
+    expect(
+      within(boardHeading).getByRole('button', { name: 'Show more actions' })
+    ).toBeInTheDocument();
+
+    expect(screen.queryByRole('region', { name: 'Become a billionaire' })).not.toBeInTheDocument();
+
+    await userEvent.click(
+      within(boardHeading).getByRole('button', { name: 'Become a billionaire' })
+    );
+
+    expect(screen.getByRole('region', { name: 'Become a billionaire' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('list', { name: 'Lists for board Become a billionaire' })
+    ).toBeInTheDocument();
+
+    const ideasListItem = screen.getByRole('listitem', { name: 'Ideas' });
+
+    expect(
+      within(ideasListItem).getByRole('button', { name: 'List preferences' })
+    ).toBeInTheDocument();
+    expect(
+      within(ideasListItem).getByRole('button', { name: 'Show more actions' })
+    ).toBeInTheDocument();
   });
 });

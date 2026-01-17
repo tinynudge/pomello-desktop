@@ -5,3 +5,15 @@
   padding: 32px;
   gap: 24px;
 }
+
+.listListItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  padding-left: 48px;
+  gap: 8px;
+}
+
+.listName {
+  flex: 1;
+}
