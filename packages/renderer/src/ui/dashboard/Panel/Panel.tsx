@@ -1,9 +1,11 @@
 import { nanoid } from 'nanoid';
 import { JSX, ParentComponent, Show } from 'solid-js';
 import styles from './Panel.module.scss';
+import { PanelAccordion } from './PanelAccordion';
 import { PanelList } from './PanelList';
 
 type PanelComponent = ParentComponent<PanelProps> & {
+  Accordion: typeof PanelAccordion;
   List: typeof PanelList;
 };
 
@@ -31,4 +33,5 @@ export const Panel: PanelComponent = props => {
   );
 };
 
+Panel.Accordion = PanelAccordion;
 Panel.List = PanelList;

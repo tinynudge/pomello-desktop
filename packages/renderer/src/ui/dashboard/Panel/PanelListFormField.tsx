@@ -8,6 +8,7 @@ import { PanelListItem } from './PanelListItem';
 
 type PanelListFormFieldProps = {
   actions?: MenuItem[];
+  class?: string;
   description?: string;
   for: string;
   label: string;
@@ -19,10 +20,13 @@ export const PanelListFormField: ParentComponent<PanelListFormFieldProps> = prop
   return (
     <PanelListItem
       aria-label={props.label}
-      class={cc({
-        [styles.panelListFormField]: true,
-        [styles.hasActions]: !!props.actions,
-      })}
+      class={cc([
+        {
+          [styles.panelListFormField]: true,
+          [styles.hasActions]: !!props.actions,
+        },
+        props.class,
+      ])}
     >
       <div class={styles.label}>
         <label for={props.for}>{props.label}</label>
