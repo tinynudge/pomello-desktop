@@ -10,7 +10,7 @@ import { TrelloConfigStore, TrelloPreferences } from '../domain';
 import { BoardListPreferencesPanel } from './BoardListPreferencesPanel';
 import { ConnectionPanel } from './ConnectionPanel';
 
-const preferences = [
+export const preferences = [
   { preference: 'addChecks', default: true },
   { preference: 'keepLogs', default: true },
   { preference: 'trackStats', default: true },

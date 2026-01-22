@@ -26,8 +26,6 @@ export const Modal: ParentComponent<ModalProps> = props => {
     }
 
     modalRef.close();
-
-    props.onHide?.();
   };
 
   const mergeRefs = (element: HTMLDialogElement) => {
@@ -41,7 +39,12 @@ export const Modal: ParentComponent<ModalProps> = props => {
   const headingId = nanoid();
 
   return (
-    <dialog aria-labelledby={headingId} class={styles.modal} ref={element => mergeRefs(element)}>
+    <dialog
+      aria-labelledby={headingId}
+      class={styles.modal}
+      onClose={() => props.onHide?.()}
+      ref={element => mergeRefs(element)}
+    >
       <h1 class={styles.heading} id={headingId}>
         {props.heading}
       </h1>

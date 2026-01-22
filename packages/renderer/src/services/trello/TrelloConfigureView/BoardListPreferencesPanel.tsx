@@ -6,10 +6,11 @@ import { Error } from '@/ui/dashboard/Error';
 import { LoadingDots } from '@/ui/dashboard/LoadingDots/LoadingDots';
 import { Panel } from '@/ui/dashboard/Panel';
 import { useQuery } from '@tanstack/solid-query';
-import { Component, For, Match, Show, Switch } from 'solid-js';
+import { Component, createSignal, For, Match, Show, Switch } from 'solid-js';
 import { fetchBoardsAndLists } from '../api/fetchBoardsAndLists';
-import { TrelloConfigStore } from '../domain';
+import { BoardOrList, TrelloBoard, TrelloConfigStore, TrelloList } from '../domain';
 import styles from './BoardListPreferencesPanel.module.scss';
+import { PreferencesModal } from './PreferencesModal';
 
 type BoardListPreferencesPanelProps = {
   onLoginClick(): void;
@@ -19,10 +20,30 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
   const { getServiceConfigValue } = useConfigureService<TrelloConfigStore>();
   const t = useTranslate();
 
+  const [getActiveBoardOrList, setActiveBoardOrList] = createSignal<BoardOrList | null>(null);
+
   const boardsAndLists = useQuery(() => ({
     queryFn: fetchBoardsAndLists,
     queryKey: ['boardsAndLists'],
   }));
+
+  const handleBoardPreferencesClick = (board: TrelloBoard) => {
+    setActiveBoardOrList({
+      item: board,
+      type: 'board',
+    });
+  };
+
+  const handleListPreferencesClick = (list: TrelloList) => {
+    setActiveBoardOrList({
+      item: list,
+      type: 'list',
+    });
+  };
+
+  const handlePreferencesModalHide = () => {
+    setActiveBoardOrList(null);
+  };
 
   const getHasToken = () => !!getServiceConfigValue('token');
 
@@ -54,7 +75,11 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
                       ]}
                       isPaddingDisabled
                       title={board.name}
-                      titleExtras={<Button>{t('service:boardPreferences')}</Button>}
+                      titleExtras={
+                        <Button onClick={[handleBoardPreferencesClick, board]}>
+                          {t('service:boardPreferences')}
+                        </Button>
+                      }
                     >
                       <Panel.List aria-label={t('service:listsLabel', { boardName: board.name })}>
                         <For each={board.lists}>
@@ -63,7 +88,9 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
                               <span class={styles.listName} id={list.id}>
                                 {list.name}
                               </span>
-                              <Button>{t('service:listPreferences')}</Button>
+                              <Button onClick={[handleListPreferencesClick, list]}>
+                                {t('service:listPreferences')}
+                              </Button>
                               <ActionsMenu
                                 menuItems={[
                                   {
@@ -100,6 +127,11 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
             </div>
           </Match>
         </Switch>
+      </Show>
+      <Show when={getActiveBoardOrList()}>
+        {getBoardOrList => (
+          <PreferencesModal boardOrList={getBoardOrList()} onHide={handlePreferencesModalHide} />
+        )}
       </Show>
     </Panel>
   );

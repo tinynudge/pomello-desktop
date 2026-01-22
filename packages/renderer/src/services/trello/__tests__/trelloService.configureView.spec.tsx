@@ -336,4 +336,270 @@ describe('Trello service - Configure view', () => {
       within(ideasListItem).getByRole('button', { name: 'Show more actions' })
     ).toBeInTheDocument();
   });
+
+  it('should allow updating the board preferences', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {},
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [generateTrelloBoard({ id: 'board-1', name: 'Board 1' })],
+        }),
+      },
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('heading', { name: 'Board 1' })).getByRole('button', {
+        name: 'Board preferences',
+      })
+    );
+
+    expect(screen.getByRole('dialog', { name: 'Board Preferences: Board 1' })).toBeInTheDocument();
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Add marker to card title' }),
+      'disabled'
+    );
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Log events in card comment' }),
+      'enabled'
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Board Preferences: Board 1' })
+    ).not.toBeInTheDocument();
+
+    expect(config.get().preferences).toMatchObject({
+      boards: {
+        'board-1': {
+          addChecks: false,
+          keepLogs: true,
+        },
+      },
+    });
+  });
+
+  it('should not update board preferences when cancelling', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {},
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [generateTrelloBoard({ id: 'board-1', name: 'Board 1' })],
+        }),
+      },
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('heading', { name: 'Board 1' })).getByRole('button', {
+        name: 'Board preferences',
+      })
+    );
+
+    expect(screen.getByRole('dialog', { name: 'Board Preferences: Board 1' })).toBeInTheDocument();
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Add marker to card title' }),
+      'disabled'
+    );
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Log events in card comment' }),
+      'enabled'
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Board Preferences: Board 1' })
+    ).not.toBeInTheDocument();
+
+    expect(config.get().preferences).toMatchObject({});
+  });
+
+  it('should remove the board preferences when resetting to default', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {
+          boards: {
+            'board-1': {
+              addChecks: false,
+              archiveCards: true,
+            },
+          },
+        },
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [generateTrelloBoard({ id: 'board-1', name: 'Board 1' })],
+        }),
+      },
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('heading', { name: 'Board 1' })).getByRole('button', {
+        name: 'Board preferences',
+      })
+    );
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Add marker to card title' }),
+      'default'
+    );
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Archive card after moving' }),
+      'default'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
+
+    expect(config.get().preferences?.boards).toBeUndefined();
+  });
+
+  it('should allow updating the list preferences', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {},
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              id: 'board-1',
+              name: 'Board 1',
+              lists: [generateTrelloList({ id: 'list-1', name: 'List 1' })],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Board 1' }));
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: 'List 1' })).getByRole('button', {
+        name: 'List preferences',
+      })
+    );
+
+    expect(screen.getByRole('dialog', { name: 'List Preferences: List 1' })).toBeInTheDocument();
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Add marker to card title' }),
+      'disabled'
+    );
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Log events in card comment' }),
+      'enabled'
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
+
+    expect(
+      screen.queryByRole('dialog', { name: 'List Preferences: List 1' })
+    ).not.toBeInTheDocument();
+
+    expect(config.get().preferences).toMatchObject({
+      lists: {
+        'list-1': {
+          addChecks: false,
+          keepLogs: true,
+        },
+      },
+    });
+  });
+
+  it('should not update list preferences when cancelling', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {},
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              id: 'board-1',
+              name: 'Board 1',
+              lists: [generateTrelloList({ id: 'list-1', name: 'List 1' })],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Board 1' }));
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: 'List 1' })).getByRole('button', {
+        name: 'List preferences',
+      })
+    );
+
+    expect(screen.getByRole('dialog', { name: 'List Preferences: List 1' })).toBeInTheDocument();
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Add marker to card title' }),
+      'disabled'
+    );
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Log events in card comment' }),
+      'enabled'
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(
+      screen.queryByRole('dialog', { name: 'List Preferences: List 1' })
+    ).not.toBeInTheDocument();
+
+    expect(config.get().preferences).toMatchObject({});
+  });
+
+  it('should remove the list preferences when resetting to default', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {
+          lists: {
+            'list-1': {
+              addChecks: false,
+              archiveCards: true,
+            },
+          },
+        },
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              id: 'board-1',
+              name: 'Board 1',
+              lists: [generateTrelloList({ id: 'list-1', name: 'List 1' })],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Board 1' }));
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: 'List 1' })).getByRole('button', {
+        name: 'List preferences',
+      })
+    );
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Add marker to card title' }),
+      'default'
+    );
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Archive card after moving' }),
+      'default'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
+
+    expect(config.get().preferences?.lists).toBeUndefined();
+  });
 });

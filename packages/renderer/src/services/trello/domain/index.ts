@@ -1,3 +1,4 @@
+export type { BoardOrList } from './BoardOrList';
 export type { TrelloBoard } from './TrelloBoard';
 export type { TrelloCache } from './TrelloCache';
 export type { TrelloCacheActions } from './TrelloCacheActions';
