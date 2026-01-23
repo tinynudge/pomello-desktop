@@ -76,6 +76,10 @@ export const ConfigureServiceProvider: ParentComponent<ConfigureServiceProviderP
 
   const setServiceConfigValue = (key: string, value: unknown) => {
     props.initialServiceConfig?.set(key, value);
+
+    if (stagedServiceConfig[key] !== undefined) {
+      setStagedServiceConfig(key, undefined);
+    }
   };
 
   const stageServiceConfigValue = (key: string, value: unknown) => {
