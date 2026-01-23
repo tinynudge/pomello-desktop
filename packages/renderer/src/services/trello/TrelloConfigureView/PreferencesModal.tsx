@@ -3,10 +3,10 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Modal } from '@/ui/dashboard/Modal';
 import { Select } from '@/ui/dashboard/Select';
 import { Component, For, onMount } from 'solid-js';
-import { unwrap } from 'solid-js/store';
 import { BoardOrList, TrelloConfigStore, TrelloPreferences } from '../domain';
 import styles from './PreferencesModal.module.scss';
 import { preferences } from './TrelloConfigureView';
+import { useUpdatePreferences } from './useUpdatePreferences';
 
 type PreferencesModalProps = {
   boardOrList: BoardOrList;
@@ -14,8 +14,9 @@ type PreferencesModalProps = {
 };
 
 export const PreferencesModal: Component<PreferencesModalProps> = props => {
+  const { getServiceConfigValue } = useConfigureService<TrelloConfigStore>();
   const t = useTranslate();
-  const { getServiceConfigValue, setServiceConfigValue } = useConfigureService<TrelloConfigStore>();
+  const updatePreference = useUpdatePreferences();
 
   onMount(() => {
     modal.showModal();
@@ -33,32 +34,11 @@ export const PreferencesModal: Component<PreferencesModalProps> = props => {
       updatedPreferencesMap.set(key as keyof TrelloPreferences, value === 'enabled');
     }
 
-    const preferences = unwrap(getServiceConfigValue('preferences'));
-    const { item, type } = props.boardOrList;
-    const categoryKey = type === 'board' ? 'boards' : 'lists';
-
-    const updatedPreferences = {
-      ...preferences,
-      [categoryKey]: {
-        ...preferences?.[categoryKey],
-        [item.id]: Object.fromEntries(updatedPreferencesMap),
-      },
-    };
-
-    // If no preferences were set, remove the empty object to avoid clutter
-    if (updatedPreferences?.[categoryKey] && updatedPreferencesMap.size === 0) {
-      delete updatedPreferences[categoryKey][item.id];
-    }
-
-    // If after removal the category is empty, remove it as well
-    if (
-      updatedPreferences?.[categoryKey] &&
-      Object.keys(updatedPreferences[categoryKey]).length === 0
-    ) {
-      delete updatedPreferences[categoryKey];
-    }
-
-    setServiceConfigValue('preferences', updatedPreferences);
+    updatePreference({
+      boardOrList: props.boardOrList,
+      commitChanges: true,
+      preferences: Object.fromEntries(updatedPreferencesMap),
+    });
   };
 
   const getHeading = () => {

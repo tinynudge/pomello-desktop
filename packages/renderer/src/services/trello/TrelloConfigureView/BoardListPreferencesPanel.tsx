@@ -11,6 +11,7 @@ import { fetchBoardsAndLists } from '../api/fetchBoardsAndLists';
 import { BoardOrList, TrelloBoard, TrelloConfigStore, TrelloList } from '../domain';
 import styles from './BoardListPreferencesPanel.module.scss';
 import { PreferencesModal } from './PreferencesModal';
+import { useUpdatePreferences } from './useUpdatePreferences';
 
 type BoardListPreferencesPanelProps = {
   onLoginClick(): void;
@@ -19,6 +20,7 @@ type BoardListPreferencesPanelProps = {
 export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps> = props => {
   const { getServiceConfigValue } = useConfigureService<TrelloConfigStore>();
   const t = useTranslate();
+  const updatePreferences = useUpdatePreferences();
 
   const [getActiveBoardOrList, setActiveBoardOrList] = createSignal<BoardOrList | null>(null);
 
@@ -34,10 +36,26 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
     });
   };
 
+  const handleBoardPreferencesReset = (board: TrelloBoard) => {
+    updatePreferences({
+      boardOrList: { item: board, type: 'board' },
+      commitChanges: false,
+      preferences: {},
+    });
+  };
+
   const handleListPreferencesClick = (list: TrelloList) => {
     setActiveBoardOrList({
       item: list,
       type: 'list',
+    });
+  };
+
+  const handleListPreferencesReset = (list: TrelloList) => {
+    updatePreferences({
+      boardOrList: { item: list, type: 'list' },
+      commitChanges: false,
+      preferences: {},
     });
   };
 
@@ -70,7 +88,7 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
                       actions={[
                         {
                           text: t('service:resetBoardPreferences'),
-                          onClick: () => {},
+                          onClick: () => handleBoardPreferencesReset(board),
                         },
                       ]}
                       isPaddingDisabled
@@ -95,7 +113,7 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
                                 menuItems={[
                                   {
                                     text: t('service:resetListPreferences'),
-                                    onClick: () => ({}),
+                                    onClick: () => handleListPreferencesReset(list),
                                   },
                                 ]}
                                 tooltip={t('service:more')}

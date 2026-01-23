@@ -418,6 +418,75 @@ describe('Trello service - Configure view', () => {
     expect(config.get().preferences).toMatchObject({});
   });
 
+  it('should be able to reset board preferences', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {
+          boards: {
+            'board-1': {
+              addChecks: false,
+              keepLogs: false,
+            },
+            'board-2': {
+              addChecks: true,
+              keepLogs: true,
+            },
+          },
+        },
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [generateTrelloBoard({ id: 'board-1', name: 'Board 1' })],
+        }),
+      },
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('heading', { name: 'Board 1' })).getByRole('button', {
+        name: 'Show more actions',
+      })
+    );
+
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Reset board preferences' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(config.get().preferences?.boards).toMatchObject({
+      'board-1': {
+        addChecks: false,
+        keepLogs: false,
+      },
+      'board-2': {
+        addChecks: true,
+        keepLogs: true,
+      },
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('heading', { name: 'Board 1' })).getByRole('button', {
+        name: 'Show more actions',
+      })
+    );
+
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Reset board preferences' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(config.get().preferences?.boards?.['board-1']).toBeUndefined();
+    expect(config.get().preferences).toMatchObject({
+      boards: {
+        'board-2': {
+          addChecks: true,
+          keepLogs: true,
+        },
+      },
+    });
+  });
+
   it('should remove the board preferences when resetting to default', async () => {
     const { config, userEvent } = await renderTrelloConfigureView({
       config: {
@@ -504,6 +573,83 @@ describe('Trello service - Configure view', () => {
       lists: {
         'list-1': {
           addChecks: false,
+          keepLogs: true,
+        },
+      },
+    });
+  });
+
+  it('should be able to reset list preferences', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        preferences: {
+          lists: {
+            'list-1': {
+              addChecks: false,
+              keepLogs: false,
+            },
+            'list-2': {
+              addChecks: true,
+              keepLogs: true,
+            },
+          },
+        },
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              id: 'board-1',
+              name: 'Board 1',
+              lists: [generateTrelloList({ id: 'list-1', name: 'List 1' })],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Board 1' }));
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: 'List 1' })).getByRole('button', {
+        name: 'Show more actions',
+      })
+    );
+
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Reset list preferences' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(config.get().preferences?.lists).toMatchObject({
+      'list-1': {
+        addChecks: false,
+        keepLogs: false,
+      },
+      'list-2': {
+        addChecks: true,
+        keepLogs: true,
+      },
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: 'List 1' })).getByRole('button', {
+        name: 'Show more actions',
+      })
+    );
+
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Reset list preferences' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(config.get().preferences?.lists?.['list-1']).toBeUndefined();
+    expect(config.get().preferences).toMatchObject({
+      lists: {
+        'list-2': {
+          addChecks: true,
           keepLogs: true,
         },
       },
