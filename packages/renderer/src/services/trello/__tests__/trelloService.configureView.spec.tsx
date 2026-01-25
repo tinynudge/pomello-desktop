@@ -56,6 +56,155 @@ describe('Trello service - Configure view', () => {
     expect(connectionSection.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
   });
 
+  it('should render the list filter panel', async () => {
+    await renderTrelloConfigureView({
+      config: {
+        listFilter: 'foo',
+        listFilterCaseSensitive: true,
+      },
+    });
+
+    const region = within(screen.getByRole('region', { name: 'Lists Filter' }));
+
+    expect(region.getByRole('heading', { name: 'Lists Filter', level: 2 })).toBeInTheDocument();
+    expect(region.getByRole('textbox', { name: 'Filter' })).toHaveValue('foo');
+    expect(region.getByRole('checkbox', { name: 'Case sensitivity' })).toBeChecked();
+  });
+
+  it('should allow the user to update the list filter', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        listFilter: undefined,
+      },
+    });
+
+    await userEvent.click(screen.getByRole('textbox', { name: 'Filter' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Filter' }), 'bar');
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+    expect(config.get().listFilter).toBe(undefined);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(config.get().listFilter).toBe('bar');
+  });
+
+  it('should allow the user to update the list filter case sensitivity', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        listFilterCaseSensitive: false,
+      },
+    });
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Case sensitivity' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+    expect(config.get().listFilterCaseSensitive).toBe(false);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(config.get().listFilterCaseSensitive).toBe(true);
+  });
+
+  it('should filter out the boards and lists based on the list filter', async () => {
+    const { config, userEvent } = await renderTrelloConfigureView({
+      config: {
+        listFilter: '',
+        listFilterCaseSensitive: false,
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              id: 'become-a-billionaire',
+              name: 'Become a billionaire',
+              lists: [
+                generateTrelloList({ id: 'to-do', name: 'To Do' }),
+                generateTrelloList({ id: 'done', name: 'Done' }),
+              ],
+            }),
+            generateTrelloBoard({
+              id: 'become-a-millionaire',
+              name: 'Become a millionaire',
+              lists: [
+                generateTrelloList({ id: 'tasks', name: 'Tasks' }),
+                generateTrelloList({ id: 'meetings', name: 'Meetings' }),
+              ],
+            }),
+          ],
+        }),
+      },
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Become a billionaire' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Become a millionaire' }));
+
+    expect(screen.getByRole('listitem', { name: 'To Do' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'Done' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'Tasks' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'Meetings' })).toBeInTheDocument();
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Filter' }), 'billionaire');
+
+    expect(screen.getByRole('heading', { name: 'Become a billionaire' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Become a millionaire' })).not.toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'To Do' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'Done' })).toBeInTheDocument();
+    expect(screen.queryByRole('listitem', { name: 'Tasks' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('listitem', { name: 'Meetings' })).not.toBeInTheDocument();
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Filter' }), ': to do');
+
+    expect(screen.getByRole('heading', { name: 'Become a billionaire' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'To Do' })).toBeInTheDocument();
+    expect(screen.queryByRole('listitem', { name: 'Done' })).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Case sensitivity' }));
+
+    expect(screen.queryByRole('heading', { name: 'Become a billionaire' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('listitem', { name: 'To Do' })).not.toBeInTheDocument();
+
+    expect(
+      within(screen.getByRole('region', { name: 'Board and List Preferences' })).getByText(
+        'No boards found. Try updating your lists filter.'
+      )
+    ).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(config.get().listFilter).toBe('billionaire: to do');
+    expect(config.get().listFilterCaseSensitive).toBe(true);
+  });
+
+  it('should show a validation error for an invalid list filter', async () => {
+    const { userEvent } = await renderTrelloConfigureView({
+      config: {
+        listFilter: '',
+      },
+    });
+
+    const region = within(screen.getByRole('region', { name: 'Lists Filter' }));
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Filter' }), '[[');
+
+    expect(region.getByRole('status')).toHaveTextContent('Invalid filter pattern');
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Filter' }), ']]');
+
+    expect(region.queryByRole('status')).not.toBeInTheDocument();
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Your pending changes have not been saved yet.'
+    );
+  });
+
   it('should render the global preferences with default values', async () => {
     await renderTrelloConfigureView({
       config: {
@@ -334,6 +483,22 @@ describe('Trello service - Configure view', () => {
     ).toBeInTheDocument();
     expect(
       within(ideasListItem).getByRole('button', { name: 'Show more actions' })
+    ).toBeInTheDocument();
+  });
+
+  it('should show a message when the member has no boards', async () => {
+    await renderTrelloConfigureView({
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [],
+        }),
+      },
+    });
+
+    expect(
+      within(screen.getByRole('region', { name: 'Board and List Preferences' })).getByText(
+        'No boards found.'
+      )
     ).toBeInTheDocument();
   });
 
