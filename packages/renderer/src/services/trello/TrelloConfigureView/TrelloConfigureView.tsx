@@ -9,6 +9,7 @@ import { createTrelloService } from '../createTrelloService';
 import { TrelloConfigStore, TrelloPreferences } from '../domain';
 import { BoardListPreferencesPanel } from './BoardListPreferencesPanel';
 import { ConnectionPanel } from './ConnectionPanel';
+import { ListsFilterPanel } from './ListsFilterPanel';
 
 export const preferences = [
   { preference: 'addChecks', default: true },
@@ -44,6 +45,7 @@ export const TrelloConfigureView: Component = () => {
   return (
     <QueryClientProvider client={createTrelloQueryClient()}>
       <ConnectionPanel onLoginClick={handleLoginClick} />
+      <ListsFilterPanel />
       <Panel
         heading={t('service:defaultPreferencesHeading')}
         padding="none"

@@ -6,7 +6,7 @@ import { Error } from '@/ui/dashboard/Error';
 import { LoadingDots } from '@/ui/dashboard/LoadingDots/LoadingDots';
 import { Panel } from '@/ui/dashboard/Panel';
 import { useQuery } from '@tanstack/solid-query';
-import { Component, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { Component, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
 import { fetchBoardsAndLists } from '../api/fetchBoardsAndLists';
 import { BoardOrList, TrelloBoard, TrelloConfigStore, TrelloList } from '../domain';
 import styles from './BoardListPreferencesPanel.module.scss';
@@ -28,6 +28,45 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
     queryFn: fetchBoardsAndLists,
     queryKey: ['boardsAndLists'],
   }));
+
+  const filteredBoardsAndLists = createMemo(() => {
+    const listFilter = getServiceConfigValue('listFilter');
+    const isCaseSensitive = getServiceConfigValue('listFilterCaseSensitive');
+    const boards = boardsAndLists.data?.boards;
+
+    if (!boards) {
+      return;
+    }
+
+    if (!listFilter) {
+      return { boards };
+    }
+
+    const filteredBoards: TrelloBoard[] = [];
+    const listsByBoardId = new Map<string, TrelloList[]>();
+
+    try {
+      const flags = isCaseSensitive !== true ? 'i' : '';
+      const regExp = new RegExp(listFilter, flags);
+
+      boards.forEach(board => {
+        const lists = board.lists.filter(list => regExp.test(`${board.name}: ${list.name}`));
+
+        if (lists.length > 0) {
+          listsByBoardId.set(board.id, lists);
+          filteredBoards.push(board);
+        }
+      });
+    } catch {
+      // Invalid RegExp, return the unfiltered boards
+      return { boards };
+    }
+
+    return {
+      boards: filteredBoards,
+      listsByBoardId,
+    };
+  });
 
   const handleBoardPreferencesClick = (board: TrelloBoard) => {
     setActiveBoardOrList({
@@ -65,6 +104,8 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
 
   const getHasToken = () => !!getServiceConfigValue('token');
 
+  const getHasListFilter = () => !!getServiceConfigValue('listFilter');
+
   return (
     <Panel heading={t('service:boardListPreferencesHeading')} padding="none">
       <Show
@@ -79,53 +120,71 @@ export const BoardListPreferencesPanel: Component<BoardListPreferencesPanelProps
         }
       >
         <Switch>
-          <Match when={boardsAndLists.isSuccess && boardsAndLists.data.boards}>
-            {getBoards => (
-              <Panel.Accordion>
-                <For each={getBoards()}>
-                  {board => (
-                    <Panel.Accordion.Item
-                      actions={[
-                        {
-                          text: t('service:resetBoardPreferences'),
-                          onClick: () => handleBoardPreferencesReset(board),
-                        },
-                      ]}
-                      isPaddingDisabled
-                      title={board.name}
-                      titleExtras={
-                        <Button onClick={[handleBoardPreferencesClick, board]}>
-                          {t('service:boardPreferences')}
-                        </Button>
-                      }
-                    >
-                      <Panel.List aria-label={t('service:listsLabel', { boardName: board.name })}>
-                        <For each={board.lists}>
-                          {list => (
-                            <Panel.List.Item aria-labelledby={list.id} class={styles.listListItem}>
-                              <span class={styles.listName} id={list.id}>
-                                {list.name}
-                              </span>
-                              <Button onClick={[handleListPreferencesClick, list]}>
-                                {t('service:listPreferences')}
-                              </Button>
-                              <ActionsMenu
-                                menuItems={[
-                                  {
-                                    text: t('service:resetListPreferences'),
-                                    onClick: () => handleListPreferencesReset(list),
-                                  },
-                                ]}
-                                tooltip={t('service:more')}
-                              />
-                            </Panel.List.Item>
-                          )}
-                        </For>
-                      </Panel.List>
-                    </Panel.Accordion.Item>
-                  )}
-                </For>
-              </Panel.Accordion>
+          <Match when={boardsAndLists.isSuccess && filteredBoardsAndLists()}>
+            {getBoardsAndLists => (
+              <Show
+                fallback={
+                  <div class={styles.fallbackContent}>
+                    <p>
+                      {getHasListFilter()
+                        ? t('service:noBoardsFoundWithFilter')
+                        : t('service:noBoardsFound')}
+                    </p>
+                  </div>
+                }
+                when={getBoardsAndLists().boards.length > 0}
+              >
+                <Panel.Accordion>
+                  <For each={getBoardsAndLists().boards}>
+                    {board => (
+                      <Panel.Accordion.Item
+                        actions={[
+                          {
+                            text: t('service:resetBoardPreferences'),
+                            onClick: () => handleBoardPreferencesReset(board),
+                          },
+                        ]}
+                        isPaddingDisabled
+                        title={board.name}
+                        titleExtras={
+                          <Button onClick={[handleBoardPreferencesClick, board]}>
+                            {t('service:boardPreferences')}
+                          </Button>
+                        }
+                      >
+                        <Panel.List aria-label={t('service:listsLabel', { boardName: board.name })}>
+                          <For
+                            each={getBoardsAndLists().listsByBoardId?.get(board.id) ?? board.lists}
+                          >
+                            {list => (
+                              <Panel.List.Item
+                                aria-labelledby={list.id}
+                                class={styles.listListItem}
+                              >
+                                <span class={styles.listName} id={list.id}>
+                                  {list.name}
+                                </span>
+                                <Button onClick={[handleListPreferencesClick, list]}>
+                                  {t('service:listPreferences')}
+                                </Button>
+                                <ActionsMenu
+                                  menuItems={[
+                                    {
+                                      text: t('service:resetListPreferences'),
+                                      onClick: () => handleListPreferencesReset(list),
+                                    },
+                                  ]}
+                                  tooltip={t('service:more')}
+                                />
+                              </Panel.List.Item>
+                            )}
+                          </For>
+                        </Panel.List>
+                      </Panel.Accordion.Item>
+                    )}
+                  </For>
+                </Panel.Accordion>
+              </Show>
             )}
           </Match>
           <Match when={boardsAndLists.isError && boardsAndLists.error}>
