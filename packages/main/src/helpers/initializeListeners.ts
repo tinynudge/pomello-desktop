@@ -1,3 +1,4 @@
+import { handleAlwaysOnTopChange } from '@/events/handleAlwaysOnTopChange';
 import { handleAppQuit } from '@/events/handleAppQuit';
 import { handleAudioFileProtocol } from '@/events/handleAudioFileProtocol';
 import { handleClipboardTextWrite } from '@/events/handleClipboardTextWrite';
@@ -30,10 +31,15 @@ import { handleUnsetStoreItem } from '@/events/handleUnsetStoreItem';
 import { handleUpdateHotkeys } from '@/events/handleUpdateHotkeys';
 import { handleUpdateSetting } from '@/events/handleUpdateSetting';
 import { handleUpdateSettings } from '@/events/handleUpdateSettings';
+import { getSettings } from '@/getSettings';
 import { AppEvent, AppProtocol } from '@pomello-desktop/domain';
 import { ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 
 export const initializeListeners = (): void => {
+  const settings = getSettings();
+
+  settings.onChange('alwaysOnTop', handleAlwaysOnTopChange);
+
   ipcMain.handle(AppEvent.ClipboardTextWrite, handleClipboardTextWrite);
   ipcMain.handle(AppEvent.GetActiveServiceId, handleGetActiveServiceId);
   ipcMain.handle(AppEvent.GetDefaultHotkeys, handleGetDefaultHotkeys);
