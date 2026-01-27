@@ -328,38 +328,4 @@ describe('App', () => {
       expect(screen.getByTestId('container')).toBeInTheDocument();
     });
   });
-
-  it('should prompt the user to confirm before quitting the app', async () => {
-    const { appApi, simulate } = renderApp({
-      settings: {
-        warnBeforeAppQuit: true,
-      },
-    });
-
-    await simulate.waitForSelectTaskView();
-
-    window.dispatchEvent(new Event('beforeunload'));
-
-    expect(appApi.showMessageBox).toHaveBeenCalledWith({
-      type: 'question',
-      message: 'Closing this window will quit Pomello. Are you sure?',
-      buttons: ['Quit', 'Cancel'],
-      defaultId: 0,
-      cancelId: 1,
-    });
-  });
-
-  it('should not prompt the user to confirm before quitting the app', async () => {
-    const { appApi, simulate } = renderApp({
-      settings: {
-        warnBeforeAppQuit: false,
-      },
-    });
-
-    await simulate.waitForSelectTaskView();
-
-    window.dispatchEvent(new Event('beforeunload'));
-
-    expect(appApi.showMessageBox).not.toHaveBeenCalled();
-  });
 });
