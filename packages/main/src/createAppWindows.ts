@@ -2,6 +2,7 @@ import { AppEvent, WindowId } from '@pomello-desktop/domain';
 import { join } from 'path';
 import { throttle } from 'throttle-debounce';
 import { version } from '../../../package.json';
+import { handleAppQuit } from './events/handleAppQuit';
 import { handleAppWindowMove } from './events/handleAppWindowMove';
 import { handleAppWindowResize } from './events/handleAppWindowResize';
 import { getPomelloConfig } from './getPomelloConfig';
@@ -48,12 +49,17 @@ export const createAppWindows = async (): Promise<void> => {
     y,
   });
 
-  appWindow.on('resize', throttle(250, handleAppWindowResize));
+  appWindow.on('close', handleAppQuit);
   appWindow.on('move', throttle(250, handleAppWindowMove));
+  appWindow.on('resize', throttle(250, handleAppWindowResize));
 
   selectWindow.setParentWindow(appWindow);
   selectWindow.excludedFromShownWindowsMenu = true;
   selectWindow.on('blur', hideSelectWindow);
+  selectWindow.on('close', event => {
+    event.preventDefault();
+    hideSelectWindow();
+  });
 
   let didSelectWindowBlur = false;
 

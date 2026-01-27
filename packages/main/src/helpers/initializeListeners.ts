@@ -1,5 +1,5 @@
 import { handleAlwaysOnTopChange } from '@/events/handleAlwaysOnTopChange';
-import { handleAppBeforeQuit } from '@/events/handleAppBeforeQuit';
+import { handleAppQuit } from '@/events/handleAppQuit';
 import { handleAudioFileProtocol } from '@/events/handleAudioFileProtocol';
 import { handleClipboardTextWrite } from '@/events/handleClipboardTextWrite';
 import { handleDecryptValue } from '@/events/handleDecryptValue';
@@ -38,7 +38,7 @@ import { app, ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 export const initializeListeners = (): void => {
   const settings = getSettings();
 
-  app.on('before-quit', handleAppBeforeQuit);
+  app.on('before-quit', handleAppQuit);
 
   settings.onChange('alwaysOnTop', handleAlwaysOnTopChange);
 

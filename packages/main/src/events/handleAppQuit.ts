@@ -2,15 +2,17 @@ import { getSettings } from '@/getSettings';
 import { translate } from '@/helpers/translate';
 import { app, dialog, Event } from 'electron';
 
-export const handleAppBeforeQuit = async (event: Event) => {
+export const handleAppQuit = async (event: Event) => {
   const settings = getSettings();
   const warnBeforeAppQuit = settings.get('warnBeforeAppQuit');
 
+  event.preventDefault();
+
   if (!warnBeforeAppQuit) {
+    app.exit();
+
     return;
   }
-
-  event.preventDefault();
 
   const { response } = await dialog.showMessageBox({
     buttons: [translate('quitAppConfirm'), translate('quitAppCancel')],
