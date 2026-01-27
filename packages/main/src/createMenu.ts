@@ -3,6 +3,7 @@ import { translate } from './helpers/translate';
 
 export const createMenu = (): void => {
   const template: MenuItemConstructorOptions[] = [
+    { role: 'fileMenu' },
     { role: 'editMenu' },
     {
       label: translate('systemMenuView'),
