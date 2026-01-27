@@ -24,7 +24,6 @@ import { onSettingsChange } from './onSettingsChange';
 import { onShowSelect } from './onShowSelect';
 import { onThemeCssChange } from './onThemeCssChange';
 import { openUrl } from './openUrl';
-import { quitApp } from './quitApp';
 import { registerServiceConfig } from './registerServiceConfig';
 import { resetSelect } from './resetSelect';
 import { selectOption } from './selectOption';
@@ -66,7 +65,6 @@ export const api = {
   onShowSelect,
   onThemeCssChange,
   openUrl,
-  quitApp,
   registerServiceConfig,
   resetSelect,
   selectOption,

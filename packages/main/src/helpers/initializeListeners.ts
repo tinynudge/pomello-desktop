@@ -1,6 +1,5 @@
 import { handleAlwaysOnTopChange } from '@/events/handleAlwaysOnTopChange';
 import { handleAppBeforeQuit } from '@/events/handleAppBeforeQuit';
-import { handleAppQuit } from '@/events/handleAppQuit';
 import { handleAudioFileProtocol } from '@/events/handleAudioFileProtocol';
 import { handleClipboardTextWrite } from '@/events/handleClipboardTextWrite';
 import { handleDecryptValue } from '@/events/handleDecryptValue';
@@ -53,7 +52,6 @@ export const initializeListeners = (): void => {
   ipcMain.handle(AppEvent.HideSelect, handleSelectHide);
   ipcMain.handle(AppEvent.LogMessage, handleLogMessage);
   ipcMain.handle(AppEvent.OpenUrl, handleOpenUrl);
-  ipcMain.handle(AppEvent.QuitApp, handleAppQuit);
   ipcMain.handle(AppEvent.RegisterServiceConfig, handleRegisterServiceConfig);
   ipcMain.handle(AppEvent.ResetSelect, handleResetSelect);
   ipcMain.handle(AppEvent.SelectOption, handleOptionSelect);

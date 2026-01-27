@@ -95,7 +95,6 @@ export const createMockAppApi = ({
     onShowSelect: vi.fn(appApi.onShowSelect ?? (callback => addListener('onShowSelect', callback))),
     onThemeCssChange: vi.fn(),
     openUrl: vi.fn(),
-    quitApp: vi.fn(),
     registerServiceConfig: vi.fn(
       appApi.registerServiceConfig ??
         ((serviceId, { defaults }) =>
