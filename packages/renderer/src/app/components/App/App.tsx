@@ -19,7 +19,6 @@ import { useLogTrackingEvents } from './useLogTrackingEvents';
 import { useMonitorPowerChange } from './useMonitorPowerChange';
 import { useOpenTask } from './useOpenTask';
 import { useTimerSounds } from './useTimerSounds';
-import { useWarnBeforeQuittingDialog } from './useWarnBeforeQuittingDialog';
 
 export const App: Component = () => {
   const { overlayViewSet } = useStoreActions();
@@ -34,7 +33,6 @@ export const App: Component = () => {
   useMonitorPowerChange();
   useOpenTask();
   useTimerSounds();
-  useWarnBeforeQuittingDialog();
 
   const handleTaskCreate = () => {
     if (!serviceResource.loading && serviceResource.latest?.service.onTaskCreate) {

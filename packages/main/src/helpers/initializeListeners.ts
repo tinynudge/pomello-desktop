@@ -1,4 +1,5 @@
 import { handleAlwaysOnTopChange } from '@/events/handleAlwaysOnTopChange';
+import { handleAppBeforeQuit } from '@/events/handleAppBeforeQuit';
 import { handleAppQuit } from '@/events/handleAppQuit';
 import { handleAudioFileProtocol } from '@/events/handleAudioFileProtocol';
 import { handleClipboardTextWrite } from '@/events/handleClipboardTextWrite';
@@ -33,10 +34,12 @@ import { handleUpdateSetting } from '@/events/handleUpdateSetting';
 import { handleUpdateSettings } from '@/events/handleUpdateSettings';
 import { getSettings } from '@/getSettings';
 import { AppEvent, AppProtocol } from '@pomello-desktop/domain';
-import { ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
+import { app, ipcMain, nativeTheme, powerMonitor, protocol } from 'electron';
 
 export const initializeListeners = (): void => {
   const settings = getSettings();
+
+  app.on('before-quit', handleAppBeforeQuit);
 
   settings.onChange('alwaysOnTop', handleAlwaysOnTopChange);
 
