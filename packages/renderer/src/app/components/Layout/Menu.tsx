@@ -19,29 +19,26 @@ export const Menu: Component<MenuProps> = props => {
   return (
     <nav aria-label={t('menuLabel')} class={styles.menu} ref={props.ref}>
       <button
-        aria-hidden={!props.isOpen}
         aria-label={t('homeButtonLabel')}
         class={styles.button}
+        inert={!props.isOpen}
         onClick={() => props.onHomeClick()}
-        tabIndex={props.isOpen ? 0 : -1}
       >
         <HomeIcon aria-hidden />
       </button>
       <button
         aria-label={t('settingsButtonLabel')}
-        aria-hidden={!props.isOpen}
         class={styles.button}
+        inert={!props.isOpen}
         onClick={() => props.onSettingsClick()}
-        tabIndex={props.isOpen ? 0 : -1}
       >
         <CogIcon aria-hidden />
       </button>
       <button
-        aria-hidden={!props.isOpen}
         aria-label={t('createTaskButtonLabel')}
         class={styles.button}
+        inert={!props.isOpen}
         onClick={() => props.onCreateTaskClick()}
-        tabIndex={props.isOpen ? 0 : -1}
       >
         <AddIcon aria-hidden />
       </button>
