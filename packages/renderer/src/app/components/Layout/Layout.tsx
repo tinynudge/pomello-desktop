@@ -121,7 +121,7 @@ export const Layout: ParentComponent<LayoutProps> = props => {
           [styles.menuOpen]: getIsMenuOpen(),
         }}
         data-mode={getAppMode()}
-        style={{ transform: `translate(${getMenuOffset()}px)` }}
+        style={{ left: `${getMenuOffset()}px` }}
       >
         <button
           aria-label={getIsMenuOpen() ? t('closeMenuLabel') : t('openMenuLabel')}
