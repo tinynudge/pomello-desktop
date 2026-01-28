@@ -16,7 +16,7 @@ button {
   align-items: center;
   background: var(--app-background-default);
   color: var(--app-content-default);
-  transition: transform 500ms $ease-out-circ;
+  transition: left 500ms $ease-out-circ;
   user-select: none;
 
   &[data-mode='TASK'] {
