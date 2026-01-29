@@ -246,8 +246,150 @@ describe('App - Task Timer End', () => {
     await simulate.advanceTimer(3);
     await simulate.hotkey('moveTask');
 
-    expect(mockTaskTimerEndPromptHandler).toHaveBeenCalled();
+    expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        optionId: 'pick-me',
+      })
+    );
     expect(screen.getByText('Take a short break')).toBeInTheDocument();
+  });
+
+  it('should handle the complete task hotkey for a customized item', async () => {
+    const mockTaskTimerEndPromptHandler = vi.fn<() => TaskTimerEndPromptHandledResponse>(() => ({
+      action: 'continueTask',
+    }));
+
+    const { simulate } = renderApp({
+      mockService: {
+        service: {
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'pick-me', label: 'Pick me!' }],
+            completeTaskItemId: 'pick-me',
+          }),
+          onTaskTimerEndPromptHandled: mockTaskTimerEndPromptHandler,
+        },
+      },
+      settings: {
+        taskTime: 3,
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.hotkey('completeTaskEarly');
+
+    expect(mockTaskTimerEndPromptHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        optionId: 'pick-me',
+      })
+    );
+    expect(screen.getByText('Take a short break')).toBeInTheDocument();
+  });
+
+  it('should show the move task hotkey in the options', async () => {
+    const { appApi, simulate } = renderApp({
+      settings: {
+        taskTime: 3,
+      },
+      mockService: {
+        service: {
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foobar' }],
+            moveTaskItemId: 'foo',
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: expect.arrayContaining([
+          {
+            hint: '⌘ ⇧ G',
+            id: 'foo',
+            label: 'Foobar',
+          },
+        ]),
+      })
+    );
+  });
+
+  it('should show the complete task hotkey in the options', async () => {
+    const { appApi, simulate } = renderApp({
+      settings: {
+        taskTime: 3,
+      },
+      mockService: {
+        service: {
+          getTaskTimerEndItems: () => ({
+            items: [{ id: 'foo', label: 'Foobar' }],
+            completeTaskItemId: 'foo',
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: expect.arrayContaining([
+          {
+            hint: '⌘ ⇧ B',
+            id: 'foo',
+            label: 'Foobar',
+          },
+        ]),
+      })
+    );
+  });
+
+  it('should show both custom complete and move task hotkeys in the options', async () => {
+    const { appApi, simulate } = renderApp({
+      settings: {
+        taskTime: 3,
+      },
+      mockService: {
+        service: {
+          getTaskTimerEndItems: () => ({
+            items: [
+              { id: 'complete-me', label: 'Complete me!' },
+              { id: 'move-me', label: 'Move me!' },
+            ],
+            completeTaskItemId: 'complete-me',
+            moveTaskItemId: 'move-me',
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: expect.arrayContaining([
+          {
+            hint: '⌘ ⇧ B',
+            id: 'complete-me',
+            label: 'Complete me!',
+          },
+          {
+            hint: '⌘ ⇧ G',
+            id: 'move-me',
+            label: 'Move me!',
+          },
+        ]),
+      })
+    );
   });
 
   it('should handle the add note option', async () => {

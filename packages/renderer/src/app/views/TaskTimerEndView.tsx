@@ -22,6 +22,7 @@ export const TaskTimerEndView: Component = () => {
   const showAddNoteView = useShowAddNoteView();
   const t = useTranslate();
 
+  let customCompleteTaskItemId: string | null = null;
   let customMoveTaskItemId: string | null = null;
 
   const getItems = () => {
@@ -30,27 +31,40 @@ export const TaskTimerEndView: Component = () => {
     const taskTimerEndItems = getService().getTaskTimerEndItems?.(currentTask().item.id);
 
     if (taskTimerEndItems) {
-      const { items, moveTaskItemId } = taskTimerEndItems;
+      const { completeTaskItemId, items, moveTaskItemId } = taskTimerEndItems;
       customItems = items;
 
-      if (moveTaskItemId) {
+      if (completeTaskItemId || moveTaskItemId) {
         customItems = produce(items, draft => {
+          let completeTaskOption: SelectItem | undefined;
           let moveTaskOption: SelectItem | undefined;
 
+          let isDone = false;
           const itemsToSearch = [...draft];
 
-          while (!moveTaskOption && itemsToSearch.length) {
+          while (!isDone && itemsToSearch.length) {
             const item = itemsToSearch.shift()!;
 
             if (item.type === 'group' || item.type === 'customGroup') {
               itemsToSearch.unshift(...item.items);
-            } else if (item.id === taskTimerEndItems.moveTaskItemId) {
+            } else if (completeTaskItemId && item.id === completeTaskItemId) {
+              completeTaskOption = item;
+            } else if (moveTaskItemId && item.id === moveTaskItemId) {
               moveTaskOption = item;
             }
+
+            isDone =
+              (!completeTaskItemId || !!completeTaskOption) && // Either no completeTaskItemId or we found it
+              (!moveTaskItemId || !!moveTaskOption); // Either no moveTaskItemId or we found it
+          }
+
+          if (completeTaskOption) {
+            customCompleteTaskItemId = completeTaskOption.id;
+            completeTaskOption.hint = getHotkeyLabel('completeTaskEarly');
           }
 
           if (moveTaskOption) {
-            customMoveTaskItemId = moveTaskItemId;
+            customMoveTaskItemId = moveTaskOption.id;
             moveTaskOption.hint = getHotkeyLabel('moveTask');
           }
         });
@@ -104,6 +118,12 @@ export const TaskTimerEndView: Component = () => {
     }
   };
 
+  const handleTaskComplete = () => {
+    if (customCompleteTaskItemId) {
+      handleOptionSelect(customCompleteTaskItemId);
+    }
+  };
+
   const handleTaskMove = () => {
     if (customMoveTaskItemId) {
       handleOptionSelect(customMoveTaskItemId);
@@ -114,6 +134,7 @@ export const TaskTimerEndView: Component = () => {
 
   registerHotkeys({
     addNote: () => showAddNoteView('generalNote'),
+    completeTaskEarly: handleTaskComplete,
     continueTask: () => taskTimerEndPromptHandled('continueTask'),
     moveTask: handleTaskMove,
     voidTask: () => taskTimerEndPromptHandled('voidTask'),
