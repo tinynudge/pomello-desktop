@@ -1,6 +1,6 @@
 import { useStoreActions } from '@/app/context/StoreContext';
 import { useRuntime } from '@/shared/context/RuntimeContext';
-import { RemoveTask, SelectItem } from '@pomello-desktop/domain';
+import { RemoveTask, TaskSelectItem } from '@pomello-desktop/domain';
 import { useQueryClient } from '@tanstack/solid-query';
 import { produce } from 'immer';
 import { useTasksCacheKey } from '../useTasksCacheKey';
@@ -13,7 +13,7 @@ export const useRemoveTaskFromCache = () => {
   const queryClient = useQueryClient();
 
   return (removeTask: RemoveTask, taskId: string) => {
-    queryClient.setQueryData<SelectItem[] | undefined>(getTasksCacheKey(), tasks => {
+    queryClient.setQueryData<TaskSelectItem[] | undefined>(getTasksCacheKey(), tasks => {
       if (!tasks) {
         return;
       }

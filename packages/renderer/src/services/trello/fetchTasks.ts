@@ -1,6 +1,6 @@
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
 import { parseTaskName } from '@/shared/helpers/parseTaskName';
-import { SelectItem } from '@pomello-desktop/domain';
+import { SelectItem, TaskSelectItem } from '@pomello-desktop/domain';
 import { fetchCardsByListId } from './api/fetchCardsByListId';
 import { TrelloCard, TrelloCheckItem, TrelloRuntime } from './domain';
 
@@ -31,15 +31,13 @@ export const fetchTasks = async ({
 
   const tasks = cards
     .sort((cardA, cardB) => cardA.pos - cardB.pos)
-    .flatMap(card => {
+    .map<TaskSelectItem>(card => {
       tasksById.set(card.id, card);
 
-      const items: SelectItem[] = [
-        {
-          id: card.id,
-          label: parseTaskName(card.name, settings.titleMarker).name,
-        },
-      ];
+      const task: TaskSelectItem = {
+        id: card.id,
+        label: parseTaskName(card.name, settings.titleMarker).name,
+      };
 
       if (user?.type === 'premium') {
         const checklists: SelectItem[] = [];
@@ -74,11 +72,11 @@ export const fetchTasks = async ({
           });
 
         if (checklists.length) {
-          items.push(...checklists);
+          task.children = checklists;
         }
       }
 
-      return items;
+      return task;
     });
 
   cache.actions.tasksSet(tasksById);

@@ -4,8 +4,9 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { useService } from '@/shared/context/ServiceContext';
 import { Heading } from '@/ui/app/Heading';
 import { SelectField } from '@/ui/app/SelectField';
-import { createQuery } from '@tanstack/solid-query';
-import { Component, Show, onMount } from 'solid-js';
+import { SelectItem } from '@pomello-desktop/domain';
+import { useQuery } from '@tanstack/solid-query';
+import { Component, Show, createMemo, onMount } from 'solid-js';
 import { unwrap } from 'solid-js/store';
 import { Dynamic } from 'solid-js/web';
 import { useTasksCacheKey } from '../hooks/useTasksCacheKey';
@@ -18,7 +19,7 @@ export const SelectTaskView: Component = () => {
   const store = useStore();
   const t = useTranslate();
 
-  const tasks = createQuery(() => ({
+  const tasks = useQuery(() => ({
     enabled: !store.isUpdatingTasks && !store.isSuspended,
     gcTime: Infinity,
     queryFn: getService().fetchTasks,
@@ -30,6 +31,24 @@ export const SelectTaskView: Component = () => {
     if (store.isQuickTaskSelectEnabled) {
       quickTaskReset();
     }
+  });
+
+  const getSelectItems = createMemo<SelectItem[] | undefined>(() => {
+    if (!tasks.data) {
+      return;
+    }
+
+    const items: SelectItem[] = [];
+
+    unwrap(tasks.data).forEach(({ children, ...task }) => {
+      items.push(task);
+
+      if (children?.length) {
+        items.push(...children);
+      }
+    });
+
+    return items;
   });
 
   const handleTaskSelect = (id: string) => {
@@ -47,8 +66,8 @@ export const SelectTaskView: Component = () => {
   const shouldOpenSelect = store.pomelloState.timer?.isActive ?? store.isQuickTaskSelectEnabled;
 
   return (
-    <Show when={tasks.data}>
-      {tasks => (
+    <Show when={getSelectItems()}>
+      {getSelectItems => (
         <Show
           fallback={
             <>
@@ -57,7 +76,7 @@ export const SelectTaskView: Component = () => {
               </Show>
               <SelectField
                 defaultOpen={shouldOpenSelect}
-                items={unwrap(tasks())}
+                items={getSelectItems()}
                 noResultsMessage={t('noTasksFound')}
                 onChange={handleTaskSelect}
                 placeholder={t('selectTaskPlaceholder')}

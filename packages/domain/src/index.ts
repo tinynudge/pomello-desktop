@@ -65,6 +65,7 @@ export type { StoreManager } from './StoreManager';
 export type { TaskCompleteItems } from './TaskCompleteItems';
 export type { TaskCompletePromptHandledEvent } from './TaskCompletePromptHandledEvent';
 export type { TaskCompletePromptHandledResponse } from './TaskCompletePromptHandledResponse';
+export type { TaskSelectItem } from './TaskSelectItem';
 export type { TaskTimerEndItems } from './TaskTimerEndItems';
 export type { TaskTimerEndPromptHandledEvent } from './TaskTimerEndPromptHandledEvent';
 export type { TaskTimerEndPromptHandledResponse } from './TaskTimerEndPromptHandledResponse';
