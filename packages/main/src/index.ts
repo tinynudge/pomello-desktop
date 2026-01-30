@@ -8,10 +8,12 @@ import { initializeListeners } from './helpers/initializeListeners';
 import { translate } from './helpers/translate';
 import { logger } from './logger';
 
-const isSingleInstance = app.requestSingleInstanceLock();
-if (!isSingleInstance) {
-  app.quit();
-  process.exit(0);
+if (!import.meta.env.DEV) {
+  const isSingleInstance = app.requestSingleInstanceLock();
+  if (!isSingleInstance) {
+    app.quit();
+    process.exit(0);
+  }
 }
 
 app.setName('Pomello');
@@ -58,22 +60,6 @@ app.whenReady().then(async () => {
 
   logger.debug('Did start application');
 });
-
-if (import.meta.env.DEV) {
-  app
-    .whenReady()
-    .then(() => import('electron-devtools-installer'))
-    .then(devToolsInstaller => {
-      const {
-        default: installExtension,
-        REACT_DEVELOPER_TOOLS,
-        REDUX_DEVTOOLS,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } = devToolsInstaller.default as any;
-
-      installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS]);
-    });
-}
 
 if (import.meta.env.PROD) {
   app
