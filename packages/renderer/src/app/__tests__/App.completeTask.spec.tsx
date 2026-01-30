@@ -1,3 +1,4 @@
+import { TaskSelectItem } from '@pomello-desktop/domain';
 import { vi } from 'vitest';
 import { renderApp, screen, waitFor } from '../__fixtures__/renderApp';
 
@@ -132,5 +133,124 @@ describe('App - Complete Task', () => {
     await waitFor(() => {
       expect(fetchTasks).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it('should optimistically remove the completed task from the cache', async () => {
+    const { appApi, simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              {
+                id: 'mama-task',
+                label: 'Mama Task',
+                children: [
+                  {
+                    id: 'task-1',
+                    label: 'Task 1',
+                  },
+                ],
+              },
+              {
+                id: 'task-2',
+                label: 'Task 2',
+              },
+            ]),
+          getTaskCompleteItems: () => ({
+            // Don't resolve to simulate pending state, we just want to test the optimistic update
+            removeTask: () => new Promise(() => {}),
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('mama-task');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: [{ id: 'task-2', label: 'Task 2' }],
+      })
+    );
+  });
+
+  it('should optimistically remove completed child tasks from the cache', async () => {
+    const { appApi, simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              {
+                id: 'mama-task',
+                label: 'Mama Task',
+                children: [
+                  { id: 'task-1', label: 'Task 1' },
+                  { id: 'task-2', label: 'Task 2' },
+                ],
+              },
+            ]),
+          getTaskCompleteItems: () => ({
+            // Don't resolve to simulate pending state, we just want to test the optimistic update
+            removeTask: () => new Promise(() => {}),
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('task-1');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: [
+          { id: 'mama-task', label: 'Mama Task' },
+          { id: 'task-2', label: 'Task 2' },
+        ],
+      })
+    );
+  });
+
+  it('should optimistically remove completed tasks from groups in the cache', async () => {
+    const { appApi, simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () =>
+            Promise.resolve([
+              {
+                id: 'group-1',
+                label: 'Group 1',
+                type: 'group',
+                items: [
+                  { id: 'task-1', label: 'Task 1' },
+                  { id: 'task-2', label: 'Task 2' },
+                ],
+              },
+            ] satisfies TaskSelectItem[]),
+          getTaskCompleteItems: () => ({
+            // Don't resolve to simulate pending state, we just want to test the optimistic update
+            removeTask: () => new Promise(() => {}),
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('task-1');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: [
+          {
+            id: 'group-1',
+            label: 'Group 1',
+            type: 'group',
+            items: [{ id: 'task-2', label: 'Task 2' }],
+          },
+        ],
+      })
+    );
   });
 });

@@ -467,4 +467,67 @@ describe('Trello service - Complete task', () => {
       );
     });
   });
+
+  it('should optimistically remove all child checklists when the card is completed early', async () => {
+    const { appApi, simulate } = await renderTrelloService({
+      config: {
+        currentList: 'MY_FIRST_LIST_ID',
+      },
+      settings: {
+        taskTime: 5,
+        shortBreakTime: 3,
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              lists: [
+                generateTrelloList({ id: 'MY_FIRST_LIST_ID' }),
+                generateTrelloList({ id: 'MY_SECOND_LIST_ID' }),
+              ],
+            }),
+          ],
+        }),
+        fetchCardsByListId: [
+          generateTrelloCard({
+            id: 'MY_FIRST_TASK',
+            name: 'My first task',
+            checklists: [
+              generateTrelloChecklist({
+                id: 'MY_FIRST_CHECKLIST',
+                name: 'My first checklist',
+                checkItems: [
+                  generateTrelloCheckItem({
+                    id: 'MY_FIRST_CHECK_ITEM',
+                    name: 'My first check item',
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      },
+    });
+
+    await simulate.selectTask('MY_FIRST_TASK');
+    await simulate.startTimer();
+    await simulate.advanceTimer(3);
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.selectOption('MY_SECOND_LIST_ID');
+    await simulate.waitForSelectTaskView();
+
+    await waitFor(() => {
+      expect(appApi.setSelectItems).toHaveBeenCalledWith(
+        expect.objectContaining({
+          items: [
+            {
+              id: 'switch-lists',
+              label: 'Switch to a different list',
+              type: 'customOption',
+            },
+          ],
+        })
+      );
+    });
+  });
 });

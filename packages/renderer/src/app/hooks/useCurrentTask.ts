@@ -1,5 +1,5 @@
 import { useService } from '@/shared/context/ServiceContext';
-import { SelectItem, SelectOptionType } from '@pomello-desktop/domain';
+import { SelectOptionType, TaskSelectItem } from '@pomello-desktop/domain';
 import { useQueryClient } from '@tanstack/solid-query';
 import { Accessor, createMemo } from 'solid-js';
 import { useStore } from '../context/StoreContext';
@@ -20,11 +20,15 @@ export const useCurrentTask = (): Accessor<CurrentTask> => {
     let task: SelectOptionType | undefined;
 
     const currentTaskId = store.pomelloState.currentTaskId;
-    const tasks = queryClient.getQueryData<SelectItem[]>(getTasksCacheKey()) ?? [];
+    const tasks = queryClient.getQueryData<TaskSelectItem[]>(getTasksCacheKey()) ?? [];
     const itemsToSearch = [...tasks];
 
     while (!task && itemsToSearch.length) {
       const item = itemsToSearch.shift()!; // "item" must exist due to the length check above
+
+      if (item.children?.length) {
+        itemsToSearch.unshift(...item.children);
+      }
 
       if (item.type === 'group' || item.type === 'customGroup') {
         itemsToSearch.unshift(...item.items);
