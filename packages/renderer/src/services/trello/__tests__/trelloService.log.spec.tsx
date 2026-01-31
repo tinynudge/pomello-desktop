@@ -739,7 +739,7 @@ describe('Trello service - Log', () => {
     await simulate.selectTask('MY_CHECK_ITEM_ID');
     await simulate.startTimer();
     await simulate.advanceTimer(60);
-    await simulate.hotkey('moveTask');
+    await simulate.hotkey('completeTaskEarly');
 
     expect(mockUpdateComment).toHaveBeenLastCalledWith(
       'TRELLO_ACTION_ID',

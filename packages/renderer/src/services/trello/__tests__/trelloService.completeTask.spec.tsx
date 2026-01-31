@@ -7,12 +7,14 @@ import { generateTrelloChecklist } from '../__fixtures__/generateTrelloChecklist
 import { generateTrelloList } from '../__fixtures__/generateTrelloList';
 import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
 import { renderTrelloService, screen, waitFor } from '../__fixtures__/renderTrelloService';
+import { markCardComplete } from '../api/markCardComplete';
 import { markCheckItemComplete } from '../api/markCheckItemComplete';
 import { moveCardToList } from '../api/moveCardToList';
 import { TrelloCard, TrelloCheckItem } from '../domain';
 
 describe('Trello service - Complete task', () => {
   beforeEach(() => {
+    vi.mock('../api/markCardComplete');
     vi.mock('../api/markCheckItemComplete');
     vi.mock('../api/moveCardToList');
 
@@ -67,6 +69,11 @@ describe('Trello service - Complete task', () => {
     expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
       expect.objectContaining({
         items: [
+          {
+            hint: '⌘ ⇧ B',
+            id: 'mark-card-complete',
+            label: 'Mark card as completed',
+          },
           {
             id: 'move-card',
             items: [
@@ -262,6 +269,35 @@ describe('Trello service - Complete task', () => {
     expect(mockedMarkCheckItemComplete).toHaveBeenCalled();
   });
 
+  it('should mark the card as complete in Trello', async () => {
+    const { simulate } = await renderTrelloService({
+      config: {
+        currentList: 'PHASE_ONE',
+      },
+      settings: {
+        taskTime: 5,
+      },
+      trelloApi: {
+        fetchBoardsAndLists: generateTrelloMember({
+          boards: [
+            generateTrelloBoard({
+              lists: [generateTrelloList({ id: 'PHASE_ONE', name: 'Phase one' })],
+            }),
+          ],
+        }),
+        fetchCardsByListId: [generateTrelloCard({ id: 'MY_TASK' })],
+      },
+    });
+
+    await simulate.selectTask('MY_TASK');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.hotkey('completeTaskEarly');
+
+    const mockedMarkCardComplete = vi.mocked(markCardComplete);
+    expect(mockedMarkCardComplete).toHaveBeenCalled();
+  });
+
   it('should optimistically remove a card when completing early and moving to another list', async () => {
     const cards = new Map([
       [
@@ -294,7 +330,7 @@ describe('Trello service - Complete task', () => {
           ],
         }),
         fetchCardsByListId: () => HttpResponse.json<TrelloCard[]>(Array.from(cards.values())),
-        moveCardToList: ({ params }) => {
+        updateCard: ({ params }) => {
           const cardId = params.idCard as string;
           const card = cards.get(cardId);
 

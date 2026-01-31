@@ -6,16 +6,18 @@ import { generateTrelloChecklist } from '../__fixtures__/generateTrelloChecklist
 import { generateTrelloList } from '../__fixtures__/generateTrelloList';
 import { generateTrelloMember } from '../__fixtures__/generateTrelloMember';
 import { renderTrelloService } from '../__fixtures__/renderTrelloService';
+import { markCardComplete } from '../api/markCardComplete';
 import { markCheckItemComplete } from '../api/markCheckItemComplete';
 import { moveCardToList } from '../api/moveCardToList';
 import { updateCard } from '../api/updateCard';
 import { updateCheckItem } from '../api/updateCheckItem';
 
+vi.mock('../api/markCardComplete');
 vi.mock('../api/markCheckItemComplete');
 vi.mock('../api/moveCardToList');
 vi.mock('../api/updateCard');
-vi.mock('../api/updateComment');
 vi.mock('../api/updateCheckItem');
+vi.mock('../api/updateComment');
 
 describe('Trello service - Task timer end', () => {
   beforeEach(() => {
@@ -95,6 +97,11 @@ describe('Trello service - Task timer end', () => {
             label: 'Add a note first',
           },
           {
+            hint: '⌘ ⇧ B',
+            id: 'mark-card-complete',
+            label: 'Mark card as completed',
+          },
+          {
             id: 'move-card',
             items: [
               { id: 'PHASE_ONE', label: 'Phase one' },
@@ -146,6 +153,7 @@ describe('Trello service - Task timer end', () => {
             label: 'Continue after break',
           },
           {
+            hint: '⌘ ⇧ G',
             id: 'switchTask',
             label: 'Switch tasks after break',
           },
@@ -160,9 +168,9 @@ describe('Trello service - Task timer end', () => {
             label: 'Add a note first',
           },
           {
-            hint: '⌘ ⇧ G',
+            hint: '⌘ ⇧ B',
             id: 'check-item-complete',
-            label: 'Mark item complete',
+            label: 'Mark checklist item as completed',
           },
         ],
       })
@@ -245,7 +253,7 @@ describe('Trello service - Task timer end', () => {
     expect(mockMoveCardToList).toHaveBeenCalled();
   });
 
-  it('should mark the checklist item as complete in Trello', async () => {
+  it('should mark the checklist item as completed in Trello', async () => {
     const { simulate } = await renderTrelloService({
       settings: {
         taskTime: 5,
@@ -275,6 +283,25 @@ describe('Trello service - Task timer end', () => {
 
     const mockedMarkCheckItemComplete = vi.mocked(markCheckItemComplete);
     expect(mockedMarkCheckItemComplete).toHaveBeenCalled();
+  });
+
+  it('should mark the card as completed in Trello', async () => {
+    const { simulate } = await renderTrelloService({
+      settings: {
+        taskTime: 5,
+      },
+      trelloApi: {
+        fetchCardsByListId: [generateTrelloCard({ id: 'MY_TASK' })],
+      },
+    });
+
+    await simulate.selectTask('MY_TASK');
+    await simulate.startTimer();
+    await simulate.advanceTimer(5);
+    await simulate.hotkey('completeTaskEarly');
+
+    const mockedMarkCardComplete = vi.mocked(markCardComplete);
+    expect(mockedMarkCardComplete).toHaveBeenCalled();
   });
 
   it('should add the pomodoro count to the card title if enabled', async () => {

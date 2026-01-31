@@ -28,10 +28,15 @@ export const fetchTasks = async ({
   logger.debug('Did fetch Trello cards');
 
   const tasksById = new Map<string, TrelloCard | TrelloCheckItem>();
+  const tasks: TaskSelectItem[] = [];
 
-  const tasks = cards
+  cards
     .sort((cardA, cardB) => cardA.pos - cardB.pos)
-    .map<TaskSelectItem>(card => {
+    .forEach(card => {
+      if (card.dueComplete) {
+        return;
+      }
+
       tasksById.set(card.id, card);
 
       const task: TaskSelectItem = {
@@ -76,7 +81,7 @@ export const fetchTasks = async ({
         }
       }
 
-      return task;
+      tasks.push(task);
     });
 
   cache.actions.tasksSet(tasksById);

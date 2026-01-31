@@ -32,7 +32,7 @@ export type TrelloApiResponses = {
   markCheckItemComplete:
     | TrelloCheckItem
     | HttpResponseResolver<PathParams, DefaultBodyType, TrelloCheckItem>;
-  moveCardToList: TrelloCard | HttpResponseResolver<PathParams, DefaultBodyType, TrelloCard>;
+  updateCard: TrelloCard | HttpResponseResolver<PathParams, DefaultBodyType, TrelloCard>;
   updateComment:
     | TrelloCardAction
     | HttpResponseResolver<PathParams, DefaultBodyType, TrelloCardAction>;
@@ -69,7 +69,7 @@ export const mockTrelloApi = (trelloApi?: Partial<TrelloApiResponses>): void => 
     ),
     http.put(
       `${TRELLO_API_URL}cards/:idCard`,
-      createHttpResponse<TrelloCard>(generateTrelloCard(), trelloApi?.moveCardToList)
+      createHttpResponse<TrelloCard>(generateTrelloCard(), trelloApi?.updateCard)
     ),
     http.put(
       `${TRELLO_API_URL}actions/:idAction`,
