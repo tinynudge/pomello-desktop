@@ -96,6 +96,173 @@ describe('App - Complete Task', () => {
     });
   });
 
+  it('should handle the complete task hotkey for a customized item', async () => {
+    const handleTaskComplete = vi.fn();
+
+    const { simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
+          getTaskCompleteItems: () => ({
+            items: [
+              { id: 'foo', label: 'Foo' },
+              { id: 'bar', label: 'Bar' },
+            ],
+            completeTaskId: 'foo',
+          }),
+          onTaskCompletePromptHandled: handleTaskComplete,
+        },
+      },
+    });
+
+    await simulate.selectTask('hello');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.hotkey('completeTaskEarly');
+
+    await waitFor(() => {
+      expect(handleTaskComplete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          optionId: 'foo',
+          taskId: 'hello',
+        })
+      );
+    });
+  });
+
+  it('should handle the move task hotkey for a customized item', async () => {
+    const handleTaskComplete = vi.fn();
+
+    const { simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
+          getTaskCompleteItems: () => ({
+            items: [
+              { id: 'foo', label: 'Foo' },
+              { id: 'bar', label: 'Bar' },
+            ],
+            moveTaskItemId: 'bar',
+          }),
+          onTaskCompletePromptHandled: handleTaskComplete,
+        },
+      },
+    });
+
+    await simulate.selectTask('hello');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+    await simulate.hotkey('moveTask');
+
+    await waitFor(() => {
+      expect(handleTaskComplete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          optionId: 'bar',
+          taskId: 'hello',
+        })
+      );
+    });
+  });
+
+  it('should show the complete task hotkey hint in the options', async () => {
+    const { appApi, simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'foo', label: 'Foo' }],
+            completeTaskId: 'foo',
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('hello');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: expect.arrayContaining([
+          {
+            hint: '⌘ ⇧ B',
+            id: 'foo',
+            label: 'Foo',
+          },
+        ]),
+      })
+    );
+  });
+
+  it('should show the move task hotkey hint in the options', async () => {
+    const { appApi, simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
+          getTaskCompleteItems: () => ({
+            items: [{ id: 'bar', label: 'Bar' }],
+            moveTaskItemId: 'bar',
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('hello');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: expect.arrayContaining([
+          {
+            hint: '⌘ ⇧ G',
+            id: 'bar',
+            label: 'Bar',
+          },
+        ]),
+      })
+    );
+  });
+
+  it('should show both custom complete and move task hotkey hints in the options', async () => {
+    const { appApi, simulate } = renderApp({
+      mockService: {
+        service: {
+          fetchTasks: () => Promise.resolve([{ id: 'hello', label: 'World' }]),
+          getTaskCompleteItems: () => ({
+            items: [
+              { id: 'foo', label: 'Foo' },
+              { id: 'bar', label: 'Bar' },
+            ],
+            completeTaskId: 'foo',
+            moveTaskItemId: 'bar',
+          }),
+        },
+      },
+    });
+
+    await simulate.selectTask('hello');
+    await simulate.startTimer();
+    await simulate.hotkey('completeTaskEarly');
+
+    expect(appApi.setSelectItems).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        items: expect.arrayContaining([
+          {
+            hint: '⌘ ⇧ B',
+            id: 'foo',
+            label: 'Foo',
+          },
+          {
+            hint: '⌘ ⇧ G',
+            id: 'bar',
+            label: 'Bar',
+          },
+        ]),
+      })
+    );
+  });
+
   it('should delay fetching the task if there is a mutation to update tasks', async () => {
     const fetchTasks = vi.fn(() => Promise.resolve([{ id: 'hello', label: 'World' }]));
 

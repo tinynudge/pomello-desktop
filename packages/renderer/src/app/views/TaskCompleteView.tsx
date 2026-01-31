@@ -20,6 +20,7 @@ export const TaskCompleteView: Component = () => {
   const removeTaskFromCache = useRemoveTaskFromCache();
   const t = useTranslate();
 
+  let customCompleteTaskId: string | null = null;
   let customMoveTaskItemId: string | null = null;
 
   const [getItems, setItems] = createSignal<SelectItem[]>();
@@ -33,7 +34,7 @@ export const TaskCompleteView: Component = () => {
     let customItems: SelectItem[] | undefined;
 
     if (result) {
-      const { items, moveTaskItemId, removeTask } = result;
+      const { completeTaskId, items, moveTaskItemId, removeTask } = result;
 
       if (removeTask) {
         removeTaskFromCache(removeTask, currentTask().item.id);
@@ -41,24 +42,37 @@ export const TaskCompleteView: Component = () => {
 
       customItems = items;
 
-      if (items && moveTaskItemId) {
+      if (items && (completeTaskId || moveTaskItemId)) {
         customItems = produce(items, draft => {
+          let completeTaskOption: SelectItem | undefined;
           let moveTaskOption: SelectItem | undefined;
 
+          let isDone = false;
           const itemsToSearch = [...draft];
 
-          while (!moveTaskOption && itemsToSearch.length) {
+          while (!isDone && itemsToSearch.length) {
             const item = itemsToSearch.shift()!;
 
             if (item.type === 'group' || item.type === 'customGroup') {
               itemsToSearch.unshift(...item.items);
+            } else if (item.id === completeTaskId) {
+              completeTaskOption = item;
             } else if (item.id === moveTaskItemId) {
               moveTaskOption = item;
             }
+
+            isDone =
+              (!completeTaskId || !!completeTaskOption) && // Either no completeTaskId or we found it
+              (!moveTaskItemId || !!moveTaskOption); // Either no moveTaskId or we found it
+          }
+
+          if (completeTaskOption) {
+            customCompleteTaskId = completeTaskOption.id;
+            completeTaskOption.hint = getHotkeyLabel('completeTaskEarly');
           }
 
           if (moveTaskOption) {
-            customMoveTaskItemId = moveTaskItemId;
+            customMoveTaskItemId = moveTaskOption.id;
             moveTaskOption.hint = getHotkeyLabel('moveTask');
           }
         });
@@ -86,12 +100,21 @@ export const TaskCompleteView: Component = () => {
     taskCompleteHandled();
   };
 
+  const handleTaskComplete = () => {
+    if (customCompleteTaskId) {
+      handleOptionSelect(customCompleteTaskId);
+    }
+  };
+
+  const handleTaskMove = () => {
+    if (customMoveTaskItemId) {
+      handleOptionSelect(customMoveTaskItemId);
+    }
+  };
+
   registerHotkeys({
-    moveTask: () => {
-      if (customMoveTaskItemId) {
-        handleOptionSelect(customMoveTaskItemId);
-      }
-    },
+    completeTaskEarly: handleTaskComplete,
+    moveTask: handleTaskMove,
   });
 
   return (
