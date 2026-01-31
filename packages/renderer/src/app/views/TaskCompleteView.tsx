@@ -20,7 +20,7 @@ export const TaskCompleteView: Component = () => {
   const removeTaskFromCache = useRemoveTaskFromCache();
   const t = useTranslate();
 
-  let customCompleteTaskId: string | null = null;
+  let customCompleteTaskItemId: string | null = null;
   let customMoveTaskItemId: string | null = null;
 
   const [getItems, setItems] = createSignal<SelectItem[]>();
@@ -34,7 +34,7 @@ export const TaskCompleteView: Component = () => {
     let customItems: SelectItem[] | undefined;
 
     if (result) {
-      const { completeTaskId, items, moveTaskItemId, removeTask } = result;
+      const { completeTaskItemId, items, moveTaskItemId, removeTask } = result;
 
       if (removeTask) {
         removeTaskFromCache(removeTask, currentTask().item.id);
@@ -42,7 +42,7 @@ export const TaskCompleteView: Component = () => {
 
       customItems = items;
 
-      if (items && (completeTaskId || moveTaskItemId)) {
+      if (items && (completeTaskItemId || moveTaskItemId)) {
         customItems = produce(items, draft => {
           let completeTaskOption: SelectItem | undefined;
           let moveTaskOption: SelectItem | undefined;
@@ -55,19 +55,19 @@ export const TaskCompleteView: Component = () => {
 
             if (item.type === 'group' || item.type === 'customGroup') {
               itemsToSearch.unshift(...item.items);
-            } else if (item.id === completeTaskId) {
+            } else if (item.id === completeTaskItemId) {
               completeTaskOption = item;
             } else if (item.id === moveTaskItemId) {
               moveTaskOption = item;
             }
 
             isDone =
-              (!completeTaskId || !!completeTaskOption) && // Either no completeTaskId or we found it
+              (!completeTaskItemId || !!completeTaskOption) && // Either no completeTaskId or we found it
               (!moveTaskItemId || !!moveTaskOption); // Either no moveTaskId or we found it
           }
 
           if (completeTaskOption) {
-            customCompleteTaskId = completeTaskOption.id;
+            customCompleteTaskItemId = completeTaskOption.id;
             completeTaskOption.hint = getHotkeyLabel('completeTaskEarly');
           }
 
@@ -101,8 +101,8 @@ export const TaskCompleteView: Component = () => {
   };
 
   const handleTaskComplete = () => {
-    if (customCompleteTaskId) {
-      handleOptionSelect(customCompleteTaskId);
+    if (customCompleteTaskItemId) {
+      handleOptionSelect(customCompleteTaskItemId);
     }
   };
 
