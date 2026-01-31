@@ -1,8 +1,10 @@
 import { TaskTimerEndItems } from '@pomello-desktop/domain';
 import { TrelloRuntime } from './domain';
-import { createMoveCardList } from './helpers/createMoveCardList';
+import { createCardListItems } from './helpers/createCardListItems';
 import { findOrFailTask } from './helpers/findOrFailTask';
 import { isCheckItem } from './helpers/isCheckItem';
+
+export const MARK_CHECK_ITEM_COMPLETE_ID = 'check-item-complete';
 
 export const getTaskTimerEndItems = (
   { cache, translate }: TrelloRuntime,
@@ -14,13 +16,13 @@ export const getTaskTimerEndItems = (
     return {
       items: [
         {
-          id: 'check-item-complete',
+          id: MARK_CHECK_ITEM_COMPLETE_ID,
           label: translate('completeCheckItemLabel'),
         },
       ],
-      moveTaskItemId: 'check-item-complete',
+      completeTaskItemId: MARK_CHECK_ITEM_COMPLETE_ID,
     };
   }
 
-  return createMoveCardList(translate, cache);
+  return createCardListItems(translate, cache);
 };
