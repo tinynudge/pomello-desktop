@@ -21,7 +21,7 @@ export const AccountDetails: Component<AccountDetailsProps> = props => {
 
   const handleLogOutClick = () => {
     if (getMatchedProfileRoute()) {
-      navigate(DashboardRoute.Productivity);
+      navigate(DashboardRoute.Settings);
     }
 
     pomelloConfig.actions.userInvalidated();

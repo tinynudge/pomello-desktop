@@ -74,7 +74,9 @@ describe('Dashboard', () => {
       },
     });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    await userEvent.click(
+      within(screen.getByTestId('account-details')).getByRole('button', { name: 'Log in' })
+    );
 
     expect(appApi.showAuthWindow).toHaveBeenCalledWith({
       type: 'pomello',
@@ -130,7 +132,7 @@ describe('Dashboard', () => {
     );
   });
 
-  it('should navigate to the Productivity page when logged out from the Profile page', async () => {
+  it('should navigate to the Settings page when logged out from the Profile page', async () => {
     const { userEvent } = renderDashboard();
 
     await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
@@ -138,7 +140,7 @@ describe('Dashboard', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
     await userEvent.click(screen.getByRole('menuitem', { name: 'Log out' }));
 
-    expect(screen.getByRole('heading', { name: 'Productivity', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Settings', level: 1 })).toBeInTheDocument();
   });
 
   it('should render an error screen when an unexpected error occurs', async () => {
