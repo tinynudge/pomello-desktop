@@ -1,5 +1,5 @@
-import { TrackingEvent, TrackingEventWithServiceData } from '@tinynudge/pomello-service';
+import { TrackingEventInput, TrackingEventInputWithServiceData } from '@tinynudge/pomello-service';
 
 export type GetTrackingEventServiceDataResponse =
-  | Omit<TrackingEventWithServiceData, keyof TrackingEvent>
+  | Omit<TrackingEventInputWithServiceData, keyof TrackingEventInput>
   | false;
