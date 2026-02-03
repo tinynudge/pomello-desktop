@@ -3,7 +3,7 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { ActionsMenu } from '@/ui/dashboard/ActionsMenu';
 import { Button } from '@/ui/dashboard/Button';
 import { Error } from '@/ui/dashboard/Error';
-import { LoadingDots } from '@/ui/dashboard/LoadingDots/LoadingDots';
+import { LoadingDots } from '@/ui/dashboard/LoadingDots';
 import { Panel } from '@/ui/dashboard/Panel';
 import { useQuery } from '@tanstack/solid-query';
 import { Component, createMemo, createSignal, For, Match, Show, Switch } from 'solid-js';
