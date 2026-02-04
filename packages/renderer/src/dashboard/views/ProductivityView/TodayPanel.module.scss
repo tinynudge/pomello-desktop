@@ -1,0 +1,18 @@
+.loadingDots {
+  margin: 20px 0;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+
+  dt {
+    color: var(--dashboard-text-hint);
+    font-size: 13px;
+  }
+
+  dd {
+    font-size: 32px;
+  }
+}
