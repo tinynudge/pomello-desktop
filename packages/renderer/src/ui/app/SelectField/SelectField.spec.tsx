@@ -42,9 +42,7 @@ describe('UI - Select Field', () => {
   });
 
   it('should open the select when clicked', async () => {
-    const { appApi, userEvent } = renderAppComponent(() => (
-      <SelectField items={[]} onChange={vi.fn()} />
-    ));
+    const { appApi, userEvent } = renderAppComponent(() => <SelectField items={[]} onChange={vi.fn()} />);
 
     await userEvent.click(screen.getByRole('button'));
 
@@ -52,9 +50,7 @@ describe('UI - Select Field', () => {
   });
 
   it('should open the select when the space bar is pressed', async () => {
-    const { appApi, userEvent } = renderAppComponent(() => (
-      <SelectField items={[]} onChange={vi.fn()} />
-    ));
+    const { appApi, userEvent } = renderAppComponent(() => <SelectField items={[]} onChange={vi.fn()} />);
 
     await userEvent.keyboard(' ');
 
@@ -64,9 +60,7 @@ describe('UI - Select Field', () => {
   it('should call the change handler when an option has been selected', async () => {
     const onSelectChange = vi.fn();
 
-    const { emitAppApiEvent } = renderAppComponent(() => (
-      <SelectField items={[]} onChange={onSelectChange} />
-    ));
+    const { emitAppApiEvent } = renderAppComponent(() => <SelectField items={[]} onChange={onSelectChange} />);
 
     emitAppApiEvent('onSelectChange', 'foo');
 

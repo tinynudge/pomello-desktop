@@ -38,37 +38,23 @@ describe('Dashboard - Sounds', () => {
     const taskTimerList = screen.getByRole('list', { name: 'Task timer sounds' });
 
     expect(taskTimerList).toBeInTheDocument();
-    expect(
-      within(taskTimerList).getByRole('listitem', { name: 'Start sound' })
-    ).toBeInTheDocument();
+    expect(within(taskTimerList).getByRole('listitem', { name: 'Start sound' })).toBeInTheDocument();
     expect(within(taskTimerList).getByRole('listitem', { name: 'Tick sound' })).toBeInTheDocument();
     expect(within(taskTimerList).getByRole('listitem', { name: 'End sound' })).toBeInTheDocument();
 
     const shortBreakTimerList = screen.getByRole('list', { name: 'Short break timer sounds' });
 
     expect(shortBreakTimerList).toBeInTheDocument();
-    expect(
-      within(shortBreakTimerList).getByRole('listitem', { name: 'Start sound' })
-    ).toBeInTheDocument();
-    expect(
-      within(shortBreakTimerList).getByRole('listitem', { name: 'Tick sound' })
-    ).toBeInTheDocument();
-    expect(
-      within(shortBreakTimerList).getByRole('listitem', { name: 'End sound' })
-    ).toBeInTheDocument();
+    expect(within(shortBreakTimerList).getByRole('listitem', { name: 'Start sound' })).toBeInTheDocument();
+    expect(within(shortBreakTimerList).getByRole('listitem', { name: 'Tick sound' })).toBeInTheDocument();
+    expect(within(shortBreakTimerList).getByRole('listitem', { name: 'End sound' })).toBeInTheDocument();
 
     const longBreakTimerList = screen.getByRole('list', { name: 'Long break timer sounds' });
 
     expect(longBreakTimerList).toBeInTheDocument();
-    expect(
-      within(longBreakTimerList).getByRole('listitem', { name: 'Start sound' })
-    ).toBeInTheDocument();
-    expect(
-      within(longBreakTimerList).getByRole('listitem', { name: 'Tick sound' })
-    ).toBeInTheDocument();
-    expect(
-      within(longBreakTimerList).getByRole('listitem', { name: 'End sound' })
-    ).toBeInTheDocument();
+    expect(within(longBreakTimerList).getByRole('listitem', { name: 'Start sound' })).toBeInTheDocument();
+    expect(within(longBreakTimerList).getByRole('listitem', { name: 'Tick sound' })).toBeInTheDocument();
+    expect(within(longBreakTimerList).getByRole('listitem', { name: 'End sound' })).toBeInTheDocument();
   });
 
   it.each([
@@ -119,25 +105,15 @@ describe('Dashboard - Sounds', () => {
       },
     });
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Task timer tick sound' }),
-      'Ding'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Task timer tick sound' }), 'Ding');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
-    expect(screen.getByRole('combobox', { name: 'Task timer tick sound' })).toHaveDisplayValue(
-      'Egg timer'
-    );
+    expect(screen.getByRole('combobox', { name: 'Task timer tick sound' })).toHaveDisplayValue('Egg timer');
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Task timer tick sound' }),
-      'Wind up'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Task timer tick sound' }), 'Wind up');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -160,9 +136,7 @@ describe('Dashboard - Sounds', () => {
 
     expect(screen.getByRole('slider', { name: 'Short break timer end volume' })).toHaveValue('0.2');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -194,9 +168,7 @@ describe('Dashboard - Sounds', () => {
     await userEvent.click(within(tickItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(screen.getByRole('menuitem', { name: 'Restore default: Egg timer' }));
 
-    expect(
-      screen.getByRole('combobox', { name: 'Long break timer tick sound' })
-    ).toHaveDisplayValue('Egg timer');
+    expect(screen.getByRole('combobox', { name: 'Long break timer tick sound' })).toHaveDisplayValue('Egg timer');
     expect(screen.getByRole('slider', { name: 'Long break timer tick volume' })).toHaveValue('1');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
@@ -294,9 +266,7 @@ describe('Dashboard - Sounds', () => {
     });
 
     expect(within(customSoundItem).getByLabelText('Name')).toHaveValue('Foo');
-    expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue(
-      '/fake/path/foo.mp3'
-    );
+    expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue('/fake/path/foo.mp3');
   });
 
   it('should preview a custom sound', async () => {
@@ -316,9 +286,7 @@ describe('Dashboard - Sounds', () => {
 
     const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: My custom sound' });
 
-    await userEvent.click(
-      within(customSoundItem).getByRole('button', { name: 'Show more options' })
-    );
+    await userEvent.click(within(customSoundItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(within(customSoundItem).getByRole('menuitem', { name: 'Preview sound' }));
 
     expect(MockHowl).toHaveBeenCalledWith({
@@ -346,9 +314,7 @@ describe('Dashboard - Sounds', () => {
 
     await userEvent.type(within(customSoundItem).getByLabelText('Name'), 'Bar');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -390,15 +356,11 @@ describe('Dashboard - Sounds', () => {
 
     await userEvent.upload(within(customSoundItem).getByLabelText('Path'), newSound);
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
-    expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue(
-      '/fake/path/foo.mp3'
-    );
+    expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue('/fake/path/foo.mp3');
 
     await userEvent.upload(within(customSoundItem).getByLabelText('Path'), newSound);
 
@@ -429,23 +391,17 @@ describe('Dashboard - Sounds', () => {
 
     let customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
 
-    await userEvent.click(
-      within(customSoundItem).getByRole('button', { name: 'Show more options' })
-    );
+    await userEvent.click(within(customSoundItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(within(customSoundItem).getByRole('menuitem', { name: 'Delete sound' }));
 
     expect(screen.queryByRole('listitem', { name: 'Custom sound: Foo' })).not.toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
     customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
 
-    await userEvent.click(
-      within(customSoundItem).getByRole('button', { name: 'Show more options' })
-    );
+    await userEvent.click(within(customSoundItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(within(customSoundItem).getByRole('menuitem', { name: 'Delete sound' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -472,9 +428,7 @@ describe('Dashboard - Sounds', () => {
 
     expect(within(customSoundItem).getByLabelText('Name')).toHaveValue('moo.mp3');
     expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue('/moo.mp3');
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -598,9 +552,7 @@ describe('Dashboard - Sounds', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Close' }));
 
-    await userEvent.click(
-      within(customSoundItem).getByRole('button', { name: 'Show more options' })
-    );
+    await userEvent.click(within(customSoundItem).getByRole('button', { name: 'Show more options' }));
 
     expect(screen.getByRole('dialog', { name: 'Premium feature' })).toBeInTheDocument();
   });

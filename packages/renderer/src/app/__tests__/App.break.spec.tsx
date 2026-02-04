@@ -124,9 +124,6 @@ describe('App - Break', () => {
     await simulate.selectOption('continueTask');
     await simulate.showDialActions();
 
-    expect(screen.getByRole('button', { name: 'Skip break' })).toHaveAttribute(
-      'title',
-      'Skip break (⌘ ⇧ M)'
-    );
+    expect(screen.getByRole('button', { name: 'Skip break' })).toHaveAttribute('title', 'Skip break (⌘ ⇧ M)');
   });
 });

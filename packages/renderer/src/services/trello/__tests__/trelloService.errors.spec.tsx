@@ -117,9 +117,7 @@ describe('Trello service - Errors', () => {
 
     await userEvent.click(signInButton);
 
-    mockServer.use(
-      http.get(`${TRELLO_API_URL}members/me`, () => HttpResponse.json(generateTrelloMember()))
-    );
+    mockServer.use(http.get(`${TRELLO_API_URL}members/me`, () => HttpResponse.json(generateTrelloMember())));
 
     config.set('token', 'MY_NEW_TOKEN');
 
@@ -146,8 +144,7 @@ describe('Trello service - Errors', () => {
       buttons: ['Copy Error', 'Cancel'],
       cancelId: 1,
       defaultId: 0,
-      message:
-        'The Trello servers are not responding and may be experiencing an outage. Please try again later.',
+      message: 'The Trello servers are not responding and may be experiencing an outage. Please try again later.',
       type: 'error',
     });
   });
@@ -161,9 +158,7 @@ describe('Trello service - Errors', () => {
 
     const retryButton = await screen.findByRole('button', { name: 'Retry' });
 
-    mockServer.use(
-      http.get(`${TRELLO_API_URL}members/me`, () => HttpResponse.json(generateTrelloMember()))
-    );
+    mockServer.use(http.get(`${TRELLO_API_URL}members/me`, () => HttpResponse.json(generateTrelloMember())));
 
     await userEvent.click(retryButton);
 

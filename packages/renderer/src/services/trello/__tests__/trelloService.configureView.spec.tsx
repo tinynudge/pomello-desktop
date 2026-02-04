@@ -1,8 +1,4 @@
-import {
-  screen,
-  waitForElementToBeRemoved,
-  within,
-} from '@/dashboard/__fixtures__/renderDashboard';
+import { screen, waitForElementToBeRemoved, within } from '@/dashboard/__fixtures__/renderDashboard';
 import { QueryClient } from '@tanstack/solid-query';
 import { HttpResponse } from 'msw';
 import { generateTrelloBoard } from '../__fixtures__/generateTrelloBoard';
@@ -37,9 +33,7 @@ describe('Trello service - Configure view', () => {
 
     const connectionSection = within(screen.getByRole('region', { name: 'Account Connection' }));
 
-    expect(
-      connectionSection.getByRole('heading', { name: 'Account Connection', level: 2 })
-    ).toBeInTheDocument();
+    expect(connectionSection.getByRole('heading', { name: 'Account Connection', level: 2 })).toBeInTheDocument();
     expect(connectionSection.getByText('Status: Not connected')).toBeInTheDocument();
     expect(connectionSection.getByRole('button', { name: 'Login' })).toBeInTheDocument();
 
@@ -81,9 +75,7 @@ describe('Trello service - Configure view', () => {
     await userEvent.click(screen.getByRole('textbox', { name: 'Filter' }));
     await userEvent.type(screen.getByRole('textbox', { name: 'Filter' }), 'bar');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
     expect(config.get().listFilter).toBe(undefined);
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
@@ -101,9 +93,7 @@ describe('Trello service - Configure view', () => {
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'Case sensitivity' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
     expect(config.get().listFilterCaseSensitive).toBe(false);
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
@@ -200,9 +190,7 @@ describe('Trello service - Configure view', () => {
 
     expect(region.queryByRole('status')).not.toBeInTheDocument();
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should render the global preferences with default values', async () => {
@@ -212,9 +200,7 @@ describe('Trello service - Configure view', () => {
       },
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Default Preferences', level: 2 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Default Preferences', level: 2 })).toBeInTheDocument();
     expect(
       screen.getByText(
         'Customize individual preferences for boards and lists. List preferences will override board preferences, and board preferences will override default preferences. Changes take effect when you restart Pomello.'
@@ -288,9 +274,7 @@ describe('Trello service - Configure view', () => {
     await userEvent.click(archiveCardCheckbox);
 
     expect(config.get().preferences?.global?.archiveCards).toBe(true);
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -323,9 +307,7 @@ describe('Trello service - Configure view', () => {
     expect(logEventsCheckbox).toBeChecked();
     expect(config.get().preferences?.global?.keepLogs).toBe(false);
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -385,19 +367,13 @@ describe('Trello service - Configure view', () => {
       },
     });
 
-    const boardListPreferencesSection = within(
-      screen.getByRole('region', { name: 'Board and List Preferences' })
-    );
+    const boardListPreferencesSection = within(screen.getByRole('region', { name: 'Board and List Preferences' }));
 
-    expect(
-      boardListPreferencesSection.getByRole('status', { name: 'Loading' })
-    ).toBeInTheDocument();
+    expect(boardListPreferencesSection.getByRole('status', { name: 'Loading' })).toBeInTheDocument();
 
     settlePromise();
 
-    await waitForElementToBeRemoved(() =>
-      boardListPreferencesSection.queryByRole('status', { name: 'Loading' })
-    );
+    await waitForElementToBeRemoved(() => boardListPreferencesSection.queryByRole('status', { name: 'Loading' }));
   });
 
   it('should handle errors when loading the boards and lists preferences', async () => {
@@ -409,17 +385,11 @@ describe('Trello service - Configure view', () => {
       },
     });
 
-    const boardListPreferencesSection = within(
-      screen.getByRole('region', { name: 'Board and List Preferences' })
-    );
+    const boardListPreferencesSection = within(screen.getByRole('region', { name: 'Board and List Preferences' }));
 
-    expect(
-      boardListPreferencesSection.getByText('Unable to fetch Trello boards and lists')
-    ).toBeInTheDocument();
+    expect(boardListPreferencesSection.getByText('Unable to fetch Trello boards and lists')).toBeInTheDocument();
     expect(boardListPreferencesSection.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
-    expect(
-      boardListPreferencesSection.getByRole('button', { name: 'Details' })
-    ).toBeInTheDocument();
+    expect(boardListPreferencesSection.getByRole('button', { name: 'Details' })).toBeInTheDocument();
 
     await userEvent.click(boardListPreferencesSection.getByRole('button', { name: 'Retry' }));
 
@@ -436,10 +406,7 @@ describe('Trello service - Configure view', () => {
         generateTrelloBoard({
           id: 'become-a-billionaire',
           name: 'Become a billionaire',
-          lists: [
-            generateTrelloList({ id: 'ideas', name: 'Ideas' }),
-            generateTrelloList({ id: 'done', name: 'Done' }),
-          ],
+          lists: [generateTrelloList({ id: 'ideas', name: 'Ideas' }), generateTrelloList({ id: 'done', name: 'Done' })],
         }),
       ],
     });
@@ -450,40 +417,26 @@ describe('Trello service - Configure view', () => {
       },
     });
 
-    const boardListPreferences = within(
-      screen.getByRole('region', { name: 'Board and List Preferences' })
-    );
+    const boardListPreferences = within(screen.getByRole('region', { name: 'Board and List Preferences' }));
 
     const boardHeading = boardListPreferences.getByRole('heading', {
       name: 'Become a billionaire',
     });
 
-    expect(
-      within(boardHeading).getByRole('button', { name: 'Board preferences' })
-    ).toBeInTheDocument();
-    expect(
-      within(boardHeading).getByRole('button', { name: 'Show more actions' })
-    ).toBeInTheDocument();
+    expect(within(boardHeading).getByRole('button', { name: 'Board preferences' })).toBeInTheDocument();
+    expect(within(boardHeading).getByRole('button', { name: 'Show more actions' })).toBeInTheDocument();
 
     expect(screen.queryByRole('region', { name: 'Become a billionaire' })).not.toBeInTheDocument();
 
-    await userEvent.click(
-      within(boardHeading).getByRole('button', { name: 'Become a billionaire' })
-    );
+    await userEvent.click(within(boardHeading).getByRole('button', { name: 'Become a billionaire' }));
 
     expect(screen.getByRole('region', { name: 'Become a billionaire' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('list', { name: 'Lists for board Become a billionaire' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'Lists for board Become a billionaire' })).toBeInTheDocument();
 
     const ideasListItem = screen.getByRole('listitem', { name: 'Ideas' });
 
-    expect(
-      within(ideasListItem).getByRole('button', { name: 'List preferences' })
-    ).toBeInTheDocument();
-    expect(
-      within(ideasListItem).getByRole('button', { name: 'Show more actions' })
-    ).toBeInTheDocument();
+    expect(within(ideasListItem).getByRole('button', { name: 'List preferences' })).toBeInTheDocument();
+    expect(within(ideasListItem).getByRole('button', { name: 'Show more actions' })).toBeInTheDocument();
   });
 
   it('should show a message when the member has no boards', async () => {
@@ -496,9 +449,7 @@ describe('Trello service - Configure view', () => {
     });
 
     expect(
-      within(screen.getByRole('region', { name: 'Board and List Preferences' })).getByText(
-        'No boards found.'
-      )
+      within(screen.getByRole('region', { name: 'Board and List Preferences' })).getByText('No boards found.')
     ).toBeInTheDocument();
   });
 
@@ -522,19 +473,11 @@ describe('Trello service - Configure view', () => {
 
     expect(screen.getByRole('dialog', { name: 'Board Preferences: Board 1' })).toBeInTheDocument();
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Add marker to card title' }),
-      'disabled'
-    );
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Log events in card comment' }),
-      'enabled'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Add marker to card title' }), 'disabled');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Log events in card comment' }), 'enabled');
     await userEvent.click(screen.getByRole('button', { name: 'Done' }));
 
-    expect(
-      screen.queryByRole('dialog', { name: 'Board Preferences: Board 1' })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Board Preferences: Board 1' })).not.toBeInTheDocument();
 
     expect(config.get().preferences).toMatchObject({
       boards: {
@@ -566,19 +509,11 @@ describe('Trello service - Configure view', () => {
 
     expect(screen.getByRole('dialog', { name: 'Board Preferences: Board 1' })).toBeInTheDocument();
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Add marker to card title' }),
-      'disabled'
-    );
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Log events in card comment' }),
-      'enabled'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Add marker to card title' }), 'disabled');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Log events in card comment' }), 'enabled');
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    expect(
-      screen.queryByRole('dialog', { name: 'Board Preferences: Board 1' })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Board Preferences: Board 1' })).not.toBeInTheDocument();
 
     expect(config.get().preferences).toMatchObject({});
   });
@@ -614,9 +549,7 @@ describe('Trello service - Configure view', () => {
 
     await userEvent.click(screen.getByRole('menuitem', { name: 'Reset board preferences' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -677,15 +610,9 @@ describe('Trello service - Configure view', () => {
       })
     );
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Add marker to card title' }),
-      'default'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Add marker to card title' }), 'default');
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Archive card after moving' }),
-      'default'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Archive card after moving' }), 'default');
 
     await userEvent.click(screen.getByRole('button', { name: 'Done' }));
 
@@ -720,19 +647,11 @@ describe('Trello service - Configure view', () => {
 
     expect(screen.getByRole('dialog', { name: 'List Preferences: List 1' })).toBeInTheDocument();
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Add marker to card title' }),
-      'disabled'
-    );
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Log events in card comment' }),
-      'enabled'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Add marker to card title' }), 'disabled');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Log events in card comment' }), 'enabled');
     await userEvent.click(screen.getByRole('button', { name: 'Done' }));
 
-    expect(
-      screen.queryByRole('dialog', { name: 'List Preferences: List 1' })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'List Preferences: List 1' })).not.toBeInTheDocument();
 
     expect(config.get().preferences).toMatchObject({
       lists: {
@@ -783,9 +702,7 @@ describe('Trello service - Configure view', () => {
 
     await userEvent.click(screen.getByRole('menuitem', { name: 'Reset list preferences' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -849,19 +766,11 @@ describe('Trello service - Configure view', () => {
 
     expect(screen.getByRole('dialog', { name: 'List Preferences: List 1' })).toBeInTheDocument();
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Add marker to card title' }),
-      'disabled'
-    );
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Log events in card comment' }),
-      'enabled'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Add marker to card title' }), 'disabled');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Log events in card comment' }), 'enabled');
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    expect(
-      screen.queryByRole('dialog', { name: 'List Preferences: List 1' })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'List Preferences: List 1' })).not.toBeInTheDocument();
 
     expect(config.get().preferences).toMatchObject({});
   });
@@ -899,15 +808,9 @@ describe('Trello service - Configure view', () => {
       })
     );
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Add marker to card title' }),
-      'default'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Add marker to card title' }), 'default');
 
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Archive card after moving' }),
-      'default'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Archive card after moving' }), 'default');
 
     await userEvent.click(screen.getByRole('button', { name: 'Done' }));
 

@@ -74,9 +74,7 @@ describe('Dashboard', () => {
       },
     });
 
-    await userEvent.click(
-      within(screen.getByTestId('account-details')).getByRole('button', { name: 'Log in' })
-    );
+    await userEvent.click(within(screen.getByTestId('account-details')).getByRole('button', { name: 'Log in' }));
 
     expect(appApi.showAuthWindow).toHaveBeenCalledWith({
       type: 'pomello',
@@ -127,9 +125,7 @@ describe('Dashboard', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Show account menu' }));
     await userEvent.click(screen.getByRole('menuitem', { name: 'Log out' }));
 
-    expect(screen.getByTestId('account-details')).toHaveTextContent(
-      'Log in or sign up to track your productivity'
-    );
+    expect(screen.getByTestId('account-details')).toHaveTextContent('Log in or sign up to track your productivity');
   });
 
   it('should navigate to the Settings page when logged out from the Profile page', async () => {

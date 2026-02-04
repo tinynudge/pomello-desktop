@@ -31,9 +31,7 @@ describe('Trello service - Task', () => {
   it('should not show the pomodoro marker in the task label', async () => {
     const { simulate } = await renderTrelloService({
       trelloApi: {
-        fetchCardsByListId: [
-          generateTrelloCard({ id: 'become-kinda-rich', name: '6 🍅 Become kinda rich' }),
-        ],
+        fetchCardsByListId: [generateTrelloCard({ id: 'become-kinda-rich', name: '6 🍅 Become kinda rich' })],
       },
     });
 

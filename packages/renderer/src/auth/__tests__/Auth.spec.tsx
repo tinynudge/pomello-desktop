@@ -8,9 +8,7 @@ describe('Auth', () => {
       authWindow: { type: 'pomello', action: 'authorize' },
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Connect your Pomello account' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Connect your Pomello account' })).toBeInTheDocument();
     expect(screen.getByText('/api/authorize/', { exact: false })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
@@ -20,9 +18,7 @@ describe('Auth', () => {
       authWindow: { type: 'pomello', action: 'register' },
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Connect your Pomello account' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Connect your Pomello account' })).toBeInTheDocument();
     expect(screen.getByText('/api/register/', { exact: false })).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
@@ -54,9 +50,7 @@ describe('Auth', () => {
     await waitFor(() => {
       expect(pomelloConfig.set).toHaveBeenCalledWith('token', 'MY_SECRET_TOKEN');
 
-      expect(
-        screen.getByText('Success! You may now close your browser window.')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Success! You may now close your browser window.')).toBeInTheDocument();
     });
   });
 
@@ -95,11 +89,7 @@ describe('Auth', () => {
     const MockAuthView = () => {
       return (
         <AuthView>
-          <AuthView.Instructions
-            authUrl="https://my-service.com"
-            heading="My heading"
-            logo="my-logo.png"
-          />
+          <AuthView.Instructions authUrl="https://my-service.com" heading="My heading" logo="my-logo.png" />
         </AuthView>
       );
     };

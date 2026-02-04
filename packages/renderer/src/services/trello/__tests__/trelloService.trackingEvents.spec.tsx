@@ -31,9 +31,7 @@ describe('Trello service - Tracking events', () => {
         taskTime: 5,
       },
       trelloApi: {
-        fetchCardsByListId: [
-          generateTrelloCard({ id: 'BILLIONAIRE', name: 'Become a billionaire' }),
-        ],
+        fetchCardsByListId: [generateTrelloCard({ id: 'BILLIONAIRE', name: 'Become a billionaire' })],
       },
     });
 

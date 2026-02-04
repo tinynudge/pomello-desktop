@@ -13,9 +13,7 @@ describe('Dashboard - Keyboard shortcuts', () => {
   it('should render the keyboard shortcuts', () => {
     renderDashboard({ route: DashboardRoute.KeyboardShortcuts });
 
-    expect(
-      screen.getByRole('heading', { name: 'Keyboard shortcuts', level: 1 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Keyboard shortcuts', level: 1 })).toBeInTheDocument();
   });
 
   it('should render the general keyboard shortcuts', () => {
@@ -95,9 +93,7 @@ describe('Dashboard - Keyboard shortcuts', () => {
     );
     expect(createTaskButton).toHaveTextContent('⌘K•⌃Z');
 
-    expect(toggleMenuButton).toHaveAccessibleName(
-      'No keyboard shortcut set for: Toggle menu. Set keyboard shortcut.'
-    );
+    expect(toggleMenuButton).toHaveAccessibleName('No keyboard shortcut set for: Toggle menu. Set keyboard shortcut.');
     expect(toggleMenuButton).toHaveTextContent('None');
   });
 
@@ -115,16 +111,12 @@ describe('Dashboard - Keyboard shortcuts', () => {
 
     const viewSettingsItem = screen.getByRole('listitem', { name: 'View settings' });
 
-    await userEvent.click(
-      within(viewSettingsItem).getByRole('button', { name: 'Show more options' })
-    );
+    await userEvent.click(within(viewSettingsItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(screen.getByRole('menuitem', { name: /Restore default/ }));
 
     expect(within(viewSettingsItem).getByRole('button', { name: /Edit/ })).toHaveTextContent('⌘⇧L');
     expect(appApi.updateHotkeys).not.toHaveBeenCalled();
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -146,16 +138,12 @@ describe('Dashboard - Keyboard shortcuts', () => {
 
     const viewSettingsItem = screen.getByRole('listitem', { name: 'View settings' });
 
-    await userEvent.click(
-      within(viewSettingsItem).getByRole('button', { name: 'Show more options' })
-    );
+    await userEvent.click(within(viewSettingsItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(screen.getByRole('menuitem', { name: 'Unset keyboard shortcut' }));
 
     expect(within(viewSettingsItem).getByRole('button', { name: /Set/ })).toHaveTextContent('None');
     expect(appApi.updateHotkeys).not.toHaveBeenCalled();
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -232,9 +220,7 @@ describe('Dashboard - Keyboard shortcuts', () => {
     vi.runOnlyPendingTimers();
 
     expect(within(voidTaskItem).getByRole('button', { name: /Void task/ })).toHaveTextContent('L');
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should show the conflict modal when recording a keyboard shortcut', async () => {

@@ -50,17 +50,13 @@ describe('UI - Select', () => {
   });
 
   it('should render an error', async () => {
-    renderDashboardComponent(() => (
-      <Select options={[]} message={{ type: 'error', text: 'You shall not pass' }} />
-    ));
+    renderDashboardComponent(() => <Select options={[]} message={{ type: 'error', text: 'You shall not pass' }} />);
 
     expect(screen.getByRole('status')).toHaveTextContent('You shall not pass');
   });
 
   it('should render a warning', async () => {
-    renderDashboardComponent(() => (
-      <Select options={[]} message={{ type: 'warning', text: 'This is a warning' }} />
-    ));
+    renderDashboardComponent(() => <Select options={[]} message={{ type: 'warning', text: 'This is a warning' }} />);
 
     expect(screen.getByRole('status')).toHaveTextContent('This is a warning');
   });

@@ -107,10 +107,7 @@ describe('Trello service - Log', () => {
         taskTime: 120,
       },
       trelloApi: {
-        fetchCardsByListId: [
-          generateTrelloCard({ id: 'MY_CARD_ID' }),
-          generateTrelloCard({ id: 'MY_SECOND_CARD_ID' }),
-        ],
+        fetchCardsByListId: [generateTrelloCard({ id: 'MY_CARD_ID' }), generateTrelloCard({ id: 'MY_SECOND_CARD_ID' })],
       },
     });
 
@@ -560,10 +557,7 @@ describe('Trello service - Log', () => {
         taskTime: 120,
       },
       trelloApi: {
-        fetchCardsByListId: [
-          generateTrelloCard({ id: 'MY_CARD_ID' }),
-          generateTrelloCard({ id: 'MY_SECOND_CARD_ID' }),
-        ],
+        fetchCardsByListId: [generateTrelloCard({ id: 'MY_CARD_ID' }), generateTrelloCard({ id: 'MY_SECOND_CARD_ID' })],
       },
     });
 

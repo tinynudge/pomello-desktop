@@ -92,8 +92,7 @@ describe('App - Pomello', () => {
         buttons: ['Log in', 'Close', "Don't remind me again"],
         cancelId: 1,
         defaultId: 0,
-        detail:
-          'You are currently NOT logged into your Pomello account. Log in to start tracking your productivity.',
+        detail: 'You are currently NOT logged into your Pomello account. Log in to start tracking your productivity.',
         message: 'Not logged into Pomello',
         type: 'info',
       });
@@ -120,8 +119,7 @@ describe('App - Pomello', () => {
         buttons: ['Log in', 'Close', "Don't remind me again"],
         cancelId: 1,
         defaultId: 0,
-        detail:
-          'You are currently NOT logged into your Pomello account. Log in to start tracking your productivity.',
+        detail: 'You are currently NOT logged into your Pomello account. Log in to start tracking your productivity.',
         message: 'Not logged into Pomello',
         type: 'info',
       });
@@ -178,8 +176,18 @@ describe('App - Pomello', () => {
           const isPremium = getUser()?.type === 'premium';
 
           return isPremium
-            ? [{ id: 'premium', label: 'Premium item' }]
-            : [{ id: 'boring', label: 'Boring item' }];
+            ? [
+                {
+                  id: 'premium',
+                  label: 'Premium item',
+                },
+              ]
+            : [
+                {
+                  id: 'boring',
+                  label: 'Boring item',
+                },
+              ];
         },
         id: fooService.id,
       };
@@ -235,8 +243,18 @@ describe('App - Pomello', () => {
           const isPremium = getUser()?.type === 'premium';
 
           return isPremium
-            ? [{ id: 'premium', label: 'Premium item' }]
-            : [{ id: 'boring', label: 'Boring item' }];
+            ? [
+                {
+                  id: 'premium',
+                  label: 'Premium item',
+                },
+              ]
+            : [
+                {
+                  id: 'boring',
+                  label: 'Boring item',
+                },
+              ];
         },
         id: fooService.id,
       };

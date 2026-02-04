@@ -5,8 +5,7 @@ import { Translate } from './Translate';
 describe('UI - Translate', () => {
   it('should render the interpolated translations', () => {
     const translations = {
-      soundsOfSilence:
-        'Hello <one first="yes or no" second=\'no\'>darkness</one> my <two>old friend</two>.',
+      soundsOfSilence: 'Hello <one first="yes or no" second=\'no\'>darkness</one> my <two>old friend</two>.',
     };
 
     const One: ParentComponent<{ first: string; second: string }> = props => (

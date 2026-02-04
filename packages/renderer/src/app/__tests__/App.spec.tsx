@@ -312,9 +312,7 @@ describe('App', () => {
   });
 
   it('should load a service container if provided', async () => {
-    const Container: ServiceContainer = props => (
-      <div data-testid="container">{props.children}</div>
-    );
+    const Container: ServiceContainer = props => <div data-testid="container">{props.children}</div>;
 
     renderApp({
       mockService: {

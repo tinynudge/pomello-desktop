@@ -65,9 +65,7 @@ describe('Dashboard - Services', () => {
     const list = screen.getByRole('list', { name: 'All services' });
     const serviceItems = within(list).getAllByRole('listitem');
 
-    expect(
-      within(serviceItems[0]).queryByRole('button', { name: 'Configure' })
-    ).not.toBeInTheDocument();
+    expect(within(serviceItems[0]).queryByRole('button', { name: 'Configure' })).not.toBeInTheDocument();
     expect(within(serviceItems[1]).getByRole('button', { name: 'Configure' })).toBeInTheDocument();
   });
 
@@ -110,8 +108,9 @@ describe('Dashboard - Services', () => {
       },
       service: {
         ConfigureView: () => {
-          const { getServiceConfigValue, serviceConfig, stageServiceConfigValue } =
-            useConfigureService<{ text: string }>();
+          const { getServiceConfigValue, serviceConfig, stageServiceConfigValue } = useConfigureService<{
+            text: string;
+          }>();
 
           const handleTextInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
             stageServiceConfigValue('text', event.currentTarget.value);
@@ -119,11 +118,7 @@ describe('Dashboard - Services', () => {
 
           return (
             <>
-              <input
-                aria-label="Text Input"
-                onInput={handleTextInput}
-                value={getServiceConfigValue('text')}
-              />
+              <input aria-label="Text Input" onInput={handleTextInput} value={getServiceConfigValue('text')} />
               <p data-testid="stored-value">{serviceConfig.text}</p>
             </>
           );
@@ -148,9 +143,7 @@ describe('Dashboard - Services', () => {
     await userEvent.clear(screen.getByLabelText('Text Input'));
     await userEvent.type(screen.getByLabelText('Text Input'), 'New Value');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -160,9 +153,7 @@ describe('Dashboard - Services', () => {
     await userEvent.clear(screen.getByLabelText('Text Input'));
     await userEvent.type(screen.getByLabelText('Text Input'), 'New New Value');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 

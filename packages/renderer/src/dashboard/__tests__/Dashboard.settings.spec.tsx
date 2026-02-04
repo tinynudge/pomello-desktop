@@ -48,9 +48,7 @@ describe('Dashboard - Settings', () => {
       'Syncing is disabled. Log in to Pomello to sync your settings.'
     );
 
-    await userEvent.click(
-      within(screen.getByTestId('settings-sync-disabled')).getByRole('button', { name: 'Log in' })
-    );
+    await userEvent.click(within(screen.getByTestId('settings-sync-disabled')).getByRole('button', { name: 'Log in' }));
 
     expect(appApi.showAuthWindow).toHaveBeenCalledOnce();
     expect(appApi.showAuthWindow).toHaveBeenCalledWith({
@@ -107,21 +105,14 @@ describe('Dashboard - Settings', () => {
     });
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'Always on top' }));
-    await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Time expired notification' }),
-      'Focus'
-    );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Time expired notification' }), 'Focus');
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Task time' }), '5');
     await userEvent.click(screen.getByRole('button', { name: '1. Edit task timer' }));
     await userEvent.click(screen.getByRole('menuitem', { name: 'Switch to short break timer' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
     expect(screen.getByRole('checkbox', { name: 'Always on top' })).not.toBeChecked();
-    expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue(
-      'focus'
-    );
+    expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue('focus');
     expect(screen.getByRole('button', { name: '1. Edit short break timer' })).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
@@ -129,9 +120,7 @@ describe('Dashboard - Settings', () => {
     expect(appApi.updateSettings).not.toHaveBeenCalled();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: 'Always on top' })).toBeChecked();
-    expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue(
-      'flash'
-    );
+    expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue('flash');
     expect(screen.getByRole('button', { name: '1. Edit task timer' })).toBeInTheDocument();
   });
 
@@ -190,41 +179,36 @@ describe('Dashboard - Settings', () => {
       label: 'Auto start breaks',
       setting: 'autoStartBreaks',
     },
-  ])(
-    'should update the toggle setting for "$label"',
-    async ({ defaultValue, index, label, setting }) => {
-      const { appApi, userEvent } = renderDashboard({
-        route: DashboardRoute.Settings,
-        settings: {
-          [setting]: defaultValue,
-        },
-      });
+  ])('should update the toggle setting for "$label"', async ({ defaultValue, index, label, setting }) => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        [setting]: defaultValue,
+      },
+    });
 
-      const main = screen.getByRole('main');
-      const listItems = within(main).getAllByRole('listitem');
-      const listItem = within(main).getByRole('listitem', { name: label });
+    const main = screen.getByRole('main');
+    const listItems = within(main).getAllByRole('listitem');
+    const listItem = within(main).getByRole('listitem', { name: label });
 
-      expect(listItem).toBe(listItems.at(index));
-      expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+    expect(listItem).toBe(listItems.at(index));
+    expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
 
-      await userEvent.click(screen.getByRole('checkbox', { name: label }));
+    await userEvent.click(screen.getByRole('checkbox', { name: label }));
 
-      expect(screen.getByRole('status')).toHaveTextContent(
-        'Your pending changes have not been saved yet.'
-      );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
-      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
-      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: !defaultValue });
+    expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: !defaultValue });
 
-      await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-      await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
-      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue });
-    }
-  );
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue });
+  });
 
   it.each([
     {
@@ -262,41 +246,36 @@ describe('Dashboard - Settings', () => {
       newValue: { id: 'bottom', label: 'Bottom' },
       setting: 'createdTaskPosition',
     },
-  ])(
-    'should update select setting for "$label"',
-    async ({ defaultValue, index, label, newValue, setting }) => {
-      const { appApi, userEvent } = renderDashboard({
-        route: DashboardRoute.Settings,
-        settings: {
-          [setting]: defaultValue.id,
-        },
-      });
+  ])('should update select setting for "$label"', async ({ defaultValue, index, label, newValue, setting }) => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        [setting]: defaultValue.id,
+      },
+    });
 
-      const main = screen.getByRole('main');
-      const listItems = within(main).getAllByRole('listitem');
-      const listItem = within(main).getByRole('listitem', { name: label });
+    const main = screen.getByRole('main');
+    const listItems = within(main).getAllByRole('listitem');
+    const listItem = within(main).getByRole('listitem', { name: label });
 
-      expect(listItem).toBe(listItems.at(index));
-      expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+    expect(listItem).toBe(listItems.at(index));
+    expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
 
-      await userEvent.selectOptions(screen.getByRole('combobox', { name: label }), newValue.label);
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: label }), newValue.label);
 
-      expect(screen.getByRole('status')).toHaveTextContent(
-        'Your pending changes have not been saved yet.'
-      );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
-      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
-      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: newValue.id });
+    expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: newValue.id });
 
-      await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-      await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
-      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue.id });
-    }
-  );
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue.id });
+  });
 
   it.each([
     {
@@ -327,45 +306,37 @@ describe('Dashboard - Settings', () => {
       newValue: 20 * 60,
       setting: 'longBreakTime',
     },
-  ])(
-    'should update time setting for "$label"',
-    async ({ defaultValue, index, label, newValue, setting }) => {
-      const { appApi, userEvent } = renderDashboard({
-        route: DashboardRoute.Settings,
-        settings: {
-          [setting]: defaultValue,
-        },
-      });
+  ])('should update time setting for "$label"', async ({ defaultValue, index, label, newValue, setting }) => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: {
+        [setting]: defaultValue,
+      },
+    });
 
-      const main = screen.getByRole('main');
-      const listItems = within(main).getAllByRole('listitem');
-      const listItem = within(main).getByRole('listitem', { name: label });
+    const main = screen.getByRole('main');
+    const listItems = within(main).getAllByRole('listitem');
+    const listItem = within(main).getByRole('listitem', { name: label });
 
-      expect(listItem).toBe(listItems.at(index));
-      expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
-      expect(within(listItem).getByText('min')).toBeInTheDocument();
+    expect(listItem).toBe(listItems.at(index));
+    expect(within(listItem).getByTestId('form-field-description')).toBeInTheDocument();
+    expect(within(listItem).getByText('min')).toBeInTheDocument();
 
-      await userEvent.selectOptions(
-        screen.getByRole('combobox', { name: label }),
-        `${newValue / 60}`
-      );
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: label }), `${newValue / 60}`);
 
-      expect(screen.getByRole('status')).toHaveTextContent(
-        'Your pending changes have not been saved yet.'
-      );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
-      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
-      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: newValue });
+    expect(appApi.updateSettings).toHaveBeenCalledTimes(1);
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: newValue });
 
-      await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-      await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
-      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+    await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: /Restore default:/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-      expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue });
-    }
-  );
+    expect(appApi.updateSettings).toHaveBeenLastCalledWith({ [setting]: defaultValue });
+  });
 
   it('should render a custom time setting', async () => {
     renderDashboard({
@@ -395,9 +366,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.clear(textbox);
     await userEvent.type(textbox, '80');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -417,9 +386,7 @@ describe('Dashboard - Settings', () => {
 
     await userEvent.type(textbox, 'abc');
 
-    expect(
-      screen.queryByText('Your pending changes have not been saved yet.')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Your pending changes have not been saved yet.')).not.toBeInTheDocument();
     expect(within(listItem).getByText('A valid number is required')).toBeInTheDocument();
 
     await userEvent.clear(textbox);
@@ -461,21 +428,13 @@ describe('Dashboard - Settings', () => {
 
     const listItem = screen.getByRole('listitem', { name: 'Short break time' });
 
-    expect(
-      within(listItem).getByRole('combobox', { name: 'Short break time' })
-    ).toBeInTheDocument();
-    expect(
-      within(listItem).queryByRole('textbox', { name: 'Short break time' })
-    ).not.toBeInTheDocument();
+    expect(within(listItem).getByRole('combobox', { name: 'Short break time' })).toBeInTheDocument();
+    expect(within(listItem).queryByRole('textbox', { name: 'Short break time' })).not.toBeInTheDocument();
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' }));
 
-    expect(
-      within(listItem).queryByRole('combobox', { name: 'Short break time' })
-    ).not.toBeInTheDocument();
+    expect(within(listItem).queryByRole('combobox', { name: 'Short break time' })).not.toBeInTheDocument();
     expect(within(listItem).getByRole('textbox', { name: 'Short break time' })).toBeInTheDocument();
   });
 
@@ -489,22 +448,16 @@ describe('Dashboard - Settings', () => {
 
     const listItem = screen.getByRole('listitem', { name: 'Long break time' });
 
-    expect(
-      within(listItem).queryByRole('combobox', { name: 'Long break time' })
-    ).not.toBeInTheDocument();
+    expect(within(listItem).queryByRole('combobox', { name: 'Long break time' })).not.toBeInTheDocument();
     expect(within(listItem).getByRole('textbox', { name: 'Long break time' })).toBeInTheDocument();
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
 
     const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
 
     expect(modal).toBeInTheDocument();
-    expect(
-      within(modal).getByRole('heading', { name: 'Incompatible setting' })
-    ).toBeInTheDocument();
+    expect(within(modal).getByRole('heading', { name: 'Incompatible setting' })).toBeInTheDocument();
     expect(
       within(modal).getByText(
         'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time, or click "Cancel" to continue using your current time.'
@@ -516,9 +469,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(within(modal).getByRole('button', { name: 'Cancel' }));
 
     expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
-    expect(
-      within(listItem).queryByRole('combobox', { name: 'Long break time' })
-    ).not.toBeInTheDocument();
+    expect(within(listItem).queryByRole('combobox', { name: 'Long break time' })).not.toBeInTheDocument();
     expect(within(listItem).getByRole('textbox', { name: 'Long break time' })).toBeInTheDocument();
   });
 
@@ -533,16 +484,12 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Task time' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
 
     const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
 
     expect(modal).toBeInTheDocument();
-    expect(
-      within(modal).getByRole('heading', { name: 'Incompatible setting' })
-    ).toBeInTheDocument();
+    expect(within(modal).getByRole('heading', { name: 'Incompatible setting' })).toBeInTheDocument();
     expect(
       within(modal).getByText(
         'Your current time is either higher than the simple view\'s maximum value or cannot be converted evenly from seconds into minutes. Click "Reset" to use to the default time, or click "Cancel" to continue using your current time.'
@@ -569,9 +516,7 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Task time' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
 
     const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
 
@@ -580,9 +525,7 @@ describe('Dashboard - Settings', () => {
     expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
     expect(within(listItem).queryByRole('textbox', { name: 'Task time' })).not.toBeInTheDocument();
     expect(within(listItem).getByRole('combobox', { name: 'Task time' })).toHaveValue('1500');
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should return to the original simple time input when undoing pending changes', async () => {
@@ -596,9 +539,7 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Overtime delay' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' }));
 
     const textbox = within(listItem).getByRole('textbox', { name: 'Overtime delay' });
 
@@ -606,9 +547,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.type(textbox, '600');
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
-    expect(
-      within(listItem).queryByRole('textbox', { name: 'Overtime delay' })
-    ).not.toBeInTheDocument();
+    expect(within(listItem).queryByRole('textbox', { name: 'Overtime delay' })).not.toBeInTheDocument();
     expect(within(listItem).getByRole('combobox', { name: 'Overtime delay' })).toHaveValue('300');
   });
 
@@ -623,9 +562,7 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Task time' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -657,14 +594,9 @@ describe('Dashboard - Settings', () => {
 
     const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
 
-    await userEvent.selectOptions(
-      within(listItem).getByRole('combobox', { name: 'Pomodoro set' }),
-      '6'
-    );
+    await userEvent.selectOptions(within(listItem).getByRole('combobox', { name: 'Pomodoro set' }), '6');
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -707,13 +639,9 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: '1. Edit task timer' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to short break timer' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to short break timer' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -721,9 +649,7 @@ describe('Dashboard - Settings', () => {
       pomodoroSet: ['shortBreak', 'longBreak', 'shortBreak'],
     });
 
-    await userEvent.click(
-      within(listItem).getByRole('button', { name: '2. Edit long break timer' })
-    );
+    await userEvent.click(within(listItem).getByRole('button', { name: '2. Edit long break timer' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to task timer' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -731,12 +657,8 @@ describe('Dashboard - Settings', () => {
       pomodoroSet: ['shortBreak', 'task', 'shortBreak'],
     });
 
-    await userEvent.click(
-      within(listItem).getByRole('button', { name: '3. Edit short break timer' })
-    );
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to long break timer' })
-    );
+    await userEvent.click(within(listItem).getByRole('button', { name: '3. Edit short break timer' }));
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to long break timer' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
     expect(appApi.updateSettings).toHaveBeenLastCalledWith({
@@ -752,9 +674,7 @@ describe('Dashboard - Settings', () => {
     });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Add timer' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Add short break timer' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Add short break timer' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
     expect(appApi.updateSettings).toHaveBeenLastCalledWith({
@@ -769,9 +689,7 @@ describe('Dashboard - Settings', () => {
       pomodoroSet: ['shortBreak', 'task', 'longBreak', 'task', 'shortBreak', 'longBreak'],
     });
 
-    await userEvent.click(
-      within(listItem).getByRole('button', { name: '5. Edit short break timer' })
-    );
+    await userEvent.click(within(listItem).getByRole('button', { name: '5. Edit short break timer' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Remove timer' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -797,12 +715,8 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' })
-    );
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' }));
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -823,13 +737,9 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -848,16 +758,12 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
 
     const modal = screen.getByRole('dialog', { name: 'Incompatible setting' });
 
     expect(modal).toBeInTheDocument();
-    expect(
-      within(modal).getByRole('heading', { name: 'Incompatible setting' })
-    ).toBeInTheDocument();
+    expect(within(modal).getByRole('heading', { name: 'Incompatible setting' })).toBeInTheDocument();
     expect(
       within(modal).getByText(
         'Your custom pomodoro set cannot be converted to a basic task count. Click "Reset" to use the default task count, or click "Cancel" to continue using your custom pomodoro set.'
@@ -878,14 +784,10 @@ describe('Dashboard - Settings', () => {
     const listItem = screen.getByRole('listitem', { name: 'Pomodoro set' });
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
-    await userEvent.click(
-      within(listItem).getByRole('menuitem', { name: 'Switch to simple view' })
-    );
+    await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Your pending changes have not been saved yet.'
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
