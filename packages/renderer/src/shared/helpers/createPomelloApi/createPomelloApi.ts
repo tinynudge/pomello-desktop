@@ -2,6 +2,7 @@ import { PomelloApi, PomelloServiceConfig, ServiceConfig } from '@pomello-deskto
 import ky from 'ky';
 import { SerializableHttpError } from '../SerializableHttpError';
 import { bindContext } from '../bindContext';
+import { fetchEvents } from './fetchEvents';
 import { fetchUser } from './fetchUser';
 import { logEvent } from './logEvent';
 
@@ -52,6 +53,7 @@ export const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): P
 
   return bindContext(
     {
+      fetchEvents,
       fetchUser,
       hasToken,
       logEvent,

@@ -13,6 +13,7 @@ import { nanoid } from 'nanoid';
 import { Mocked, vi } from 'vitest';
 import { createHttpResponse } from './createHttpResponse';
 import { mockServer } from './mockServer';
+import { generateTrackingEvents } from '@/app/__fixtures__/generateTrackingEvents';
 
 export type PomelloApiResponses = {
   [K in keyof PomelloApi]:
@@ -56,6 +57,13 @@ export const createMockPomelloApi = (
       createHttpResponse<PomelloApiResponse<PomelloUser>>(
         generatePomelloUser(),
         pomelloApiResponses.fetchUser
+      )
+    ),
+    http.get(
+      `${import.meta.env.VITE_APP_URL}/api/events`,
+      createHttpResponse<PomelloApiResponse<TrackingEvent[]>>(
+        generateTrackingEvents(),
+        pomelloApiResponses.fetchEvents
       )
     ),
     http.post(

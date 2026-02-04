@@ -1,9 +1,11 @@
 import { createMockAppApi } from '@/__fixtures__/createMockAppApi';
 import { createMockLogger } from '@/__fixtures__/createMockLogger';
+import { createMockPomelloApi, PomelloApiResponses } from '@/__fixtures__/createMockPomelloApi';
 import { createMockServiceFactory } from '@/__fixtures__/createMockService';
 import { createMockServiceConfig } from '@/__fixtures__/createMockServiceConfig';
 import { createMockSettings } from '@/__fixtures__/createMockSettings';
 import { mockHotkeys } from '@/__fixtures__/mockHotkeys';
+import { PomelloApiProvider } from '@/shared/context/PomelloApiContext';
 import { RuntimeProvider } from '@/shared/context/RuntimeContext';
 import {
   DashboardRoute,
@@ -14,8 +16,9 @@ import {
   ServiceRegistry,
   Settings,
 } from '@pomello-desktop/domain';
-import { MemoryRouter, createMemoryHistory } from '@solidjs/router';
+import { createMemoryHistory, MemoryRouter } from '@solidjs/router';
 import { render } from '@solidjs/testing-library';
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query';
 import userEvent from '@testing-library/user-event';
 import dashboardTranslations from '../../../../../translations/dashboard/en-US.json';
 import sharedTranslations from '../../../../../translations/shared/en-US.json';
@@ -28,6 +31,7 @@ export * from '@solidjs/testing-library';
 type RenderDashboardOptions = {
   appApi?: Partial<AppApi>;
   hotkeys?: FormattedHotkeys;
+  pomelloApi?: Partial<PomelloApiResponses>;
   pomelloConfig?: Partial<PomelloServiceConfig>;
   route?: DashboardRoute;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,6 +73,8 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
     settings,
   });
 
+  const pomelloApi = createMockPomelloApi(pomelloConfig, options.pomelloApi);
+
   const serviceRegistry: ServiceRegistry = {};
   const services = options.services ?? [createMockServiceFactory()];
 
@@ -82,25 +88,38 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
     value: `/${options.route ?? DashboardRoute.Productivity}`,
   });
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
   const result = render(() => (
-    <RuntimeProvider
-      initialLogger={logger}
-      initialPomelloConfig={pomelloConfig}
-      initialServices={serviceRegistry}
-      initialSettings={settings}
-      initialTranslations={{ ...sharedTranslations, ...dashboardTranslations }}
-    >
-      <DashboardProvider initialDefaultHotkeys={mockHotkeys} initialHotkeys={hotkeys}>
-        <MemoryRouter history={history} root={Layout}>
-          <Routes />
-        </MemoryRouter>
-      </DashboardProvider>
-    </RuntimeProvider>
+    <QueryClientProvider client={queryClient}>
+      <RuntimeProvider
+        initialLogger={logger}
+        initialPomelloConfig={pomelloConfig}
+        initialServices={serviceRegistry}
+        initialSettings={settings}
+        initialTranslations={{ ...sharedTranslations, ...dashboardTranslations }}
+      >
+        <PomelloApiProvider initialPomelloApi={pomelloApi}>
+          <DashboardProvider initialDefaultHotkeys={mockHotkeys} initialHotkeys={hotkeys}>
+            <MemoryRouter history={history} root={Layout}>
+              <Routes />
+            </MemoryRouter>
+          </DashboardProvider>
+        </PomelloApiProvider>
+      </RuntimeProvider>
+    </QueryClientProvider>
   ));
 
   return {
     appApi,
     emitAppApiEvent,
+    pomelloApi,
     pomelloConfig,
     result,
     userEvent: userEvent.setup(),

@@ -10,6 +10,7 @@ export { DashboardRoute } from './DashboardRoute';
 export type { DefaultSoundId } from './DefaultSoundId';
 export type { DialAction } from './DialAction';
 export type { ErrorHandler } from './ErrorHandler';
+export type { FetchEventsOptions } from './FetchEventsOptions';
 export type { FindOrCreateWindowOptions } from './FindOrCreateWindowOptions';
 export type { FormattedHotkey } from './FormattedHotkey';
 export type { FormattedHotkeys } from './FormattedHotkeys';

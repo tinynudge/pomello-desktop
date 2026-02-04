@@ -1,5 +1,16 @@
+import {
+  generateBreakTrackingEvent,
+  generateNoteTrackingEvent,
+  generateOverBreakTrackingEvent,
+  generateOverTaskTrackingEvent,
+  generatePauseTrackingEvent,
+  generateTaskTrackingEvent,
+  generateTrackingEvents,
+  generateVoidTrackingEvent,
+} from '@/app/__fixtures__/generateTrackingEvents';
 import { DashboardRoute } from '@pomello-desktop/domain';
-import { renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
+import { HttpResponse } from 'msw';
+import { renderDashboard, screen, waitForElementToBeRemoved, within } from '../__fixtures__/renderDashboard';
 
 describe('Dashboard - Productivity', () => {
   it('should render the productivity view', () => {
@@ -102,5 +113,122 @@ describe('Dashboard - Productivity', () => {
     });
 
     expect(screen.getByRole('heading', { name: 'Productivity', level: 1 })).toBeInTheDocument();
+  });
+
+  describe('Today Panel', () => {
+    it("should show loading state while fetching today's events", async () => {
+      const fetchEventsPromise = Promise.withResolvers<void>();
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: async () => {
+            await fetchEventsPromise.promise;
+
+            return HttpResponse.json({ data: [] });
+          },
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const todayRegion = screen.getByRole('region', { name: 'Today' });
+
+      expect(within(todayRegion).getByRole('status', { name: 'Loading' })).toBeInTheDocument();
+
+      fetchEventsPromise.resolve();
+
+      await waitForElementToBeRemoved(() => within(todayRegion).queryByRole('status', { name: 'Loading' }));
+    });
+
+    it('should show stats when there are no events', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const todayRegion = screen.getByRole('region', { name: 'Today' });
+
+      await waitForElementToBeRemoved(() => within(todayRegion).queryByRole('status', { name: 'Loading' }));
+
+      expect(within(todayRegion).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('0');
+      expect(within(todayRegion).getByRole('definition', { name: 'Task Time' })).toHaveTextContent('0:00');
+      expect(within(todayRegion).getByRole('definition', { name: 'Break Time' })).toHaveTextContent('0:00');
+      expect(within(todayRegion).getByRole('definition', { name: 'Voided Pomodoros' })).toHaveTextContent('0');
+    });
+
+    it('should handle errors when fetching events', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: () => HttpResponse.error(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const todayRegion = screen.getByRole('region', { name: 'Today' });
+
+      await waitForElementToBeRemoved(() => within(todayRegion).queryByRole('status', { name: 'Loading' }));
+
+      expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Details' })).toBeInTheDocument();
+    });
+
+    it('should show a summary of productivity stats', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              meta: {
+                duration: 1500,
+                pomodoros: 1,
+              },
+              children: [
+                generateOverTaskTrackingEvent({ meta: { duration: 180 } }),
+                generatePauseTrackingEvent({ meta: { duration: 120 } }),
+              ],
+            }),
+            generateNoteTrackingEvent(),
+            generateTaskTrackingEvent({
+              meta: {
+                duration: 1500,
+                pomodoros: 0.8,
+              },
+            }),
+            generateBreakTrackingEvent({
+              meta: {
+                duration: 300,
+              },
+            }),
+            generateBreakTrackingEvent({
+              meta: {
+                duration: 900,
+              },
+              children: [generateOverBreakTrackingEvent({ meta: { duration: 120 } })],
+            }),
+            generateVoidTrackingEvent({
+              meta: {
+                voidedPomodoros: 1,
+              },
+            }),
+            generateVoidTrackingEvent({
+              meta: {
+                voidedPomodoros: 1,
+              },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const todayRegion = screen.getByRole('region', { name: 'Today' });
+
+      await waitForElementToBeRemoved(() => within(todayRegion).queryByRole('status', { name: 'Loading' }));
+
+      expect(within(todayRegion).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.80');
+      expect(within(todayRegion).getByRole('definition', { name: 'Task Time' })).toHaveTextContent('0:50');
+      expect(within(todayRegion).getByRole('definition', { name: 'Break Time' })).toHaveTextContent('0:20');
+      expect(within(todayRegion).getByRole('definition', { name: 'Voided Pomodoros' })).toHaveTextContent('2');
+    });
   });
 });
