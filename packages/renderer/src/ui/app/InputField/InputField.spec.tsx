@@ -22,9 +22,7 @@ describe('UI - Input Field', () => {
   });
 
   it('should call the onInput handler when updated', async () => {
-    const { userEvent } = renderAppComponent(() => (
-      <InputField value={value} onInput={handleInputChange} />
-    ));
+    const { userEvent } = renderAppComponent(() => <InputField value={value} onInput={handleInputChange} />);
 
     await userEvent.type(screen.getByRole('textbox'), 'f');
 

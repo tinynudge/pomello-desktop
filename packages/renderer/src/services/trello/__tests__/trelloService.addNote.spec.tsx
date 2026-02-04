@@ -211,10 +211,7 @@ describe('Trello service - Add note', () => {
     await simulate.hotkey('addNote');
     await userEvent.type(screen.getByRole('textbox'), 'Find out who the muffin man is{Enter}');
 
-    expect(mockAddComment).toHaveBeenCalledWith(
-      'INVESTIGATION',
-      '**Note:** Find out who the muffin man is'
-    );
+    expect(mockAddComment).toHaveBeenCalledWith('INVESTIGATION', '**Note:** Find out who the muffin man is');
   });
 
   it('should handle a malformed encoded JSON string in the comment log', async () => {
@@ -297,9 +294,7 @@ describe('Trello service - Add note', () => {
             }),
           ],
         }),
-        fetchCardsByListId: [
-          generateTrelloCard({ actions: [], id: 'INVESTIGATION', name: 'My investigation' }),
-        ],
+        fetchCardsByListId: [generateTrelloCard({ actions: [], id: 'INVESTIGATION', name: 'My investigation' })],
       },
     });
 

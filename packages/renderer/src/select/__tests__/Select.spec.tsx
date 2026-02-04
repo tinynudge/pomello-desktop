@@ -106,9 +106,7 @@ describe('Select', () => {
   });
 
   it('should render custom options', async () => {
-    const CustomSelectOption: CustomSelectOptionComponent = props => (
-      <>Custom - {props.option.label}</>
-    );
+    const CustomSelectOption: CustomSelectOptionComponent = props => <>Custom - {props.option.label}</>;
 
     renderSelect({
       service: { CustomSelectOption },
@@ -124,9 +122,7 @@ describe('Select', () => {
   });
 
   it('should render custom option groups', async () => {
-    const CustomSelectGroup: CustomSelectGroupComponent = props => (
-      <>Custom Group - {props.group.label}</>
-    );
+    const CustomSelectGroup: CustomSelectGroupComponent = props => <>Custom Group - {props.group.label}</>;
 
     renderSelect({
       service: { CustomSelectGroup },
@@ -260,9 +256,7 @@ describe('Select', () => {
 
     await userEvent.type(screen.getByRole('combobox'), 'sur');
 
-    expect(appApi.setSelectBounds).toHaveBeenCalledWith(
-      expect.objectContaining({ orientation: 'bottom' })
-    );
+    expect(appApi.setSelectBounds).toHaveBeenCalledWith(expect.objectContaining({ orientation: 'bottom' }));
   });
 
   it('should hide the select when the escape key is pressed', async () => {

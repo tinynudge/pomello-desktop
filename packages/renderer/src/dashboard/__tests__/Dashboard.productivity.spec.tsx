@@ -15,9 +15,7 @@ describe('Dashboard - Productivity', () => {
     expect(within(thisWeekRegion).getByRole('heading', { name: /This Week:/ })).toBeInTheDocument();
 
     const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
-    expect(
-      within(historyRegion).getByRole('heading', { name: 'Productivity History' })
-    ).toBeInTheDocument();
+    expect(within(historyRegion).getByRole('heading', { name: 'Productivity History' })).toBeInTheDocument();
   });
 
   it('should show the correct week start date in "This Week" panel', () => {
@@ -27,9 +25,7 @@ describe('Dashboard - Productivity', () => {
     renderDashboard({ route: DashboardRoute.Productivity });
 
     const thisWeekRegion = screen.getByRole('region', { name: 'This Week: January 25' });
-    expect(
-      within(thisWeekRegion).getByRole('heading', { name: 'This Week: January 25' })
-    ).toBeInTheDocument();
+    expect(within(thisWeekRegion).getByRole('heading', { name: 'This Week: January 25' })).toBeInTheDocument();
 
     vi.useRealTimers();
   });
@@ -45,14 +41,10 @@ describe('Dashboard - Productivity', () => {
     const loginView = screen.getByTestId('login-view');
 
     expect(screen.queryByRole('heading', { name: 'Productivity' })).not.toBeInTheDocument();
-    expect(
-      within(loginView).getByText('You must be logged in to Pomello to view this.')
-    ).toBeInTheDocument();
+    expect(within(loginView).getByText('You must be logged in to Pomello to view this.')).toBeInTheDocument();
     expect(within(loginView).getByRole('button', { name: 'Log in' })).toBeInTheDocument();
     expect(
-      within(loginView).getByText(
-        (_content, element) => element?.textContent === 'No account? Sign up for free.'
-      )
+      within(loginView).getByText((_content, element) => element?.textContent === 'No account? Sign up for free.')
     ).toBeInTheDocument();
   });
 

@@ -11,9 +11,7 @@ describe('UI - ToggleSwitch', () => {
   it('should trigger the onChange handler', async () => {
     const handleSwitchChange = vi.fn();
 
-    const { userEvent } = renderDashboardComponent(() => (
-      <ToggleSwitch onChange={handleSwitchChange} />
-    ));
+    const { userEvent } = renderDashboardComponent(() => <ToggleSwitch onChange={handleSwitchChange} />);
 
     await userEvent.click(screen.getByRole('checkbox'));
 

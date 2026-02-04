@@ -64,9 +64,7 @@ describe('Trello service - Task timer end', () => {
             }),
           ],
         }),
-        fetchCardsByListId: [
-          generateTrelloCard({ id: 'BILLIONAIRE', name: 'Become a billionaire' }),
-        ],
+        fetchCardsByListId: [generateTrelloCard({ id: 'BILLIONAIRE', name: 'Become a billionaire' })],
       },
     });
 

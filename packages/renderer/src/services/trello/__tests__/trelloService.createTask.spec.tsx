@@ -68,10 +68,7 @@ describe('Trello service - Create task', () => {
 
     await simulate.waitForSelectTaskView();
     await simulate.hotkey('createTask');
-    await userEvent.type(
-      screen.getByRole('textbox'),
-      'World domination -desc Take over the world{Enter}'
-    );
+    await userEvent.type(screen.getByRole('textbox'), 'World domination -desc Take over the world{Enter}');
 
     await waitFor(() => {
       expect(createCard).toHaveBeenCalledWith({
@@ -237,9 +234,7 @@ describe('Trello service - Create task', () => {
     await simulate.hotkey('createTask');
     await userEvent.type(screen.getByRole('textbox'), `${input}{Enter}`);
 
-    expect(NotificationMock).toHaveBeenCalledWith(
-      'Multiple boards found matching "board". Please refine your query.'
-    );
+    expect(NotificationMock).toHaveBeenCalledWith('Multiple boards found matching "board". Please refine your query.');
     expect(createCard).not.toHaveBeenCalled();
     expect(screen.getByRole('textbox')).toHaveValue(input);
   });
@@ -293,9 +288,7 @@ describe('Trello service - Create task', () => {
     await simulate.hotkey('createTask');
     await userEvent.type(screen.getByRole('textbox'), `${input}{Enter}`);
 
-    expect(NotificationMock).toHaveBeenCalledWith(
-      'Multiple lists found matching "mylist". Please refine your query.'
-    );
+    expect(NotificationMock).toHaveBeenCalledWith('Multiple lists found matching "mylist". Please refine your query.');
     expect(createCard).not.toHaveBeenCalled();
     expect(screen.getByRole('textbox')).toHaveValue(input);
   });
@@ -347,9 +340,7 @@ describe('Trello service - Create task', () => {
             }),
           ],
         }),
-        fetchLabelsByBoardId: [
-          generateTrelloLabel({ id: 'PURPLE_LABEL', color: 'purple', name: 'Action' }),
-        ],
+        fetchLabelsByBoardId: [generateTrelloLabel({ id: 'PURPLE_LABEL', color: 'purple', name: 'Action' })],
       },
     });
 

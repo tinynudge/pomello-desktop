@@ -95,9 +95,7 @@ describe('App - Errors', () => {
     });
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Something terrible happened in Terrible Service')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Something terrible happened in Terrible Service')).toBeInTheDocument();
     });
   });
 

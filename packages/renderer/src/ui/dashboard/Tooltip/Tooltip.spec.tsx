@@ -4,9 +4,7 @@ import { Tooltip } from './Tooltip';
 describe('UI - Tooltip', () => {
   it('should show and hide the tooltip on mouseover and mouseout', async () => {
     const { userEvent } = renderDashboardComponent(() => (
-      <Tooltip text="Do not click">
-        {tooltipTargetRef => <button ref={tooltipTargetRef}>Click me</button>}
-      </Tooltip>
+      <Tooltip text="Do not click">{tooltipTargetRef => <button ref={tooltipTargetRef}>Click me</button>}</Tooltip>
     ));
 
     await userEvent.hover(screen.getByRole('button'));
@@ -20,9 +18,7 @@ describe('UI - Tooltip', () => {
 
   it('should show and hide the tooltip on focus and blur', async () => {
     renderDashboardComponent(() => (
-      <Tooltip text="Do not click">
-        {tooltipTargetRef => <button ref={tooltipTargetRef}>Click me</button>}
-      </Tooltip>
+      <Tooltip text="Do not click">{tooltipTargetRef => <button ref={tooltipTargetRef}>Click me</button>}</Tooltip>
     ));
 
     screen.getByRole('button').focus();

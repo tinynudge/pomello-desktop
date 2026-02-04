@@ -56,9 +56,7 @@ describe('Trello service - Complete task', () => {
             }),
           ],
         }),
-        fetchCardsByListId: [
-          generateTrelloCard({ id: 'BILLIONAIRE', name: 'Become a billionaire' }),
-        ],
+        fetchCardsByListId: [generateTrelloCard({ id: 'BILLIONAIRE', name: 'Become a billionaire' })],
       },
     });
 
@@ -300,14 +298,8 @@ describe('Trello service - Complete task', () => {
 
   it('should optimistically remove a card when completing early and moving to another list', async () => {
     const cards = new Map([
-      [
-        'MY_FIRST_TASK',
-        generateTrelloCard({ id: 'MY_FIRST_TASK', name: 'My first task', checklists: [] }),
-      ],
-      [
-        'MY_SECOND_TASK',
-        generateTrelloCard({ id: 'MY_SECOND_TASK', name: 'My second task', checklists: [] }),
-      ],
+      ['MY_FIRST_TASK', generateTrelloCard({ id: 'MY_FIRST_TASK', name: 'My first task', checklists: [] })],
+      ['MY_SECOND_TASK', generateTrelloCard({ id: 'MY_SECOND_TASK', name: 'My second task', checklists: [] })],
     ]);
 
     const { appApi, simulate } = await renderTrelloService({
@@ -430,14 +422,8 @@ describe('Trello service - Complete task', () => {
 
   it('should optimistically remove a checklist item when completing early', async () => {
     const checkItems = new Map([
-      [
-        'MY_FIRST_CHECK_ITEM',
-        generateTrelloCheckItem({ id: 'MY_FIRST_CHECK_ITEM', name: 'My first check item' }),
-      ],
-      [
-        'MY_SECOND_CHECK_ITEM',
-        generateTrelloCheckItem({ id: 'MY_SECOND_CHECK_ITEM', name: 'My second check item' }),
-      ],
+      ['MY_FIRST_CHECK_ITEM', generateTrelloCheckItem({ id: 'MY_FIRST_CHECK_ITEM', name: 'My first check item' })],
+      ['MY_SECOND_CHECK_ITEM', generateTrelloCheckItem({ id: 'MY_SECOND_CHECK_ITEM', name: 'My second check item' })],
     ]);
     const { appApi, simulate } = await renderTrelloService({
       settings: {
@@ -517,10 +503,7 @@ describe('Trello service - Complete task', () => {
         fetchBoardsAndLists: generateTrelloMember({
           boards: [
             generateTrelloBoard({
-              lists: [
-                generateTrelloList({ id: 'MY_FIRST_LIST_ID' }),
-                generateTrelloList({ id: 'MY_SECOND_LIST_ID' }),
-              ],
+              lists: [generateTrelloList({ id: 'MY_FIRST_LIST_ID' }), generateTrelloList({ id: 'MY_SECOND_LIST_ID' })],
             }),
           ],
         }),

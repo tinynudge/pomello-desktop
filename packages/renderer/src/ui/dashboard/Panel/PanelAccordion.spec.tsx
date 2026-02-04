@@ -7,9 +7,8 @@ describe('UI - Panel', () => {
       <Panel heading="H.S.K.T.">
         <Panel.Accordion>
           <Panel.Accordion.Item title="Head">
-            The upper part of the human body, or the front or upper part of the body of an animal,
-            typically separated from the rest of the body by a neck, and containing the brain,
-            mouth, and sense organs.
+            The upper part of the human body, or the front or upper part of the body of an animal, typically separated
+            from the rest of the body by a neck, and containing the brain, mouth, and sense organs.
           </Panel.Accordion.Item>
         </Panel.Accordion>
       </Panel>
@@ -26,9 +25,8 @@ describe('UI - Panel', () => {
       <Panel heading="H.S.K.T.">
         <Panel.Accordion>
           <Panel.Accordion.Item title="Head">
-            The upper part of the human body, or the front or upper part of the body of an animal,
-            typically separated from the rest of the body by a neck, and containing the brain,
-            mouth, and sense organs.
+            The upper part of the human body, or the front or upper part of the body of an animal, typically separated
+            from the rest of the body by a neck, and containing the brain, mouth, and sense organs.
           </Panel.Accordion.Item>
         </Panel.Accordion>
       </Panel>
@@ -54,13 +52,9 @@ describe('UI - Panel', () => {
     renderDashboardComponent(() => (
       <Panel heading="H.S.K.T.">
         <Panel.Accordion>
-          <Panel.Accordion.Item
-            title="Head"
-            titleExtras={<span data-testid="title-extras">Extra content</span>}
-          >
-            The upper part of the human body, or the front or upper part of the body of an animal,
-            typically separated from the rest of the body by a neck, and containing the brain,
-            mouth, and sense organs.
+          <Panel.Accordion.Item title="Head" titleExtras={<span data-testid="title-extras">Extra content</span>}>
+            The upper part of the human body, or the front or upper part of the body of an animal, typically separated
+            from the rest of the body by a neck, and containing the brain, mouth, and sense organs.
           </Panel.Accordion.Item>
         </Panel.Accordion>
       </Panel>
@@ -85,9 +79,8 @@ describe('UI - Panel', () => {
               },
             ]}
           >
-            The upper part of the human body, or the front or upper part of the body of an animal,
-            typically separated from the rest of the body by a neck, and containing the brain,
-            mouth, and sense organs.
+            The upper part of the human body, or the front or upper part of the body of an animal, typically separated
+            from the rest of the body by a neck, and containing the brain, mouth, and sense organs.
           </Panel.Accordion.Item>
         </Panel.Accordion>
       </Panel>

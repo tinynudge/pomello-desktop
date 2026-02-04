@@ -20,9 +20,7 @@ describe('UI - Error', () => {
 
   it('should call the retry function when clicking the retry button', async () => {
     const retry = vi.fn();
-    const { userEvent } = renderDashboardComponent(() => (
-      <ErrorComponent error={new Error('💣')} retry={retry} />
-    ));
+    const { userEvent } = renderDashboardComponent(() => <ErrorComponent error={new Error('💣')} retry={retry} />);
 
     await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
 
