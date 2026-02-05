@@ -57,7 +57,6 @@ export const renderApp = (options: RenderAppOptions = {}) => {
 
   const logger = createMockLogger();
   const settings = createMockSettings(options.settings);
-  const pomelloService = createMockPomelloService(settings);
   const createMockService = createMockServiceFactory(options.mockService);
 
   const [pomelloConfig, pomelloConfigActions] = createMockServiceConfig<PomelloServiceConfig>(
@@ -105,6 +104,7 @@ export const renderApp = (options: RenderAppOptions = {}) => {
   const services =
     options.createServiceRegistry?.(defaultServiceRegistry) ?? defaultServiceRegistry;
 
+  const pomelloService = createMockPomelloService(settings);
   const pomelloApi = createMockPomelloApi(pomelloConfig, options.pomelloApi);
 
   render(() => (

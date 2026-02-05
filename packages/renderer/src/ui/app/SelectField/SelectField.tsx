@@ -64,7 +64,11 @@ export const SelectField: Component<SelectFieldProps> = props => {
   // This is much simpler than doing a lot of message passing to figure out if
   // the select window has updated.
   if (props.defaultOpen) {
-    setTimeout(showSelectWindow, 5);
+    const timeoutId = setTimeout(showSelectWindow, 5);
+
+    onCleanup(() => {
+      clearTimeout(timeoutId);
+    });
   }
 
   let buttonRef!: HTMLButtonElement;
