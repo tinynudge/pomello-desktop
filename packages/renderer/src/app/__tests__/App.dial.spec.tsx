@@ -82,4 +82,28 @@ describe('App - Dial', () => {
 
     expect(screen.queryByRole('button', { name: 'Hide actions' })).not.toBeInTheDocument();
   });
+
+  it('should update the timer settings when settings change', async () => {
+    const { appApi, simulate } = renderApp({
+      settings: {
+        taskTime: 3,
+        pomodoroSet: ['task', 'task'],
+      },
+    });
+
+    await simulate.selectTask();
+    await simulate.startTimer();
+
+    expect(screen.getByText('03')).toBeInTheDocument();
+
+    await simulate.advanceTimer(3);
+
+    appApi.updateSettings({
+      taskTime: 5 * 60,
+    });
+
+    await simulate.selectOption('continueTask');
+
+    expect(screen.getByText('5')).toBeInTheDocument();
+  });
 });

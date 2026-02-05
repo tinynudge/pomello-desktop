@@ -16,21 +16,42 @@ const defaultSettings: PomelloSettings = {
   taskTime: 30,
 };
 
-export const createMockPomelloService = (settings: Settings): PomelloService => {
-  const { pomodoroSet } = settings;
-
+const getPomelloSettings = ({
+  betweenTasksGracePeriod,
+  longBreakTime,
+  overtimeDelay,
+  pomodoroSet,
+  shortBreakTime,
+  taskTime,
+}: Settings): PomelloSettings => {
   const set = Array.isArray(pomodoroSet)
     ? pomodoroSet
     : [...Array(pomodoroSet - 1)]
         .flatMap<SetItem>(() => ['task', 'shortBreak'])
         .concat(['task', 'longBreak']);
 
-  return createPomelloService({
+  return {
+    betweenTasksGracePeriod,
+    longBreakTime,
+    overtimeDelay,
+    set,
+    shortBreakTime,
+    taskTime,
+  };
+};
+
+export const createMockPomelloService = (settings: Settings): PomelloService => {
+  const pomelloService = createPomelloService({
     createTicker,
     settings: {
       ...defaultSettings,
-      ...settings,
-      set,
+      ...getPomelloSettings(settings),
     },
   });
+
+  window.app.onSettingsChange(updatedSettings => {
+    pomelloService.updateSettings(getPomelloSettings(updatedSettings));
+  });
+
+  return pomelloService;
 };
