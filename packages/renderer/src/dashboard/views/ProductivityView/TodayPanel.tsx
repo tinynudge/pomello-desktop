@@ -1,85 +1,51 @@
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
-import { LoadingDots } from '@/ui/dashboard/LoadingDots';
 import { Panel } from '@/ui/dashboard/Panel';
 import { useQuery } from '@tanstack/solid-query';
 import { format } from 'date-fns';
-import { Component, For, Match, Switch } from 'solid-js';
-import styles from './TodayPanel.module.scss';
+import { Component } from 'solid-js';
+import { StatItem, StatsDisplay } from './StatsDisplay';
 
 export const TodayPanel: Component = () => {
   const pomelloApi = usePomelloApi();
   const t = useTranslate();
 
-  const events = useQuery(() => ({
+  const todaysProductivity = useQuery<StatItem[]>(() => ({
     queryKey: ['todaysProductivity'],
     queryFn: async () => {
       const events = await pomelloApi.fetchEvents({
         startDate: format(new Date(), 'yyyy-MM-dd'),
       });
 
-      return events.reduce(
-        (stats, event) => {
-          if (event.type === 'break') {
-            stats.breakTime.value += event.meta.duration;
-          } else if (event.type === 'task') {
-            stats.pomodoros.value += event.meta.pomodoros;
-            stats.taskTime.value += event.meta.duration;
-          } else if (event.type === 'void') {
-            stats.voidedPomodoros.value += event.meta.voidedPomodoros;
-          }
+      let pomodoros = 0;
+      let taskTime = 0;
+      let breakTime = 0;
+      let voidedPomodoros = 0;
 
-          return stats;
-        },
-        {
-          pomodoros: { type: 'number', value: 0 },
-          taskTime: { type: 'duration', value: 0 },
-          breakTime: { type: 'duration', value: 0 },
-          voidedPomodoros: { type: 'number', value: 0 },
+      events.forEach(event => {
+        if (event.type === 'break') {
+          breakTime += event.meta.duration;
+        } else if (event.type === 'task') {
+          pomodoros += event.meta.pomodoros;
+          taskTime += event.meta.duration;
+        } else if (event.type === 'void') {
+          voidedPomodoros += event.meta.voidedPomodoros;
         }
-      );
+      });
+
+      return [
+        { label: t('statLabel.pomodoros'), type: 'number', value: pomodoros },
+        { label: t('statLabel.taskTime'), type: 'duration', value: taskTime },
+        { label: t('statLabel.breakTime'), type: 'duration', value: breakTime },
+        { label: t('statLabel.voidedPomodoros'), type: 'number', value: voidedPomodoros },
+      ];
     },
     throwOnError: true,
   }));
 
-  const formatNumber = (value: number) => value.toFixed(2).replace(/\.00$/, '');
-
-  const formatDuration = (duration: number) => {
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.floor((duration % 3600) / 60);
-
-    let minutesString: string = `${minutes}`;
-
-    if (minutes < 10) {
-      minutesString = `0${minutes}`;
-    }
-
-    return `${hours}:${minutesString}`;
-  };
-
   return (
     <Panel heading={t('todayLabel')}>
-      <Switch>
-        <Match when={events.data}>
-          {getEvents => (
-            <dl class={styles.stats}>
-              <For each={Object.entries(getEvents())}>
-                {([key, { type, value }]) => (
-                  <div>
-                    <dt id={`stat-${key}`}>{t(`statLabel.${key}`)}</dt>
-                    <dd aria-labelledby={`stat-${key}`}>
-                      {type === 'number' ? formatNumber(value) : formatDuration(value)}
-                    </dd>
-                  </div>
-                )}
-              </For>
-            </dl>
-          )}
-        </Match>
-        <Match when={events.isLoading}>
-          <LoadingDots class={styles.loadingDots} />
-        </Match>
-      </Switch>
+      <StatsDisplay isLoading={todaysProductivity.isLoading} stats={todaysProductivity.data} />
     </Panel>
   );
 };

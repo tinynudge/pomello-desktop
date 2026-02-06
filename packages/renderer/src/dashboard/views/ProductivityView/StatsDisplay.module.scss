@@ -1,13 +1,12 @@
-.loadingDots {
-  margin: 20px 0;
-}
-
-.stats {
-  display: flex;
+.statsDisplay {
+  display: grid;
   justify-content: space-around;
+  grid-auto-flow: column;
+  grid-template-rows: auto auto;
   text-align: center;
 
   dt {
+    align-content: center;
     color: var(--dashboard-text-hint);
     font-size: 13px;
   }
@@ -15,4 +14,8 @@
   dd {
     font-size: 32px;
   }
+}
+
+.loadingDots {
+  margin: 21px 0;
 }
