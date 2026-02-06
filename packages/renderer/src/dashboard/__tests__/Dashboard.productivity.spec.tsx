@@ -22,23 +22,11 @@ describe('Dashboard - Productivity', () => {
     const todayRegion = screen.getByRole('region', { name: 'Today' });
     expect(within(todayRegion).getByRole('heading', { name: 'Today' })).toBeInTheDocument();
 
-    const thisWeekRegion = screen.getByRole('region', { name: /This Week:/ });
-    expect(within(thisWeekRegion).getByRole('heading', { name: /This Week:/ })).toBeInTheDocument();
+    const thisWeekRegion = screen.getByRole('region', { name: /Week of/ });
+    expect(within(thisWeekRegion).getByRole('heading', { name: /Week of/ })).toBeInTheDocument();
 
     const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
     expect(within(historyRegion).getByRole('heading', { name: 'Productivity History' })).toBeInTheDocument();
-  });
-
-  it('should show the correct week start date in "This Week" panel', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
-
-    renderDashboard({ route: DashboardRoute.Productivity });
-
-    const thisWeekRegion = screen.getByRole('region', { name: 'This Week: January 25' });
-    expect(within(thisWeekRegion).getByRole('heading', { name: 'This Week: January 25' })).toBeInTheDocument();
-
-    vi.useRealTimers();
   });
 
   it('should show a login view when not logged in', () => {
@@ -229,6 +217,326 @@ describe('Dashboard - Productivity', () => {
       expect(within(todayRegion).getByRole('definition', { name: 'Task Time' })).toHaveTextContent('0:50');
       expect(within(todayRegion).getByRole('definition', { name: 'Break Time' })).toHaveTextContent('0:20');
       expect(within(todayRegion).getByRole('definition', { name: 'Voided Pomodoros' })).toHaveTextContent('2');
+    });
+  });
+
+  describe('Week of Panel', () => {
+    beforeEach(() => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+    });
+
+    it('should show the correct week start date in "This Week" panel', () => {
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const thisWeekRegion = screen.getByRole('region', { name: 'Week of January 25' });
+      expect(within(thisWeekRegion).getByRole('heading', { name: 'Week of January 25' })).toBeInTheDocument();
+    });
+
+    it('should show loading state while fetching weekly events', async () => {
+      const fetchEventsPromise = Promise.withResolvers<void>();
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: async () => {
+            await fetchEventsPromise.promise;
+
+            return HttpResponse.json({ data: [] });
+          },
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: /Week of/ });
+
+      expect(within(weekRegion).getByRole('status', { name: 'Loading' })).toBeInTheDocument();
+
+      fetchEventsPromise.resolve();
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+    });
+
+    it('should show stats when there are no events', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: /Week of/ });
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Pomodoros' })).toHaveTextContent('0');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Pomodoros' })).toHaveTextContent('0');
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Task Time' })).toHaveTextContent('0:00');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Task Time' })).toHaveTextContent('0:00');
+    });
+
+    it('should handle errors when fetching weekly events', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: ({ request }) => {
+            const url = new URL(request.url);
+
+            const startDate = url.searchParams.get('startDate');
+            const endDate = url.searchParams.get('endDate');
+
+            if (startDate === endDate) {
+              // Don't return an error when fetching events for the Today panel
+              return HttpResponse.json(generateTrackingEvents());
+            }
+
+            return HttpResponse.error();
+          },
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: /Week of/ });
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+
+      expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Details' })).toBeInTheDocument();
+    });
+
+    it('should show a summary of weekly productivity stats', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            // Day 1 events (Monday)
+            generateTaskTrackingEvent({
+              startTime: '2026-01-26T10:00:00Z',
+              meta: {
+                duration: 1500,
+                pomodoros: 1,
+              },
+            }),
+            generateTaskTrackingEvent({
+              startTime: '2026-01-26T11:00:00Z',
+              meta: {
+                duration: 1500,
+                pomodoros: 1,
+              },
+            }),
+            // Day 2 events (Tuesday)
+            generateTaskTrackingEvent({
+              startTime: '2026-01-27T10:00:00Z',
+              meta: {
+                duration: 3000,
+                pomodoros: 2,
+              },
+            }),
+            // Day 3 events (Wednesday)
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00Z',
+              meta: {
+                duration: 1500,
+                pomodoros: 1,
+              },
+            }),
+            // Non-task events should be ignored
+            generateBreakTrackingEvent({
+              startTime: '2026-01-28T10:30:00Z',
+              meta: { duration: 300 },
+            }),
+            generateNoteTrackingEvent({
+              startTime: '2026-01-28T11:00:00Z',
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: /Week of/ });
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+
+      // Total: 1 + 1 + 2 + 1 = 5 pomodoros
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Pomodoros' })).toHaveTextContent('5');
+      // Average: 5 pomodoros / 3 active days = 1.67 (rounded)
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Pomodoros' })).toHaveTextContent('1.67');
+      // Total time: 1500 + 1500 + 3000 + 1500 = 7500 seconds = 125 minutes = 2:05
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Task Time' })).toHaveTextContent('2:05');
+      // Average time: 7500 / 3 = 2500 seconds = 41.67 minutes = 0:41
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Task Time' })).toHaveTextContent('0:41');
+    });
+
+    it('should show stats with single active day', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00Z',
+              meta: {
+                duration: 3000,
+                pomodoros: 2,
+              },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: /Week of/ });
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+
+      // With single day, total equals average
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Pomodoros' })).toHaveTextContent('2');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Pomodoros' })).toHaveTextContent('2');
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Task Time' })).toHaveTextContent('0:50');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Task Time' })).toHaveTextContent('0:50');
+    });
+
+    it('should navigate to previous week when clicking Previous week button', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      expect(screen.getByRole('region', { name: 'Week of January 25' })).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+
+      expect(screen.getByRole('region', { name: 'Week of January 18' })).toBeInTheDocument();
+    });
+
+    it('should navigate to next week when clicking Next week button', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+
+      expect(screen.getByRole('region', { name: 'Week of January 18' })).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Next week' }));
+
+      expect(screen.getByRole('region', { name: 'Week of January 25' })).toBeInTheDocument();
+    });
+
+    it('should return to current week when clicking This week button', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+
+      expect(screen.getByRole('region', { name: 'Week of January 11' })).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: 'This week' }));
+
+      expect(screen.getByRole('region', { name: 'Week of January 25' })).toBeInTheDocument();
+    });
+
+    it('should disable This week and Next week buttons when viewing current week', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      expect(screen.getByRole('button', { name: 'Previous week' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'This week' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Next week' })).toBeDisabled();
+    });
+
+    it('should enable This week and Next week buttons when viewing past week', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+
+      expect(screen.getByRole('button', { name: 'Previous week' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'This week' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'Next week' })).toBeEnabled();
+    });
+
+    it('should handle fractional pomodoros correctly', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00Z',
+              meta: {
+                duration: 750,
+                pomodoros: 0.5,
+              },
+            }),
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T11:00:00Z',
+              meta: {
+                duration: 375,
+                pomodoros: 0.25,
+              },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: 'Week of January 25' });
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Pomodoros' })).toHaveTextContent('0.75');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Pomodoros' })).toHaveTextContent('0.75');
+    });
+
+    it('should calculate averages across multiple active days correctly', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            // Multiple events on same day should count as one active day
+            generateTaskTrackingEvent({
+              startTime: '2026-01-26T10:00:00Z',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateTaskTrackingEvent({
+              startTime: '2026-01-26T11:00:00Z',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateTaskTrackingEvent({
+              startTime: '2026-01-26T14:00:00Z',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            // Second active day
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00Z',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: 'Week of January 25' });
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+
+      // Total: 4 pomodoros, Average: 4/2 = 2 pomodoros per active day
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Pomodoros' })).toHaveTextContent('4');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Pomodoros' })).toHaveTextContent('2');
+      // Total time: 6000 seconds = 100 minutes = 1:40, Average: 3000 seconds = 50 minutes = 0:50
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Task Time' })).toHaveTextContent('1:40');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Task Time' })).toHaveTextContent('0:50');
     });
   });
 });
