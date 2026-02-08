@@ -1,23 +1,18 @@
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
-import { Button } from '@/ui/dashboard/Button';
 import { Panel } from '@/ui/dashboard/Panel';
 import { useQuery } from '@tanstack/solid-query';
-import { addWeeks, endOfWeek, format, startOfWeek, subWeeks } from 'date-fns';
-import { Component, createMemo, createSignal } from 'solid-js';
+import { endOfWeek, format, startOfWeek } from 'date-fns';
+import { Component, createSignal } from 'solid-js';
+import { HistoryPanel } from './HistoryPanel';
 import { StatItem, StatsDisplay } from './StatsDisplay';
 
 export const WeeklyProductivityPanels: Component = () => {
   const pomelloApi = usePomelloApi();
   const t = useTranslate();
 
-  const thisWeekDateRange: [Date, Date] = [startOfWeek(new Date()), endOfWeek(new Date())];
-
-  const [dateRange, setDateRange] = createSignal<[Date, Date]>(thisWeekDateRange);
-
-  const getIsCurrentWeek = createMemo(
-    () => dateRange()[0].getTime() === thisWeekDateRange[0].getTime()
-  );
+  const initialDateRange: [Date, Date] = [startOfWeek(new Date()), endOfWeek(new Date())];
+  const [dateRange, setDateRange] = createSignal<[Date, Date]>(initialDateRange);
 
   const weeklyProductivity = useQuery<StatItem[]>(() => ({
     queryKey: ['weekProductivity', dateRange()[0].getTime(), dateRange()[1].getTime()],
@@ -60,38 +55,16 @@ export const WeeklyProductivityPanels: Component = () => {
     throwOnError: true,
   }));
 
-  const handlePreviousWeekClick = () => {
-    const [currentStartOfWeek] = dateRange();
-    const newStartOfWeek = subWeeks(currentStartOfWeek, 1);
-
-    setDateRange([newStartOfWeek, endOfWeek(newStartOfWeek)]);
-  };
-
-  const handleNextWeekClick = () => {
-    const [currentStartOfWeek] = dateRange();
-    const newStartOfWeek = addWeeks(currentStartOfWeek, 1);
-
-    setDateRange([newStartOfWeek, endOfWeek(newStartOfWeek)]);
-  };
-
-  const handleThisWeekClick = () => {
-    setDateRange(thisWeekDateRange);
-  };
-
   return (
     <>
       <Panel heading={t('weekOf', { week: format(dateRange()[0], 'MMMM d') })}>
         <StatsDisplay isLoading={weeklyProductivity.isLoading} stats={weeklyProductivity.data} />
       </Panel>
-      <Panel heading={t('productivityHistoryLabel')}>
-        <Button onClick={handlePreviousWeekClick}>{t('previousWeekLabel')}</Button>
-        <Button disabled={getIsCurrentWeek()} onClick={handleThisWeekClick}>
-          {t('thisWeekLabel')}
-        </Button>
-        <Button disabled={getIsCurrentWeek()} onClick={handleNextWeekClick}>
-          {t('nextWeekLabel')}
-        </Button>
-      </Panel>
+      <HistoryPanel
+        getDateRange={dateRange}
+        initialDateRange={initialDateRange}
+        onDateRangeChange={setDateRange}
+      />
     </>
   );
 };
