@@ -1,8 +1,18 @@
 .button {
-  padding: 6px 14px;
+  display: inline-flex;
+  min-height: 35px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
   border: 1px solid var(--dashboard-input-default-border);
   border-radius: 4px;
   background-color: var(--dashboard-input-default-background-default);
+  vertical-align: middle;
+
+  &[data-icon-only] {
+    min-width: 35px;
+    padding: 0;
+  }
 
   &:focus-visible {
     outline: 3px solid var(--dashboard-focus);
@@ -19,8 +29,13 @@
   }
 
   &[data-size='small'] {
-    padding: 4px 10px;
+    min-height: 28px;
+    padding: 0 10px;
     font-size: 13px;
+
+    &[data-icon-only] {
+      min-width: 28px;
+    }
   }
 
   &[data-variant='primary'] {
@@ -60,12 +75,14 @@
   }
 
   &[data-variant='text'] {
+    min-height: auto;
     padding: 0 2px;
     border: 0;
     background-color: transparent;
     color: var(--dashboard-button-link-default);
     outline-offset: 1px;
     text-decoration: underline;
+    vertical-align: baseline;
 
     &:hover {
       text-decoration: none;
@@ -73,6 +90,27 @@
 
     &:active {
       color: var(--dashboard-button-link-active);
+    }
+  }
+}
+
+.buttonGroup {
+  display: inline-flex;
+
+  > .button {
+    &:focus-visible {
+      z-index: 1;
+    }
+
+    &:not(:first-of-type) {
+      margin-left: -1px;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+
+    &:not(:last-of-type) {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
     }
   }
 }
