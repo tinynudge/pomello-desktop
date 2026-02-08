@@ -190,8 +190,8 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
             onClick: handleDeleteSoundClick,
           },
         ]}
-        menuLabel={t('formFieldMoreOptionsMenuLabel')}
-        tooltip={t('formFieldMoreOptionsTooltip')}
+        menuLabel={t('panelMoreOptionsMenuLabel')}
+        tooltip={t('panelMoreOptionsTooltip')}
         triggerLabel={t('formFieldMoreOptionsTriggerLabel')}
       />
     </Panel.List.Item>
