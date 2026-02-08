@@ -539,4 +539,131 @@ describe('Dashboard - Productivity', () => {
       expect(within(weekRegion).getByRole('definition', { name: 'Average Task Time' })).toHaveTextContent('0:50');
     });
   });
+
+  describe('History Panel', () => {
+    it('should show the correct tooltips to change the date range', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.hover(within(historyRegion).getByRole('button', { name: 'Previous week' }));
+
+      expect(screen.getByRole('tooltip', { name: 'Previous week' })).toBeInTheDocument();
+
+      await userEvent.unhover(within(historyRegion).getByRole('button', { name: 'Previous week' }));
+
+      expect(screen.queryByRole('tooltip', { name: 'Previous week' })).not.toBeInTheDocument();
+
+      await userEvent.hover(within(historyRegion).getByRole('button', { name: 'This week' }));
+
+      expect(screen.getByRole('tooltip', { name: 'This week' })).toBeInTheDocument();
+
+      await userEvent.unhover(within(historyRegion).getByRole('button', { name: 'This week' }));
+
+      expect(screen.queryByRole('tooltip', { name: 'This week' })).not.toBeInTheDocument();
+
+      await userEvent.hover(within(historyRegion).getByRole('button', { name: 'Next week' }));
+
+      expect(screen.getByRole('tooltip', { name: 'Next week' })).toBeInTheDocument();
+
+      await userEvent.unhover(within(historyRegion).getByRole('button', { name: 'Next week' }));
+
+      expect(screen.queryByRole('tooltip', { name: 'Next week' })).not.toBeInTheDocument();
+    });
+
+    it('should show and hide the Filter tooltip', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.hover(within(historyRegion).getByRole('button', { name: 'Filter' }));
+
+      expect(screen.getByRole('tooltip', { name: 'Filter' })).toBeInTheDocument();
+
+      await userEvent.unhover(within(historyRegion).getByRole('button', { name: 'Filter' }));
+
+      expect(screen.queryByRole('tooltip', { name: 'Filter' })).not.toBeInTheDocument();
+    });
+
+    it('should display a date range within same month', () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 25\u201331, 2026');
+    });
+
+    it('should display a date range spanning different months', () => {
+      vi.setSystemTime(new Date('2025-12-02T12:00:00Z'));
+
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent(
+        'November 30\u2013December 6, 2025'
+      );
+    });
+
+    it('should display a date range spanning different years', () => {
+      vi.setSystemTime(new Date('2026-01-03T12:00:00Z'));
+
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent(
+        'December 28, 2025\u2013January 3, 2026'
+      );
+    });
+
+    it('should update the heading when navigating to previous week', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 25\u201331, 2026');
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Previous week' }));
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 18\u201324, 2026');
+    });
+
+    it('should update the heading when navigating to next week', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Previous week' }));
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 18\u201324, 2026');
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Next week' }));
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 25\u201331, 2026');
+    });
+
+    it('should update the heading when clicking This week', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Previous week' }));
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Previous week' }));
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 11\u201317, 2026');
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'This week' }));
+
+      expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 25\u201331, 2026');
+    });
+  });
 });

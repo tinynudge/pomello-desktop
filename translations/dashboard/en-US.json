@@ -28,6 +28,7 @@
   "editKeyboardShortcutLabel": "Edit keyboard shortcut for: {{command}}. Current keyboard shortcut: {{binding}}.",
   "editKeyboardShortcutText": "Edit keyboard shortcut",
   "exportData": "Export data",
+  "filter": "Filter",
   "formFieldMoreOptionsTriggerLabel": "Show more options",
   "freeAccountLabel": "Free",
   "generalHotkeysHeader": "General",
@@ -87,6 +88,7 @@
   "moreActionsShortLabel": "More actions",
   "nextWeekLabel": "Next week",
   "noCustomSoundsAdded": "No custom sounds have been added yet.",
+  "overview": "Overview",
   "overwrite": "Overwrite",
   "panelMoreOptionsMenuLabel": "More options",
   "panelMoreOptionsTooltip": "More",
@@ -216,6 +218,7 @@
   "timeLength": "{{count}} min",
   "timeSelectMinSuffix": "min",
   "timeSelectSecSuffix": "sec",
+  "timeline": "Timeline",
   "todayLabel": "Today",
   "toggleDefault.false": "Off",
   "toggleDefault.true": "On",
@@ -225,5 +228,6 @@
   "undoChangesLabel": "Undo changes",
   "unsetHotkey": "Unset keyboard shortcut",
   "upgrade": "Upgrade",
+  "viewOptions": "View options",
   "weekOf": "Week of {{week}}"
 }
