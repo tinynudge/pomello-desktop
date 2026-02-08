@@ -1,11 +1,18 @@
 @use '@/shared/styles/global' as *;
 
 @position-try --tooltip-top-left {
+  margin: 0 0 8px;
   position-area: top span-right;
 }
 
 @position-try --tooltip-top-right {
+  margin: 0 0 8px;
   position-area: top span-left;
+}
+
+@position-try --tooltip-top-center {
+  margin: 0 0 8px;
+  position-area: top;
 }
 
 @position-try --tooltip-bottom-center {
@@ -27,13 +34,24 @@
   padding: 8px;
   border: 0;
   border-radius: 4px;
-  margin: 0 0 8px;
   background-color: var(--dashboard-tooltip-background);
   box-shadow: $z1-shadow;
   color: var(--dashboard-tooltip-text);
-  position-area: top;
-  position-try-fallbacks:
-    --tooltip-top-left, --tooltip-top-right, --tooltip-bottom-center, --tooltip-bottom-left,
-    --tooltip-bottom-right;
   white-space: nowrap;
+
+  &[data-alignment='top'] {
+    margin: 0 0 8px;
+    position-area: top;
+    position-try-fallbacks:
+      --tooltip-top-left, --tooltip-top-right, --tooltip-bottom-center, --tooltip-bottom-left,
+      --tooltip-bottom-right;
+  }
+
+  &[data-alignment='bottom'] {
+    margin: 8px 0 0;
+    position-area: bottom;
+    position-try-fallbacks:
+      --tooltip-bottom-left, --tooltip-bottom-right, --tooltip-top-center, --tooltip-top-left,
+      --tooltip-top-right;
+  }
 }

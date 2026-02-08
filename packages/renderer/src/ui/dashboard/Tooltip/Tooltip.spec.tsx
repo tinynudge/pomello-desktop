@@ -29,4 +29,26 @@ describe('UI - Tooltip', () => {
 
     expect(screen.queryByRole('tooltip', { name: 'Do not click' })).not.toBeInTheDocument();
   });
+
+  it('should have a default alignment of top', async () => {
+    renderDashboardComponent(() => (
+      <Tooltip text="Do not click">{tooltipTargetRef => <button ref={tooltipTargetRef}>Click me</button>}</Tooltip>
+    ));
+
+    screen.getByRole('button').focus();
+
+    expect(screen.getByRole('tooltip')).toHaveAttribute('data-alignment', 'top');
+  });
+
+  it('should allow for bottom alignment', async () => {
+    renderDashboardComponent(() => (
+      <Tooltip text="Do not click" alignment="bottom">
+        {tooltipTargetRef => <button ref={tooltipTargetRef}>Click me</button>}
+      </Tooltip>
+    ));
+
+    screen.getByRole('button').focus();
+
+    expect(screen.getByRole('tooltip')).toHaveAttribute('data-alignment', 'bottom');
+  });
 });

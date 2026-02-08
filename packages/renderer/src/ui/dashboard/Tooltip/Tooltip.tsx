@@ -3,6 +3,7 @@ import { Component, JSX, createSignal, onCleanup } from 'solid-js';
 import styles from './Tooltip.module.scss';
 
 type TooltipProps = {
+  alignment?: 'top' | 'bottom';
   children(tooltipTargetRef: TooltipTargetRef): JSX.Element;
   text: string;
 };
@@ -54,6 +55,7 @@ export const Tooltip: Component<TooltipProps> = props => {
       <span
         aria-hidden={!getIsVisible()}
         class={styles.tooltip}
+        data-alignment={props.alignment ?? 'top'}
         popover="manual"
         ref={tooltipRef}
         role="tooltip"
