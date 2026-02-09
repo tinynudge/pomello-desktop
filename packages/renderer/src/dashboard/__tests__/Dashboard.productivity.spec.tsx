@@ -571,18 +571,18 @@ describe('Dashboard - Productivity', () => {
       expect(screen.queryByRole('tooltip', { name: 'Next week' })).not.toBeInTheDocument();
     });
 
-    it('should show and hide the Filter tooltip', async () => {
+    it('should show and hide the Filters tooltip', async () => {
       const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
 
       const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
 
-      await userEvent.hover(within(historyRegion).getByRole('button', { name: 'Filter' }));
+      await userEvent.hover(within(historyRegion).getByRole('button', { name: 'Filters' }));
 
-      expect(screen.getByRole('tooltip', { name: 'Filter' })).toBeInTheDocument();
+      expect(screen.getByRole('tooltip', { name: 'Filters' })).toBeInTheDocument();
 
-      await userEvent.unhover(within(historyRegion).getByRole('button', { name: 'Filter' }));
+      await userEvent.unhover(within(historyRegion).getByRole('button', { name: 'Filters' }));
 
-      expect(screen.queryByRole('tooltip', { name: 'Filter' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('tooltip', { name: 'Filters' })).not.toBeInTheDocument();
     });
 
     it('should display a date range within same month', () => {
@@ -664,6 +664,139 @@ describe('Dashboard - Productivity', () => {
       await userEvent.click(within(historyRegion).getByRole('button', { name: 'This week' }));
 
       expect(within(historyRegion).getByRole('heading', { level: 3 })).toHaveTextContent('January 25\u201331, 2026');
+    });
+
+    it('should open filters modal', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Filters' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Chart filters' });
+
+      expect(dialog).toBeInTheDocument();
+
+      const dayButtons = within(dialog).getAllByRole('button', { pressed: true });
+
+      expect(dayButtons).toHaveLength(7);
+      expect(dayButtons[0]).toHaveAccessibleName('Sunday');
+      expect(dayButtons[1]).toHaveAccessibleName('Monday');
+      expect(dayButtons[2]).toHaveAccessibleName('Tuesday');
+      expect(dayButtons[3]).toHaveAccessibleName('Wednesday');
+      expect(dayButtons[4]).toHaveAccessibleName('Thursday');
+      expect(dayButtons[5]).toHaveAccessibleName('Friday');
+      expect(dayButtons[6]).toHaveAccessibleName('Saturday');
+
+      expect(
+        within(dialog).getByText(
+          'Disabled days are hidden from the chart by default. However, if a disabled date has recorded events, it will become visible.'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('should be able to update the chart days', async () => {
+      const { appApi, userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        settings: {
+          productivityChartDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        },
+      });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Filters' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Chart filters' });
+      const mondayButton = within(dialog).getByRole('button', { name: 'Monday' });
+
+      expect(mondayButton).toHaveAttribute('aria-pressed', 'true');
+
+      await userEvent.click(mondayButton);
+
+      expect(mondayButton).toHaveAttribute('aria-pressed', 'false');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Done' }));
+
+      expect(appApi.updateSetting).toHaveBeenCalledWith(
+        'productivityChartDays',
+        expect.arrayContaining(['Su', 'Tu', 'We', 'Th', 'Fr', 'Sa'])
+      );
+      expect(appApi.updateSetting).toHaveBeenCalledWith('productivityChartDays', expect.not.arrayContaining(['Mo']));
+    });
+
+    it('should not update the settings if the chart days remain unchanged', async () => {
+      const { appApi, userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        settings: {
+          productivityChartDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        },
+      });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Filters' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Chart filters' });
+      const mondayButton = within(dialog).getByRole('button', { name: 'Monday' });
+
+      await userEvent.click(mondayButton);
+      await userEvent.click(mondayButton);
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Done' }));
+
+      expect(appApi.updateSetting).not.toHaveBeenCalled();
+    });
+
+    it('should persist chart days when reopening the filters modal', async () => {
+      const { userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        settings: {
+          productivityChartDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        },
+      });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Filters' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Chart filters' });
+      const sundayButton = within(dialog).getByRole('button', { name: 'Sunday' });
+
+      await userEvent.click(sundayButton);
+      expect(sundayButton).toHaveAttribute('aria-pressed', 'false');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Done' }));
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Filters' }));
+
+      const reopenedDialog = screen.getByRole('dialog', { name: 'Chart filters' });
+      const updatedSundayButton = within(reopenedDialog).getByRole('button', { name: 'Sunday' });
+
+      expect(updatedSundayButton).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('should render the chart days with the correct initial settings', async () => {
+      const { userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        settings: {
+          productivityChartDays: ['Mo', 'We', 'Fr'],
+        },
+      });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(within(historyRegion).getByRole('button', { name: 'Filters' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Chart filters' });
+
+      expect(within(dialog).getByRole('button', { name: 'Sunday' })).toHaveAttribute('aria-pressed', 'false');
+      expect(within(dialog).getByRole('button', { name: 'Monday' })).toHaveAttribute('aria-pressed', 'true');
+      expect(within(dialog).getByRole('button', { name: 'Tuesday' })).toHaveAttribute('aria-pressed', 'false');
+      expect(within(dialog).getByRole('button', { name: 'Wednesday' })).toHaveAttribute('aria-pressed', 'true');
+      expect(within(dialog).getByRole('button', { name: 'Thursday' })).toHaveAttribute('aria-pressed', 'false');
+      expect(within(dialog).getByRole('button', { name: 'Friday' })).toHaveAttribute('aria-pressed', 'true');
+      expect(within(dialog).getByRole('button', { name: 'Saturday' })).toHaveAttribute('aria-pressed', 'false');
     });
   });
 });
