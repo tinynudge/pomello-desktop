@@ -3,9 +3,10 @@ import { Button } from '@/ui/dashboard/Button';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
 import { addWeeks, endOfWeek, format, subWeeks } from 'date-fns';
-import { Accessor, Component, createMemo } from 'solid-js';
+import { Accessor, Component, createMemo, createSignal, Show } from 'solid-js';
 import ArrowIcon from './assets/arrow.svg';
 import FilterIcon from './assets/filter.svg';
+import { FiltersModal } from './FiltersModal';
 import styles from './HistoryPanel.module.scss';
 
 type HistoryPanelProps = {
@@ -16,6 +17,8 @@ type HistoryPanelProps = {
 
 export const HistoryPanel: Component<HistoryPanelProps> = props => {
   const t = useTranslate();
+
+  const [getIsFiltersModalOpen, setIsFiltersModalOpen] = createSignal(false);
 
   const getIsCurrentWeek = createMemo(
     () => props.getDateRange()[0].getTime() === props.initialDateRange[0].getTime()
@@ -37,6 +40,14 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
 
   const handleThisWeekClick = () => {
     props.onDateRangeChange(props.initialDateRange);
+  };
+
+  const handleFilterClick = () => {
+    setIsFiltersModalOpen(true);
+  };
+
+  const handleFiltersModalHide = () => {
+    setIsFiltersModalOpen(false);
   };
 
   const getDateRangeHeading = () => {
@@ -103,9 +114,14 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
           </Button.Group>
         </div>
         <div class={styles.actions}>
-          <Tooltip text={t('filter')}>
+          <Tooltip text={t('filters')}>
             {tooltipTargetRef => (
-              <Button aria-label={t('filter')} iconOnly ref={tooltipTargetRef}>
+              <Button
+                aria-label={t('filters')}
+                iconOnly
+                onClick={handleFilterClick}
+                ref={tooltipTargetRef}
+              >
                 <FilterIcon height={12} />
               </Button>
             )}
@@ -116,6 +132,9 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
           </Button.Group>
         </div>
       </header>
+      <Show when={getIsFiltersModalOpen()}>
+        <FiltersModal onHide={handleFiltersModalHide} />
+      </Show>
     </Panel>
   );
 };

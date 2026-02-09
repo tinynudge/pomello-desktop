@@ -34,6 +34,10 @@ type DashboardContextValue = {
   getSetting<TSetting extends keyof Settings>(key: TSetting): Settings[TSetting];
   onPremiumFeatureModalClose(): void;
   onStagedSettingsClear(subscriber: () => void): Unsubscribe;
+  setSetting<TSetting extends keyof Settings>(
+    key: TSetting,
+    value: Settings[TSetting]
+  ): Promise<void>;
   showPremiumFeatureModal(customText?: string): void;
   stageHotkey(command: HotkeyCommand, hotkey: FormattedHotkey | false): void;
   stageSetting<TSetting extends keyof Settings>(
@@ -163,6 +167,17 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
     };
   };
 
+  const setSetting = async <TSetting extends keyof Settings>(
+    key: TSetting,
+    value: Settings[TSetting]
+  ) => {
+    await window.app.updateSetting(key, value);
+
+    if (stagedSettings[key] !== undefined) {
+      setStagedSettings(key, undefined);
+    }
+  };
+
   const showPremiumFeatureModal = (customText?: string) => {
     setPremiumFeatureModal(customText ?? true);
   };
@@ -196,6 +211,7 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
         getSetting,
         onPremiumFeatureModalClose,
         onStagedSettingsClear,
+        setSetting,
         showPremiumFeatureModal,
         stageHotkey,
         stageSetting,
