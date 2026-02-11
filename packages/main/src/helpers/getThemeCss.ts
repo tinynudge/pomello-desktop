@@ -202,6 +202,25 @@ const defaultTheme: ThemeConfig = {
         outline: opacity(colors.yellow, 30),
       },
     },
+    chart: {
+      'long-break': [colors.longBreak, colors.longBreakDark],
+      'over-long-break': {
+        background: [opacity(colors.longBreak, 75), opacity(colors.longBreakDark, 75)],
+        line: [colors.white, colors.darkAlt],
+      },
+      'over-short-break': {
+        background: [opacity(colors.shortBreak, 75), opacity(colors.shortBreakDark, 75)],
+        line: [colors.white, colors.darkAlt],
+      },
+      'over-task': {
+        background: [opacity(colors.task, 75), opacity(colors.taskDark, 75)],
+        line: [colors.white, colors.darkAlt],
+      },
+      'short-break': [colors.shortBreak, colors.shortBreakDark],
+      axis: [opacity(colors.black, 12), colors.dark],
+      pause: [opacity(colors.task, 20), opacity(colors.taskDark, 20)],
+      task: [colors.task, colors.taskDark],
+    },
     content: {
       background: [colors.lightAlt, colors.dark],
     },
