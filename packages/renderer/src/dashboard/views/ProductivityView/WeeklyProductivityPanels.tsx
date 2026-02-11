@@ -1,69 +1,90 @@
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
-import { useTranslate } from '@/shared/context/RuntimeContext';
-import { Panel } from '@/ui/dashboard/Panel';
 import { useQuery } from '@tanstack/solid-query';
+import { TrackingEvent } from '@tinynudge/pomello-service';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
-import { Component, createSignal } from 'solid-js';
+import { Component, createMemo, createSignal } from 'solid-js';
 import { HistoryPanel } from './HistoryPanel';
-import { StatItem, StatsDisplay } from './StatsDisplay';
+import { WeekPanel } from './WeekPanel';
+
+export type WeeklyProductivity = Map<
+  string,
+  {
+    breakTime: number;
+    events: TrackingEvent[];
+    pomodoros: number;
+    taskTime: number;
+    voidedPomodoros: number;
+  }
+>;
 
 export const WeeklyProductivityPanels: Component = () => {
   const pomelloApi = usePomelloApi();
-  const t = useTranslate();
 
   const initialDateRange: [Date, Date] = [startOfWeek(new Date()), endOfWeek(new Date())];
-  const [dateRange, setDateRange] = createSignal<[Date, Date]>(initialDateRange);
+  const [getDateRange, setDateRange] = createSignal<[Date, Date]>(initialDateRange);
 
-  const weeklyProductivity = useQuery<StatItem[]>(() => ({
-    queryKey: ['weekProductivity', dateRange()[0].getTime(), dateRange()[1].getTime()],
+  const events = useQuery<TrackingEvent[]>(() => ({
+    queryKey: ['weekProductivity', getDateRange()[0].getTime(), getDateRange()[1].getTime()],
     queryFn: async () => {
-      const [startDate, endDate] = dateRange();
+      const [startDate, endDate] = getDateRange();
 
-      const events = await pomelloApi.fetchEvents({
+      return await pomelloApi.fetchEvents({
         startDate: format(startDate, 'yyyy-MM-dd'),
         endDate: format(endDate, 'yyyy-MM-dd'),
       });
-
-      let totalPomodoros = 0;
-      let averagePomodoros = 0;
-      let totalTaskTime = 0;
-      let averageTaskTime = 0;
-
-      const activeDays = new Set<string>();
-
-      events.forEach(event => {
-        if (event.type === 'task') {
-          totalPomodoros += event.meta.pomodoros;
-          totalTaskTime += event.meta.duration;
-
-          activeDays.add(event.startTime.substring(0, 10));
-        }
-      });
-
-      if (activeDays.size > 0) {
-        averagePomodoros = totalPomodoros / activeDays.size;
-        averageTaskTime = totalTaskTime / activeDays.size;
-      }
-
-      return [
-        { label: t('statLabel.totalPomodoros'), type: 'number', value: totalPomodoros },
-        { label: t('statLabel.averagePomodoros'), type: 'number', value: averagePomodoros },
-        { label: t('statLabel.totalTaskTime'), type: 'duration', value: totalTaskTime },
-        { label: t('statLabel.averageTaskTime'), type: 'duration', value: averageTaskTime },
-      ];
     },
     throwOnError: true,
   }));
 
+  const getWeeklyProductivity = createMemo<WeeklyProductivity>(() => {
+    const productivity: WeeklyProductivity = new Map();
+
+    if (!events.data) {
+      return productivity;
+    }
+
+    events.data.forEach(event => {
+      if (event.type === 'note') {
+        return;
+      }
+
+      const date = event.startTime.substring(0, 10);
+
+      const dateData = productivity.get(date) ?? {
+        breakTime: 0,
+        events: [],
+        pomodoros: 0,
+        taskTime: 0,
+        voidedPomodoros: 0,
+      };
+
+      if (event.type === 'task') {
+        dateData.pomodoros += event.meta.pomodoros;
+        dateData.taskTime += event.meta.duration;
+      } else if (event.type === 'break') {
+        dateData.breakTime += event.meta.duration;
+      } else if (event.type === 'void') {
+        dateData.voidedPomodoros += event.meta.voidedPomodoros;
+      }
+
+      productivity.set(date, dateData);
+    });
+
+    return productivity;
+  });
+
   return (
     <>
-      <Panel heading={t('weekOf', { week: format(dateRange()[0], 'MMMM d') })}>
-        <StatsDisplay isLoading={weeklyProductivity.isLoading} stats={weeklyProductivity.data} />
-      </Panel>
+      <WeekPanel
+        isLoading={events.isLoading}
+        startDate={getDateRange()[0]}
+        weeklyProductivity={getWeeklyProductivity()}
+      />
       <HistoryPanel
-        getDateRange={dateRange}
+        dateRange={getDateRange()}
         initialDateRange={initialDateRange}
         onDateRangeChange={setDateRange}
+        weeklyProductivity={getWeeklyProductivity()}
       />
     </>
   );

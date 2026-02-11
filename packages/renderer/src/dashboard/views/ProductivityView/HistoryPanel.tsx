@@ -1,38 +1,97 @@
-import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
+import { timeDay } from 'd3';
 import { addWeeks, endOfWeek, format, subWeeks } from 'date-fns';
-import { Accessor, Component, createMemo, createSignal, Show } from 'solid-js';
+import { Component, createEffect, createMemo, createSignal, For, onCleanup, Show } from 'solid-js';
 import ArrowIcon from './assets/arrow.svg';
 import FilterIcon from './assets/filter.svg';
+import { Chart } from './Chart';
 import { FiltersModal } from './FiltersModal';
 import styles from './HistoryPanel.module.scss';
+import { WeeklyProductivity } from './WeeklyProductivityPanels';
 
 type HistoryPanelProps = {
-  getDateRange: Accessor<[Date, Date]>;
+  dateRange: [Date, Date];
   initialDateRange: [Date, Date];
   onDateRangeChange(dateRange: [Date, Date]): void;
+  weeklyProductivity: WeeklyProductivity;
 };
 
+const allLegendTypes = [
+  'task',
+  'taskOver',
+  'void',
+  'pause',
+  'shortBreak',
+  'shortBreakOver',
+  'longBreak',
+  'longBreakOver',
+] as const;
+
 export const HistoryPanel: Component<HistoryPanelProps> = props => {
+  const settings = useSettings();
   const t = useTranslate();
 
+  const [getView, setView] = createSignal<'overview' | 'timeline'>('overview');
   const [getIsFiltersModalOpen, setIsFiltersModalOpen] = createSignal(false);
 
   const getIsCurrentWeek = createMemo(
-    () => props.getDateRange()[0].getTime() === props.initialDateRange[0].getTime()
+    () => props.dateRange[0].getTime() === props.initialDateRange[0].getTime()
   );
 
+  const getXDomain = createMemo(() => {
+    const visibleDays = new Set(settings.productivityChartDays);
+
+    return timeDay
+      .range(...props.dateRange)
+      .filter(date => {
+        const day = format(date, 'EEEEEE');
+        const fullDate = format(date, 'yyyy-MM-dd');
+
+        return visibleDays.has(day) || props.weeklyProductivity.has(fullDate);
+      })
+      .map(date => format(date, 'MMM d'));
+  });
+
+  const getLegendTypes = createMemo(() =>
+    getView() === 'timeline'
+      ? allLegendTypes
+      : allLegendTypes.filter(type => type === 'task' || type === 'void')
+  );
+
+  createEffect(() => {
+    if (getView() === 'timeline') {
+      const updatePanelHeight = () => {
+        const { top } = contentRef.getBoundingClientRect();
+
+        const height = window.innerHeight - window.scrollY - Math.ceil(top) - 32;
+
+        contentRef.style.height = `${height}px`;
+      };
+
+      updatePanelHeight();
+
+      window.addEventListener('resize', updatePanelHeight);
+
+      onCleanup(() => {
+        window.removeEventListener('resize', updatePanelHeight);
+      });
+    } else {
+      contentRef.style.height = '';
+    }
+  });
+
   const handlePreviousWeekClick = () => {
-    const [currentStartOfWeek] = props.getDateRange();
+    const [currentStartOfWeek] = props.dateRange;
     const newStartOfWeek = subWeeks(currentStartOfWeek, 1);
 
     props.onDateRangeChange([newStartOfWeek, endOfWeek(newStartOfWeek)]);
   };
 
   const handleNextWeekClick = () => {
-    const [currentStartOfWeek] = props.getDateRange();
+    const [currentStartOfWeek] = props.dateRange;
     const newStartOfWeek = addWeeks(currentStartOfWeek, 1);
 
     props.onDateRangeChange([newStartOfWeek, endOfWeek(newStartOfWeek)]);
@@ -50,8 +109,12 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
     setIsFiltersModalOpen(false);
   };
 
+  const handleViewChange = (view: 'overview' | 'timeline') => {
+    setView(view);
+  };
+
   const getDateRangeHeading = () => {
-    const [startDate, endDate] = props.getDateRange();
+    const [startDate, endDate] = props.dateRange;
 
     const isSameMonth = startDate.getMonth() === endDate.getMonth();
     const isSameYear = startDate.getFullYear() === endDate.getFullYear();
@@ -64,77 +127,120 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
     return `${format(startDate, startDateFormat)}${enDash}${format(endDate, endDateFormat)}`;
   };
 
+  let contentRef!: HTMLDivElement;
+
   return (
-    <Panel heading={t('productivityHistoryLabel')} padding="none">
-      <header class={styles.header}>
-        <div>
-          <h3 aria-live="polite">{getDateRangeHeading()}</h3>
-          <Button.Group>
-            <Tooltip alignment="bottom" text={t('previousWeekLabel')}>
+    <>
+      <Panel
+        contentClass={styles.historyPanel}
+        contentRef={element => (contentRef = element)}
+        heading={t('productivityHistoryLabel')}
+        padding="none"
+      >
+        <header class={styles.header}>
+          <div>
+            <h3 aria-live="polite">{getDateRangeHeading()}</h3>
+            <Button.Group>
+              <Tooltip alignment="bottom" text={t('previousWeekLabel')}>
+                {tooltipTargetRef => (
+                  <Button
+                    aria-label={t('previousWeekLabel')}
+                    iconOnly
+                    onClick={handlePreviousWeekClick}
+                    ref={tooltipTargetRef}
+                    size="small"
+                  >
+                    <ArrowIcon height={10} style={{ transform: 'rotate(180deg)' }} />
+                  </Button>
+                )}
+              </Tooltip>
+              <Tooltip alignment="bottom" text={t('thisWeekLabel')}>
+                {tooltipTargetRef => (
+                  <Button
+                    aria-label={t('thisWeekLabel')}
+                    disabled={getIsCurrentWeek()}
+                    iconOnly
+                    onClick={handleThisWeekClick}
+                    ref={tooltipTargetRef}
+                    size="small"
+                  >
+                    <span class={styles.thisWeekDot} />
+                  </Button>
+                )}
+              </Tooltip>
+              <Tooltip alignment="bottom" text={t('nextWeekLabel')}>
+                {tooltipTargetRef => (
+                  <Button
+                    aria-label={t('nextWeekLabel')}
+                    disabled={getIsCurrentWeek()}
+                    iconOnly
+                    onClick={handleNextWeekClick}
+                    ref={tooltipTargetRef}
+                    size="small"
+                  >
+                    <ArrowIcon height={10} />
+                  </Button>
+                )}
+              </Tooltip>
+            </Button.Group>
+          </div>
+          <div class={styles.actions}>
+            <Tooltip text={t('filters')}>
               {tooltipTargetRef => (
                 <Button
-                  aria-label={t('previousWeekLabel')}
+                  aria-label={t('filters')}
                   iconOnly
-                  onClick={handlePreviousWeekClick}
+                  onClick={handleFilterClick}
                   ref={tooltipTargetRef}
-                  size="small"
                 >
-                  <ArrowIcon height={10} style={{ transform: 'rotate(180deg)' }} />
+                  <FilterIcon height={12} />
                 </Button>
               )}
             </Tooltip>
-            <Tooltip alignment="bottom" text={t('thisWeekLabel')}>
-              {tooltipTargetRef => (
-                <Button
-                  aria-label={t('thisWeekLabel')}
-                  disabled={getIsCurrentWeek()}
-                  iconOnly
-                  onClick={handleThisWeekClick}
-                  ref={tooltipTargetRef}
-                  size="small"
-                >
-                  <span class={styles.thisWeekDot} />
-                </Button>
-              )}
-            </Tooltip>
-            <Tooltip alignment="bottom" text={t('nextWeekLabel')}>
-              {tooltipTargetRef => (
-                <Button
-                  aria-label={t('nextWeekLabel')}
-                  disabled={getIsCurrentWeek()}
-                  iconOnly
-                  onClick={handleNextWeekClick}
-                  ref={tooltipTargetRef}
-                  size="small"
-                >
-                  <ArrowIcon height={10} />
-                </Button>
-              )}
-            </Tooltip>
-          </Button.Group>
-        </div>
-        <div class={styles.actions}>
-          <Tooltip text={t('filters')}>
-            {tooltipTargetRef => (
+            <Button.Group aria-label={t('viewOptions')}>
               <Button
-                aria-label={t('filters')}
-                iconOnly
-                onClick={handleFilterClick}
-                ref={tooltipTargetRef}
+                aria-pressed={getView() === 'overview'}
+                onClick={[handleViewChange, 'overview']}
+                variant={getView() === 'overview' ? 'primary' : undefined}
               >
-                <FilterIcon height={12} />
+                {t('overview')}
               </Button>
-            )}
-          </Tooltip>
-          <Button.Group aria-label={t('viewOptions')}>
-            <Button variant="primary">{t('overview')}</Button>
-            <Button>{t('timeline')}</Button>
-          </Button.Group>
-        </div>
-      </header>
+              <Button
+                aria-pressed={getView() === 'timeline'}
+                onClick={[handleViewChange, 'timeline']}
+                variant={getView() === 'timeline' ? 'primary' : undefined}
+              >
+                {t('timeline')}
+              </Button>
+            </Button.Group>
+          </div>
+        </header>
+        <Chart
+          dateRange={props.dateRange}
+          view={getView()}
+          weeklyProductivity={props.weeklyProductivity}
+        />
+        <footer class={styles.footer}>
+          <div class={styles.xAxis}>
+            <For each={getXDomain()}>{date => <div class={styles.date}>{date}</div>}</For>
+          </div>
+          <div class={styles.legend}>
+            <For each={getLegendTypes()}>
+              {type => (
+                <div class={styles.item}>
+                  <svg width={24} height={16}>
+                    <rect width={24} height={16} data-type={type} />
+                  </svg>
+                  <span>{t(`legend.${type}`)}</span>
+                </div>
+              )}
+            </For>
+          </div>
+        </footer>
+      </Panel>
       <Show when={getIsFiltersModalOpen()}>
         <FiltersModal onHide={handleFiltersModalHide} />
       </Show>
-    </Panel>
+    </>
   );
 };

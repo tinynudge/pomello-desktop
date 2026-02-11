@@ -51,6 +51,10 @@ global.HTMLDialogElement.prototype.close = function () {
 
 global.scrollTo = () => {};
 
+const svgTextElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+global.SVGTextElement = svgTextElement.constructor as typeof SVGTextElement;
+global.SVGTextElement.prototype.getBBox = () => ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
+
 beforeAll(() => {
   mockServer.listen();
 });

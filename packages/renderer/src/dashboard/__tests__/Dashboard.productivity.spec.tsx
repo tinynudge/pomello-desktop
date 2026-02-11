@@ -798,5 +798,219 @@ describe('Dashboard - Productivity', () => {
       expect(within(dialog).getByRole('button', { name: 'Friday' })).toHaveAttribute('aria-pressed', 'true');
       expect(within(dialog).getByRole('button', { name: 'Saturday' })).toHaveAttribute('aria-pressed', 'false');
     });
+
+    it('should toggle between overview and timeline views', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const overviewButton = screen.getByRole('button', { name: 'Overview' });
+      const timelineButton = screen.getByRole('button', { name: 'Timeline' });
+
+      await userEvent.click(timelineButton);
+
+      expect(overviewButton).toHaveAttribute('aria-pressed', 'false');
+      expect(timelineButton).toHaveAttribute('aria-pressed', 'true');
+
+      await userEvent.click(overviewButton);
+
+      expect(overviewButton).toHaveAttribute('aria-pressed', 'true');
+      expect(timelineButton).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('should show task and void legend items in overview view', () => {
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      expect(within(historyRegion).getByText('Task')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Void')).toBeInTheDocument();
+
+      expect(within(historyRegion).queryByText('Task (Over)')).not.toBeInTheDocument();
+      expect(within(historyRegion).queryByText('Pause')).not.toBeInTheDocument();
+      expect(within(historyRegion).queryByText('Short break')).not.toBeInTheDocument();
+      expect(within(historyRegion).queryByText('Short break (Over)')).not.toBeInTheDocument();
+      expect(within(historyRegion).queryByText('Long break')).not.toBeInTheDocument();
+      expect(within(historyRegion).queryByText('Long break (Over)')).not.toBeInTheDocument();
+    });
+
+    it('should show all legend items in timeline view', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+
+      expect(within(historyRegion).getByText('Task')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Task (Over)')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Void')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Pause')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Short break')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Short break (Over)')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Long break')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Long break (Over)')).toBeInTheDocument();
+    });
+
+    it('should show x-axis dates based on productivityChartDays setting', () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+
+      renderDashboard({
+        route: DashboardRoute.Productivity,
+        settings: {
+          productivityChartDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        },
+      });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      // Week of Jan 25-31 should show all 7 days
+      expect(within(historyRegion).getByText('Jan 25')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Jan 26')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Jan 27')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Jan 28')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Jan 29')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Jan 30')).toBeInTheDocument();
+      expect(within(historyRegion).getByText('Jan 31')).toBeInTheDocument();
+    });
+
+    it('should only show enabled days in x-axis', () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+
+      renderDashboard({
+        route: DashboardRoute.Productivity,
+        settings: {
+          productivityChartDays: ['Mo', 'We', 'Fr'],
+        },
+      });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      // Only Monday, Wednesday, Friday should show
+      expect(within(historyRegion).getByText('Jan 26')).toBeInTheDocument(); // Monday
+      expect(within(historyRegion).getByText('Jan 28')).toBeInTheDocument(); // Wednesday
+      expect(within(historyRegion).getByText('Jan 30')).toBeInTheDocument(); // Friday
+
+      // Other days should not show
+      expect(within(historyRegion).queryByText('Jan 25')).not.toBeInTheDocument(); // Sunday
+      expect(within(historyRegion).queryByText('Jan 27')).not.toBeInTheDocument(); // Tuesday
+      expect(within(historyRegion).queryByText('Jan 29')).not.toBeInTheDocument(); // Thursday
+      expect(within(historyRegion).queryByText('Jan 31')).not.toBeInTheDocument(); // Saturday
+    });
+
+    it('should show disabled day in x-axis if it has events', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            // Event on Tuesday (which is disabled)
+            generateTaskTrackingEvent({
+              startTime: '2026-01-27T10:00:00Z',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+        settings: {
+          productivityChartDays: ['Mo', 'We', 'Fr'], // Tuesday is disabled
+        },
+      });
+
+      const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      // Tuesday should show because it has events
+      expect(within(historyRegion).getByText('Jan 27')).toBeInTheDocument(); // Tuesday
+
+      // Other enabled days should also show
+      expect(within(historyRegion).getByText('Jan 26')).toBeInTheDocument(); // Monday
+      expect(within(historyRegion).getByText('Jan 28')).toBeInTheDocument(); // Wednesday
+      expect(within(historyRegion).getByText('Jan 30')).toBeInTheDocument(); // Friday
+    });
+
+    it('should show the default 10 ticks on the y-axis in overview view', () => {
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const yAxis = screen.getByTestId('productivity-chart-y-axis');
+
+      expect(within(yAxis).getByText('0')).toBeInTheDocument();
+      expect(within(yAxis).getByText('1')).toBeInTheDocument();
+      expect(within(yAxis).getByText('2')).toBeInTheDocument();
+      expect(within(yAxis).getByText('3')).toBeInTheDocument();
+      expect(within(yAxis).getByText('4')).toBeInTheDocument();
+      expect(within(yAxis).getByText('5')).toBeInTheDocument();
+      expect(within(yAxis).getByText('6')).toBeInTheDocument();
+      expect(within(yAxis).getByText('7')).toBeInTheDocument();
+      expect(within(yAxis).getByText('8')).toBeInTheDocument();
+      expect(within(yAxis).getByText('9')).toBeInTheDocument();
+      expect(within(yAxis).queryByText('10')).toBeInTheDocument();
+    });
+
+    it('should adjust y-axis ticks based on the maximum value in overview view', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00Z',
+              meta: { pomodoros: 12 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const yAxis = screen.getByTestId('productivity-chart-y-axis');
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      // Should show ticks up to 12
+      expect(within(yAxis).getByText('0')).toBeInTheDocument();
+      expect(within(yAxis).getByText('2')).toBeInTheDocument();
+      expect(within(yAxis).getByText('4')).toBeInTheDocument();
+      expect(within(yAxis).getByText('6')).toBeInTheDocument();
+      expect(within(yAxis).getByText('8')).toBeInTheDocument();
+      expect(within(yAxis).getByText('10')).toBeInTheDocument();
+      expect(within(yAxis).getByText('12')).toBeInTheDocument();
+      expect(within(yAxis).getByText('13')).toBeInTheDocument();
+      expect(within(yAxis).queryByText('14')).not.toBeInTheDocument();
+    });
+
+    it('should show 24 hours on the y-axis in timeline view', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+
+      const yAxis = screen.getByTestId('productivity-chart-y-axis');
+
+      expect(within(yAxis).getAllByText('12 AM')).toHaveLength(2);
+      expect(within(yAxis).getByText('1 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('2 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('3 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('4 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('5 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('6 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('7 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('8 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('9 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('10 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('11 AM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('12 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('1 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('2 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('3 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('4 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('5 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('6 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('7 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('8 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('9 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('10 PM')).toBeInTheDocument();
+      expect(within(yAxis).getByText('11 PM')).toBeInTheDocument();
+    });
   });
 });

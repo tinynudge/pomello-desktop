@@ -1,0 +1,26 @@
+.chart {
+  display: block;
+  overflow: visible;
+  width: 100%;
+  height: 400px;
+
+  &.isTimeline {
+    height: 1600px;
+  }
+}
+
+.yAxis {
+  text-anchor: start;
+
+  .line {
+    stroke: var(--dashboard-chart-axis);
+  }
+
+  .value {
+    font-size: 12px;
+  }
+
+  .textBackground {
+    fill: var(--dashboard-panel-background);
+  }
+}
