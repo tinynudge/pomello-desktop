@@ -259,7 +259,7 @@ describe('Trello service - Add note', () => {
   it('should prompt the user to disable logs if unable to comment', async () => {
     let notificationCallback: () => void;
 
-    const mockNotification = vi.fn(() => {
+    const mockNotification = vi.fn(function () {
       return {
         addEventListener: (_event: string, callback: () => void) => {
           notificationCallback = callback;
