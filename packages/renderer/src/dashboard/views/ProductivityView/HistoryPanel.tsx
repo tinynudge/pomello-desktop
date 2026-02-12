@@ -10,6 +10,7 @@ import FilterIcon from './assets/filter.svg';
 import { Chart } from './Chart';
 import { FiltersModal } from './FiltersModal';
 import styles from './HistoryPanel.module.scss';
+import { getStoredView, setStoredView } from './storedView';
 import { WeeklyProductivity } from './WeeklyProductivityPanels';
 
 type HistoryPanelProps = {
@@ -34,7 +35,7 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
   const settings = useSettings();
   const t = useTranslate();
 
-  const [getView, setView] = createSignal<'overview' | 'timeline'>('overview');
+  const [getView, setView] = createSignal(getStoredView());
   const [getIsFiltersModalOpen, setIsFiltersModalOpen] = createSignal(false);
 
   const getIsCurrentWeek = createMemo(
@@ -111,6 +112,7 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
 
   const handleViewChange = (view: 'overview' | 'timeline') => {
     setView(view);
+    setStoredView(view);
   };
 
   const getDateRangeHeading = () => {
