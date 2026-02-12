@@ -12,7 +12,7 @@ type RenderTrelloServiceOptions = Pick<RenderAppOptions, 'appApi' | 'pomelloApi'
   trelloApi?: Partial<TrelloApiResponses>;
 };
 
-const originalCreateTrelloCache = vi.hoisted(async () => {
+const originalCreateTrelloCache = await vi.hoisted(async () => {
   const { createTrelloCache } = await import('@/services/trello/createTrelloCache');
 
   return createTrelloCache;
@@ -20,9 +20,15 @@ const originalCreateTrelloCache = vi.hoisted(async () => {
 
 let cache: TrelloCache;
 
-vi.mock('@/services/trello/createTrelloCache.ts', () => ({
-  createTrelloCache: () => cache,
-}));
+vi.mock('@/services/trello/createTrelloCache.ts', async importOriginal => {
+  const originalModule =
+    await importOriginal<typeof import('@/services/trello/createTrelloCache')>();
+
+  return {
+    ...originalModule,
+    createTrelloCache: () => cache,
+  };
+});
 
 export const renderTrelloService = async ({
   appApi,
@@ -30,7 +36,7 @@ export const renderTrelloService = async ({
   trelloApi,
   ...remainingOptions
 }: RenderTrelloServiceOptions = {}) => {
-  cache = (await originalCreateTrelloCache)();
+  cache = originalCreateTrelloCache();
 
   mockTrelloApi(trelloApi);
 

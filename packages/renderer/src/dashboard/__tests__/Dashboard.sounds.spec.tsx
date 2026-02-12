@@ -3,14 +3,14 @@ import { Howl } from 'howler';
 import { nanoid } from 'nanoid';
 import { fireEvent, renderDashboard, screen, within } from '../__fixtures__/renderDashboard';
 
-vi.mock('howler', () => {
-  const Howl = vi.fn(() => ({
-    on: vi.fn(),
-    play: vi.fn(),
-  }));
-
-  return { Howl };
-});
+vi.mock('howler', () => ({
+  Howl: vi.fn(function () {
+    return {
+      on: vi.fn(),
+      play: vi.fn(),
+    };
+  }),
+}));
 
 vi.mock('nanoid', async importOriginal => {
   const original = await importOriginal<{ nanoid: typeof nanoid }>();
