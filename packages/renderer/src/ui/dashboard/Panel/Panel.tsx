@@ -10,6 +10,8 @@ type PanelComponent = ParentComponent<PanelProps> & {
 };
 
 type PanelProps = {
+  contentClass?: string;
+  contentRef?(element: HTMLDivElement): void;
   heading: string;
   padding?: 'none' | 'small' | 'medium' | 'large';
   subHeading?: JSX.Element;
@@ -26,7 +28,12 @@ export const Panel: PanelComponent = props => {
       <Show when={props.subHeading}>
         <div class={styles.subHeading}>{props.subHeading}</div>
       </Show>
-      <div class={styles.content} data-padding={props.padding ?? 'medium'}>
+      <div
+        class={props.contentClass}
+        classList={{ [styles.content]: true }}
+        data-padding={props.padding ?? 'medium'}
+        ref={props.contentRef}
+      >
         {props.children}
       </div>
     </section>
