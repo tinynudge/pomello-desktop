@@ -11,6 +11,7 @@ import {
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { HttpResponse } from 'msw';
 import { renderDashboard, screen, waitForElementToBeRemoved, within } from '../__fixtures__/renderDashboard';
+import { setStoredView } from '../views/ProductivityView/storedView';
 
 describe('Dashboard - Productivity', () => {
   it('should render the productivity view', () => {
@@ -541,6 +542,10 @@ describe('Dashboard - Productivity', () => {
   });
 
   describe('History Panel', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
     it('should show the correct tooltips to change the date range', async () => {
       const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
 
@@ -811,6 +816,42 @@ describe('Dashboard - Productivity', () => {
       expect(timelineButton).toHaveAttribute('aria-pressed', 'true');
 
       await userEvent.click(overviewButton);
+
+      expect(overviewButton).toHaveAttribute('aria-pressed', 'true');
+      expect(timelineButton).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('should restore timeline view from localStorage on mount', () => {
+      setStoredView('timeline');
+
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const overviewButton = screen.getByRole('button', { name: 'Overview' });
+      const timelineButton = screen.getByRole('button', { name: 'Timeline' });
+
+      expect(overviewButton).toHaveAttribute('aria-pressed', 'false');
+      expect(timelineButton).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('should restore overview view from localStorage on mount', () => {
+      setStoredView('overview');
+
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const overviewButton = screen.getByRole('button', { name: 'Overview' });
+      const timelineButton = screen.getByRole('button', { name: 'Timeline' });
+
+      expect(overviewButton).toHaveAttribute('aria-pressed', 'true');
+      expect(timelineButton).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('should default to overview view when localStorage contains invalid value', () => {
+      setStoredView('invalid-value' as 'overview');
+
+      renderDashboard({ route: DashboardRoute.Productivity });
+
+      const overviewButton = screen.getByRole('button', { name: 'Overview' });
+      const timelineButton = screen.getByRole('button', { name: 'Timeline' });
 
       expect(overviewButton).toHaveAttribute('aria-pressed', 'true');
       expect(timelineButton).toHaveAttribute('aria-pressed', 'false');
