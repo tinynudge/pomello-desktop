@@ -9,17 +9,14 @@
 
   [data-type='pause'] {
     fill: var(--dashboard-chart-pause);
-    stroke: var(--dashboard-chart-task);
   }
 
   [data-type='void'] {
     fill: url('#void');
-    stroke: var(--dashboard-chart-task);
   }
 
   [data-type='taskOver'] {
     fill: url('#overTask');
-    stroke: var(--dashboard-chart-task);
   }
 
   [data-type='shortBreak'] {
@@ -32,12 +29,10 @@
 
   [data-type='shortBreakOver'] {
     fill: url('#overShortBreak');
-    stroke: var(--dashboard-chart-short-break);
   }
 
   [data-type='longBreakOver'] {
     fill: url('#overLongBreak');
-    stroke: var(--dashboard-chart-long-break);
   }
 }
 
@@ -67,35 +62,4 @@
   height: 8px;
   border-radius: 50%;
   background-color: currentcolor;
-}
-
-.footer {
-  position: sticky;
-  bottom: 0;
-  background-color: var(--dashboard-panel-background);
-}
-
-.xAxis {
-  display: flex;
-  padding: 12px var(--content-padding);
-  text-align: center;
-
-  .date {
-    flex: 1;
-  }
-}
-
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 12px var(--content-padding) 24px;
-  gap: 8px 24px;
-
-  .item {
-    display: inline-flex;
-    align-items: center;
-    font-size: 13px;
-    gap: 6px;
-  }
 }

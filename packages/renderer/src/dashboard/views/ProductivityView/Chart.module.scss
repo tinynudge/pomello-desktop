@@ -9,6 +9,12 @@
   }
 }
 
+.eventBorder {
+  pointer-events: none;
+  shape-rendering: crispedges;
+  stroke: var(--dashboard-chart-event-border);
+}
+
 .yAxis {
   text-anchor: start;
 
@@ -22,5 +28,36 @@
 
   .textBackground {
     fill: var(--dashboard-panel-background);
+  }
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--dashboard-panel-background);
+}
+
+.xAxis {
+  display: flex;
+  padding: 12px var(--content-padding);
+  text-align: center;
+
+  .date {
+    flex: 1;
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 12px var(--content-padding) 24px;
+  gap: 8px 24px;
+
+  .item {
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+    gap: 6px;
   }
 }

@@ -1,10 +1,9 @@
-import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
+import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
-import { timeDay } from 'd3';
 import { addWeeks, endOfWeek, format, subWeeks } from 'date-fns';
-import { Component, createEffect, createMemo, createSignal, For, onCleanup, Show } from 'solid-js';
+import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from 'solid-js';
 import ArrowIcon from './assets/arrow.svg';
 import FilterIcon from './assets/filter.svg';
 import { Chart } from './Chart';
@@ -20,19 +19,7 @@ type HistoryPanelProps = {
   weeklyProductivity: WeeklyProductivity;
 };
 
-const allLegendTypes = [
-  'task',
-  'taskOver',
-  'void',
-  'pause',
-  'shortBreak',
-  'shortBreakOver',
-  'longBreak',
-  'longBreakOver',
-] as const;
-
 export const HistoryPanel: Component<HistoryPanelProps> = props => {
-  const settings = useSettings();
   const t = useTranslate();
 
   const [getView, setView] = createSignal(getStoredView());
@@ -40,26 +27,6 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
 
   const getIsCurrentWeek = createMemo(
     () => props.dateRange[0].getTime() === props.initialDateRange[0].getTime()
-  );
-
-  const getXDomain = createMemo(() => {
-    const visibleDays = new Set(settings.productivityChartDays);
-
-    return timeDay
-      .range(...props.dateRange)
-      .filter(date => {
-        const day = format(date, 'EEEEEE');
-        const fullDate = format(date, 'yyyy-MM-dd');
-
-        return visibleDays.has(day) || props.weeklyProductivity.has(fullDate);
-      })
-      .map(date => format(date, 'MMM d'));
-  });
-
-  const getLegendTypes = createMemo(() =>
-    getView() === 'timeline'
-      ? allLegendTypes
-      : allLegendTypes.filter(type => type === 'task' || type === 'void')
   );
 
   createEffect(() => {
@@ -222,23 +189,6 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
           view={getView()}
           weeklyProductivity={props.weeklyProductivity}
         />
-        <footer class={styles.footer}>
-          <div class={styles.xAxis}>
-            <For each={getXDomain()}>{date => <div class={styles.date}>{date}</div>}</For>
-          </div>
-          <div class={styles.legend}>
-            <For each={getLegendTypes()}>
-              {type => (
-                <div class={styles.item}>
-                  <svg width={24} height={16}>
-                    <rect width={24} height={16} data-type={type} />
-                  </svg>
-                  <span>{t(`legend.${type}`)}</span>
-                </div>
-              )}
-            </For>
-          </div>
-        </footer>
       </Panel>
       <Show when={getIsFiltersModalOpen()}>
         <FiltersModal onHide={handleFiltersModalHide} />

@@ -203,6 +203,7 @@ const defaultTheme: ThemeConfig = {
       },
     },
     chart: {
+      'event-border': [opacity(colors.white, 30), opacity(colors.darkAlt, 30)],
       'long-break': [colors.longBreak, colors.longBreakDark],
       'over-long-break': {
         background: [opacity(colors.longBreak, 75), opacity(colors.longBreakDark, 75)],

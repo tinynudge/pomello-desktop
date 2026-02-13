@@ -51,6 +51,25 @@ global.HTMLDialogElement.prototype.close = function () {
 
 global.scrollTo = () => {};
 
+global.ResizeObserver = class ResizeObserver {
+  callback: ResizeObserverCallback;
+
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback;
+  }
+
+  observe(target: Element) {
+    this.callback(
+      [{ target, contentRect: target.getBoundingClientRect() } as ResizeObserverEntry],
+      this
+    );
+  }
+
+  unobserve() {}
+
+  disconnect() {}
+};
+
 const svgTextElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 global.SVGTextElement = svgTextElement.constructor as typeof SVGTextElement;
 global.SVGTextElement.prototype.getBBox = () => ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
