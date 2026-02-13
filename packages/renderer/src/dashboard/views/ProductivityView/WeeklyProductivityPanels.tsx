@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/solid-query';
 import { TrackingEvent } from '@tinynudge/pomello-service';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
 import { Component, createMemo, createSignal } from 'solid-js';
+import { unwrap } from 'solid-js/store';
 import { HistoryPanel } from './HistoryPanel';
 import { WeekPanel } from './WeekPanel';
 
@@ -57,6 +58,8 @@ export const WeeklyProductivityPanels: Component = () => {
         taskTime: 0,
         voidedPomodoros: 0,
       };
+
+      dateData.events.push(unwrap(event));
 
       if (event.type === 'task') {
         dateData.pomodoros += event.meta.pomodoros;
