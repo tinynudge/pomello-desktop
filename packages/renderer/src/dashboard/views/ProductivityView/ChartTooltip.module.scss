@@ -1,0 +1,27 @@
+.chartTooltip {
+  position: absolute;
+  z-index: 100;
+  display: inline-block;
+  padding: 16px;
+  background-color: var(--dashboard-tooltip-background);
+  color: var(--dashboard-tooltip-text);
+  pointer-events: none;
+  transform: translateY(-55%);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+  gap: 8px;
+}
+
+.stats {
+  display: grid;
+  column-gap: 8px;
+  grid-template-columns: repeat(2, auto);
+
+  dd {
+    text-align: right;
+  }
+}

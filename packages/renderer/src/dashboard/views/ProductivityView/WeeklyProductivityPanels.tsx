@@ -12,9 +12,12 @@ export type WeeklyProductivity = Map<
   {
     breakTime: number;
     events: TrackingEvent[];
+    overBreakTime: number;
+    overTaskTime: number;
     pomodoros: number;
     taskTime: number;
     voidedPomodoros: number;
+    voidTime: number;
   }
 >;
 
@@ -54,9 +57,12 @@ export const WeeklyProductivityPanels: Component = () => {
       const dateData = productivity.get(date) ?? {
         breakTime: 0,
         events: [],
+        overBreakTime: 0,
+        overTaskTime: 0,
         pomodoros: 0,
         taskTime: 0,
         voidedPomodoros: 0,
+        voidTime: 0,
       };
 
       dateData.events.push(unwrap(event));
@@ -64,10 +70,23 @@ export const WeeklyProductivityPanels: Component = () => {
       if (event.type === 'task') {
         dateData.pomodoros += event.meta.pomodoros;
         dateData.taskTime += event.meta.duration;
+
+        event.children.forEach(childEvent => {
+          if (childEvent.type === 'over_task') {
+            dateData.overTaskTime += childEvent.meta.duration;
+          }
+        });
       } else if (event.type === 'break') {
         dateData.breakTime += event.meta.duration;
+
+        event.children.forEach(childEvent => {
+          if (childEvent.type === 'over_break') {
+            dateData.overBreakTime += childEvent.meta.duration;
+          }
+        });
       } else if (event.type === 'void') {
         dateData.voidedPomodoros += event.meta.voidedPomodoros;
+        dateData.voidTime += event.meta.duration;
       }
 
       productivity.set(date, dateData);

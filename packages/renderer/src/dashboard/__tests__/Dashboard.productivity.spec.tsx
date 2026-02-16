@@ -1053,5 +1053,154 @@ describe('Dashboard - Productivity', () => {
       expect(within(yAxis).getByText('10 PM')).toBeInTheDocument();
       expect(within(yAxis).getByText('11 PM')).toBeInTheDocument();
     });
+
+    it('should show tooltip with day summary when hovering over chart date column', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00Z',
+              meta: { duration: 1800, pomodoros: 1.2 },
+              children: [generateOverTaskTrackingEvent({ meta: { duration: 300 } })],
+            }),
+            generateBreakTrackingEvent({
+              startTime: '2026-01-28T10:30:00Z',
+              meta: { duration: 600 },
+              children: [generateOverBreakTrackingEvent({ meta: { duration: 120 } })],
+            }),
+            generateVoidTrackingEvent({
+              startTime: '2026-01-28T11:00:00Z',
+              meta: { duration: 450, voidedPomodoros: 0.5 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      // Wednesday is the 4th column (index 3) - Jan 28
+      const wednesdayColumn = dateColumns[3];
+
+      await userEvent.hover(wednesdayColumn);
+
+      const tooltip = await screen.findByRole('tooltip');
+
+      expect(tooltip).toBeInTheDocument();
+      expect(within(tooltip).getByRole('heading', { name: 'Wednesday, January 28, 2026' })).toBeInTheDocument();
+
+      expect(within(tooltip).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.2');
+      expect(within(tooltip).getByRole('definition', { name: 'Task time' })).toHaveTextContent('30m');
+      expect(within(tooltip).getByRole('definition', { name: 'Over task time' })).toHaveTextContent('5m');
+      expect(within(tooltip).getByRole('definition', { name: 'Break time' })).toHaveTextContent('10m');
+      expect(within(tooltip).getByRole('definition', { name: 'Over break time' })).toHaveTextContent('2m');
+      expect(within(tooltip).getByRole('definition', { name: 'Voided pomodoros' })).toHaveTextContent('0.5');
+      expect(within(tooltip).getByRole('definition', { name: 'Voided time' })).toHaveTextContent('8m');
+    });
+
+    it('should show tooltip with task stats when hovering over task bar segment', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              serviceId: 'test-service',
+              startTime: '2026-01-28T10:00:00Z',
+              meta: { duration: 2700, pomodoros: 1.8 },
+              children: [generateOverTaskTrackingEvent({ meta: { duration: 180 } })],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const taskBar = screen.getByTestId('bar-segment-test-service-task');
+
+      await userEvent.hover(taskBar);
+
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(tooltip).toBeInTheDocument();
+      expect(within(tooltip).getByRole('heading', { name: 'test-service' })).toBeInTheDocument();
+
+      expect(within(tooltip).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.8');
+      expect(within(tooltip).getByRole('definition', { name: 'Task time' })).toHaveTextContent('45m');
+      expect(within(tooltip).getByRole('definition', { name: 'Over task time' })).toHaveTextContent('3m');
+    });
+
+    it('should show tooltip with void stats when hovering over void bar segment', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateVoidTrackingEvent({
+              serviceId: 'void-service',
+              startTime: '2026-01-28T10:00:00Z',
+              meta: { duration: 900, voidedPomodoros: 2 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const voidBar = screen.getByTestId('bar-segment-void-service-void');
+
+      await userEvent.hover(voidBar);
+
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(within(tooltip).getByRole('heading', { name: 'void-service' })).toBeInTheDocument();
+
+      expect(within(tooltip).getByRole('definition', { name: 'Voided pomodoros' })).toHaveTextContent('2');
+      expect(within(tooltip).getByRole('definition', { name: 'Voided time' })).toHaveTextContent('15m');
+    });
+
+    it('should hide tooltip when mouse leaves the chart element', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              serviceId: 'test-service',
+              startTime: '2026-01-28T10:00:00Z',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const taskBar = screen.getByTestId('bar-segment-test-service-task');
+
+      await userEvent.hover(taskBar);
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+      await userEvent.unhover(taskBar);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
   });
 });
