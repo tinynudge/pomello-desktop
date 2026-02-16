@@ -1,8 +1,9 @@
 import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
 import { axisLeft, scaleBand, scaleLinear, select, timeDay } from 'd3';
-import { format } from 'date-fns';
-import { Component, createEffect, createMemo, createSignal, For, onCleanup } from 'solid-js';
+import { format, parseISO } from 'date-fns';
+import { Component, createEffect, createMemo, createSignal, For, onCleanup, Show } from 'solid-js';
 import styles from './Chart.module.scss';
+import { ChartTooltip, Tooltip, tooltipMaxWidth, TooltipWithPosition } from './ChartTooltip';
 import { WeeklyProductivity } from './WeeklyProductivityPanels';
 
 const allLegendTypes = [
@@ -22,12 +23,23 @@ type ChartProps = {
   weeklyProductivity: WeeklyProductivity;
 };
 
+type OverviewSegment = {
+  date: string;
+  duration: number;
+  overDuration: number;
+  serviceId: string;
+  type: 'task' | 'void';
+  value: number;
+};
+
 export const Chart: Component<ChartProps> = props => {
   const settings = useSettings();
   const t = useTranslate();
 
   const [getChartWidth, setChartWidth] = createSignal(0);
   const [getChartHeight, setChartHeight] = createSignal(0);
+
+  const [getTooltip, setTooltip] = createSignal<TooltipWithPosition>();
 
   const getLeftMargin = () => (props.view === 'overview' ? 64 : 88);
 
@@ -66,7 +78,16 @@ export const Chart: Component<ChartProps> = props => {
   });
 
   const getYScale = createMemo(() => {
-    const yScale = scaleLinear().range([getChartHeight() - 12, 12]);
+    const chartHeight = getChartHeight();
+
+    const yScale = scaleLinear();
+
+    if (chartHeight === 0) {
+      // Avoid rendering issues on initial load when height is 0. Otherwise we might get negative values.
+      yScale.range([0, 0]);
+    } else {
+      yScale.range([chartHeight - 12, 12]);
+    }
 
     if (props.view === 'timeline') {
       yScale.domain([24, 0]);
@@ -94,11 +115,142 @@ export const Chart: Component<ChartProps> = props => {
 
   createEffect(() => {
     drawYAxis();
+    drawXColumns();
 
     if (props.view === 'overview') {
       drawOverviewChart();
     }
   });
+
+  const handleXColumnMouseMove = (event: MouseEvent, date: string) => {
+    // Reactivity is handled by D3
+    // eslint-disable-next-line solid/reactivity
+    showTooltip(date, event.offsetY, () => {
+      const productivity = props.weeklyProductivity.get(date);
+
+      const tooltip: Tooltip = {
+        title: format(parseISO(date), 'EEEE, MMMM d, yyyy'),
+        content: [],
+      };
+
+      if (!productivity) {
+        tooltip.content.push({
+          type: 'text',
+          value: t('unableToLoadData'),
+        });
+      } else {
+        tooltip.content.push(
+          {
+            type: 'stats',
+            stats: [
+              {
+                label: t('tooltip.stat.pomodoros'),
+                type: 'number',
+                value: productivity.pomodoros,
+              },
+              {
+                label: t('tooltip.stat.taskTime'),
+                type: 'duration',
+                value: productivity.taskTime,
+              },
+              {
+                label: t('tooltip.stat.overTaskTime'),
+                type: 'duration',
+                value: productivity.overTaskTime,
+              },
+            ],
+          },
+          {
+            type: 'stats',
+            stats: [
+              {
+                label: t('tooltip.stat.breakTime'),
+                type: 'duration',
+                value: productivity.breakTime,
+              },
+              {
+                label: t('tooltip.stat.overBreakTime'),
+                type: 'duration',
+                value: productivity.overBreakTime,
+              },
+            ],
+          },
+          {
+            type: 'stats',
+            stats: [
+              {
+                label: t('tooltip.stat.voidedPomodoros'),
+                type: 'number',
+                value: productivity.voidedPomodoros,
+              },
+              {
+                label: t('tooltip.stat.voidedTime'),
+                type: 'duration',
+                value: productivity.voidTime,
+              },
+            ],
+          }
+        );
+      }
+
+      return tooltip;
+    });
+  };
+
+  const handleBarSegmentMouseMove = (event: MouseEvent, segment: OverviewSegment) => {
+    showTooltip(segment.date, event.offsetY, () => {
+      const tooltip: Tooltip = {
+        title: segment.serviceId,
+        content: [],
+      };
+
+      if (segment.type === 'task') {
+        tooltip.content.push({
+          type: 'stats',
+          stats: [
+            {
+              label: t('tooltip.stat.pomodoros'),
+              type: 'number',
+              value: segment.value,
+            },
+            {
+              label: t('tooltip.stat.taskTime'),
+              type: 'duration',
+              value: segment.duration,
+            },
+            {
+              label: t('tooltip.stat.overTaskTime'),
+              type: 'duration',
+              value: segment.overDuration,
+            },
+          ],
+        });
+      } else {
+        tooltip.content.push({
+          type: 'stats',
+          stats: [
+            {
+              label: t('tooltip.stat.voidedPomodoros'),
+              type: 'number',
+              value: segment.value,
+            },
+            {
+              label: t('tooltip.stat.voidedTime'),
+              type: 'duration',
+              value: segment.duration,
+            },
+          ],
+        });
+      }
+
+      return tooltip;
+    });
+  };
+
+  const handleTooltipHide = () => {
+    tooltipRef = undefined;
+    setTooltip(undefined);
+  };
 
   const drawYAxis = () => {
     const axis = axisLeft(getYScale());
@@ -148,6 +300,29 @@ export const Chart: Component<ChartProps> = props => {
       });
   };
 
+  const drawXColumns = () => {
+    const xScale = getXScale();
+    const yScale = getYScale();
+
+    const [yMin, yMax] = yScale.domain();
+    const width = xScale.bandwidth();
+    const height = yScale(yMin) - yScale(yMax);
+    const y = yScale(yMax);
+
+    select(xColumnsRef)
+      .html('')
+      .selectAll('rect')
+      .data(getXDomain().map(date => format(date, 'yyyy-MM-dd')))
+      .enter()
+      .append('rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('x', date => xScale(date) ?? 0)
+      .attr('y', y)
+      .on('mousemove', handleXColumnMouseMove)
+      .on('mouseout', handleTooltipHide);
+  };
+
   const drawOverviewChart = () => {
     const xScale = getXScale();
     const yScale = getYScale();
@@ -156,7 +331,7 @@ export const Chart: Component<ChartProps> = props => {
     const width = xScale.bandwidth() * 0.8;
     const x = (xScale.bandwidth() - width) / 2;
 
-    const barGroup = select(barsRef)
+    const bars = select(barsRef)
       .html('')
       .selectAll('g')
       .data(props.weeklyProductivity)
@@ -166,32 +341,44 @@ export const Chart: Component<ChartProps> = props => {
         'transform',
         ([date, { pomodoros, voidedPomodoros }]) =>
           `translate(${xScale(date)}, ${yScale(pomodoros + voidedPomodoros)})`
-      )
-      .selectAll('g')
-      .data(([, data]) => {
-        // Group events by service and type to aggregate pomodoro counts
-        const eventGroups = new Map<
-          string,
-          {
-            serviceId: string;
-            type: 'task' | 'void';
-            value: number;
-          }
-        >();
+      );
 
-        for (const { meta, serviceId, type } of data.events) {
-          if (type !== 'task' && type !== 'void') {
+    barGroupsByDate = {};
+    bars.each(([date], index, nodes) => {
+      barGroupsByDate[date] = nodes[index];
+    });
+
+    const segments = bars
+      .selectAll('g')
+      .data(([date, data]) => {
+        // Group events by service and type to aggregate pomodoro counts
+        const eventGroups = new Map<string, OverviewSegment>();
+
+        for (const event of data.events) {
+          if (event.type !== 'task' && event.type !== 'void') {
             continue;
           }
 
-          const groupKey = `${type}:${serviceId}`;
+          const groupKey = `${event.type}:${event.serviceId}`;
           const group = eventGroups.get(groupKey) ?? {
-            serviceId,
-            type,
+            date,
+            duration: 0,
+            overDuration: 0,
+            serviceId: event.serviceId,
+            type: event.type,
             value: 0,
           };
 
-          group.value += type === 'task' ? meta.pomodoros : meta.voidedPomodoros;
+          group.duration += event.meta.duration;
+          group.value += event.type === 'task' ? event.meta.pomodoros : event.meta.voidedPomodoros;
+
+          if (event.type === 'task') {
+            for (const childEvent of event.children) {
+              if (childEvent.type === 'over_task') {
+                group.overDuration += childEvent.meta.duration;
+              }
+            }
+          }
 
           eventGroups.set(groupKey, group);
         }
@@ -223,15 +410,18 @@ export const Chart: Component<ChartProps> = props => {
       })
       .enter();
 
-    barGroup
+    segments
       .append('rect')
+      .attr('data-testid', ({ serviceId, type }) => `bar-segment-${serviceId}-${type}`)
       .attr('data-type', ({ type }) => type)
       .attr('width', width)
       .attr('height', ({ height }) => height)
       .attr('x', x)
-      .attr('y', ({ y }) => y);
+      .attr('y', ({ y }) => y)
+      .on('mousemove', handleBarSegmentMouseMove)
+      .on('mouseout', handleTooltipHide);
 
-    barGroup
+    segments
       .filter((_data, index) => index > 0)
       .append('line')
       .classed(styles.eventBorder, true)
@@ -239,19 +429,58 @@ export const Chart: Component<ChartProps> = props => {
       .attr('x2', width);
   };
 
+  const showTooltip = (date: string, mouseY: number, createTooltip: () => Tooltip) => {
+    // The tooltip already exists, just update its position
+    if (tooltipRef) {
+      tooltipRef.style.top = `${mouseY}px`;
+
+      return;
+    }
+
+    const barGroup = barGroupsByDate[date];
+
+    if (!barGroup || !(barGroup instanceof SVGGElement)) {
+      return;
+    }
+
+    const chartBounds = chartRef.getBoundingClientRect();
+    const barGroupBounds = barGroup.getBoundingClientRect();
+
+    const exceedsRightBoundary = barGroupBounds.right + tooltipMaxWidth > chartBounds.right;
+    const offset = 12;
+
+    const x = exceedsRightBoundary
+      ? chartBounds.right - barGroupBounds.left + offset
+      : barGroupBounds.right - chartBounds.left + offset;
+
+    setTooltip({
+      ...createTooltip(),
+      position: {
+        alignment: exceedsRightBoundary ? 'right' : 'left',
+        x,
+        y: mouseY,
+      },
+    });
+  };
+
+  let barGroupsByDate: Record<string, SVGGElement> = {};
+
   let barsRef!: SVGGElement;
   let chartRef!: SVGSVGElement;
+  let xColumnsRef!: SVGGElement;
   let yAxisRef!: SVGGElement;
 
+  // The tooltip is dynamically created, so the reference may not always exist
+  let tooltipRef: HTMLDivElement | undefined;
+
   return (
-    <>
-      <svg
-        classList={{
-          [styles.chart]: true,
-          [styles.isTimeline]: props.view === 'timeline',
-        }}
-        ref={chartRef}
-      >
+    <div
+      classList={{
+        [styles.chart]: true,
+        [styles.isTimeline]: props.view === 'timeline',
+      }}
+    >
+      <svg class={styles.plot} ref={chartRef}>
         <defs>
           <pattern height="10" id="overTask" patternUnits="userSpaceOnUse" width="10">
             <rect fill="var(--dashboard-chart-over-task-background)" height="10" width="10" />
@@ -283,8 +512,16 @@ export const Chart: Component<ChartProps> = props => {
           </pattern>
         </defs>
         <g class={styles.yAxis} data-testid="productivity-chart-y-axis" ref={yAxisRef} />
-        <g ref={barsRef} />
+        <g
+          class={styles.dateBackgrounds}
+          data-testid="productivity-chart-date-backgrounds"
+          ref={xColumnsRef}
+        />
+        <g data-testid="productivity-chart-bars" ref={barsRef} />
       </svg>
+      <Show when={getTooltip()}>
+        {getTooltip => <ChartTooltip tooltip={getTooltip()} ref={tooltipRef} />}
+      </Show>
       <footer class={styles.footer}>
         <div class={styles.xAxis} style={{ 'padding-left': `${getLeftMargin()}px` }}>
           <For each={getXDomain()}>
@@ -304,6 +541,6 @@ export const Chart: Component<ChartProps> = props => {
           </For>
         </div>
       </footer>
-    </>
+    </div>
   );
 };
