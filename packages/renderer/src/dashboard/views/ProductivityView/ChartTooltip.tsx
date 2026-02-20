@@ -1,58 +1,82 @@
+import { useTranslate } from '@/shared/context/RuntimeContext';
+import { format } from 'date-fns';
 import { nanoid } from 'nanoid';
-import { Component, For, Match, Switch } from 'solid-js';
+import { Component, For, Show } from 'solid-js';
 import styles from './ChartTooltip.module.scss';
+
+export type Tooltip = {
+  title: string;
+  stats?: TooltipStat[][];
+};
+
+export type TooltipWithPosition = Tooltip & {
+  position: {
+    alignment: 'left' | 'right';
+    x: number;
+    y: number;
+  };
+};
+
+export type TooltipStat = DurationStat | NumberStat | TextStat | TimeStat;
 
 type ChartTooltipProps = {
   tooltip: TooltipWithPosition;
   ref?: HTMLDivElement;
 };
 
-export type TooltipWithPosition = Tooltip & { position: TooltipPosition };
-
-export type Tooltip = {
-  title: string;
-  content: TooltipContent[];
+type DurationStat = {
+  labelKey: string;
+  type: 'duration';
+  value: number;
 };
 
-type TooltipPosition = {
-  alignment: 'left' | 'right';
-  x: number;
-  y: number;
+type NumberStat = {
+  labelKey: string;
+  type: 'number';
+  value: number;
 };
 
-type TooltipContent = StatsContent | TextContent;
-
-type StatsContent = {
-  type: 'stats';
-  stats: {
-    label: string;
-    type: 'duration' | 'number';
-    value: number;
-  }[];
-};
-
-type TextContent = {
+type TextStat = {
+  labelKey: string;
   type: 'text';
-  value: string;
+  valueKey: string;
+};
+
+type TimeStat = {
+  labelKey: string;
+  type: 'time';
+  value: Date;
 };
 
 export const tooltipMaxWidth = 300;
 
 export const ChartTooltip: Component<ChartTooltipProps> = props => {
+  const t = useTranslate();
+
   const getAlignment = () => {
     return props.tooltip.position.alignment === 'left'
       ? { left: `${props.tooltip.position.x}px` }
       : { right: `${props.tooltip.position.x}px` };
   };
 
-  const formatDuration = (duration: number) => {
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.round((duration % 3600) / 60);
+  const getValue = (stat: TooltipStat) => {
+    if (stat.type === 'duration') {
+      const hours = Math.floor(stat.value / 3600);
+      const minutes = Math.round((stat.value % 3600) / 60);
 
-    return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
+      return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
+    }
+
+    if (stat.type === 'number') {
+      return Math.round(stat.value * 100) / 100;
+    }
+
+    if (stat.type === 'time') {
+      return format(stat.value, 'h:mm aaa');
+    }
+
+    return t(stat.valueKey);
   };
-
-  const formatNumber = (value: number) => Math.round(value * 100) / 100;
 
   return (
     <div
@@ -67,37 +91,28 @@ export const ChartTooltip: Component<ChartTooltipProps> = props => {
     >
       <h4>{props.tooltip.title}</h4>
       <div class={styles.content}>
-        <For each={props.tooltip.content}>
-          {content => (
-            <Switch>
-              <Match when={content.type === 'text' && content.value}>
-                {getValue => <p>{getValue()}</p>}
-              </Match>
-              <Match when={content.type === 'stats' && content.stats}>
-                {getStats => (
-                  <dl class={styles.stats}>
-                    <For each={getStats()}>
-                      {stat => {
-                        const id = nanoid();
+        <Show fallback={<p>{t('unableToLoadData')}</p>} when={props.tooltip.stats}>
+          <div class={styles.stats}>
+            <For each={props.tooltip.stats}>
+              {statGroup => (
+                <dl class={styles.statGroup}>
+                  <For each={statGroup}>
+                    {stat => {
+                      const id = nanoid();
 
-                        return (
-                          <>
-                            <dt id={id}>{stat.label}</dt>
-                            <dd aria-labelledby={id}>
-                              {stat.type === 'duration'
-                                ? formatDuration(stat.value)
-                                : formatNumber(stat.value)}
-                            </dd>
-                          </>
-                        );
-                      }}
-                    </For>
-                  </dl>
-                )}
-              </Match>
-            </Switch>
-          )}
-        </For>
+                      return (
+                        <>
+                          <dt id={id}>{t(stat.labelKey)}</dt>
+                          <dd aria-labelledby={id}>{getValue(stat)}</dd>
+                        </>
+                      );
+                    }}
+                  </For>
+                </dl>
+              )}
+            </For>
+          </div>
+        </Show>
       </div>
     </div>
   );

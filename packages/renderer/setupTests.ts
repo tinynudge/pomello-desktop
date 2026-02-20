@@ -51,6 +51,8 @@ global.HTMLDialogElement.prototype.close = function () {
 
 global.scrollTo = () => {};
 
+global.Element.prototype.scrollIntoView = () => {};
+
 global.ResizeObserver = class ResizeObserver {
   callback: ResizeObserverCallback;
 

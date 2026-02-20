@@ -10,18 +10,22 @@
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
   margin-top: 12px;
-  gap: 8px;
 }
 
 .stats {
   display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 8px;
+}
+
+.statGroup {
+  display: grid;
   column-gap: 8px;
-  grid-template-columns: repeat(2, auto);
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
 
   dd {
-    text-align: right;
+    justify-self: end;
   }
 }
