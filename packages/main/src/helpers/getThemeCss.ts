@@ -203,6 +203,7 @@ const defaultTheme: ThemeConfig = {
       },
     },
     chart: {
+      'current-time': colors.red,
       'date-hover': [opacity(colors.black, 3), opacity(colors.black, 5)],
       'event-border': [opacity(colors.white, 30), opacity(colors.darkAlt, 30)],
       'long-break': [colors.longBreak, colors.longBreakDark],

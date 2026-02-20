@@ -7,19 +7,18 @@ import { unwrap } from 'solid-js/store';
 import { HistoryPanel } from './HistoryPanel';
 import { WeekPanel } from './WeekPanel';
 
-export type WeeklyProductivity = Map<
-  string,
-  {
-    breakTime: number;
-    events: TrackingEvent[];
-    overBreakTime: number;
-    overTaskTime: number;
-    pomodoros: number;
-    taskTime: number;
-    voidedPomodoros: number;
-    voidTime: number;
-  }
->;
+export type WeeklyProductivity = Map<string, DailyProductivity>;
+
+export type DailyProductivity = {
+  breakTime: number;
+  events: TrackingEvent[];
+  overBreakTime: number;
+  overTaskTime: number;
+  pomodoros: number;
+  taskTime: number;
+  voidedPomodoros: number;
+  voidTime: number;
+};
 
 export const WeeklyProductivityPanels: Component = () => {
   const pomelloApi = usePomelloApi();

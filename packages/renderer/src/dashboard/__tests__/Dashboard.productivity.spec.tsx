@@ -223,7 +223,7 @@ describe('Dashboard - Productivity', () => {
 
   describe('Week of Panel', () => {
     beforeEach(() => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
     });
 
     it('should show the correct week start date in "This Week" panel', () => {
@@ -309,14 +309,14 @@ describe('Dashboard - Productivity', () => {
           fetchEvents: generateTrackingEvents(
             // Day 1 events (Monday)
             generateTaskTrackingEvent({
-              startTime: '2026-01-26T10:00:00Z',
+              startTime: '2026-01-26T10:00:00',
               meta: {
                 duration: 1500,
                 pomodoros: 1,
               },
             }),
             generateTaskTrackingEvent({
-              startTime: '2026-01-26T11:00:00Z',
+              startTime: '2026-01-26T11:00:00',
               meta: {
                 duration: 1500,
                 pomodoros: 1,
@@ -324,7 +324,7 @@ describe('Dashboard - Productivity', () => {
             }),
             // Day 2 events (Tuesday)
             generateTaskTrackingEvent({
-              startTime: '2026-01-27T10:00:00Z',
+              startTime: '2026-01-27T10:00:00',
               meta: {
                 duration: 3000,
                 pomodoros: 2,
@@ -332,7 +332,7 @@ describe('Dashboard - Productivity', () => {
             }),
             // Day 3 events (Wednesday)
             generateTaskTrackingEvent({
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: {
                 duration: 1500,
                 pomodoros: 1,
@@ -340,11 +340,11 @@ describe('Dashboard - Productivity', () => {
             }),
             // Non-task events should be ignored
             generateBreakTrackingEvent({
-              startTime: '2026-01-28T10:30:00Z',
+              startTime: '2026-01-28T10:30:00',
               meta: { duration: 300 },
             }),
             generateNoteTrackingEvent({
-              startTime: '2026-01-28T11:00:00Z',
+              startTime: '2026-01-28T11:00:00',
             })
           ),
         },
@@ -370,7 +370,7 @@ describe('Dashboard - Productivity', () => {
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             generateTaskTrackingEvent({
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: {
                 duration: 3000,
                 pomodoros: 2,
@@ -475,14 +475,14 @@ describe('Dashboard - Productivity', () => {
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             generateTaskTrackingEvent({
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: {
                 duration: 750,
                 pomodoros: 0.5,
               },
             }),
             generateTaskTrackingEvent({
-              startTime: '2026-01-28T11:00:00Z',
+              startTime: '2026-01-28T11:00:00',
               meta: {
                 duration: 375,
                 pomodoros: 0.25,
@@ -507,20 +507,20 @@ describe('Dashboard - Productivity', () => {
           fetchEvents: generateTrackingEvents(
             // Multiple events on same day should count as one active day
             generateTaskTrackingEvent({
-              startTime: '2026-01-26T10:00:00Z',
+              startTime: '2026-01-26T10:00:00',
               meta: { duration: 1500, pomodoros: 1 },
             }),
             generateTaskTrackingEvent({
-              startTime: '2026-01-26T11:00:00Z',
+              startTime: '2026-01-26T11:00:00',
               meta: { duration: 1500, pomodoros: 1 },
             }),
             generateTaskTrackingEvent({
-              startTime: '2026-01-26T14:00:00Z',
+              startTime: '2026-01-26T14:00:00',
               meta: { duration: 1500, pomodoros: 1 },
             }),
             // Second active day
             generateTaskTrackingEvent({
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: { duration: 1500, pomodoros: 1 },
             })
           ),
@@ -591,7 +591,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should display a date range within same month', () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
 
       renderDashboard({ route: DashboardRoute.Productivity });
 
@@ -601,7 +601,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should display a date range spanning different months', () => {
-      vi.setSystemTime(new Date('2025-12-02T12:00:00Z'));
+      vi.setSystemTime(new Date('2025-12-02T12:00:00'));
 
       renderDashboard({ route: DashboardRoute.Productivity });
 
@@ -613,7 +613,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should display a date range spanning different years', () => {
-      vi.setSystemTime(new Date('2026-01-03T12:00:00Z'));
+      vi.setSystemTime(new Date('2026-01-03T12:00:00'));
 
       renderDashboard({ route: DashboardRoute.Productivity });
 
@@ -625,7 +625,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should update the heading when navigating to previous week', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
 
       const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
 
@@ -639,7 +639,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should update the heading when navigating to next week', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
 
       const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
 
@@ -655,7 +655,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should update the heading when clicking This week', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
 
       const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
 
@@ -891,7 +891,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should show x-axis dates based on productivityChartDays setting', () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
 
       renderDashboard({
         route: DashboardRoute.Productivity,
@@ -913,7 +913,7 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should only show enabled days in x-axis', () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
 
       renderDashboard({
         route: DashboardRoute.Productivity,
@@ -937,14 +937,14 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should show disabled day in x-axis if it has events', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
 
       renderDashboard({
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             // Event on Tuesday (which is disabled)
             generateTaskTrackingEvent({
-              startTime: '2026-01-27T10:00:00Z',
+              startTime: '2026-01-27T10:00:00',
               meta: { duration: 1500, pomodoros: 1 },
             })
           ),
@@ -989,13 +989,13 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should adjust y-axis ticks based on the maximum value in overview view', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z'));
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
 
       renderDashboard({
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             generateTaskTrackingEvent({
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: { pomodoros: 12 },
             })
           ),
@@ -1055,23 +1055,23 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should show tooltip with day summary when hovering over chart date column', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
 
       const { userEvent } = renderDashboard({
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             generateTaskTrackingEvent({
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: { duration: 1800, pomodoros: 1.2 },
               children: [generateOverTaskTrackingEvent({ meta: { duration: 300 } })],
             }),
             generateBreakTrackingEvent({
-              startTime: '2026-01-28T10:30:00Z',
+              startTime: '2026-01-28T10:30:00',
               meta: { duration: 600 },
               children: [generateOverBreakTrackingEvent({ meta: { duration: 120 } })],
             }),
             generateVoidTrackingEvent({
-              startTime: '2026-01-28T11:00:00Z',
+              startTime: '2026-01-28T11:00:00',
               meta: { duration: 450, voidedPomodoros: 0.5 },
             })
           ),
@@ -1098,22 +1098,22 @@ describe('Dashboard - Productivity', () => {
 
       expect(within(tooltip).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.2');
       expect(within(tooltip).getByRole('definition', { name: 'Task time' })).toHaveTextContent('30m');
-      expect(within(tooltip).getByRole('definition', { name: 'Over task time' })).toHaveTextContent('5m');
+      expect(within(tooltip).getByRole('definition', { name: 'Task over time' })).toHaveTextContent('5m');
       expect(within(tooltip).getByRole('definition', { name: 'Break time' })).toHaveTextContent('10m');
-      expect(within(tooltip).getByRole('definition', { name: 'Over break time' })).toHaveTextContent('2m');
+      expect(within(tooltip).getByRole('definition', { name: 'Break over time' })).toHaveTextContent('2m');
       expect(within(tooltip).getByRole('definition', { name: 'Voided pomodoros' })).toHaveTextContent('0.5');
       expect(within(tooltip).getByRole('definition', { name: 'Voided time' })).toHaveTextContent('8m');
     });
 
     it('should show tooltip with task stats when hovering over task bar segment', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
 
       const { userEvent } = renderDashboard({
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             generateTaskTrackingEvent({
               serviceId: 'test-service',
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: { duration: 2700, pomodoros: 1.8 },
               children: [generateOverTaskTrackingEvent({ meta: { duration: 180 } })],
             })
@@ -1137,18 +1137,18 @@ describe('Dashboard - Productivity', () => {
 
       expect(within(tooltip).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.8');
       expect(within(tooltip).getByRole('definition', { name: 'Task time' })).toHaveTextContent('45m');
-      expect(within(tooltip).getByRole('definition', { name: 'Over task time' })).toHaveTextContent('3m');
+      expect(within(tooltip).getByRole('definition', { name: 'Task over time' })).toHaveTextContent('3m');
     });
 
     it('should show tooltip with void stats when hovering over void bar segment', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
 
       const { userEvent } = renderDashboard({
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             generateVoidTrackingEvent({
               serviceId: 'void-service',
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: { duration: 900, voidedPomodoros: 2 },
             })
           ),
@@ -1173,14 +1173,14 @@ describe('Dashboard - Productivity', () => {
     });
 
     it('should hide tooltip when mouse leaves the chart element', async () => {
-      vi.setSystemTime(new Date('2026-01-28T12:00:00Z')); // Wednesday, January 28, 2026
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
 
       const { userEvent } = renderDashboard({
         pomelloApi: {
           fetchEvents: generateTrackingEvents(
             generateTaskTrackingEvent({
               serviceId: 'test-service',
-              startTime: '2026-01-28T10:00:00Z',
+              startTime: '2026-01-28T10:00:00',
               meta: { duration: 1500, pomodoros: 1 },
             })
           ),
@@ -1201,6 +1201,460 @@ describe('Dashboard - Productivity', () => {
       await userEvent.unhover(taskBar);
 
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('should show tooltip with task stats when hovering over timeline task segment', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-id',
+              meta: { duration: 1800, pomodoros: 1.2 }, // 30 minutes
+              serviceId: 'task-service-id',
+              startTime: '2026-01-28T10:00:00', // 10:00 AM
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const timelineSegment = screen.getByTestId('timeline-segment-task-id');
+
+      await userEvent.hover(timelineSegment);
+
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(tooltip).toBeInTheDocument();
+      expect(within(tooltip).getByRole('heading', { name: 'task-service-id' })).toBeInTheDocument();
+      expect(within(tooltip).getByRole('definition', { name: 'Type' })).toHaveTextContent('Task');
+      expect(within(tooltip).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.2');
+      expect(within(tooltip).getByRole('definition', { name: 'Start time' })).toHaveTextContent('10:00 am');
+      expect(within(tooltip).getByRole('definition', { name: 'End time' })).toHaveTextContent('10:30 am');
+      expect(within(tooltip).getByRole('definition', { name: 'Duration' })).toHaveTextContent('30m');
+    });
+
+    it('should show tooltip with void stats when hovering over timeline void segment', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateVoidTrackingEvent({
+              id: 'void-id',
+              meta: { duration: 900, voidedPomodoros: 1.5 },
+              serviceId: 'void-service-id',
+              startTime: '2026-01-28T11:00:00',
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const voidSegment = screen.getByTestId('timeline-segment-void-id');
+
+      await userEvent.hover(voidSegment);
+
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(within(tooltip).getByRole('heading', { name: 'void-service-id' })).toBeInTheDocument();
+      expect(within(tooltip).getByRole('definition', { name: 'Type' })).toHaveTextContent('Void');
+      expect(within(tooltip).getByRole('definition', { name: 'Voided pomodoros' })).toHaveTextContent('1.5');
+      expect(within(tooltip).getByRole('definition', { name: 'Start time' })).toHaveTextContent('11:00 am');
+      expect(within(tooltip).getByRole('definition', { name: 'End time' })).toHaveTextContent('11:15 am');
+      expect(within(tooltip).getByRole('definition', { name: 'Duration' })).toHaveTextContent('15m');
+    });
+
+    it('should show tooltip with break stats when hovering over timeline break segment', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateBreakTrackingEvent({
+              id: 'break-id',
+              meta: { duration: 300, type: 'short' }, // 5 minutes
+              serviceId: 'break-service-id',
+              startTime: '2026-01-28T14:00:00', // 2:00 PM
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const breakSegment = screen.getByTestId('timeline-segment-break-id');
+
+      await userEvent.hover(breakSegment);
+
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(within(tooltip).getByRole('heading', { name: 'break-service-id' })).toBeInTheDocument();
+      expect(within(tooltip).getByRole('definition', { name: 'Type' })).toHaveTextContent('Short break');
+      expect(within(tooltip).queryByRole('definition', { name: 'Pomodoros' })).not.toBeInTheDocument();
+      expect(within(tooltip).getByRole('definition', { name: 'Start time' })).toHaveTextContent('2:00 pm');
+      expect(within(tooltip).getByRole('definition', { name: 'End time' })).toHaveTextContent('2:05 pm');
+      expect(within(tooltip).getByRole('definition', { name: 'Duration' })).toHaveTextContent('5m');
+    });
+
+    it('should show tooltip for overtask timeline segments', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              children: [
+                generateOverTaskTrackingEvent({
+                  id: 'overtask-id',
+                  serviceId: 'overtask-service-id',
+                  meta: { duration: 180 },
+                }),
+              ],
+              meta: { duration: 1500, pomodoros: 1 },
+              startTime: '2026-01-28T09:00:00',
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const overTaskSegment = screen.getByTestId('timeline-segment-overtask-id');
+
+      await userEvent.hover(overTaskSegment);
+
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(within(tooltip).getByRole('heading', { name: 'overtask-service-id' })).toBeInTheDocument();
+      expect(within(tooltip).getByRole('definition', { name: 'Type' })).toBeInTheDocument();
+      expect(within(tooltip).queryByRole('definition', { name: 'Pomodoros' })).not.toBeInTheDocument();
+      expect(within(tooltip).getByRole('definition', { name: 'Duration' })).toHaveTextContent('3m');
+    });
+
+    it('should hide timeline tooltip when mouse leaves the segment', async () => {
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent({ id: 'task-id' })),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const timelineSegment = screen.getByTestId('timeline-segment-task-id');
+
+      await userEvent.hover(timelineSegment);
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+      await userEvent.unhover(timelineSegment);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('should render current time indicator in timeline view for current week', async () => {
+      vi.setSystemTime(new Date('2026-01-28T14:30:00')); // Wednesday, January 28, 2026 at 2:30 PM
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const currentTime = screen.getByTestId('productivity-chart-current-time');
+
+      expect(currentTime).toHaveTextContent('2:30 PM');
+    });
+
+    it('should not render current time indicator for past weeks', async () => {
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      expect(screen.queryByTestId('productivity-chart-current-time')).not.toBeEmptyDOMElement();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+
+      expect(screen.queryByTestId('productivity-chart-current-time')).toBeEmptyDOMElement();
+    });
+
+    it('should hide y-axis tick when current time is within 15 minutes after the hour', async () => {
+      vi.setSystemTime(new Date('2026-01-28T14:10:00')); // 2:10 PM
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const yAxis = screen.getByTestId('productivity-chart-y-axis');
+
+      expect(yAxis.querySelector('[data-value="14"]')).toHaveAttribute('data-hidden', 'true');
+    });
+
+    it('should hide y-axis tick when current time is within 15 minutes before the hour', async () => {
+      vi.setSystemTime(new Date('2026-01-28T14:50:00')); // 2:50 PM
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const yAxis = screen.getByTestId('productivity-chart-y-axis');
+
+      expect(yAxis.querySelector('[data-value="15"]')).toHaveAttribute('data-hidden', 'true');
+    });
+
+    it('should not hide y-axis tick when current time is in middle of hour', async () => {
+      vi.setSystemTime(new Date('2026-01-28T14:30:00')); // 2:30 PM
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const yAxis = screen.getByTestId('productivity-chart-y-axis');
+
+      expect(yAxis.querySelector('[data-hidden="true"]')).toBeNull();
+    });
+
+    it('should render all event types in timeline view', async () => {
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-id',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generateOverTaskTrackingEvent({
+                  id: 'over-task-id',
+                  meta: { duration: 180 },
+                }),
+              ],
+            }),
+            generateBreakTrackingEvent({
+              id: 'short-break-id',
+              meta: { duration: 300, type: 'short' },
+              children: [
+                generateOverBreakTrackingEvent({
+                  id: 'over-short-break-id',
+                  meta: { duration: 60 },
+                }),
+              ],
+            }),
+            generateBreakTrackingEvent({
+              id: 'long-break-id',
+              meta: { duration: 900, type: 'long' },
+              children: [
+                generateOverBreakTrackingEvent({
+                  id: 'over-long-break-id',
+                  meta: { duration: 120 },
+                }),
+              ],
+            }),
+            generatePauseTrackingEvent({
+              id: 'pause-id',
+              meta: { duration: 600 },
+            }),
+            generateVoidTrackingEvent({
+              id: 'void-id',
+              meta: { duration: 900, voidedPomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const chartBars = screen.getByTestId('productivity-chart-bars');
+
+      expect(within(chartBars).getByTestId('timeline-segment-task-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-over-task-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-short-break-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-over-short-break-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-long-break-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-over-long-break-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-pause-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-void-id')).toBeInTheDocument();
+    });
+
+    it('should exclude note events and zero-duration events from timeline', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateNoteTrackingEvent({
+              id: 'note-id',
+              startTime: '2026-01-28T10:00:00',
+            }),
+            generateTaskTrackingEvent({
+              id: 'zero-duration-task-id',
+              startTime: '2026-01-28T11:00:00',
+              meta: { duration: 0, pomodoros: 0 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() =>
+        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+      );
+
+      const chartBars = screen.getByTestId('productivity-chart-bars');
+
+      expect(within(chartBars).queryByTestId('timeline-segment-note-id')).not.toBeInTheDocument();
+      expect(within(chartBars).queryByTestId('timeline-segment-zero-duration-task-id')).not.toBeInTheDocument();
+    });
+
+    describe('Timeline Scrolling Behavior', () => {
+      const scrollIntoViewMock = vi.spyOn(Element.prototype, 'scrollIntoView');
+
+      beforeEach(() => {
+        scrollIntoViewMock.mockClear();
+      });
+
+      afterAll(() => {
+        scrollIntoViewMock.mockRestore();
+      });
+
+      it('should scroll to current time when switching to timeline view for current week', async () => {
+        setStoredView('timeline');
+
+        renderDashboard({
+          pomelloApi: {
+            fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+          },
+          route: DashboardRoute.Productivity,
+        });
+
+        await waitForElementToBeRemoved(() =>
+          within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+        );
+
+        expect(scrollIntoViewMock).toHaveBeenCalledWith({ block: 'center' });
+      });
+
+      it('should scroll to timeline start for past weeks', async () => {
+        vi.setSystemTime(new Date('2026-01-28T14:30:00')); // Wednesday, January 28, 2026
+
+        const { userEvent } = renderDashboard({
+          pomelloApi: {
+            fetchEvents: generateTrackingEvents(
+              generateTaskTrackingEvent({
+                startTime: '2026-01-18T10:00:00', // Previous week
+              })
+            ),
+          },
+          route: DashboardRoute.Productivity,
+        });
+
+        await waitForElementToBeRemoved(() =>
+          within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+
+        expect(scrollIntoViewMock).toHaveBeenCalledWith({ block: 'start' });
+      });
+
+      it('should not scroll when changing date range while already in timeline view', async () => {
+        vi.setSystemTime(new Date('2026-01-28T14:30:00')); // Wednesday, January 28, 2026
+        setStoredView('timeline');
+
+        const { userEvent } = renderDashboard({
+          pomelloApi: {
+            fetchEvents: generateTrackingEvents(
+              generateTaskTrackingEvent({
+                startTime: '2026-01-28T10:00:00',
+              }),
+              generateTaskTrackingEvent({
+                startTime: '2026-01-18T10:00:00', // Previous week
+              })
+            ),
+          },
+          route: DashboardRoute.Productivity,
+        });
+
+        await waitForElementToBeRemoved(() =>
+          within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
+        );
+
+        expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
+
+        scrollIntoViewMock.mockClear();
+
+        await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
+
+        expect(scrollIntoViewMock).not.toHaveBeenCalled();
+      });
     });
   });
 });

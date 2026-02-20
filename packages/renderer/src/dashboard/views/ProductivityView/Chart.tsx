@@ -1,9 +1,23 @@
 import { useSettings, useTranslate } from '@/shared/context/RuntimeContext';
-import { axisLeft, scaleBand, scaleLinear, select, timeDay } from 'd3';
-import { format, parseISO } from 'date-fns';
-import { Component, createEffect, createMemo, createSignal, For, onCleanup, Show } from 'solid-js';
+import { axisLeft, ScaleBand, scaleBand, ScaleLinear, scaleLinear, select, timeDay } from 'd3';
+import { format, isWithinInterval } from 'date-fns';
+import {
+  batch,
+  Component,
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  onCleanup,
+  Show,
+} from 'solid-js';
 import styles from './Chart.module.scss';
 import { ChartTooltip, Tooltip, tooltipMaxWidth, TooltipWithPosition } from './ChartTooltip';
+import { createOverviewsSegments, OverviewSegment } from './createOverviewsSegments';
+import { createOverviewTooltip } from './createOverviewTooltip';
+import { createTimelineSegments, TimelineSegment } from './createTimelineSegments';
+import { createTimelineTooltip } from './createTimelineTooltip';
+import { createXColumnTooltip } from './createXColumnTooltip';
 import { WeeklyProductivity } from './WeeklyProductivityPanels';
 
 const allLegendTypes = [
@@ -23,32 +37,61 @@ type ChartProps = {
   weeklyProductivity: WeeklyProductivity;
 };
 
-type OverviewSegment = {
-  date: string;
-  duration: number;
-  overDuration: number;
-  serviceId: string;
-  type: 'task' | 'void';
-  value: number;
+type TimelineRenderedEvent = {
+  isCurrentWeek: boolean;
 };
+
+type XScale = ScaleBand<string>;
+
+export type YScale = ScaleLinear<number, number>;
+
+const timelineRenderedEvent = 'timelineRendered';
 
 export const Chart: Component<ChartProps> = props => {
   const settings = useSettings();
   const t = useTranslate();
 
-  const [getChartWidth, setChartWidth] = createSignal(0);
-  const [getChartHeight, setChartHeight] = createSignal(0);
-
   const [getTooltip, setTooltip] = createSignal<TooltipWithPosition>();
+  const [getHiddenHour, setHiddenHour] = createSignal<number>();
 
-  const getLeftMargin = () => (props.view === 'overview' ? 64 : 88);
+  const [getXScale, setXScale] = createSignal<XScale | undefined>(undefined, {
+    equals: (previous, next) =>
+      `${previous?.domain()}-${previous?.range()}` === `${next?.domain()}-${next?.range()}`,
+  });
+
+  const [getYScale, setYScale] = createSignal<YScale | undefined>(undefined, {
+    equals: (previous, next) =>
+      `${previous?.domain()}-${previous?.range()}` === `${next?.domain()}-${next?.range()}`,
+  });
+
+  const getXDomain = createMemo(
+    () => {
+      const visibleDays = new Set(settings.productivityChartDays);
+
+      return timeDay.range(...props.dateRange).filter(date => {
+        const day = format(date, 'EEEEEE');
+        const fullDate = format(date, 'yyyy-MM-dd');
+
+        return visibleDays.has(day) || props.weeklyProductivity.has(fullDate);
+      });
+    },
+    undefined,
+    { equals: (previous, next) => `${previous}` === `${next}` }
+  );
 
   createEffect(() => {
-    const resizeObserver = new ResizeObserver(() => {
-      const { width, height } = chartRef.getBoundingClientRect();
+    const initialChartWidth = chartRef.clientWidth;
+    const xDomain = getXDomain();
 
-      setChartWidth(width);
-      setChartHeight(height);
+    batch(() => {
+      setXScale(() => createXScale(xDomain));
+      setYScale(() => createYScale());
+    });
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (chartRef.clientWidth !== initialChartWidth) {
+        setXScale(() => createXScale(xDomain));
+      }
     });
 
     resizeObserver.observe(chartRef);
@@ -58,36 +101,97 @@ export const Chart: Component<ChartProps> = props => {
     });
   });
 
-  const getXDomain = createMemo(() => {
-    const visibleDays = new Set(settings.productivityChartDays);
+  createEffect(() => {
+    const xScale = getXScale();
+    const yScale = getYScale();
 
-    return timeDay.range(...props.dateRange).filter(date => {
-      const day = format(date, 'EEEEEE');
-      const fullDate = format(date, 'yyyy-MM-dd');
-
-      return visibleDays.has(day) || props.weeklyProductivity.has(fullDate);
-    });
-  });
-
-  const getXScale = createMemo(() => {
-    const xDomain = getXDomain();
-
-    return scaleBand()
-      .domain(xDomain.map(date => format(date, 'yyyy-MM-dd')))
-      .range([getLeftMargin(), getChartWidth() - 32]);
-  });
-
-  const getYScale = createMemo(() => {
-    const chartHeight = getChartHeight();
-
-    const yScale = scaleLinear();
-
-    if (chartHeight === 0) {
-      // Avoid rendering issues on initial load when height is 0. Otherwise we might get negative values.
-      yScale.range([0, 0]);
-    } else {
-      yScale.range([chartHeight - 12, 12]);
+    if (!xScale || !yScale || props.weeklyProductivity.size === 0) {
+      return;
     }
+
+    if (props.view === 'overview') {
+      drawOverviewChart(xScale, yScale);
+    } else if (props.view === 'timeline') {
+      drawTimelineChart(xScale, yScale);
+    }
+  });
+
+  createEffect(() => {
+    const xScale = getXScale();
+    const yScale = getYScale();
+
+    if (xScale && yScale) {
+      drawYAxis(yScale);
+      drawXColumns(xScale, yScale);
+    }
+  });
+
+  createEffect(() => {
+    // Scroll to the current time, or the start of the timeline, when switching to the timeline view.
+    // Don't change the scroll position when changing the date range while already in the timeline.
+    if (props.view === 'timeline') {
+      const handleTimelineRendered = (event: Event) => {
+        if ((event as CustomEvent<TimelineRenderedEvent>).detail.isCurrentWeek) {
+          currentTimeRef.scrollIntoView({ block: 'center' });
+        } else {
+          barsRef.scrollIntoView({ block: 'start' });
+        }
+      };
+
+      chartRef.addEventListener(timelineRenderedEvent, handleTimelineRendered, { once: true });
+
+      onCleanup(() => {
+        chartRef.removeEventListener(timelineRenderedEvent, handleTimelineRendered);
+      });
+    }
+  });
+
+  createEffect(() => {
+    const hiddenHour = getHiddenHour();
+
+    if (hiddenHour) {
+      select(yAxisRef).select(`[data-value="${hiddenHour}"]`).attr('data-hidden', 'true');
+    } else {
+      select(yAxisRef).select('[data-hidden="true"]').attr('data-hidden', null);
+    }
+  });
+
+  const getLegendTypes = createMemo(() =>
+    props.view === 'timeline'
+      ? allLegendTypes
+      : allLegendTypes.filter(type => type === 'task' || type === 'void')
+  );
+
+  const handleXColumnMouseMove = (event: MouseEvent, date: string) => {
+    // Reactivity is handled by D3
+    // eslint-disable-next-line solid/reactivity
+    showTooltip(date, event.offsetY, () => createXColumnTooltip(date, props.weeklyProductivity));
+  };
+
+  const handleBarSegmentMouseMove = (event: MouseEvent, segment: OverviewSegment) => {
+    showTooltip(segment.date, event.offsetY, () => createOverviewTooltip(segment));
+  };
+
+  const handleTimelineSegmentMouseMove = (event: MouseEvent, segment: TimelineSegment) => {
+    showTooltip(segment.date, event.offsetY, () => createTimelineTooltip(segment));
+  };
+
+  const handleTooltipHide = () => {
+    tooltipRef = undefined;
+    setTooltip(undefined);
+  };
+
+  const getChartHeight = () => (props.view === 'overview' ? 400 : 2000);
+
+  const getLeftMargin = () => (props.view === 'overview' ? 64 : 88);
+
+  const createXScale = (xDomain: Date[]) =>
+    scaleBand()
+      .domain(xDomain.map(date => format(date, 'yyyy-MM-dd')))
+      .range([getLeftMargin(), chartRef.clientWidth - 32]);
+
+  const createYScale = () => {
+    const yScale = scaleLinear().range([chartRef.clientHeight - 12, 12]);
 
     if (props.view === 'timeline') {
       yScale.domain([24, 0]);
@@ -105,155 +209,10 @@ export const Chart: Component<ChartProps> = props => {
     }
 
     return yScale;
-  });
-
-  const getLegendTypes = createMemo(() =>
-    props.view === 'timeline'
-      ? allLegendTypes
-      : allLegendTypes.filter(type => type === 'task' || type === 'void')
-  );
-
-  createEffect(() => {
-    drawYAxis();
-    drawXColumns();
-
-    if (props.view === 'overview') {
-      drawOverviewChart();
-    }
-  });
-
-  const handleXColumnMouseMove = (event: MouseEvent, date: string) => {
-    // Reactivity is handled by D3
-    // eslint-disable-next-line solid/reactivity
-    showTooltip(date, event.offsetY, () => {
-      const productivity = props.weeklyProductivity.get(date);
-
-      const tooltip: Tooltip = {
-        title: format(parseISO(date), 'EEEE, MMMM d, yyyy'),
-        content: [],
-      };
-
-      if (!productivity) {
-        tooltip.content.push({
-          type: 'text',
-          value: t('unableToLoadData'),
-        });
-      } else {
-        tooltip.content.push(
-          {
-            type: 'stats',
-            stats: [
-              {
-                label: t('tooltip.stat.pomodoros'),
-                type: 'number',
-                value: productivity.pomodoros,
-              },
-              {
-                label: t('tooltip.stat.taskTime'),
-                type: 'duration',
-                value: productivity.taskTime,
-              },
-              {
-                label: t('tooltip.stat.overTaskTime'),
-                type: 'duration',
-                value: productivity.overTaskTime,
-              },
-            ],
-          },
-          {
-            type: 'stats',
-            stats: [
-              {
-                label: t('tooltip.stat.breakTime'),
-                type: 'duration',
-                value: productivity.breakTime,
-              },
-              {
-                label: t('tooltip.stat.overBreakTime'),
-                type: 'duration',
-                value: productivity.overBreakTime,
-              },
-            ],
-          },
-          {
-            type: 'stats',
-            stats: [
-              {
-                label: t('tooltip.stat.voidedPomodoros'),
-                type: 'number',
-                value: productivity.voidedPomodoros,
-              },
-              {
-                label: t('tooltip.stat.voidedTime'),
-                type: 'duration',
-                value: productivity.voidTime,
-              },
-            ],
-          }
-        );
-      }
-
-      return tooltip;
-    });
   };
 
-  const handleBarSegmentMouseMove = (event: MouseEvent, segment: OverviewSegment) => {
-    showTooltip(segment.date, event.offsetY, () => {
-      const tooltip: Tooltip = {
-        title: segment.serviceId,
-        content: [],
-      };
-
-      if (segment.type === 'task') {
-        tooltip.content.push({
-          type: 'stats',
-          stats: [
-            {
-              label: t('tooltip.stat.pomodoros'),
-              type: 'number',
-              value: segment.value,
-            },
-            {
-              label: t('tooltip.stat.taskTime'),
-              type: 'duration',
-              value: segment.duration,
-            },
-            {
-              label: t('tooltip.stat.overTaskTime'),
-              type: 'duration',
-              value: segment.overDuration,
-            },
-          ],
-        });
-      } else {
-        tooltip.content.push({
-          type: 'stats',
-          stats: [
-            {
-              label: t('tooltip.stat.voidedPomodoros'),
-              type: 'number',
-              value: segment.value,
-            },
-            {
-              label: t('tooltip.stat.voidedTime'),
-              type: 'duration',
-              value: segment.duration,
-            },
-          ],
-        });
-      }
-
-      return tooltip;
-    });
-  };
-
-  const handleTooltipHide = () => {
-    tooltipRef = undefined;
-    setTooltip(undefined);
-  };
-
-  const drawYAxis = () => {
-    const axis = axisLeft(getYScale());
+  const drawYAxis = (yScale: YScale) => {
+    const axis = axisLeft(yScale);
 
     if (props.view === 'timeline') {
       axis.ticks(24).tickFormat(tick => {
@@ -276,8 +235,8 @@ export const Chart: Component<ChartProps> = props => {
 
         axis.selectAll('.tick line').attr('class', styles.line).attr('x1', 0).attr('x2', '100%');
 
-        axis.selectAll('.tick').each((_datum, index, group) => {
-          const tick = select(group[index]);
+        axis.selectAll('.tick').each((value, index, group) => {
+          const tick = select(group[index]).attr('data-value', `${value}`);
           const text = tick.select('text');
           const textNode = text.node();
 
@@ -300,10 +259,7 @@ export const Chart: Component<ChartProps> = props => {
       });
   };
 
-  const drawXColumns = () => {
-    const xScale = getXScale();
-    const yScale = getYScale();
-
+  const drawXColumns = (xScale: XScale, yScale: YScale) => {
     const [yMin, yMax] = yScale.domain();
     const width = xScale.bandwidth();
     const height = yScale(yMin) - yScale(yMax);
@@ -312,7 +268,7 @@ export const Chart: Component<ChartProps> = props => {
     select(xColumnsRef)
       .html('')
       .selectAll('rect')
-      .data(getXDomain().map(date => format(date, 'yyyy-MM-dd')))
+      .data(xScale.domain())
       .enter()
       .append('rect')
       .attr('width', width)
@@ -323,91 +279,18 @@ export const Chart: Component<ChartProps> = props => {
       .on('mouseout', handleTooltipHide);
   };
 
-  const drawOverviewChart = () => {
-    const xScale = getXScale();
-    const yScale = getYScale();
+  const drawOverviewChart = (xScale: XScale, yScale: YScale) => {
+    const { width, x } = getBarDimensions(xScale);
 
-    const fullHeight = yScale(0);
-    const width = xScale.bandwidth() * 0.8;
-    const x = (xScale.bandwidth() - width) / 2;
-
-    const bars = select(barsRef)
-      .html('')
-      .selectAll('g')
-      .data(props.weeklyProductivity)
-      .enter()
-      .append('g')
-      .attr(
-        'transform',
-        ([date, { pomodoros, voidedPomodoros }]) =>
-          `translate(${xScale(date)}, ${yScale(pomodoros + voidedPomodoros)})`
-      );
-
-    barGroupsByDate = {};
-    bars.each(([date], index, nodes) => {
-      barGroupsByDate[date] = nodes[index];
-    });
+    const bars = createBarGroups().attr(
+      'transform',
+      ([date, { pomodoros, voidedPomodoros }]) =>
+        `translate(${xScale(date)}, ${yScale(pomodoros + voidedPomodoros)})`
+    );
 
     const segments = bars
       .selectAll('g')
-      .data(([date, data]) => {
-        // Group events by service and type to aggregate pomodoro counts
-        const eventGroups = new Map<string, OverviewSegment>();
-
-        for (const event of data.events) {
-          if (event.type !== 'task' && event.type !== 'void') {
-            continue;
-          }
-
-          const groupKey = `${event.type}:${event.serviceId}`;
-          const group = eventGroups.get(groupKey) ?? {
-            date,
-            duration: 0,
-            overDuration: 0,
-            serviceId: event.serviceId,
-            type: event.type,
-            value: 0,
-          };
-
-          group.duration += event.meta.duration;
-          group.value += event.type === 'task' ? event.meta.pomodoros : event.meta.voidedPomodoros;
-
-          if (event.type === 'task') {
-            for (const childEvent of event.children) {
-              if (childEvent.type === 'over_task') {
-                group.overDuration += childEvent.meta.duration;
-              }
-            }
-          }
-
-          eventGroups.set(groupKey, group);
-        }
-
-        // Sort so voided pomodoros render at the top, then by value for stacking order
-        const sortedGroups = Array.from(eventGroups.values()).sort((a, b) => {
-          if (a.type !== b.type) {
-            return a.type === 'void' ? -1 : 1;
-          }
-
-          return a.value - b.value;
-        });
-
-        // Calculate y positions for stacked bar segments
-        let cumulativeY = 0;
-
-        return sortedGroups.map(group => {
-          const height = fullHeight - yScale(group.value);
-          const y = cumulativeY;
-
-          cumulativeY += height;
-
-          return {
-            ...group,
-            height,
-            y,
-          };
-        });
-      })
+      .data(([date, data]) => createOverviewsSegments(date, data, yScale))
       .enter();
 
     segments
@@ -427,6 +310,121 @@ export const Chart: Component<ChartProps> = props => {
       .classed(styles.eventBorder, true)
       .attr('transform', ({ y }) => `translate(${x}, ${y})`)
       .attr('x2', width);
+  };
+
+  const drawTimelineChart = (xScale: XScale, yScale: YScale) => {
+    const { width, x } = getBarDimensions(xScale);
+
+    createBarGroups()
+      .attr('transform', ([date]) => `translate(${xScale(date)}, 0)`)
+      .selectAll('rect')
+      .data(([, data]) => createTimelineSegments(data))
+      .enter()
+      .append('rect')
+      .attr('data-testid', ({ event }) => `timeline-segment-${event.id}`)
+      .attr('data-type', ({ type }) => type)
+      .attr('width', width)
+      .attr('height', ({ endHour, startHour }) => yScale(endHour) - yScale(startHour))
+      .attr('x', x)
+      .attr('y', ({ startHour }) => yScale(startHour))
+      .on('mousemove', handleTimelineSegmentMouseMove)
+      .on('mouseout', handleTooltipHide);
+
+    const [start, end] = props.dateRange;
+    const isCurrentWeek = isWithinInterval(new Date(), { start, end });
+
+    if (isCurrentWeek) {
+      drawCurrentTimeAxis(yScale);
+
+      const intervalId = setInterval(() => {
+        drawCurrentTimeAxis(yScale);
+      }, 10_000);
+
+      onCleanup(() => {
+        clearInterval(intervalId);
+
+        select(currentTimeRef).html('');
+        setHiddenHour(undefined);
+      });
+    }
+
+    queueMicrotask(() => {
+      chartRef.dispatchEvent(
+        new CustomEvent<TimelineRenderedEvent>(timelineRenderedEvent, {
+          detail: { isCurrentWeek },
+        })
+      );
+    });
+  };
+
+  const drawCurrentTimeAxis = (yScale: YScale) => {
+    const now = new Date();
+    const currentHour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const y = yScale(currentHour);
+
+    const currentTimeGroup = select(currentTimeRef).html('');
+
+    currentTimeGroup
+      .attr('transform', `translate(0, ${y})`)
+      .append('line')
+      .classed(styles.line, true)
+      .attr('x2', '100%');
+
+    const currentTimeText = currentTimeGroup
+      .append('text')
+      .attr('class', styles.label)
+      .attr('x', 32)
+      .attr('y', 4)
+      .text(format(now, 'h:mm a'))
+      .node();
+
+    if (currentTimeText) {
+      const { width, height, x, y } = currentTimeText.getBBox();
+      const textBackgroundOffset = 4;
+
+      currentTimeGroup
+        .insert('rect', 'text')
+        .attr('class', styles.labelBackground)
+        .attr('width', width + textBackgroundOffset * 2)
+        .attr('height', height)
+        .attr('x', x - textBackgroundOffset)
+        .attr('y', y);
+    }
+
+    // Hide nearby Y-axis ticks to avoid overlap
+    const minutes = now.getMinutes();
+
+    if (minutes <= 15) {
+      setHiddenHour(Math.floor(currentHour));
+    } else if (minutes >= 45) {
+      setHiddenHour(Math.ceil(currentHour));
+    } else {
+      setHiddenHour(undefined);
+    }
+  };
+
+  const createBarGroups = () => {
+    const bars = select(barsRef)
+      .html('')
+      .selectAll('g')
+      .data(props.weeklyProductivity)
+      .enter()
+      .append('g');
+
+    barGroupsByDate = {};
+    bars.each(([date], index, nodes) => {
+      barGroupsByDate[date] = nodes[index];
+    });
+
+    return bars;
+  };
+
+  const getBarDimensions = (xScale: XScale) => {
+    const bandwidth = xScale.bandwidth();
+    const width = bandwidth * 0.8;
+    const x = (bandwidth - width) / 2;
+
+    return { width, x };
   };
 
   const showTooltip = (date: string, mouseY: number, createTooltip: () => Tooltip) => {
@@ -467,6 +465,7 @@ export const Chart: Component<ChartProps> = props => {
 
   let barsRef!: SVGGElement;
   let chartRef!: SVGSVGElement;
+  let currentTimeRef!: SVGGElement;
   let xColumnsRef!: SVGGElement;
   let yAxisRef!: SVGGElement;
 
@@ -474,13 +473,8 @@ export const Chart: Component<ChartProps> = props => {
   let tooltipRef: HTMLDivElement | undefined;
 
   return (
-    <div
-      classList={{
-        [styles.chart]: true,
-        [styles.isTimeline]: props.view === 'timeline',
-      }}
-    >
-      <svg class={styles.plot} ref={chartRef}>
+    <div class={styles.chart}>
+      <svg class={styles.plot} ref={chartRef} style={{ height: `${getChartHeight()}px` }}>
         <defs>
           <pattern height="10" id="overTask" patternUnits="userSpaceOnUse" width="10">
             <rect fill="var(--dashboard-chart-over-task-background)" height="10" width="10" />
@@ -517,7 +511,12 @@ export const Chart: Component<ChartProps> = props => {
           data-testid="productivity-chart-date-backgrounds"
           ref={xColumnsRef}
         />
-        <g data-testid="productivity-chart-bars" ref={barsRef} />
+        <g class={styles.bars} data-testid="productivity-chart-bars" ref={barsRef} />
+        <g
+          class={styles.currentTime}
+          data-testid="productivity-chart-current-time"
+          ref={currentTimeRef}
+        />
       </svg>
       <Show when={getTooltip()}>
         {getTooltip => <ChartTooltip tooltip={getTooltip()} ref={tooltipRef} />}
@@ -535,7 +534,7 @@ export const Chart: Component<ChartProps> = props => {
                 <svg width={24} height={16}>
                   <rect width={24} height={16} data-type={type} />
                 </svg>
-                <span>{t(`legend.${type}`)}</span>
+                <span>{t(`chart.type.${type}`)}</span>
               </div>
             )}
           </For>

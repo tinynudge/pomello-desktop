@@ -6,27 +6,6 @@
   display: block;
   overflow: visible;
   width: 100%;
-  height: 400px;
-
-  .isTimeline & {
-    height: 1600px;
-  }
-}
-
-.dateBackgrounds {
-  rect {
-    fill: transparent;
-
-    &:hover {
-      fill: var(--dashboard-chart-date-hover);
-    }
-  }
-}
-
-.eventBorder {
-  pointer-events: none;
-  shape-rendering: crispedges;
-  stroke: var(--dashboard-chart-event-border);
 }
 
 .yAxis {
@@ -43,6 +22,48 @@
   .textBackground {
     fill: var(--dashboard-panel-background);
   }
+
+  [data-hidden] {
+    visibility: hidden;
+  }
+}
+
+.currentTime {
+  color: var(--dashboard-chart-current-time);
+
+  .line {
+    stroke: currentcolor;
+  }
+
+  .label {
+    fill: currentcolor;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .labelBackground {
+    fill: var(--dashboard-panel-background);
+  }
+}
+
+.dateBackgrounds {
+  rect {
+    fill: transparent;
+
+    &:hover {
+      fill: var(--dashboard-chart-date-hover);
+    }
+  }
+}
+
+.bars {
+  scroll-margin-top: 140px;
+}
+
+.eventBorder {
+  pointer-events: none;
+  shape-rendering: crispedges;
+  stroke: var(--dashboard-chart-event-border);
 }
 
 .footer {
