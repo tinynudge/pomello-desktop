@@ -1614,5 +1614,171 @@ describe('Dashboard - Productivity', () => {
         expect(scrollIntoViewMock).not.toHaveBeenCalled();
       });
     });
+
+    describe('Timeline Premium Gating', () => {
+      it('should show a premium modal when free user clicks Timeline button', async () => {
+        const { userEvent } = renderDashboard({
+          route: DashboardRoute.Productivity,
+          pomelloConfig: {
+            user: {
+              email: 'free@user.com',
+              name: 'Free User',
+              timezone: 'America/New_York',
+              type: 'free',
+            },
+          },
+        });
+
+        await userEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+
+        const dialog = screen.getByRole('dialog', { name: 'Premium feature' });
+
+        expect(dialog).toBeInTheDocument();
+        expect(
+          within(dialog).getByText(
+            'The timeline view is a premium feature and is not available on free accounts. Click "Upgrade" to update your account and gain access to this feature.'
+          )
+        ).toBeInTheDocument();
+        expect(within(dialog).getByRole('button', { name: 'Upgrade' })).toBeInTheDocument();
+        expect(within(dialog).getByRole('button', { name: 'Close' })).toBeInTheDocument();
+      });
+
+      it('should show a premium modal for free users when accessing a stored view', async () => {
+        setStoredView('timeline');
+
+        renderDashboard({
+          route: DashboardRoute.Productivity,
+          pomelloConfig: {
+            user: {
+              email: 'free@user.com',
+              name: 'Free User',
+              timezone: 'America/New_York',
+              type: 'free',
+            },
+          },
+        });
+
+        const dialog = await screen.findByRole('dialog', { name: 'Premium feature' });
+
+        expect(dialog).toBeInTheDocument();
+        expect(
+          within(dialog).getByText(
+            'The timeline view is a premium feature and is not available on free accounts. Click "Upgrade" to update your account and gain access to this feature.'
+          )
+        ).toBeInTheDocument();
+        expect(within(dialog).getByRole('button', { name: 'Upgrade' })).toBeInTheDocument();
+        expect(within(dialog).getByRole('button', { name: 'Close' })).toBeInTheDocument();
+      });
+
+      it('should revert to overview view when free user closes the premium modal', async () => {
+        const { userEvent } = renderDashboard({
+          route: DashboardRoute.Productivity,
+          pomelloConfig: {
+            user: {
+              email: 'free@user.com',
+              name: 'Free User',
+              timezone: 'America/New_York',
+              type: 'free',
+            },
+          },
+        });
+
+        const overviewButton = screen.getByRole('button', { name: 'Overview' });
+        const timelineButton = screen.getByRole('button', { name: 'Timeline' });
+
+        expect(overviewButton).toHaveAttribute('aria-pressed', 'true');
+        expect(timelineButton).toHaveAttribute('aria-pressed', 'false');
+
+        await userEvent.click(timelineButton);
+
+        const dialog = screen.getByRole('dialog', { name: 'Premium feature' });
+
+        expect(dialog).toBeInTheDocument();
+
+        await userEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
+
+        expect(screen.queryByRole('dialog', { name: 'Premium feature' })).not.toBeInTheDocument();
+        expect(overviewButton).toHaveAttribute('aria-pressed', 'true');
+        expect(timelineButton).toHaveAttribute('aria-pressed', 'false');
+      });
+
+      it('should open subscription page when clicking Upgrade button', async () => {
+        const { appApi, userEvent } = renderDashboard({
+          route: DashboardRoute.Productivity,
+          pomelloConfig: {
+            user: {
+              email: 'free@user.com',
+              name: 'Free User',
+              timezone: 'America/New_York',
+              type: 'free',
+            },
+          },
+        });
+
+        await userEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+
+        const dialog = screen.getByRole('dialog', { name: 'Premium feature' });
+
+        await userEvent.click(within(dialog).getByRole('button', { name: 'Upgrade' }));
+
+        expect(appApi.openUrl).toHaveBeenCalledWith(expect.stringMatching(/dashboard\/user\/subscription$/));
+      });
+
+      it('should not show a premium modal when premium user clicks Timeline button', async () => {
+        const { userEvent } = renderDashboard({
+          route: DashboardRoute.Productivity,
+          pomelloConfig: {
+            user: {
+              email: 'premium@user.com',
+              name: 'Premium User',
+              timezone: 'America/New_York',
+              type: 'premium',
+            },
+          },
+        });
+
+        const timelineButton = screen.getByRole('button', { name: 'Timeline' });
+
+        await userEvent.click(timelineButton);
+
+        expect(screen.queryByRole('dialog', { name: 'Premium feature' })).not.toBeInTheDocument();
+        expect(timelineButton).toHaveAttribute('aria-pressed', 'true');
+      });
+
+      it('should allow a premium user to freely switch between views', async () => {
+        const { userEvent } = renderDashboard({
+          route: DashboardRoute.Productivity,
+          pomelloConfig: {
+            user: {
+              email: 'premium@user.com',
+              name: 'Premium User',
+              timezone: 'America/New_York',
+              type: 'premium',
+            },
+          },
+        });
+
+        const overviewButton = screen.getByRole('button', { name: 'Overview' });
+        const timelineButton = screen.getByRole('button', { name: 'Timeline' });
+
+        await userEvent.click(timelineButton);
+
+        expect(timelineButton).toHaveAttribute('aria-pressed', 'true');
+        expect(overviewButton).toHaveAttribute('aria-pressed', 'false');
+        expect(screen.queryByRole('dialog', { name: 'Premium feature' })).not.toBeInTheDocument();
+
+        await userEvent.click(overviewButton);
+
+        expect(overviewButton).toHaveAttribute('aria-pressed', 'true');
+        expect(timelineButton).toHaveAttribute('aria-pressed', 'false');
+        expect(screen.queryByRole('dialog', { name: 'Premium feature' })).not.toBeInTheDocument();
+
+        await userEvent.click(timelineButton);
+
+        expect(timelineButton).toHaveAttribute('aria-pressed', 'true');
+        expect(overviewButton).toHaveAttribute('aria-pressed', 'false');
+        expect(screen.queryByRole('dialog', { name: 'Premium feature' })).not.toBeInTheDocument();
+      });
+    });
   });
 });

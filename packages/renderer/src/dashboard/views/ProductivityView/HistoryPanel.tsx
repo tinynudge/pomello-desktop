@@ -1,4 +1,5 @@
-import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useDashboard } from '@/dashboard/context/DashboardContext';
+import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
@@ -21,6 +22,8 @@ type HistoryPanelProps = {
 };
 
 export const HistoryPanel: Component<HistoryPanelProps> = props => {
+  const { showPremiumFeatureModal } = useDashboard();
+  const { store } = usePomelloConfig();
   const t = useTranslate();
 
   const [getView, setView] = createSignal(getStoredView());
@@ -52,6 +55,17 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
     }
   });
 
+  createEffect(() => {
+    const isPremiumUser = store.user?.type === 'premium';
+
+    if (getView() === 'timeline' && !isPremiumUser) {
+      showPremiumFeatureModal({
+        customText: t('premiumFeatureModalTimelineText'),
+        onClose: () => updateView('overview'),
+      });
+    }
+  });
+
   const handlePreviousWeekClick = () => {
     const [currentStartOfWeek] = props.dateRange;
     const newStartOfWeek = subWeeks(currentStartOfWeek, 1);
@@ -78,7 +92,7 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
     setIsFiltersModalOpen(false);
   };
 
-  const handleViewChange = (view: 'overview' | 'timeline') => {
+  const updateView = (view: 'overview' | 'timeline') => {
     setView(view);
     setStoredView(view);
   };
@@ -170,14 +184,14 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
             <Button.Group aria-label={t('viewOptions')}>
               <Button
                 aria-pressed={getView() === 'overview'}
-                onClick={[handleViewChange, 'overview']}
+                onClick={[updateView, 'overview']}
                 variant={getView() === 'overview' ? 'primary' : undefined}
               >
                 {t('overview')}
               </Button>
               <Button
                 aria-pressed={getView() === 'timeline'}
-                onClick={[handleViewChange, 'timeline']}
+                onClick={[updateView, 'timeline']}
                 variant={getView() === 'timeline' ? 'primary' : undefined}
               >
                 {t('timeline')}

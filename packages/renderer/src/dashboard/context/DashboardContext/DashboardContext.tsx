@@ -24,6 +24,11 @@ type SetSettingFunction<TSetting extends keyof Settings> = (
   state: Settings[TSetting]
 ) => Settings[TSetting];
 
+type ShowPremiumFeatureModalOptions = {
+  customText?: string;
+  onClose?(): void;
+};
+
 type DashboardContextValue = {
   clearStagedSettings(): void;
   commitStagedSettings(): Promise<void>;
@@ -38,7 +43,7 @@ type DashboardContextValue = {
     key: TSetting,
     value: Settings[TSetting]
   ): Promise<void>;
-  showPremiumFeatureModal(customText?: string): void;
+  showPremiumFeatureModal(options?: ShowPremiumFeatureModalOptions): void;
   stageHotkey(command: HotkeyCommand, hotkey: FormattedHotkey | false): void;
   stageSetting<TSetting extends keyof Settings>(
     key: TSetting,
@@ -157,6 +162,9 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
 
   const onPremiumFeatureModalClose = () => {
     setPremiumFeatureModal(false);
+
+    premiumFeatureModalCloseCallback?.();
+    premiumFeatureModalCloseCallback = undefined;
   };
 
   const onStagedSettingsClear = (subscriber: () => void) => {
@@ -178,8 +186,13 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
     }
   };
 
-  const showPremiumFeatureModal = (customText?: string) => {
+  const showPremiumFeatureModal = ({
+    customText,
+    onClose,
+  }: ShowPremiumFeatureModalOptions = {}) => {
     setPremiumFeatureModal(customText ?? true);
+
+    premiumFeatureModalCloseCallback = onClose;
   };
 
   const stageHotkey = (command: HotkeyCommand, hotkey: FormattedHotkey | false) => {
@@ -198,6 +211,8 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   };
 
   const subscribers = new Set<() => void>();
+
+  let premiumFeatureModalCloseCallback: (() => void) | undefined;
 
   return (
     <DashboardContext.Provider
