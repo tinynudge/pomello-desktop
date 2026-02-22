@@ -23,6 +23,7 @@
   "chart.type.task": "Task",
   "chart.type.taskOver": "Task (Over)",
   "chart.type.void": "Void",
+  "chart.loading": "Loading productivity data",
   "chartFilters": "Chart filters",
   "close": "Close",
   "configureService": "Configure",

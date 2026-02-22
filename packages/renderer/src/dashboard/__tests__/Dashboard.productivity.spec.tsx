@@ -957,9 +957,7 @@ describe('Dashboard - Productivity', () => {
 
       const historyRegion = screen.getByRole('region', { name: 'Productivity History' });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       // Tuesday should show because it has events
       expect(within(historyRegion).getByText('Jan 27')).toBeInTheDocument(); // Tuesday
@@ -1005,9 +1003,7 @@ describe('Dashboard - Productivity', () => {
 
       const yAxis = screen.getByTestId('productivity-chart-y-axis');
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       // Should show ticks up to 12
       expect(within(yAxis).getByText('0')).toBeInTheDocument();
@@ -1079,9 +1075,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
       const dateColumns = dateBackgrounds.querySelectorAll('rect');
@@ -1122,9 +1116,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const taskBar = screen.getByTestId('bar-segment-test-service-task');
 
@@ -1156,9 +1148,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const voidBar = screen.getByTestId('bar-segment-void-service-void');
 
@@ -1188,9 +1178,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const taskBar = screen.getByTestId('bar-segment-test-service-task');
 
@@ -1221,9 +1209,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const timelineSegment = screen.getByTestId('timeline-segment-task-id');
 
@@ -1258,9 +1244,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const voidSegment = screen.getByTestId('timeline-segment-void-id');
 
@@ -1294,9 +1278,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const breakSegment = screen.getByTestId('timeline-segment-break-id');
 
@@ -1335,9 +1317,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const overTaskSegment = screen.getByTestId('timeline-segment-overtask-id');
 
@@ -1361,9 +1341,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const timelineSegment = screen.getByTestId('timeline-segment-task-id');
 
@@ -1387,9 +1365,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const currentTime = screen.getByTestId('productivity-chart-current-time');
 
@@ -1406,9 +1382,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       expect(screen.queryByTestId('productivity-chart-current-time')).not.toBeEmptyDOMElement();
 
@@ -1428,9 +1402,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const yAxis = screen.getByTestId('productivity-chart-y-axis');
 
@@ -1448,9 +1420,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const yAxis = screen.getByTestId('productivity-chart-y-axis');
 
@@ -1468,9 +1438,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const yAxis = screen.getByTestId('productivity-chart-y-axis');
 
@@ -1526,9 +1494,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const chartBars = screen.getByTestId('productivity-chart-bars');
 
@@ -1563,9 +1529,7 @@ describe('Dashboard - Productivity', () => {
         route: DashboardRoute.Productivity,
       });
 
-      await waitForElementToBeRemoved(() =>
-        within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-      );
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
       const chartBars = screen.getByTestId('productivity-chart-bars');
 
@@ -1594,9 +1558,7 @@ describe('Dashboard - Productivity', () => {
           route: DashboardRoute.Productivity,
         });
 
-        await waitForElementToBeRemoved(() =>
-          within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-        );
+        await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
         expect(scrollIntoViewMock).toHaveBeenCalledWith({ block: 'center' });
       });
@@ -1615,9 +1577,7 @@ describe('Dashboard - Productivity', () => {
           route: DashboardRoute.Productivity,
         });
 
-        await waitForElementToBeRemoved(() =>
-          within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-        );
+        await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
         await userEvent.click(screen.getByRole('button', { name: 'Previous week' }));
         await userEvent.click(screen.getByRole('button', { name: 'Timeline' }));
@@ -1643,9 +1603,7 @@ describe('Dashboard - Productivity', () => {
           route: DashboardRoute.Productivity,
         });
 
-        await waitForElementToBeRemoved(() =>
-          within(screen.getByRole('region', { name: /Week of/ })).queryByRole('status', { name: 'Loading' })
-        );
+        await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
 
         expect(scrollIntoViewMock).toHaveBeenCalledTimes(1);
 
