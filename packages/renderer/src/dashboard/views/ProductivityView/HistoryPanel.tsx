@@ -15,6 +15,7 @@ import { WeeklyProductivity } from './WeeklyProductivityPanels';
 type HistoryPanelProps = {
   dateRange: [Date, Date];
   initialDateRange: [Date, Date];
+  isLoading: boolean;
   onDateRangeChange(dateRange: [Date, Date]): void;
   weeklyProductivity: WeeklyProductivity;
 };
@@ -186,6 +187,7 @@ export const HistoryPanel: Component<HistoryPanelProps> = props => {
         </header>
         <Chart
           dateRange={props.dateRange}
+          isLoading={props.isLoading}
           view={getView()}
           weeklyProductivity={props.weeklyProductivity}
         />

@@ -104,6 +104,7 @@ export const WeeklyProductivityPanels: Component = () => {
       <HistoryPanel
         dateRange={getDateRange()}
         initialDateRange={initialDateRange}
+        isLoading={events.isLoading}
         onDateRangeChange={setDateRange}
         weeklyProductivity={getWeeklyProductivity()}
       />

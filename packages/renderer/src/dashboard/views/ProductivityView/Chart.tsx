@@ -33,6 +33,7 @@ const allLegendTypes = [
 
 type ChartProps = {
   dateRange: [Date, Date];
+  isLoading: boolean;
   view: 'overview' | 'timeline';
   weeklyProductivity: WeeklyProductivity;
 };
@@ -474,7 +475,12 @@ export const Chart: Component<ChartProps> = props => {
 
   return (
     <div class={styles.chart}>
-      <svg class={styles.plot} ref={chartRef} style={{ height: `${getChartHeight()}px` }}>
+      <svg
+        aria-busy={props.isLoading}
+        class={styles.plot}
+        ref={chartRef}
+        style={{ height: `${getChartHeight()}px` }}
+      >
         <defs>
           <pattern height="10" id="overTask" patternUnits="userSpaceOnUse" width="10">
             <rect fill="var(--dashboard-chart-over-task-background)" height="10" width="10" />
@@ -511,13 +517,31 @@ export const Chart: Component<ChartProps> = props => {
           data-testid="productivity-chart-date-backgrounds"
           ref={xColumnsRef}
         />
-        <g class={styles.bars} data-testid="productivity-chart-bars" ref={barsRef} />
+        <g
+          classList={{
+            [styles.bars]: true,
+            [styles.isLoading]: props.isLoading,
+          }}
+          data-testid="productivity-chart-bars"
+          ref={barsRef}
+        />
         <g
           class={styles.currentTime}
           data-testid="productivity-chart-current-time"
           ref={currentTimeRef}
         />
       </svg>
+      <Show when={props.isLoading}>
+        <div
+          aria-atomic="true"
+          aria-label={t('chart.loading')}
+          aria-live="polite"
+          class={styles.loadingStatus}
+          role="status"
+        >
+          {t('chart.loading')}
+        </div>
+      </Show>
       <Show when={getTooltip()}>
         {getTooltip => <ChartTooltip tooltip={getTooltip()} ref={tooltipRef} />}
       </Show>
