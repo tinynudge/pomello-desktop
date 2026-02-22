@@ -105,7 +105,9 @@ export const SoundField: Component<SoundFieldProps> = props => {
   };
 
   const handleIssueFoundClick = () => {
-    showPremiumFeatureModal(t('premiumFeatureModalCustomSoundText'));
+    showPremiumFeatureModal({
+      customText: t('premiumFeatureModalCustomSoundText'),
+    });
   };
 
   return (

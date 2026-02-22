@@ -11,7 +11,7 @@ type ModalProps = {
   buttons?: ButtonProps[];
   heading: string;
   onHide?(): void;
-  ref?: HTMLDialogElement;
+  ref?: HTMLDialogElement | ((element: HTMLDialogElement) => void);
 };
 
 export const Modal: ParentComponent<ModalProps> = props => {

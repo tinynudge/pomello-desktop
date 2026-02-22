@@ -9,7 +9,9 @@ export const PremiumFeatureModal: Component = () => {
 
   createEffect(() => {
     if (getPremiumFeatureModal()) {
-      modalRef.showModal();
+      // Since the modal is dynamically rendered, we need to wait for the next tick
+      // to ensure that the modal has been attached to the DOM.
+      queueMicrotask(() => modalRef.showModal());
     }
   });
 
