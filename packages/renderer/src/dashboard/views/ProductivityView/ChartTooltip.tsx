@@ -1,11 +1,13 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
+import { useQuery } from '@tanstack/solid-query';
 import { format } from 'date-fns';
 import { nanoid } from 'nanoid';
-import { Component, For, Show } from 'solid-js';
+import { Component, For, Match, Show, Switch } from 'solid-js';
 import styles from './ChartTooltip.module.scss';
 
 export type Tooltip = {
-  title: string;
+  getTitle(): string | Promise<string>;
+  key: string;
   stats?: TooltipStat[][];
 };
 
@@ -53,6 +55,12 @@ export const tooltipMaxWidth = 300;
 export const ChartTooltip: Component<ChartTooltipProps> = props => {
   const t = useTranslate();
 
+  const title = useQuery(() => ({
+    queryFn: props.tooltip.getTitle,
+    queryKey: ['tooltip', props.tooltip.key],
+    retry: false,
+  }));
+
   const getAlignment = () => {
     return props.tooltip.position.alignment === 'left'
       ? { left: `${props.tooltip.position.x}px` }
@@ -89,7 +97,13 @@ export const ChartTooltip: Component<ChartTooltipProps> = props => {
         top: `${props.tooltip.position.y}px`,
       }}
     >
-      <h4>{props.tooltip.title}</h4>
+      <h4>
+        <Switch>
+          <Match when={title.isError}>{t('taskNameError')}</Match>
+          <Match when={title.isLoading}>{t('loadingTask')}</Match>
+          <Match when={title.isFetched}>{title.data}</Match>
+        </Switch>
+      </h4>
       <div class={styles.content}>
         <Show fallback={<p>{t('unableToLoadData')}</p>} when={props.tooltip.stats}>
           <div class={styles.stats}>

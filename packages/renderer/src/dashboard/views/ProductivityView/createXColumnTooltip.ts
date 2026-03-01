@@ -9,7 +9,8 @@ export const createXColumnTooltip = (
   const productivity = weeklyProductivity.get(date);
 
   const tooltip: Tooltip = {
-    title: format(parseISO(date), 'EEEE, MMMM d, yyyy'),
+    getTitle: () => format(parseISO(date), 'EEEE, MMMM d, yyyy'),
+    key: date,
   };
 
   if (productivity) {

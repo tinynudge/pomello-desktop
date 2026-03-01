@@ -1,8 +1,12 @@
 import { addSeconds, parseISO } from 'date-fns';
 import { Tooltip, TooltipStat } from './ChartTooltip';
 import { TimelineSegment } from './createTimelineSegments';
+import { FetchTaskName } from './useFetchTaskNames';
 
-export const createTimelineTooltip = (segment: TimelineSegment): Tooltip => {
+export const createTimelineTooltip = (
+  segment: TimelineSegment,
+  fetchTaskName: FetchTaskName
+): Tooltip => {
   const primaryStats: TooltipStat[] = [
     {
       labelKey: 'tooltip.stat.type',
@@ -46,7 +50,13 @@ export const createTimelineTooltip = (segment: TimelineSegment): Tooltip => {
   ];
 
   return {
-    title: segment.event.serviceId,
+    getTitle: () =>
+      fetchTaskName({
+        date: segment.date,
+        service: segment.event.service,
+        taskId: segment.event.serviceId,
+      }),
+    key: segment.event.id,
     stats: [primaryStats, timeStats],
   };
 };

@@ -1,9 +1,19 @@
 import { Tooltip } from './ChartTooltip';
 import { OverviewSegment } from './createOverviewsSegments';
+import { FetchTaskName } from './useFetchTaskNames';
 
-export const createOverviewTooltip = (segment: OverviewSegment): Tooltip => {
+export const createOverviewTooltip = (
+  segment: OverviewSegment,
+  fetchTaskName: FetchTaskName
+): Tooltip => {
   const tooltip: Tooltip = {
-    title: segment.serviceId,
+    getTitle: () =>
+      fetchTaskName({
+        date: segment.date,
+        service: segment.service,
+        taskId: segment.serviceId,
+      }),
+    key: segment.serviceId,
   };
 
   if (segment.type === 'task') {

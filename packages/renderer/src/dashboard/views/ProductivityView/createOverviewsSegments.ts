@@ -6,6 +6,7 @@ export type OverviewSegment = {
   duration: number;
   height: number;
   overDuration: number;
+  service?: string;
   serviceId: string;
   type: 'task' | 'void';
   value: number;
@@ -30,6 +31,7 @@ export const createOverviewsSegments = (
       date,
       duration: 0,
       overDuration: 0,
+      service: event.service,
       serviceId: event.serviceId,
       type: event.type,
       value: 0,

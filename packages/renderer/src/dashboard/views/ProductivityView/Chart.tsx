@@ -18,6 +18,7 @@ import { createOverviewTooltip } from './createOverviewTooltip';
 import { createTimelineSegments, TimelineSegment } from './createTimelineSegments';
 import { createTimelineTooltip } from './createTimelineTooltip';
 import { createXColumnTooltip } from './createXColumnTooltip';
+import { useFetchTaskNames } from './useFetchTaskNames';
 import { WeeklyProductivity } from './WeeklyProductivityPanels';
 
 const allLegendTypes = [
@@ -163,6 +164,10 @@ export const Chart: Component<ChartProps> = props => {
       : allLegendTypes.filter(type => type === 'task' || type === 'void')
   );
 
+  const fetchTaskName = useFetchTaskNames({
+    getWeeklyProductivity: () => props.weeklyProductivity,
+  });
+
   const handleXColumnMouseMove = (event: MouseEvent, date: string) => {
     // Reactivity is handled by D3
     // eslint-disable-next-line solid/reactivity
@@ -170,11 +175,11 @@ export const Chart: Component<ChartProps> = props => {
   };
 
   const handleBarSegmentMouseMove = (event: MouseEvent, segment: OverviewSegment) => {
-    showTooltip(segment.date, event.offsetY, () => createOverviewTooltip(segment));
+    showTooltip(segment.date, event.offsetY, () => createOverviewTooltip(segment, fetchTaskName));
   };
 
   const handleTimelineSegmentMouseMove = (event: MouseEvent, segment: TimelineSegment) => {
-    showTooltip(segment.date, event.offsetY, () => createTimelineTooltip(segment));
+    showTooltip(segment.date, event.offsetY, () => createTimelineTooltip(segment, fetchTaskName));
   };
 
   const handleTooltipHide = () => {
