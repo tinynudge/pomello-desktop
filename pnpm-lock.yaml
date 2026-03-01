@@ -112,8 +112,8 @@ importers:
         specifier: ^5.81.5
         version: 5.81.5(solid-js@1.9.7)
       '@tinynudge/pomello-service':
-        specifier: ^0.1.35
-        version: 0.1.35
+        specifier: ^0.1.36
+        version: 0.1.36
       classcat:
         specifier: ^5.0.5
         version: 5.0.5
@@ -967,6 +967,9 @@ packages:
 
   '@tinynudge/pomello-service@0.1.35':
     resolution: {integrity: sha512-pquFhKbBXQPKrnjEGRUkYGl4jkZh/MKeTlhf1nS9a/NOScQmuqIaxNDYV7ZLHafU2xJ4hOPkdQSqj6fNuIpqoA==, tarball: https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.35/0542bbdfd9f6c5223b0420e01381c633df9e4861}
+
+  '@tinynudge/pomello-service@0.1.36':
+    resolution: {integrity: sha512-1OCjGrN+reRlvBlgz2gMHV1OmdEfggAq22OhipL5OY1xny3GPrb37ZfIoTOdJWpjotAqmggFYXlvl4VTJptB/w==, tarball: https://npm.pkg.github.com/download/@tinynudge/pomello-service/0.1.36/64dd26fae5042815d19a20ed9a268fe200520623}
 
   '@tootallnate/once@2.0.0':
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
@@ -5513,6 +5516,8 @@ snapshots:
       '@testing-library/dom': 10.4.0
 
   '@tinynudge/pomello-service@0.1.35': {}
+
+  '@tinynudge/pomello-service@0.1.36': {}
 
   '@tootallnate/once@2.0.0': {}
 

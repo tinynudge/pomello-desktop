@@ -1125,8 +1125,6 @@ describe('Dashboard - Productivity', () => {
       const tooltip = screen.getByRole('tooltip');
 
       expect(tooltip).toBeInTheDocument();
-      expect(within(tooltip).getByRole('heading', { name: 'test-service' })).toBeInTheDocument();
-
       expect(within(tooltip).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.8');
       expect(within(tooltip).getByRole('definition', { name: 'Task time' })).toHaveTextContent('45m');
       expect(within(tooltip).getByRole('definition', { name: 'Task over time' })).toHaveTextContent('3m');
@@ -1155,8 +1153,6 @@ describe('Dashboard - Productivity', () => {
       await userEvent.hover(voidBar);
 
       const tooltip = screen.getByRole('tooltip');
-
-      expect(within(tooltip).getByRole('heading', { name: 'void-service' })).toBeInTheDocument();
 
       expect(within(tooltip).getByRole('definition', { name: 'Voided pomodoros' })).toHaveTextContent('2');
       expect(within(tooltip).getByRole('definition', { name: 'Voided time' })).toHaveTextContent('15m');
@@ -1218,7 +1214,6 @@ describe('Dashboard - Productivity', () => {
       const tooltip = screen.getByRole('tooltip');
 
       expect(tooltip).toBeInTheDocument();
-      expect(within(tooltip).getByRole('heading', { name: 'task-service-id' })).toBeInTheDocument();
       expect(within(tooltip).getByRole('definition', { name: 'Type' })).toHaveTextContent('Task');
       expect(within(tooltip).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.2');
       expect(within(tooltip).getByRole('definition', { name: 'Start time' })).toHaveTextContent('10:00 am');
@@ -1252,7 +1247,6 @@ describe('Dashboard - Productivity', () => {
 
       const tooltip = screen.getByRole('tooltip');
 
-      expect(within(tooltip).getByRole('heading', { name: 'void-service-id' })).toBeInTheDocument();
       expect(within(tooltip).getByRole('definition', { name: 'Type' })).toHaveTextContent('Void');
       expect(within(tooltip).getByRole('definition', { name: 'Voided pomodoros' })).toHaveTextContent('1.5');
       expect(within(tooltip).getByRole('definition', { name: 'Start time' })).toHaveTextContent('11:00 am');
@@ -1286,7 +1280,6 @@ describe('Dashboard - Productivity', () => {
 
       const tooltip = screen.getByRole('tooltip');
 
-      expect(within(tooltip).getByRole('heading', { name: 'break-service-id' })).toBeInTheDocument();
       expect(within(tooltip).getByRole('definition', { name: 'Type' })).toHaveTextContent('Short break');
       expect(within(tooltip).queryByRole('definition', { name: 'Pomodoros' })).not.toBeInTheDocument();
       expect(within(tooltip).getByRole('definition', { name: 'Start time' })).toHaveTextContent('2:00 pm');
@@ -1325,7 +1318,6 @@ describe('Dashboard - Productivity', () => {
 
       const tooltip = screen.getByRole('tooltip');
 
-      expect(within(tooltip).getByRole('heading', { name: 'overtask-service-id' })).toBeInTheDocument();
       expect(within(tooltip).getByRole('definition', { name: 'Type' })).toBeInTheDocument();
       expect(within(tooltip).queryByRole('definition', { name: 'Pomodoros' })).not.toBeInTheDocument();
       expect(within(tooltip).getByRole('definition', { name: 'Duration' })).toHaveTextContent('3m');

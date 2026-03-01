@@ -1,4 +1,5 @@
 import { ServiceFactory } from '@pomello-desktop/domain';
+import { createFetchTrelloTaskNames } from './createFetchTrelloTaskNames';
 import { createPomelloEventListeners } from './createPomelloEventListeners';
 import { createTrelloCache } from './createTrelloCache';
 import { createTrelloConfig } from './createTrelloConfig';
@@ -57,6 +58,7 @@ export const createTrelloService: ServiceFactory<TrelloConfigStore> = runtime =>
   };
 };
 
+createTrelloService.createFetchTaskNames = createFetchTrelloTaskNames;
 createTrelloService.displayName = 'Trello';
 createTrelloService.hasConfigureView = true;
 createTrelloService.id = 'trello';
