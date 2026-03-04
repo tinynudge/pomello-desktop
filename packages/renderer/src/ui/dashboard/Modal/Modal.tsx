@@ -1,19 +1,14 @@
 import { nanoid } from 'nanoid';
-import { For, JSX, ParentComponent, Show } from 'solid-js';
+import { For, ParentComponent, Show } from 'solid-js';
 import { Button, ButtonProps } from '../Button';
 import styles from './Modal.module.scss';
 
-export type ModalButton = Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
-  text: string;
-};
-
-type ModalButtonProps = ButtonProps & {
+export type ModalButtonProps = ButtonProps & {
   preventClose?: boolean;
 };
 
 type ModalProps = {
   buttons?: ModalButtonProps[];
-  closeOnEscape?: boolean;
   heading: string;
   onHide?(): void;
   ref?: HTMLDialogElement | ((element: HTMLDialogElement) => void);
@@ -39,12 +34,6 @@ export const Modal: ParentComponent<ModalProps> = props => {
     props.onHide?.();
   };
 
-  const handleModalKeyDown: JSX.EventHandlerUnion<HTMLDialogElement, KeyboardEvent> = event => {
-    if (props.closeOnEscape === false && event.key === 'Escape') {
-      event.preventDefault();
-    }
-  };
-
   const mergeRefs = (element: HTMLDialogElement) => {
     /* @ts-expect-error Solid uses the callback form when forwarding refs */
     props.ref?.(element);
@@ -60,7 +49,6 @@ export const Modal: ParentComponent<ModalProps> = props => {
       aria-labelledby={headingId}
       class={styles.modal}
       onClose={handleModalClose}
-      onKeyDown={handleModalKeyDown}
       ref={element => mergeRefs(element)}
     >
       <h1 class={styles.heading} id={headingId}>

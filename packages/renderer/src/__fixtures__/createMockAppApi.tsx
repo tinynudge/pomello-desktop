@@ -112,6 +112,9 @@ export const createMockAppApi = ({
     showMessageBox: vi.fn(
       appApi.showMessageBox ?? (() => Promise.resolve({ checkboxChecked: false, response: 0 }))
     ),
+    showSaveDialog: vi.fn(
+      appApi.showSaveDialog ?? (() => Promise.resolve('/mock/path/to/export.csv'))
+    ),
     showSelect: vi.fn(appApi.showSelect ?? (() => Promise.resolve())),
     updateHotkeys: vi.fn(async updatedHotkeys =>
       emit('onHotkeysChange', { ...hotkeys, ...updatedHotkeys })
@@ -123,6 +126,7 @@ export const createMockAppApi = ({
       emit('onSettingsChange', { ...settings, ...updatedSettings })
     ),
     writeClipboardText: vi.fn(),
+    writeFile: vi.fn(appApi.writeFile ?? (() => Promise.resolve())),
   };
 
   window.app = api;
