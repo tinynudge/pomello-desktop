@@ -33,11 +33,13 @@ import { setSelectItems } from './setSelectItems';
 import { showAuthWindow } from './showAuthWindow';
 import { showDashboardWindow } from './showDashboardWindow';
 import { showMessageBox } from './showMessageBox';
+import { showSaveDialog } from './showSaveDialog';
 import { showSelect } from './showSelect';
 import { updateHotkeys } from './updateHotkeys';
 import { updateSetting } from './updateSetting';
 import { updateSettings } from './updateSettings';
 import { writeClipboardText } from './writeClipboardText';
+import { writeFile } from './writeFile';
 
 export const api = {
   decryptValue,
@@ -74,11 +76,13 @@ export const api = {
   showAuthWindow,
   showDashboardWindow,
   showMessageBox,
+  showSaveDialog,
   showSelect,
   updateHotkeys,
   updateSetting,
   updateSettings,
   writeClipboardText,
+  writeFile,
 };
 
 contextBridge.exposeInMainWorld('app', api);

@@ -26,6 +26,7 @@ export enum AppEvent {
   ShowAuthWindow = 'show-auth-window',
   ShowDashboardWindow = 'show-dashboard-window',
   ShowMessageBox = 'show-message-box',
+  ShowSaveDialog = 'show-save-dialog',
   ShowSelect = 'show-select',
   StoreChange = 'store-change',
   ThemeCssChange = 'theme-css-change',
@@ -33,4 +34,5 @@ export enum AppEvent {
   UpdateHotkeys = 'update-hotkeys',
   UpdateSetting = 'update-setting',
   UpdateSettings = 'update-settings',
+  WriteFile = 'write-file',
 }

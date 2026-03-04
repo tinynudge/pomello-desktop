@@ -803,4 +803,374 @@ describe('Dashboard - Productivity', () => {
       expect(within(dialog).getByRole('button', { name: 'Saturday' })).toHaveAttribute('aria-pressed', 'false');
     });
   });
+
+  describe('Export data', () => {
+    beforeEach(() => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+    });
+
+    it('should open the export modal when clicking the Export data button', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      expect(dialog).toBeInTheDocument();
+      expect(within(dialog).getByLabelText('Start date')).toBeInTheDocument();
+      expect(within(dialog).getByLabelText('End date')).toBeInTheDocument();
+      expect(within(dialog).getByLabelText('Format')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Export' })).toBeEnabled();
+      expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    it('should close the modal when clicking Cancel', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+
+      expect(screen.queryByRole('dialog', { name: 'Export data' })).not.toBeInTheDocument();
+    });
+
+    it('should show a validation error when start date is empty', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.clear(within(dialog).getByLabelText('Start date'));
+
+      expect(within(dialog).getByText('A valid date is required')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Export' })).toBeDisabled();
+    });
+
+    it('should show a validation error when end date is empty', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.clear(within(dialog).getByLabelText('End date'));
+
+      expect(within(dialog).getByText('A valid date is required')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Export' })).toBeDisabled();
+    });
+
+    it('should show a validation error when start date is after end date', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.clear(within(dialog).getByLabelText('Start date'));
+      await userEvent.type(within(dialog).getByLabelText('Start date'), '2026-01-29');
+
+      expect(within(dialog).getByText('Start date must be before end date')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Export' })).toBeDisabled();
+    });
+
+    it('should show a validation error when end date is in the future', async () => {
+      const { userEvent } = renderDashboard({ route: DashboardRoute.Productivity });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.clear(within(dialog).getByLabelText('End date'));
+      await userEvent.type(within(dialog).getByLabelText('End date'), '2026-02-01');
+
+      expect(within(dialog).getByText('End date cannot be in the future')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Export' })).toBeDisabled();
+    });
+
+    it('should show loading state while exporting', async () => {
+      const fetchEventsPromise = Promise.withResolvers<void>();
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: async () => {
+            await fetchEventsPromise.promise;
+
+            return HttpResponse.json(generateTrackingEvents(generateTaskTrackingEvent()));
+          },
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+
+      expect(within(dialog).getByRole('button', { name: 'Exporting...' })).toBeDisabled();
+
+      fetchEventsPromise.resolve();
+    });
+
+    it('should show success state after exporting data', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+
+      expect(within(dialog).getByText('Your exported data is ready.')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Save' })).toBeInTheDocument();
+    });
+
+    it('should show no-data state when there are no events for the date range', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+
+      expect(within(dialog).getByText('No events found for the selected date range.')).toBeInTheDocument();
+      expect(within(dialog).getByText('Please adjust the dates and try again.')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    });
+
+    it('should show error state when export fails', async () => {
+      let requestCount = 0;
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: () => {
+            requestCount += 1;
+
+            // First requests are for Today/Week panels; fail on the export request
+            if (requestCount <= 2) {
+              return HttpResponse.json(generateTrackingEvents());
+            }
+
+            return HttpResponse.error();
+          },
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+
+      expect(within(dialog).getByText('Something went wrong. Unable to export data.')).toBeInTheDocument();
+      expect(within(dialog).queryByRole('button', { name: 'Export' })).not.toBeInTheDocument();
+      expect(within(dialog).queryByRole('button', { name: 'Save' })).not.toBeInTheDocument();
+    });
+
+    it('should save the JSON file when clicking Save after a successful export', async () => {
+      const { appApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Format'), 'json');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+
+      expect(appApi.showSaveDialog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          defaultPath: expect.stringMatching(/^pomello-export-2026-01-21-2026-01-28\.json$/),
+          filters: [{ name: 'JSON', extensions: ['json'] }],
+        })
+      );
+      expect(appApi.writeFile).toHaveBeenCalledWith(expect.objectContaining({ filePath: '/mock/path/to/export.csv' }));
+    });
+
+    it('should save the CSV file when clicking Save after a successful export', async () => {
+      const { appApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Format'), 'csv');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+
+      expect(appApi.showSaveDialog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          defaultPath: expect.stringMatching(/^pomello-export-2026-01-21-2026-01-28\.csv$/),
+          filters: [{ name: 'CSV', extensions: ['csv'] }],
+        })
+      );
+      expect(appApi.writeFile).toHaveBeenCalledWith(expect.objectContaining({ filePath: '/mock/path/to/export.csv' }));
+    });
+
+    it('should write the correct JSON content when saving', async () => {
+      const startTime = '2026-01-25T14:30:00.000Z';
+      const serviceId = 'task-abc-123';
+
+      const { appApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent({ serviceId, startTime })),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Format'), 'json');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+
+      const date = new Date(startTime);
+
+      const expectedContent = JSON.stringify(
+        [
+          {
+            taskName: serviceId,
+            parentTaskName: null,
+            service: 'trello',
+            serviceId,
+            parentServiceId: null,
+            type: 'Task',
+            time: '0:25',
+            duration: 1500,
+            allottedTime: 1500,
+            pomodoros: 1,
+            date: date.toLocaleDateString(),
+            startTime: date.toLocaleTimeString(),
+          },
+        ],
+        null,
+        2
+      );
+
+      expect(appApi.writeFile).toHaveBeenCalledWith(expect.objectContaining({ content: expectedContent }));
+    });
+
+    it('should write the correct CSV content when saving', async () => {
+      const startTime = '2026-01-25T14:30:00.000Z';
+      const serviceId = 'task-abc-123';
+
+      const { appApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent({ serviceId, startTime })),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Format'), 'csv');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+
+      const date = new Date(startTime);
+
+      const expectedContent = [
+        'Task Name,Parent Task Name,Service,Service ID,Parent Service ID,Type,Time,Duration,Allotted Time,Pomodoros,Date,Start Time',
+        `${serviceId},,trello,${serviceId},,Task,0:25,1500,1500,1,${date.toLocaleDateString()},${date.toLocaleTimeString()}`,
+      ].join('\n');
+
+      expect(appApi.writeFile).toHaveBeenCalledWith(expect.objectContaining({ content: expectedContent }));
+    });
+
+    it('should not write the file if the save dialog is cancelled', async () => {
+      const { appApi, userEvent } = renderDashboard({
+        appApi: {
+          showSaveDialog: () => Promise.resolve(null),
+        },
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+
+      expect(appApi.writeFile).not.toHaveBeenCalled();
+    });
+
+    it('should return to the form when clicking Back from the no-data state', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Back' }));
+
+      expect(within(dialog).getByLabelText('Start date')).toBeInTheDocument();
+      expect(within(dialog).getByLabelText('End date')).toBeInTheDocument();
+      expect(within(dialog).queryByText('No events found for the selected date range.')).not.toBeInTheDocument();
+    });
+
+    it('should reset to the form when the modal is closed and reopened', async () => {
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent()),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const dialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Export' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Export data' }));
+
+      const reopenedDialog = screen.getByRole('dialog', { name: 'Export data' });
+
+      expect(within(reopenedDialog).getByLabelText('Start date')).toBeInTheDocument();
+      expect(within(reopenedDialog).queryByText('Your exported data is ready.')).not.toBeInTheDocument();
+    });
+  });
 });
