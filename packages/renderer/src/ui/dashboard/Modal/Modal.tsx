@@ -7,8 +7,13 @@ export type ModalButton = Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'chi
   text: string;
 };
 
+type ModalButtonProps = ButtonProps & {
+  preventClose?: boolean;
+};
+
 type ModalProps = {
-  buttons?: ButtonProps[];
+  buttons?: ModalButtonProps[];
+  closeOnEscape?: boolean;
   heading: string;
   onHide?(): void;
   ref?: HTMLDialogElement | ((element: HTMLDialogElement) => void);
@@ -16,7 +21,7 @@ type ModalProps = {
 
 export const Modal: ParentComponent<ModalProps> = props => {
   const handleButtonClick = (
-    button: ButtonProps,
+    button: ModalButtonProps,
     event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }
   ) => {
     if (typeof button?.onClick === 'object') {
@@ -25,7 +30,19 @@ export const Modal: ParentComponent<ModalProps> = props => {
       button.onClick?.(event);
     }
 
-    modalRef.close();
+    if (!button.preventClose) {
+      modalRef.close();
+    }
+  };
+
+  const handleModalClose = () => {
+    props.onHide?.();
+  };
+
+  const handleModalKeyDown: JSX.EventHandlerUnion<HTMLDialogElement, KeyboardEvent> = event => {
+    if (props.closeOnEscape === false && event.key === 'Escape') {
+      event.preventDefault();
+    }
   };
 
   const mergeRefs = (element: HTMLDialogElement) => {
@@ -42,7 +59,8 @@ export const Modal: ParentComponent<ModalProps> = props => {
     <dialog
       aria-labelledby={headingId}
       class={styles.modal}
-      onClose={() => props.onHide?.()}
+      onClose={handleModalClose}
+      onKeyDown={handleModalKeyDown}
       ref={element => mergeRefs(element)}
     >
       <h1 class={styles.heading} id={headingId}>
