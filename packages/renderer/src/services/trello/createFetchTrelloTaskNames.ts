@@ -1,9 +1,9 @@
 import {
   CreateFetchTaskNamesOptions,
   FetchTaskNames,
+  ServiceId,
   TaskNamesById,
 } from '@pomello-desktop/domain';
-import { TrackingEvent } from '@tinynudge/pomello-service';
 import { TrelloConfigStore } from './domain';
 import { getTrelloClient } from './getTrelloClient';
 
@@ -54,14 +54,14 @@ export const createFetchTrelloTaskNames = ({
     unsubscribe();
   });
 
-  const fetchTaskNames = async (events: TrackingEvent[]): Promise<TaskNamesById> => {
-    if (events.length === 0) {
+  const fetchTaskNames = async (ids: ServiceId[]): Promise<TaskNamesById> => {
+    if (ids.length === 0) {
       return {};
     }
 
     const trelloClient = getTrelloClient();
 
-    const urls = events.map(({ serviceId, parentServiceId }) => {
+    const urls = ids.map(([serviceId, parentServiceId]) => {
       const endpoint = parentServiceId
         ? `/cards/${parentServiceId}/checkItem/${serviceId}`
         : `/cards/${serviceId}`;
@@ -91,12 +91,12 @@ export const createFetchTrelloTaskNames = ({
     for (const chunkResult of chunkedResults) {
       if (chunkResult.status === 'fulfilled') {
         for (const response of chunkResult.value) {
-          const event = events[eventIndex];
+          const [serviceId] = ids[eventIndex];
 
           if ('200' in response) {
-            taskNames[event.serviceId] = response[200].name;
+            taskNames[serviceId] = response[200].name;
           } else {
-            taskNames[event.serviceId] = new Error(response.message);
+            taskNames[serviceId] = new Error(response.message);
           }
 
           eventIndex += 1;
