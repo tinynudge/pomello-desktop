@@ -213,7 +213,7 @@ describe('Dashboard - Productivity', () => {
 
       await waitForElementToBeRemoved(() => within(todayRegion).queryByRole('status', { name: 'Loading' }));
 
-      expect(within(todayRegion).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.80');
+      expect(within(todayRegion).getByRole('definition', { name: 'Pomodoros' })).toHaveTextContent('1.8');
       expect(within(todayRegion).getByRole('definition', { name: 'Task Time' })).toHaveTextContent('0:50');
       expect(within(todayRegion).getByRole('definition', { name: 'Break Time' })).toHaveTextContent('0:20');
       expect(within(todayRegion).getByRole('definition', { name: 'Voided Pomodoros' })).toHaveTextContent('2');
@@ -498,6 +498,35 @@ describe('Dashboard - Productivity', () => {
 
       expect(within(weekRegion).getByRole('definition', { name: 'Total Pomodoros' })).toHaveTextContent('0.75');
       expect(within(weekRegion).getByRole('definition', { name: 'Average Pomodoros' })).toHaveTextContent('0.75');
+    });
+
+    it('should round pomodoro numbers to at most 2 decimal places', async () => {
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-26T10:00:00',
+              meta: { duration: 500, pomodoros: 0.99 / 3 },
+            }),
+            generateTaskTrackingEvent({
+              startTime: '2026-01-27T10:00:00',
+              meta: { duration: 500, pomodoros: 1 / 3 },
+            }),
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 500, pomodoros: 1 / 3 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      const weekRegion = screen.getByRole('region', { name: 'Week of January 25' });
+
+      await waitForElementToBeRemoved(() => within(weekRegion).queryByRole('status', { name: 'Loading' }));
+
+      expect(within(weekRegion).getByRole('definition', { name: 'Total Pomodoros' })).toHaveTextContent('1');
+      expect(within(weekRegion).getByRole('definition', { name: 'Average Pomodoros' })).toHaveTextContent('0.33');
     });
 
     it('should calculate averages across multiple active days correctly', async () => {

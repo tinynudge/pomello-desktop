@@ -14,7 +14,7 @@ export type StatItem = {
 };
 
 export const StatsDisplay: Component<StatsDisplayProps> = props => {
-  const formatNumber = (value: number) => value.toFixed(2).replace(/\.00$/, '');
+  const formatNumber = (value: number) => Math.round(value * 100) / 100;
 
   const formatDuration = (duration: number) => {
     const hours = Math.floor(duration / 3600);
