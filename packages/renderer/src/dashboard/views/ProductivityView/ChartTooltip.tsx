@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/solid-query';
 import { format } from 'date-fns';
 import { nanoid } from 'nanoid';
 import { Component, For, Match, Show, Switch } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import styles from './ChartTooltip.module.scss';
 
 export type Tooltip = {
@@ -87,47 +88,49 @@ export const ChartTooltip: Component<ChartTooltipProps> = props => {
   };
 
   return (
-    <div
-      class={styles.chartTooltip}
-      ref={props.ref}
-      role="tooltip"
-      style={{
-        ...getAlignment(),
-        'max-width': `${tooltipMaxWidth}px`,
-        top: `${props.tooltip.position.y}px`,
-      }}
-    >
-      <h4>
-        <Switch>
-          <Match when={title.isError}>{t('taskNameError')}</Match>
-          <Match when={title.isLoading}>{t('loadingTask')}</Match>
-          <Match when={title.isFetched}>{title.data}</Match>
-        </Switch>
-      </h4>
-      <div class={styles.content}>
-        <Show fallback={<p>{t('unableToLoadData')}</p>} when={props.tooltip.stats}>
-          <div class={styles.stats}>
-            <For each={props.tooltip.stats}>
-              {statGroup => (
-                <dl class={styles.statGroup}>
-                  <For each={statGroup}>
-                    {stat => {
-                      const id = nanoid();
+    <Portal>
+      <div
+        class={styles.chartTooltip}
+        ref={props.ref}
+        role="tooltip"
+        style={{
+          ...getAlignment(),
+          'max-width': `${tooltipMaxWidth}px`,
+          top: `${props.tooltip.position.y}px`,
+        }}
+      >
+        <h4>
+          <Switch>
+            <Match when={title.isError}>{t('taskNameError')}</Match>
+            <Match when={title.isLoading}>{t('loadingTask')}</Match>
+            <Match when={title.isFetched}>{title.data}</Match>
+          </Switch>
+        </h4>
+        <div class={styles.content}>
+          <Show fallback={<p>{t('unableToLoadData')}</p>} when={props.tooltip.stats}>
+            <div class={styles.stats}>
+              <For each={props.tooltip.stats}>
+                {statGroup => (
+                  <dl class={styles.statGroup}>
+                    <For each={statGroup}>
+                      {stat => {
+                        const id = nanoid();
 
-                      return (
-                        <>
-                          <dt id={id}>{t(stat.labelKey)}</dt>
-                          <dd aria-labelledby={id}>{getValue(stat)}</dd>
-                        </>
-                      );
-                    }}
-                  </For>
-                </dl>
-              )}
-            </For>
-          </div>
-        </Show>
+                        return (
+                          <>
+                            <dt id={id}>{t(stat.labelKey)}</dt>
+                            <dd aria-labelledby={id}>{getValue(stat)}</dd>
+                          </>
+                        );
+                      }}
+                    </For>
+                  </dl>
+                )}
+              </For>
+            </div>
+          </Show>
+        </div>
       </div>
-    </div>
+    </Portal>
   );
 };

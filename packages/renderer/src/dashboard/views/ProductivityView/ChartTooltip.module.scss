@@ -1,12 +1,12 @@
 .chartTooltip {
-  position: absolute;
+  position: fixed;
   z-index: 100;
   display: inline-block;
   padding: 16px;
   background-color: var(--dashboard-tooltip-background);
   color: var(--dashboard-tooltip-text);
   pointer-events: none;
-  transform: translateY(-55%);
+  transform: translateY(-50%);
 }
 
 .content {

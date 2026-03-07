@@ -171,15 +171,15 @@ export const Chart: Component<ChartProps> = props => {
   const handleXColumnMouseMove = (event: MouseEvent, date: string) => {
     // Reactivity is handled by D3
     // eslint-disable-next-line solid/reactivity
-    showTooltip(date, event.offsetY, () => createXColumnTooltip(date, props.weeklyProductivity));
+    showTooltip(date, event.clientY, () => createXColumnTooltip(date, props.weeklyProductivity));
   };
 
   const handleBarSegmentMouseMove = (event: MouseEvent, segment: OverviewSegment) => {
-    showTooltip(segment.date, event.offsetY, () => createOverviewTooltip(segment, fetchTaskName));
+    showTooltip(segment.date, event.clientY, () => createOverviewTooltip(segment, fetchTaskName));
   };
 
   const handleTimelineSegmentMouseMove = (event: MouseEvent, segment: TimelineSegment) => {
-    showTooltip(segment.date, event.offsetY, () => createTimelineTooltip(segment, fetchTaskName));
+    showTooltip(segment.date, event.clientY, () => createTimelineTooltip(segment, fetchTaskName));
   };
 
   const handleTooltipHide = () => {
@@ -447,15 +447,14 @@ export const Chart: Component<ChartProps> = props => {
       return;
     }
 
-    const chartBounds = chartRef.getBoundingClientRect();
     const barGroupBounds = barGroup.getBoundingClientRect();
 
-    const exceedsRightBoundary = barGroupBounds.right + tooltipMaxWidth > chartBounds.right;
+    const exceedsRightBoundary = barGroupBounds.right + tooltipMaxWidth > window.innerWidth;
     const offset = 12;
 
     const x = exceedsRightBoundary
-      ? chartBounds.right - barGroupBounds.left + offset
-      : barGroupBounds.right - chartBounds.left + offset;
+      ? window.innerWidth - barGroupBounds.left + offset
+      : barGroupBounds.right + offset;
 
     setTooltip({
       ...createTooltip(),
