@@ -3,7 +3,7 @@ import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { Modal } from '@/ui/dashboard/Modal';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
-import { Component, createSignal, For, onMount } from 'solid-js';
+import { Component, createSignal, For } from 'solid-js';
 import { unwrap } from 'solid-js/store';
 import styles from './FiltersModal.module.scss';
 
@@ -19,10 +19,6 @@ export const FiltersModal: Component<FiltersModalProps> = props => {
 
   const initialDisplayedDays = new Set(unwrap(getSetting('productivityChartDays')));
   const [getDisplayedDays, setDisplayedDays] = createSignal(initialDisplayedDays);
-
-  onMount(() => {
-    modalRef.showModal();
-  });
 
   const handleModalConfirm = () => {
     const didUpdate = !!initialDisplayedDays.symmetricDifference(getDisplayedDays()).size;
@@ -69,6 +65,7 @@ export const FiltersModal: Component<FiltersModalProps> = props => {
       heading={t('chartFilters')}
       onHide={props.onHide}
       ref={modalRef}
+      showOnMount
     >
       <ul class={styles.filters}>
         <li>

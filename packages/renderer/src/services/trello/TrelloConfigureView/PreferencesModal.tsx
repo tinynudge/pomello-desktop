@@ -2,7 +2,7 @@ import { useConfigureService } from '@/shared/context/ConfigureServiceContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Modal } from '@/ui/dashboard/Modal';
 import { Select } from '@/ui/dashboard/Select';
-import { Component, For, onMount } from 'solid-js';
+import { Component, For } from 'solid-js';
 import { BoardOrList, TrelloConfigStore, TrelloPreferences } from '../domain';
 import styles from './PreferencesModal.module.scss';
 import { preferences } from './TrelloConfigureView';
@@ -17,10 +17,6 @@ export const PreferencesModal: Component<PreferencesModalProps> = props => {
   const { getServiceConfigValue } = useConfigureService<TrelloConfigStore>();
   const t = useTranslate();
   const updatePreference = useUpdatePreferences();
-
-  onMount(() => {
-    modal.showModal();
-  });
 
   const handleConfirm = () => {
     const formData = new FormData(form);
@@ -82,6 +78,7 @@ export const PreferencesModal: Component<PreferencesModalProps> = props => {
       heading={getHeading()}
       onHide={() => props.onHide()}
       ref={modal}
+      showOnMount
     >
       <form ref={form}>
         <ul class={styles.preferences}>

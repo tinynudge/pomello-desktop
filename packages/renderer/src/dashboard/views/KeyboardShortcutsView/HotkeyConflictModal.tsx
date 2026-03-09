@@ -13,8 +13,6 @@ export const HotkeyConflictModal: Component<HotkeyConflictModalProps> = props =>
   const t = useTranslate();
 
   onMount(() => {
-    conflictingHotkeyModalRef.showModal();
-
     conflictingHotkeyModalRef.addEventListener('close', handleModalClose);
 
     onCleanup(() => {
@@ -48,6 +46,7 @@ export const HotkeyConflictModal: Component<HotkeyConflictModalProps> = props =>
       ]}
       heading={t('conflictingHotkeyHeading')}
       ref={conflictingHotkeyModalRef}
+      showOnMount
     >
       <p>
         {t('conflictingHotkeyText', {
