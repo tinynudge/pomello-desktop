@@ -1,27 +1,17 @@
 import { useDashboard } from '@/dashboard/context/DashboardContext';
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Modal } from '@/ui/dashboard/Modal';
-import { Component, createEffect, Show } from 'solid-js';
+import { Component, Show } from 'solid-js';
 
 export const PremiumFeatureModal: Component = () => {
   const { getPremiumFeatureModal, onPremiumFeatureModalClose } = useDashboard();
   const t = useTranslate();
-
-  createEffect(() => {
-    if (getPremiumFeatureModal()) {
-      // Since the modal is dynamically rendered, we need to wait for the next tick
-      // to ensure that the modal has been attached to the DOM.
-      queueMicrotask(() => modalRef.showModal());
-    }
-  });
 
   const handleUpgradeClick = () => {
     const upgradeUrl = `${import.meta.env.VITE_APP_URL}/dashboard/user/subscription`;
 
     window.app.openUrl(upgradeUrl);
   };
-
-  let modalRef!: HTMLDialogElement;
 
   return (
     <Show when={getPremiumFeatureModal()}>
@@ -44,7 +34,7 @@ export const PremiumFeatureModal: Component = () => {
             ]}
             heading={t('premiumFeatureModalHeading')}
             onHide={onPremiumFeatureModalClose}
-            ref={modalRef}
+            showOnMount
           >
             <p>{text}</p>
           </Modal>

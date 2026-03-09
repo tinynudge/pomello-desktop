@@ -1,8 +1,11 @@
 @use '@/shared/styles/global' as *;
 
 .modal {
+  --content-padding-block: 16px;
+  --content-padding-inline: 24px;
+
   max-width: 48vw;
-  padding: 24px;
+  padding: 0;
   border: 0;
   border-radius: 8px;
   background-color: var(--dashboard-modal-background);
@@ -15,15 +18,26 @@
 }
 
 .heading {
-  margin-bottom: 16px;
+  padding: var(--content-padding-inline) var(--content-padding-inline) var(--content-padding-block);
   font-size: inherit;
 }
 
+.content {
+  padding-inline: var(--content-padding-inline);
+
+  &[data-padding='none'] {
+    padding: 0;
+  }
+}
+
 .buttons {
+  position: sticky;
+  bottom: 0;
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
   justify-content: flex-start;
-  margin-top: 24px;
+  padding: var(--content-padding-block) var(--content-padding-inline);
+  background-color: var(--dashboard-modal-background);
   gap: 12px;
 }

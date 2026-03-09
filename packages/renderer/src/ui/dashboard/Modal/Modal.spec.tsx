@@ -13,6 +13,12 @@ describe('UI - Modal', () => {
     expect(screen.getByRole('heading', { name: 'Danger' })).toBeInTheDocument();
   });
 
+  it('should show the modal on mount when showOnMount is true', () => {
+    renderDashboardComponent(() => <Modal heading="Auto Open" showOnMount />);
+
+    expect(screen.getByRole('dialog', { name: 'Auto Open' })).toBeInTheDocument();
+  });
+
   it('should render modal buttons', async () => {
     let modalRef!: HTMLDialogElement;
 
