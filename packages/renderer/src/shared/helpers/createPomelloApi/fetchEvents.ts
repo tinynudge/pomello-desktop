@@ -1,5 +1,5 @@
 import { FetchEventsOptions, PomelloApiResponse } from '@pomello-desktop/domain';
-import { TrackingEvent } from '@tinynudge/pomello-service';
+import { PrimaryTrackingEvent } from '@tinynudge/pomello-service';
 import { PomelloApiContext } from './createPomelloApi';
 
 export const fetchEvents = async (
@@ -7,7 +7,7 @@ export const fetchEvents = async (
   { startDate, endDate }: FetchEventsOptions
 ) => {
   const { data } = await client
-    .get<PomelloApiResponse<TrackingEvent[]>>('events', {
+    .get<PomelloApiResponse<PrimaryTrackingEvent[]>>('events', {
       searchParams: {
         startDate,
         endDate: endDate ?? startDate,

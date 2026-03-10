@@ -3,6 +3,7 @@ import { TaskNamesById } from '@pomello-desktop/domain';
 import {
   BreakTrackingEvent,
   OverBreakTrackingEvent,
+  PrimaryTrackingEvent,
   TrackingEvent,
 } from '@tinynudge/pomello-service';
 
@@ -73,7 +74,7 @@ export const useExportHelpers = () => {
   };
 
   const parseEvents = (
-    events: TrackingEvent[],
+    events: PrimaryTrackingEvent[],
     taskNamesById: TaskNamesById,
     callback: (parsedEvent: ParsedEvent) => void
   ): void => {
@@ -126,7 +127,7 @@ export const useExportHelpers = () => {
     }
   };
 
-  const transformToCsv = (events: TrackingEvent[], taskNamesById: TaskNamesById): string => {
+  const transformToCsv = (events: PrimaryTrackingEvent[], taskNamesById: TaskNamesById): string => {
     const headers = [
       t('export.csv.taskName'),
       t('export.csv.parentTaskName'),
@@ -166,7 +167,10 @@ export const useExportHelpers = () => {
     return rows.join('\n');
   };
 
-  const transformToJson = (events: TrackingEvent[], taskNamesById: TaskNamesById): string => {
+  const transformToJson = (
+    events: PrimaryTrackingEvent[],
+    taskNamesById: TaskNamesById
+  ): string => {
     const transformedEvents: ParsedEvent[] = [];
 
     parseEvents(events, taskNamesById, parsedEvent => {
