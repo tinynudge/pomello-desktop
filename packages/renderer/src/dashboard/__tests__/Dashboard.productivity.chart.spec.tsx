@@ -1385,6 +1385,10 @@ describe('Dashboard - Productivity Chart', () => {
               id: 'task-id',
               meta: { duration: 1500, pomodoros: 1 },
               children: [
+                generatePauseTrackingEvent({
+                  id: 'pause-id',
+                  meta: { duration: 600 },
+                }),
                 generateOverTaskTrackingEvent({
                   id: 'over-task-id',
                   meta: { duration: 180 },
@@ -1410,10 +1414,6 @@ describe('Dashboard - Productivity Chart', () => {
                   meta: { duration: 120 },
                 }),
               ],
-            }),
-            generatePauseTrackingEvent({
-              id: 'pause-id',
-              meta: { duration: 600 },
             }),
             generateVoidTrackingEvent({
               id: 'void-id',

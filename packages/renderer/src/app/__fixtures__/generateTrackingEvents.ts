@@ -5,6 +5,7 @@ import {
   OverBreakTrackingEvent,
   OverTaskTrackingEvent,
   PauseTrackingEvent,
+  PrimaryTrackingEvent,
   TaskTrackingEvent,
   TrackingEvent,
   VoidTrackingEvent,
@@ -16,8 +17,8 @@ type PartialTrackingEvent<T extends TrackingEvent> = Partial<
 >;
 
 export const generateTrackingEvents = (
-  ...events: TrackingEvent[]
-): PomelloApiResponse<TrackingEvent[]> => ({
+  ...events: PrimaryTrackingEvent[]
+): PomelloApiResponse<PrimaryTrackingEvent[]> => ({
   data: events ?? [],
 });
 

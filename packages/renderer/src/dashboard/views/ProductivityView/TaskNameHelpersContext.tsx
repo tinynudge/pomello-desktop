@@ -2,11 +2,11 @@ import { useRuntime } from '@/shared/context/RuntimeContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
 import { createServiceConfig } from '@/shared/helpers/createServiceConfig';
 import { FetchTaskNames, ServiceId, Unsubscribe } from '@pomello-desktop/domain';
-import { TrackingEvent } from '@tinynudge/pomello-service';
+import { PrimaryTrackingEvent } from '@tinynudge/pomello-service';
 import { ParentComponent, createContext, onCleanup, useContext } from 'solid-js';
 
 type TaskNameHelpersContextValue = {
-  extractServiceIds: (events: TrackingEvent[]) => Map<string, ServiceId[]>;
+  extractServiceIds: (events: PrimaryTrackingEvent[]) => Map<string, ServiceId[]>;
   getFetchTaskNames: (serviceId: string) => Promise<FetchTaskNames | null>;
 };
 
@@ -67,7 +67,7 @@ export const TaskNameHelpersProvider: ParentComponent = props => {
     return fetchTaskNames;
   };
 
-  const extractServiceIds = (events: TrackingEvent[]): Map<string, ServiceId[]> => {
+  const extractServiceIds = (events: PrimaryTrackingEvent[]): Map<string, ServiceId[]> => {
     const serviceIdsByService = new Map<string, ServiceId[]>();
     const seenEvents = new Set<string>();
 

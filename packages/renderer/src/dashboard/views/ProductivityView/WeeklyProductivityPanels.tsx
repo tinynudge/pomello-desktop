@@ -1,6 +1,6 @@
 import { usePomelloApi } from '@/shared/context/PomelloApiContext';
 import { useQuery } from '@tanstack/solid-query';
-import { TrackingEvent } from '@tinynudge/pomello-service';
+import { PrimaryTrackingEvent } from '@tinynudge/pomello-service';
 import { endOfWeek, format, startOfWeek } from 'date-fns';
 import { Component, createMemo, createSignal } from 'solid-js';
 import { unwrap } from 'solid-js/store';
@@ -11,7 +11,7 @@ export type WeeklyProductivity = Map<string, DailyProductivity>;
 
 export type DailyProductivity = {
   breakTime: number;
-  events: TrackingEvent[];
+  events: PrimaryTrackingEvent[];
   overBreakTime: number;
   overTaskTime: number;
   pomodoros: number;
@@ -26,7 +26,7 @@ export const WeeklyProductivityPanels: Component = () => {
   const initialDateRange: [Date, Date] = [startOfWeek(new Date()), endOfWeek(new Date())];
   const [getDateRange, setDateRange] = createSignal<[Date, Date]>(initialDateRange);
 
-  const events = useQuery<TrackingEvent[]>(() => ({
+  const events = useQuery<PrimaryTrackingEvent[]>(() => ({
     queryKey: ['weekProductivity', getDateRange()[0].getTime(), getDateRange()[1].getTime()],
     queryFn: async () => {
       const [startDate, endDate] = getDateRange();
