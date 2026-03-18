@@ -6,6 +6,7 @@ export type OverviewSegment = {
   duration: number;
   height: number;
   overDuration: number;
+  productivity: DailyProductivity;
   service?: string;
   serviceId: string;
   type: 'task' | 'void';
@@ -19,7 +20,7 @@ export const createOverviewsSegments = (
   yScale: YScale
 ): OverviewSegment[] => {
   // Group events by service and type to aggregate pomodoro counts
-  const eventGroups = new Map<string, Omit<OverviewSegment, 'height' | 'y'>>();
+  const eventGroups = new Map<string, Omit<OverviewSegment, 'productivity' | 'height' | 'y'>>();
 
   for (const event of productivity.events) {
     if (event.type !== 'task' && event.type !== 'void') {
@@ -70,6 +71,6 @@ export const createOverviewsSegments = (
 
     cumulativeY += height;
 
-    return { ...group, height, y };
+    return { ...group, height, productivity, y };
   });
 };

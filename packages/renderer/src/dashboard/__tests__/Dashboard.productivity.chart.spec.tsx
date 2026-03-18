@@ -1711,4 +1711,410 @@ describe('Dashboard - Productivity Chart', () => {
       expect(screen.queryByRole('dialog', { name: 'Premium feature' })).not.toBeInTheDocument();
     });
   });
+
+  describe('Events Modal', () => {
+    it('should open events modal with correct heading when clicking a date column in overview', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent({ startTime: '2026-01-28T10:00:00' })),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      // Wednesday is the 4th column (index 3) - Jan 28
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(dialog).toBeInTheDocument();
+      expect(within(dialog).getByRole('heading', { name: 'Wednesday, January 28, 2026' })).toBeInTheDocument();
+    });
+
+    it('should open events modal when clicking a bar segment in overview', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({ serviceId: 'my-task', startTime: '2026-01-28T10:00:00' })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      await userEvent.click(screen.getByTestId('bar-segment-my-task-task'));
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('should open events modal when clicking a timeline segment', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({ id: 'event-1', startTime: '2026-01-28T10:00:00' })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      await userEvent.click(screen.getByTestId('timeline-segment-event-1'));
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('should close the events modal when clicking the close button', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(generateTaskTrackingEvent({ startTime: '2026-01-28T10:00:00' })),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('should show correct time range and duration label for a task event', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 }, // 25 minutes
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByText('10:00\u201310:25 am')).toBeInTheDocument();
+      expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
+    });
+
+    it('should show different meridiem for both times when they cross am/pm boundary', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T11:45:00',
+              meta: { duration: 1200, pomodoros: 1 }, // 20 minutes — crosses noon
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByText('11:45 am\u201312:05 pm')).toBeInTheDocument();
+    });
+
+    it('should show task name heading only once for consecutive events with the same serviceId', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({ serviceId: 'shared-task', startTime: '2026-01-28T10:00:00' }),
+            generateTaskTrackingEvent({ serviceId: 'shared-task', startTime: '2026-01-28T11:00:00' })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      // The serviceId is shown as the task name (no fetch configured), and should appear only once
+      expect(within(dialog).getAllByText('shared-task')).toHaveLength(1);
+    });
+
+    it('should display fetched task name in events modal', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const mockService = createMockServiceFactory({
+        createFetchTaskNames: () => async ids => {
+          const taskNames: TaskNamesById = {};
+
+          ids.forEach(([id]) => {
+            taskNames[id] = `Task name for ${id}`;
+          });
+
+          return taskNames;
+        },
+        service: { id: 'mock' },
+      });
+
+      const { userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        services: [mockService],
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              service: 'mock',
+              serviceId: 'task-123',
+              startTime: '2026-01-28T10:00:00',
+            })
+          ),
+        },
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByRole('heading', { name: 'Task name for task-123' })).toBeInTheDocument();
+    });
+
+    it('should show loading state while fetching task names in events modal', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { promise, resolve } = Promise.withResolvers<void>();
+
+      const mockService = createMockServiceFactory({
+        createFetchTaskNames: () => async ids => {
+          await promise;
+
+          const taskNames: TaskNamesById = {};
+
+          ids.forEach(([id]) => {
+            taskNames[id] = `Task name for ${id}`;
+          });
+
+          return taskNames;
+        },
+        service: { id: 'mock' },
+      });
+
+      const { userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        services: [mockService],
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              service: 'mock',
+              serviceId: 'task-123',
+              startTime: '2026-01-28T10:00:00',
+            })
+          ),
+        },
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByRole('heading', { name: 'Loading task...' })).toBeInTheDocument();
+
+      resolve();
+
+      await waitFor(() => {
+        expect(within(dialog).getByRole('heading', { name: 'Task name for task-123' })).toBeInTheDocument();
+      });
+    });
+
+    it('should fall back to serviceId when task name fetch throws', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const mockService = createMockServiceFactory({
+        createFetchTaskNames: () => async () => {
+          throw new Error('Network error');
+        },
+        service: { id: 'mock' },
+      });
+
+      const { userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        services: [mockService],
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              service: 'mock',
+              serviceId: 'task-123',
+              startTime: '2026-01-28T10:00:00',
+            })
+          ),
+        },
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await waitFor(() => {
+        expect(within(dialog).getByRole('heading', { name: 'task-123' })).toBeInTheDocument();
+      });
+    });
+
+    it('should fall back to serviceId when task name is not in fetch result', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const mockService = createMockServiceFactory({
+        createFetchTaskNames: () => async () => ({}),
+        service: { id: 'mock' },
+      });
+
+      const { userEvent } = renderDashboard({
+        route: DashboardRoute.Productivity,
+        services: [mockService],
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              service: 'mock',
+              serviceId: 'task-123',
+              startTime: '2026-01-28T10:00:00',
+            })
+          ),
+        },
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await waitFor(() => {
+        expect(within(dialog).getByRole('heading', { name: 'task-123' })).toBeInTheDocument();
+      });
+    });
+
+    it('should render child events under their parent task', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generateOverTaskTrackingEvent({
+                  startTime: '2026-01-28T10:25:00',
+                  meta: { duration: 120 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
+      expect(within(dialog).getByText('Task (Over) for 2m')).toBeInTheDocument();
+    });
+
+    it('should render over_break child events with the correct break type label', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateBreakTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 300, type: 'short' },
+              children: [
+                generateOverBreakTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 90 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByText('Short break for 5m')).toBeInTheDocument();
+      expect(within(dialog).getByText('Short break (Over) for 1m 30s')).toBeInTheDocument();
+    });
+  });
 });

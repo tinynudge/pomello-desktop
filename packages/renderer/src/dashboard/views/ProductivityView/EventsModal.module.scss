@@ -1,0 +1,31 @@
+.events {
+  display: grid;
+  column-gap: 12px;
+  grid-template-columns: auto 1fr;
+}
+
+.taskName {
+  max-width: 60ch;
+  grid-column: -1 / 1;
+  margin-block: 12px;
+  padding-inline: var(--content-padding-inline);
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.event {
+  display: grid;
+  padding: 0;
+  border: none;
+  background-color: var(--dashboard-modal-background);
+  grid-column: -1 / 1;
+  grid-template-columns: subgrid;
+
+  &:hover,
+  &:focus-within {
+    background-color: var(--dashboard-sidebar-background-hover);
+    outline: none;
+  }
+}

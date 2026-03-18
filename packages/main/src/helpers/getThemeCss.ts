@@ -207,12 +207,8 @@ const defaultTheme: ThemeConfig = {
       'date-hover': [opacity(colors.black, 3), opacity(colors.black, 5)],
       'event-border': [opacity(colors.white, 30), opacity(colors.darkAlt, 30)],
       'long-break': [colors.longBreak, colors.longBreakDark],
-      'over-long-break': {
+      'long-over-break': {
         background: [opacity(colors.longBreak, 75), opacity(colors.longBreakDark, 75)],
-        line: [colors.white, colors.darkAlt],
-      },
-      'over-short-break': {
-        background: [opacity(colors.shortBreak, 75), opacity(colors.shortBreakDark, 75)],
         line: [colors.white, colors.darkAlt],
       },
       'over-task': {
@@ -223,6 +219,10 @@ const defaultTheme: ThemeConfig = {
       axis: [opacity(colors.black, 12), colors.dark],
       pause: [opacity(colors.task, 20), opacity(colors.taskDark, 20)],
       task: [colors.task, colors.taskDark],
+      'short-over-break': {
+        background: [opacity(colors.shortBreak, 75), opacity(colors.shortBreakDark, 75)],
+        line: [colors.white, colors.darkAlt],
+      },
     },
     content: {
       background: [colors.lightAlt, colors.dark],
