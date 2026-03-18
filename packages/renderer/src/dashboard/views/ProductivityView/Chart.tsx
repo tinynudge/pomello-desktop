@@ -18,8 +18,9 @@ import { createOverviewTooltip } from './createOverviewTooltip';
 import { createTimelineSegments, TimelineSegment } from './createTimelineSegments';
 import { createTimelineTooltip } from './createTimelineTooltip';
 import { createXColumnTooltip } from './createXColumnTooltip';
+import { EventsModal } from './EventsModal';
 import { useFetchTaskNames } from './useFetchTaskNames';
-import { WeeklyProductivity } from './WeeklyProductivityPanels';
+import { DailyProductivity, WeeklyProductivity } from './WeeklyProductivityPanels';
 
 const allLegendTypes = [
   'task',
@@ -39,6 +40,11 @@ type ChartProps = {
   weeklyProductivity: WeeklyProductivity;
 };
 
+type EventsModalData = {
+  date: string;
+  productivity: DailyProductivity;
+};
+
 type TimelineRenderedEvent = {
   isCurrentWeek: boolean;
 };
@@ -54,6 +60,7 @@ export const Chart: Component<ChartProps> = props => {
   const t = useTranslate();
 
   const [getTooltip, setTooltip] = createSignal<TooltipWithPosition>();
+  const [getEventsModal, setEventsModal] = createSignal<EventsModalData>();
   const [getHiddenHour, setHiddenHour] = createSignal<number>();
 
   const [getXScale, setXScale] = createSignal<XScale | undefined>(undefined, {
@@ -164,7 +171,7 @@ export const Chart: Component<ChartProps> = props => {
       : allLegendTypes.filter(type => type === 'task' || type === 'void')
   );
 
-  const fetchTaskName = useFetchTaskNames({
+  const { fetchTaskName, fetchTaskNamesByDate } = useFetchTaskNames({
     getWeeklyProductivity: () => props.weeklyProductivity,
   });
 
@@ -185,6 +192,28 @@ export const Chart: Component<ChartProps> = props => {
   const handleTooltipHide = () => {
     tooltipRef = undefined;
     setTooltip(undefined);
+  };
+
+  const handleXColumnClick = (_event: MouseEvent, date: string) => {
+    const productivity = props.weeklyProductivity.get(date);
+
+    if (!productivity) {
+      return;
+    }
+
+    setEventsModal({ date, productivity });
+  };
+
+  const handleBarSegmentClick = (_event: MouseEvent, segment: OverviewSegment) => {
+    setEventsModal(segment);
+  };
+
+  const handleTimelineSegmentClick = (_event: MouseEvent, segment: TimelineSegment) => {
+    setEventsModal(segment);
+  };
+
+  const handleEventsModalHide = () => {
+    setEventsModal(undefined);
   };
 
   const getChartHeight = () => (props.view === 'overview' ? 400 : 2000);
@@ -282,7 +311,8 @@ export const Chart: Component<ChartProps> = props => {
       .attr('x', date => xScale(date) ?? 0)
       .attr('y', y)
       .on('mousemove', handleXColumnMouseMove)
-      .on('mouseout', handleTooltipHide);
+      .on('mouseout', handleTooltipHide)
+      .on('click', handleXColumnClick);
   };
 
   const drawOverviewChart = (xScale: XScale, yScale: YScale) => {
@@ -308,7 +338,8 @@ export const Chart: Component<ChartProps> = props => {
       .attr('x', x)
       .attr('y', ({ y }) => y)
       .on('mousemove', handleBarSegmentMouseMove)
-      .on('mouseout', handleTooltipHide);
+      .on('mouseout', handleTooltipHide)
+      .on('click', handleBarSegmentClick);
 
     segments
       .filter((_data, index) => index > 0)
@@ -334,7 +365,8 @@ export const Chart: Component<ChartProps> = props => {
       .attr('x', x)
       .attr('y', ({ startHour }) => yScale(startHour))
       .on('mousemove', handleTimelineSegmentMouseMove)
-      .on('mouseout', handleTooltipHide);
+      .on('mouseout', handleTooltipHide)
+      .on('click', handleTimelineSegmentClick);
 
     const [start, end] = props.dateRange;
     const isCurrentWeek = isWithinInterval(new Date(), { start, end });
@@ -486,6 +518,13 @@ export const Chart: Component<ChartProps> = props => {
         style={{ height: `${getChartHeight()}px` }}
       >
         <defs>
+          <pattern height="10" id="longOverBreak" patternUnits="userSpaceOnUse" width="10">
+            <rect fill="var(--dashboard-chart-long-over-break-background)" height="10" width="10" />
+            <path
+              d="M 0,10 l 10,-10 M -2.5,2.5 l 5,-5 M 7.5,12.5 l 5,-5"
+              stroke="var(--dashboard-chart-long-over-break-line)"
+            />
+          </pattern>
           <pattern height="10" id="overTask" patternUnits="userSpaceOnUse" width="10">
             <rect fill="var(--dashboard-chart-over-task-background)" height="10" width="10" />
             <path
@@ -493,22 +532,15 @@ export const Chart: Component<ChartProps> = props => {
               stroke="var(--dashboard-chart-over-task-line)"
             />
           </pattern>
-          <pattern height="10" id="overShortBreak" patternUnits="userSpaceOnUse" width="10">
+          <pattern height="10" id="shortOverBreak" patternUnits="userSpaceOnUse" width="10">
             <rect
-              fill="var(--dashboard-chart-over-short-break-background)"
+              fill="var(--dashboard-chart-short-over-break-background)"
               height="10"
               width="10"
             />
             <path
               d="M 0,10 l 10,-10 M -2.5,2.5 l 5,-5 M 7.5,12.5 l 5,-5"
-              stroke="var(--dashboard-chart-over-short-break-line)"
-            />
-          </pattern>
-          <pattern height="10" id="overLongBreak" patternUnits="userSpaceOnUse" width="10">
-            <rect fill="var(--dashboard-chart-over-long-break-background)" height="10" width="10" />
-            <path
-              d="M 0,10 l 10,-10 M -2.5,2.5 l 5,-5 M 7.5,12.5 l 5,-5"
-              stroke="var(--dashboard-chart-over-long-break-line)"
+              stroke="var(--dashboard-chart-short-over-break-line)"
             />
           </pattern>
           <pattern height="8" id="void" patternUnits="userSpaceOnUse" width="8">
@@ -548,6 +580,16 @@ export const Chart: Component<ChartProps> = props => {
       </Show>
       <Show when={getTooltip()}>
         {getTooltip => <ChartTooltip tooltip={getTooltip()} ref={tooltipRef} />}
+      </Show>
+      <Show when={getEventsModal()}>
+        {getModal => (
+          <EventsModal
+            date={getModal().date}
+            fetchTaskNamesByDate={fetchTaskNamesByDate}
+            onHide={handleEventsModalHide}
+            productivity={getModal().productivity}
+          />
+        )}
       </Show>
       <footer class={styles.footer}>
         <div class={styles.xAxis} style={{ 'padding-left': `${getLeftMargin()}px` }}>

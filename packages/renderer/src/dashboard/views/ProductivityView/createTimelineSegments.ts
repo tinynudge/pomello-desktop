@@ -10,6 +10,7 @@ export type TimelineSegment = {
   duration: number;
   endHour: number;
   event: TrackingEvent;
+  productivity: DailyProductivity;
   startHour: number;
   startTime: string;
   type: string;
@@ -70,6 +71,7 @@ export const createTimelineSegments = (productivity: DailyProductivity): Timelin
       duration: event.meta.duration,
       endHour: startHour + event.meta.duration / 3600,
       event,
+      productivity,
       startHour,
       startTime: event.startTime,
       type: getBarTypeFromEvent(event),

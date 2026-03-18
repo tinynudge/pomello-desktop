@@ -39,7 +39,7 @@ export const useFetchTaskNames = ({ getWeeklyProductivity }: UseFetchTaskNamesOp
     });
   };
 
-  const fetchTaskNamesByDate = (service: string, date: string): Promise<TaskNamesById> => {
+  const fetchServiceTaskNamesByDate = (service: string, date: string): Promise<TaskNamesById> => {
     const isToday = format(new Date(), 'yyyy-MM-dd') === date;
 
     return queryClient.fetchQuery({
@@ -64,12 +64,28 @@ export const useFetchTaskNames = ({ getWeeklyProductivity }: UseFetchTaskNamesOp
     });
   };
 
+  const fetchTaskNamesByDate = async (date: string): Promise<TaskNamesById> => {
+    const eventsByService = await getEventsByDate(date);
+
+    const results = await Promise.allSettled(
+      eventsByService.keys().map(service => fetchServiceTaskNamesByDate(service, date))
+    );
+
+    return results.reduce<TaskNamesById>((taskNames, result) => {
+      if (result.status === 'fulfilled' && result.value) {
+        return { ...taskNames, ...result.value };
+      }
+
+      return taskNames;
+    }, {});
+  };
+
   const fetchTaskName = async ({
     date,
     service = 'trello',
     taskId,
   }: FetchTaskNameOptions): Promise<string> => {
-    const taskNamesById = await fetchTaskNamesByDate(service, date);
+    const taskNamesById = await fetchServiceTaskNamesByDate(service, date);
 
     const taskName = taskNamesById[taskId];
 
@@ -84,5 +100,5 @@ export const useFetchTaskNames = ({ getWeeklyProductivity }: UseFetchTaskNamesOp
     return taskName;
   };
 
-  return fetchTaskName;
+  return { fetchTaskName, fetchTaskNamesByDate };
 };
