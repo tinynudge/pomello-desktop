@@ -1376,6 +1376,7 @@ describe('Dashboard - Productivity Chart', () => {
 
   describe('Event Rendering', () => {
     it('should render all event types in timeline view', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00')); // Wednesday, January 28, 2026
       setStoredView('timeline');
 
       renderDashboard({
@@ -1383,40 +1384,48 @@ describe('Dashboard - Productivity Chart', () => {
           fetchEvents: generateTrackingEvents(
             generateTaskTrackingEvent({
               id: 'task-id',
+              startTime: '2026-01-28T08:00:00',
               meta: { duration: 1500, pomodoros: 1 },
               children: [
                 generatePauseTrackingEvent({
                   id: 'pause-id',
+                  startTime: '2026-01-28T08:05:00',
                   meta: { duration: 600 },
                 }),
                 generateOverTaskTrackingEvent({
                   id: 'over-task-id',
+                  startTime: '2026-01-28T08:25:00',
                   meta: { duration: 180 },
                 }),
               ],
             }),
             generateBreakTrackingEvent({
               id: 'short-break-id',
+              startTime: '2026-01-28T08:28:00',
               meta: { duration: 300, type: 'short' },
               children: [
                 generateOverBreakTrackingEvent({
                   id: 'over-short-break-id',
+                  startTime: '2026-01-28T08:33:00',
                   meta: { duration: 60 },
                 }),
               ],
             }),
             generateBreakTrackingEvent({
               id: 'long-break-id',
+              startTime: '2026-01-28T08:34:00',
               meta: { duration: 900, type: 'long' },
               children: [
                 generateOverBreakTrackingEvent({
                   id: 'over-long-break-id',
+                  startTime: '2026-01-28T08:49:00',
                   meta: { duration: 120 },
                 }),
               ],
             }),
             generateVoidTrackingEvent({
               id: 'void-id',
+              startTime: '2026-01-28T08:51:00',
               meta: { duration: 900, voidedPomodoros: 1 },
             })
           ),
@@ -1465,6 +1474,102 @@ describe('Dashboard - Productivity Chart', () => {
 
       expect(within(chartBars).queryByTestId('timeline-segment-note-id')).not.toBeInTheDocument();
       expect(within(chartBars).queryByTestId('timeline-segment-zero-duration-task-id')).not.toBeInTheDocument();
+    });
+
+    it('should render two task segments and a pause segment when a task has one pause', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-id',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generatePauseTrackingEvent({
+                  id: 'pause-id',
+                  startTime: '2026-01-28T10:10:00',
+                  meta: { duration: 300 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const chartBars = screen.getByTestId('productivity-chart-bars');
+
+      expect(within(chartBars).getByTestId('timeline-segment-task-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-task-id-1')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-pause-id')).toBeInTheDocument();
+    });
+
+    it('should render three task segments when a task has two pauses', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-id',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generatePauseTrackingEvent({
+                  id: 'pause-1-id',
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 },
+                }),
+                generatePauseTrackingEvent({
+                  id: 'pause-2-id',
+                  startTime: '2026-01-28T10:15:00',
+                  meta: { duration: 180 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const chartBars = screen.getByTestId('productivity-chart-bars');
+
+      expect(within(chartBars).getByTestId('timeline-segment-task-id')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-task-id-1')).toBeInTheDocument();
+      expect(within(chartBars).getByTestId('timeline-segment-task-id-2')).toBeInTheDocument();
+    });
+
+    it('should render a single task segment when a task has no pauses', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+      setStoredView('timeline');
+
+      renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-id',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const chartBars = screen.getByTestId('productivity-chart-bars');
+
+      expect(within(chartBars).getByTestId('timeline-segment-task-id')).toBeInTheDocument();
+      expect(within(chartBars).queryByTestId('timeline-segment-task-id-1')).not.toBeInTheDocument();
     });
   });
 

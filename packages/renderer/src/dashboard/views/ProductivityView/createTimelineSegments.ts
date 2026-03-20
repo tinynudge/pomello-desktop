@@ -1,8 +1,11 @@
 import {
   BreakTrackingEvent,
   OverBreakTrackingEvent,
+  PauseTrackingEvent,
+  TaskTrackingEvent,
   TrackingEvent,
 } from '@tinynudge/pomello-service';
+import { addSeconds, differenceInSeconds, format, parseISO } from 'date-fns';
 import { DailyProductivity } from './WeeklyProductivityPanels';
 
 export type TimelineSegment = {
@@ -51,6 +54,41 @@ export const createTimelineSegments = (productivity: DailyProductivity): Timelin
 
   while (events.length > 0) {
     const event = events.shift()!;
+
+    if (event.type === 'task' && event.children.some(child => child.type === 'pause')) {
+      const pauseEvents = event.children.filter(
+        (child): child is PauseTrackingEvent => child.type === 'pause'
+      );
+
+      let segmentStart = parseISO(event.startTime);
+      let remainingDuration = event.meta.duration;
+
+      const segmentedTaskEvents: TaskTrackingEvent[] = [];
+
+      [...pauseEvents, null].forEach((pauseEvent, index) => {
+        const startTime = format(segmentStart, 'yyyy-MM-dd HH:mm:ss');
+        let duration = remainingDuration;
+
+        if (pauseEvent) {
+          duration = differenceInSeconds(parseISO(pauseEvent.startTime), segmentStart);
+
+          remainingDuration -= duration;
+          segmentStart = addSeconds(parseISO(pauseEvent.startTime), pauseEvent.meta.duration);
+        }
+
+        segmentedTaskEvents.push({
+          ...event,
+          id: index === 0 ? event.id : `${event.id}-${index}`,
+          startTime,
+          meta: { ...event.meta, duration },
+          children: [],
+        });
+      });
+
+      events.unshift(...segmentedTaskEvents, ...event.children);
+
+      continue;
+    }
 
     if ('children' in event) {
       if (event.type === 'break') {
