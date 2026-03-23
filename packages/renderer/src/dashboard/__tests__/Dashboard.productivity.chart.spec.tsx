@@ -2188,6 +2188,37 @@ describe('Dashboard - Productivity Chart', () => {
       expect(within(dialog).getByText('Task (Over) for 2m')).toBeInTheDocument();
     });
 
+    it('should include pause child durations in the task time range', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({ meta: { duration: 60 } }), // +1 min pause
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      // End time is 10:26 am (25 min task + 1 min pause), not 10:25 am
+      expect(within(dialog).getByText('10:00\u201310:26 am')).toBeInTheDocument();
+    });
+
     it('should render over_break child events with the correct break type label', async () => {
       vi.setSystemTime(new Date('2026-01-28T12:00:00'));
 

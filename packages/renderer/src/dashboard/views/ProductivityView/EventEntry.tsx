@@ -20,7 +20,16 @@ export const EventEntry: Component<EventEntryProps> = props => {
       return format(startDate, 'h:mm aaa');
     }
 
-    const endDate = addSeconds(startDate, props.event.meta.duration);
+    const duration =
+      props.event.type === 'task'
+        ? props.event.children.reduce((duration, childEvent) => {
+            const childDuration = childEvent.type === 'pause' ? childEvent.meta.duration : 0;
+
+            return duration + childDuration;
+          }, props.event.meta.duration)
+        : props.event.meta.duration;
+
+    const endDate = addSeconds(startDate, duration);
     const sameMeridiem = format(startDate, 'aaa') === format(endDate, 'aaa');
     const startFormatted = format(startDate, sameMeridiem ? 'h:mm' : 'h:mm aaa');
     const endTime = format(endDate, 'h:mm aaa');
