@@ -1,0 +1,10 @@
+.clickable {
+  border: none;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-within {
+    background-color: var(--dashboard-sidebar-background-hover);
+    outline: none;
+  }
+}
