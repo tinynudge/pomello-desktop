@@ -1,31 +1,50 @@
-.events {
-  display: grid;
-  column-gap: 12px;
-  grid-template-columns: auto 1fr;
-}
-
 .taskName {
   max-width: 60ch;
+  margin-bottom: 4px;
   grid-column: -1 / 1;
-  margin-block: 12px;
   padding-inline: var(--content-padding-inline);
-
-  &:first-of-type {
-    margin-top: 0;
-  }
 }
 
 .event {
   display: grid;
   padding: 0;
-  border: none;
   background-color: var(--dashboard-modal-background);
   grid-column: -1 / 1;
   grid-template-columns: subgrid;
+  padding-block: 4px;
+}
 
-  &:hover,
-  &:focus-within {
-    background-color: var(--dashboard-sidebar-background-hover);
-    outline: none;
+.events {
+  display: grid;
+  column-gap: 12px;
+  grid-template-columns: auto 1fr;
+
+  &[data-mode='edit'] {
+    .eventGroup:not(:has([data-active])) .taskName,
+    .event:not([data-active]) {
+      opacity: 0.2;
+    }
   }
+}
+
+.eventGroup {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+
+  & + & {
+    margin-top: 16px;
+  }
+}
+
+.time {
+  padding-left: var(--content-padding-inline);
+  justify-self: start;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  padding-right: var(--content-padding-inline);
+  gap: 8px;
 }

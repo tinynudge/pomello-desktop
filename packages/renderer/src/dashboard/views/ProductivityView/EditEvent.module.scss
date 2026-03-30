@@ -1,0 +1,13 @@
+.editEvent {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  margin-block: 12px;
+  padding-inline: var(--content-padding-inline);
+  place-items: center start;
+  row-gap: 8px;
+}
+
+.actions {
+  grid-column: 2;
+}
