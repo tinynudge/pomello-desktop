@@ -10,6 +10,7 @@ import {
   generateVoidTrackingEvent,
 } from '@/app/__fixtures__/generateTrackingEvents';
 import { DashboardRoute, ServiceId, TaskNamesById } from '@pomello-desktop/domain';
+import { HttpResponse } from 'msw';
 import { renderDashboard, screen, waitFor, waitForElementToBeRemoved, within } from '../__fixtures__/renderDashboard';
 import { setStoredView } from '../views/ProductivityView/storedView';
 
@@ -2427,6 +2428,211 @@ describe('Dashboard - Productivity Chart', () => {
 
       expect(within(dialog).queryByRole('button', { name: /Task for 25m/ })).not.toBeInTheDocument();
       expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
+    });
+
+    it('should show a delete button when editing an event', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      expect(within(dialog).getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    it('should call pomelloApi.deleteEvent when clicking delete', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { pomelloApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'event-to-delete',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      expect(pomelloApi.deleteEvent).toHaveBeenCalledWith('event-to-delete');
+    });
+
+    it('should optimistically remove the event from the events modal', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const deleteEventPromise = Promise.withResolvers<void>();
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          deleteEvent: async () => {
+            await deleteEventPromise.promise;
+
+            return HttpResponse.json({ data: undefined });
+          },
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'event-to-delete',
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
+      expect(within(dialog).getByText('Short break for 5m')).toBeInTheDocument();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      expect(within(dialog).queryByText('Task for 25m')).not.toBeInTheDocument();
+      expect(within(dialog).getByText('Short break for 5m')).toBeInTheDocument();
+
+      deleteEventPromise.resolve();
+    });
+
+    it('should optimistically remove a child event when deleting a child', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const deleteEventPromise = Promise.withResolvers<void>();
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          deleteEvent: async () => {
+            await deleteEventPromise.promise;
+
+            return HttpResponse.json({ data: undefined });
+          },
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generateOverTaskTrackingEvent({
+                  id: 'over-task-to-delete',
+                  startTime: '2026-01-28T10:25:00',
+                  meta: { duration: 120 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
+      expect(within(dialog).getByText('Task (Over) for 2m')).toBeInTheDocument();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task \(Over\) for 2m/ }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
+      expect(within(dialog).queryByText('Task (Over) for 2m')).not.toBeInTheDocument();
+
+      deleteEventPromise.resolve();
+    });
+
+    it('should return to view mode after deleting an event', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'event-to-delete',
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      // In edit mode, events are not rendered as buttons
+      expect(within(dialog).queryByRole('button', { name: /Short break for 5m/ })).not.toBeInTheDocument();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      // After deletion, should return to view mode — remaining event is rendered as a button
+      expect(within(dialog).getByRole('button', { name: /Short break for 5m/ })).toBeInTheDocument();
     });
   });
 });

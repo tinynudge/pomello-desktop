@@ -197,7 +197,7 @@ export const EventsModal: Component<EventsModalProps> = props => {
                         <span>{label}</span>
                       </div>
                       <Show when={event.id === getActiveEventId()}>
-                        <EditEvent onCancel={handleEditCancel} />
+                        <EditEvent event={event} onCancel={handleEditCancel} />
                       </Show>
                     </EventContainer>
                   );

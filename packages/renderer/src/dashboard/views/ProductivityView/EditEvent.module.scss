@@ -9,5 +9,7 @@
 }
 
 .actions {
+  display: inline-flex;
+  gap: 8px;
   grid-column: 2;
 }

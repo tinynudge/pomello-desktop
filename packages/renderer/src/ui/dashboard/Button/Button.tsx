@@ -6,7 +6,7 @@ import styles from './Buttons.module.scss';
 export type ButtonProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & {
   iconOnly?: boolean;
   size?: 'default' | 'small';
-  variant?: 'default' | 'primary' | 'text' | 'warning';
+  variant?: 'danger' | 'default' | 'primary' | 'text' | 'warning';
 };
 
 const ButtonComponent: ParentComponent<ButtonProps> = allProps => {
