@@ -60,6 +60,26 @@
     }
   }
 
+  &[data-variant='danger'] {
+    border-color: var(--dashboard-button-danger-background-default);
+    background-color: var(--dashboard-button-danger-background-default);
+    color: var(--dashboard-button-danger-text);
+
+    &:focus-visible {
+      outline-color: var(--dashboard-button-danger-outline);
+    }
+
+    &:hover {
+      border-color: var(--dashboard-button-danger-background-hover);
+      background-color: var(--dashboard-button-danger-background-hover);
+    }
+
+    &:active {
+      border-color: var(--dashboard-button-danger-background-active);
+      background-color: var(--dashboard-button-danger-background-active);
+    }
+  }
+
   &[data-variant='warning'] {
     border-color: var(--dashboard-button-warning-background-default);
     background-color: var(--dashboard-button-warning-background-default);

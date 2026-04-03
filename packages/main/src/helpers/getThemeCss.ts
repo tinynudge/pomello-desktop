@@ -180,6 +180,15 @@ const defaultTheme: ThemeConfig = {
     },
     border: [opacity(colors.dark, 24), colors.dark],
     button: {
+      danger: {
+        text: colors.white,
+        background: {
+          active: [darken(colors.red, 8), lighten(colors.red, 20)],
+          default: [colors.red, colors.red],
+          hover: [darken(colors.red, 4), lighten(colors.red, 12)],
+        },
+        outline: opacity(colors.red, 30),
+      },
       link: {
         active: [darken(colors.blue, 40), lighten(colors.blue, 40)],
         default: [colors.blue, colors.blueDark],

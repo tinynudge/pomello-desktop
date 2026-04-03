@@ -60,7 +60,7 @@ export const Chart: Component<ChartProps> = props => {
   const t = useTranslate();
 
   const [getTooltip, setTooltip] = createSignal<TooltipWithPosition>();
-  const [getEventsModal, setEventsModal] = createSignal<EventsModalData>();
+  const [getEventsModalDate, setEventsModalDate] = createSignal<string>();
   const [getHiddenHour, setHiddenHour] = createSignal<number>();
 
   const [getXScale, setXScale] = createSignal<XScale | undefined>(undefined, {
@@ -195,25 +195,19 @@ export const Chart: Component<ChartProps> = props => {
   };
 
   const handleXColumnClick = (_event: MouseEvent, date: string) => {
-    const productivity = props.weeklyProductivity.get(date);
-
-    if (!productivity) {
-      return;
-    }
-
-    setEventsModal({ date, productivity });
+    setEventsModalDate(date);
   };
 
   const handleBarSegmentClick = (_event: MouseEvent, segment: OverviewSegment) => {
-    setEventsModal(segment);
+    setEventsModalDate(segment.date);
   };
 
   const handleTimelineSegmentClick = (_event: MouseEvent, segment: TimelineSegment) => {
-    setEventsModal(segment);
+    setEventsModalDate(segment.date);
   };
 
   const handleEventsModalHide = () => {
-    setEventsModal(undefined);
+    setEventsModalDate(undefined);
   };
 
   const getChartHeight = () => (props.view === 'overview' ? 400 : 2000);
@@ -498,6 +492,22 @@ export const Chart: Component<ChartProps> = props => {
     });
   };
 
+  const getEventsModalData = (): EventsModalData | undefined => {
+    const date = getEventsModalDate();
+
+    if (!date) {
+      return;
+    }
+
+    const productivity = props.weeklyProductivity.get(date);
+
+    if (!productivity) {
+      return;
+    }
+
+    return { date, productivity };
+  };
+
   let barGroupsByDate: Record<string, SVGGElement> = {};
 
   let barsRef!: SVGGElement;
@@ -581,13 +591,13 @@ export const Chart: Component<ChartProps> = props => {
       <Show when={getTooltip()}>
         {getTooltip => <ChartTooltip tooltip={getTooltip()} ref={tooltipRef} />}
       </Show>
-      <Show when={getEventsModal()}>
-        {getModal => (
+      <Show when={getEventsModalData()}>
+        {getModalData => (
           <EventsModal
-            date={getModal().date}
+            date={getModalData().date}
             fetchTaskNamesByDate={fetchTaskNamesByDate}
             onHide={handleEventsModalHide}
-            productivity={getModal().productivity}
+            productivity={getModalData().productivity}
           />
         )}
       </Show>
