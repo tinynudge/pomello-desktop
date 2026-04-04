@@ -66,7 +66,9 @@ export const useCheckPomelloAccount = () => {
   const checkPomelloAccount = async () => {
     await setPomelloUser();
 
-    timeoutId = window.setTimeout(checkPomelloAccount, 1000 * 60 * 10);
+    if (!import.meta.env.DEV) {
+      timeoutId = window.setTimeout(checkPomelloAccount, 1000 * 60 * 10);
+    }
   };
 
   const setPomelloUser = async (): Promise<void> => {
