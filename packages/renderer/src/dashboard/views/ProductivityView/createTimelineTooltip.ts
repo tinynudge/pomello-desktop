@@ -56,7 +56,7 @@ export const createTimelineTooltip = (
         service: segment.event.service,
         taskId: segment.event.serviceId,
       }),
-    key: segment.event.id,
+    key: segment.segmentId,
     stats: [primaryStats, timeStats],
   };
 };

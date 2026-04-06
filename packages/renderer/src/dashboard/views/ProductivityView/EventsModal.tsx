@@ -26,6 +26,7 @@ type TrackingEventWithBreakParent =
 type EventsModalProps = {
   date: string;
   fetchTaskNamesByDate(date: string): Promise<TaskNamesById>;
+  highlightedEventId?: string;
   onHide(): void;
   productivity: DailyProductivity;
 };
@@ -163,7 +164,12 @@ export const EventsModal: Component<EventsModalProps> = props => {
 
   return (
     <Modal
-      buttons={[{ autofocus: true, children: t('close') }]}
+      buttons={[
+        {
+          autofocus: !props.highlightedEventId,
+          children: t('close'),
+        },
+      ]}
       heading={format(parseISO(props.date), 'EEEE, MMMM d, yyyy')}
       onHide={props.onHide}
       padding="none"
@@ -186,6 +192,7 @@ export const EventsModal: Component<EventsModalProps> = props => {
                       ariaLabel={`${getTaskName(group.serviceId)}: ${timeRange} ${label}`}
                       class={styles.event}
                       isActive={event.id === getActiveEventId()}
+                      isHighlighted={event.id === props.highlightedEventId}
                       mode={getMode()}
                       onEventEdit={() => handleEventEdit(event.id)}
                     >

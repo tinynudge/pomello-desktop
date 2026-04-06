@@ -36,6 +36,7 @@ export const WeeklyProductivityPanels: Component = () => {
         endDate: format(endDate, 'yyyy-MM-dd'),
       });
     },
+    reconcile: 'id',
     throwOnError: true,
   }));
 

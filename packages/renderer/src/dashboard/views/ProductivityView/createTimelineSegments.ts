@@ -2,7 +2,6 @@ import {
   BreakTrackingEvent,
   OverBreakTrackingEvent,
   PauseTrackingEvent,
-  TaskTrackingEvent,
   TrackingEvent,
 } from '@tinynudge/pomello-service';
 import { addSeconds, differenceInSeconds, format, parseISO } from 'date-fns';
@@ -13,15 +12,15 @@ export type TimelineSegment = {
   duration: number;
   endHour: number;
   event: TrackingEvent;
-  productivity: DailyProductivity;
+  segmentId: string;
   startHour: number;
   startTime: string;
   type: string;
 };
 
-type TrackingEventWithBreakParent =
-  | Exclude<TrackingEvent, OverBreakTrackingEvent>
-  | (OverBreakTrackingEvent & { parent: BreakTrackingEvent });
+type TimelineTrackingEvent =
+  | (Exclude<TrackingEvent, OverBreakTrackingEvent> & { segmentId?: string })
+  | (OverBreakTrackingEvent & { parent: BreakTrackingEvent; segmentId?: string });
 
 /**
  * Converts an ISO timestamp to decimal hours (0-24).
@@ -34,7 +33,7 @@ const getElapsedHours = (startTime: string): number => {
   return hours + minutes / 60 + seconds / 3600;
 };
 
-const getBarTypeFromEvent = (event: TrackingEventWithBreakParent): string => {
+const getBarTypeFromEvent = (event: TimelineTrackingEvent): string => {
   switch (event.type) {
     case 'break':
       return `${event.meta.type}Break`;
@@ -50,7 +49,7 @@ const getBarTypeFromEvent = (event: TrackingEventWithBreakParent): string => {
 export const createTimelineSegments = (productivity: DailyProductivity): TimelineSegment[] => {
   const timelineSegments: TimelineSegment[] = [];
 
-  const events = [...productivity.events] as TrackingEventWithBreakParent[];
+  const events = [...productivity.events] as TimelineTrackingEvent[];
 
   while (events.length > 0) {
     const event = events.shift()!;
@@ -63,7 +62,7 @@ export const createTimelineSegments = (productivity: DailyProductivity): Timelin
       let segmentStart = parseISO(event.startTime);
       let remainingDuration = event.meta.duration;
 
-      const segmentedTaskEvents: TaskTrackingEvent[] = [];
+      const segmentedTaskEvents: TimelineTrackingEvent[] = [];
 
       [...pauseEvents, null].forEach((pauseEvent, index) => {
         const startTime = format(segmentStart, 'yyyy-MM-dd HH:mm:ss');
@@ -78,7 +77,7 @@ export const createTimelineSegments = (productivity: DailyProductivity): Timelin
 
         segmentedTaskEvents.push({
           ...event,
-          id: index === 0 ? event.id : `${event.id}-${index}`,
+          segmentId: index === 0 ? event.id : `${event.id}-${index}`,
           startTime,
           meta: { ...event.meta, duration },
           children: [],
@@ -109,7 +108,7 @@ export const createTimelineSegments = (productivity: DailyProductivity): Timelin
       duration: event.meta.duration,
       endHour: startHour + event.meta.duration / 3600,
       event,
-      productivity,
+      segmentId: event.segmentId ?? event.id,
       startHour,
       startTime: event.startTime,
       type: getBarTypeFromEvent(event),

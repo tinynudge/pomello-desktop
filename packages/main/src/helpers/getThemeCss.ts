@@ -236,6 +236,9 @@ const defaultTheme: ThemeConfig = {
     content: {
       background: [colors.lightAlt, colors.dark],
     },
+    event: {
+      hover: [colors.lightAlt, opacity(colors.dark, 58)],
+    },
     focus: [lighten(colors.primary, 72), darken(colors.primaryDark, 40)],
     'loading-dots': [colors.primary, colors.primaryDark],
     illustration: {
