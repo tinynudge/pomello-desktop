@@ -1,18 +1,37 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Tooltip } from '@/ui/dashboard/Tooltip';
-import { Match, ParentComponent, Switch } from 'solid-js';
+import { Match, onMount, ParentComponent, Switch } from 'solid-js';
 import styles from './EventContainer.module.scss';
 
 type EventContainerProps = {
   ariaLabel: string;
   class: string;
   isActive: boolean;
+  isHighlighted: boolean;
   mode: 'edit' | 'view';
   onEventEdit(): void;
 };
 
 export const EventContainer: ParentComponent<EventContainerProps> = props => {
   const t = useTranslate();
+
+  onMount(() => {
+    if (props.isHighlighted && buttonRef) {
+      buttonRef.dataset.highlighted = '';
+      buttonRef.scrollIntoView({ block: 'center' });
+      buttonRef.focus({ preventScroll: true });
+
+      buttonRef.addEventListener(
+        'animationend',
+        () => {
+          delete buttonRef?.dataset.highlighted;
+        },
+        { once: true }
+      );
+    }
+  });
+
+  let buttonRef: HTMLButtonElement | undefined;
 
   return (
     <Switch>
@@ -24,7 +43,10 @@ export const EventContainer: ParentComponent<EventContainerProps> = props => {
               class={props.class}
               classList={{ [styles.clickable]: true }}
               onClick={props.onEventEdit}
-              ref={tooltipRef}
+              ref={ref => {
+                tooltipRef(ref);
+                buttonRef = ref;
+              }}
             >
               {props.children}
             </button>

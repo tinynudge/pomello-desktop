@@ -4,7 +4,25 @@
 
   &:hover,
   &:focus-within {
-    background-color: var(--dashboard-sidebar-background-hover);
+    background-color: var(--dashboard-event-hover);
     outline: none;
+  }
+}
+
+[data-highlighted] {
+  animation: flash 1.2s ease-in-out forwards;
+}
+
+@keyframes flash {
+  0%,
+  40%,
+  80% {
+    background-color: transparent;
+  }
+
+  20%,
+  60%,
+  100% {
+    background-color: var(--dashboard-event-hover);
   }
 }

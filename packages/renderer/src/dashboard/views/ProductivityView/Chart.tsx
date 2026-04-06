@@ -20,7 +20,7 @@ import { createTimelineTooltip } from './createTimelineTooltip';
 import { createXColumnTooltip } from './createXColumnTooltip';
 import { EventsModal } from './EventsModal';
 import { useFetchTaskNames } from './useFetchTaskNames';
-import { DailyProductivity, WeeklyProductivity } from './WeeklyProductivityPanels';
+import { WeeklyProductivity } from './WeeklyProductivityPanels';
 
 const allLegendTypes = [
   'task',
@@ -40,9 +40,9 @@ type ChartProps = {
   weeklyProductivity: WeeklyProductivity;
 };
 
-type EventsModalData = {
+type EventsModalInput = {
   date: string;
-  productivity: DailyProductivity;
+  highlightedEventId?: string;
 };
 
 type TimelineRenderedEvent = {
@@ -60,7 +60,28 @@ export const Chart: Component<ChartProps> = props => {
   const t = useTranslate();
 
   const [getTooltip, setTooltip] = createSignal<TooltipWithPosition>();
-  const [getEventsModalDate, setEventsModalDate] = createSignal<string>();
+
+  const [getEventsModalInput, setEventsModalInput] = createSignal<EventsModalInput>();
+
+  const getEventsModalData = createMemo(() => {
+    const input = getEventsModalInput();
+
+    if (!input) {
+      return;
+    }
+
+    const productivity = props.weeklyProductivity.get(input.date);
+
+    if (!productivity) {
+      return;
+    }
+
+    return {
+      date: input.date,
+      highlightedEventId: input.highlightedEventId,
+      productivity,
+    };
+  });
   const [getHiddenHour, setHiddenHour] = createSignal<number>();
 
   const [getXScale, setXScale] = createSignal<XScale | undefined>(undefined, {
@@ -195,19 +216,29 @@ export const Chart: Component<ChartProps> = props => {
   };
 
   const handleXColumnClick = (_event: MouseEvent, date: string) => {
-    setEventsModalDate(date);
+    setEventsModalInput({ date });
   };
 
   const handleBarSegmentClick = (_event: MouseEvent, segment: OverviewSegment) => {
-    setEventsModalDate(segment.date);
+    const matchingEvent = segment.productivity.events.findLast(
+      event => event.serviceId === segment.serviceId && event.type === segment.type
+    );
+
+    setEventsModalInput({
+      date: segment.date,
+      highlightedEventId: matchingEvent?.id,
+    });
   };
 
   const handleTimelineSegmentClick = (_event: MouseEvent, segment: TimelineSegment) => {
-    setEventsModalDate(segment.date);
+    setEventsModalInput({
+      date: segment.date,
+      highlightedEventId: segment.event.id,
+    });
   };
 
   const handleEventsModalHide = () => {
-    setEventsModalDate(undefined);
+    setEventsModalInput(undefined);
   };
 
   const getChartHeight = () => (props.view === 'overview' ? 400 : 2000);
@@ -352,7 +383,7 @@ export const Chart: Component<ChartProps> = props => {
       .data(([, data]) => createTimelineSegments(data))
       .enter()
       .append('rect')
-      .attr('data-testid', ({ event }) => `timeline-segment-${event.id}`)
+      .attr('data-testid', ({ segmentId }) => `timeline-segment-${segmentId}`)
       .attr('data-type', ({ type }) => type)
       .attr('width', width)
       .attr('height', ({ endHour, startHour }) => yScale(endHour) - yScale(startHour))
@@ -492,22 +523,6 @@ export const Chart: Component<ChartProps> = props => {
     });
   };
 
-  const getEventsModalData = (): EventsModalData | undefined => {
-    const date = getEventsModalDate();
-
-    if (!date) {
-      return;
-    }
-
-    const productivity = props.weeklyProductivity.get(date);
-
-    if (!productivity) {
-      return;
-    }
-
-    return { date, productivity };
-  };
-
   let barGroupsByDate: Record<string, SVGGElement> = {};
 
   let barsRef!: SVGGElement;
@@ -596,6 +611,7 @@ export const Chart: Component<ChartProps> = props => {
           <EventsModal
             date={getModalData().date}
             fetchTaskNamesByDate={fetchTaskNamesByDate}
+            highlightedEventId={getModalData().highlightedEventId}
             onHide={handleEventsModalHide}
             productivity={getModalData().productivity}
           />

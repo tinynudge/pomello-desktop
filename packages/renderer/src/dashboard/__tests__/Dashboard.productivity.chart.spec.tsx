@@ -2220,6 +2220,211 @@ describe('Dashboard - Productivity Chart', () => {
       expect(within(dialog).getByText('10:00\u201310:26 am')).toBeInTheDocument();
     });
 
+    it('should highlight the matching event when clicking a bar segment in overview', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              id: 'break-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            }),
+            generateTaskTrackingEvent({
+              id: 'task-event-2',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:30:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      await userEvent.click(screen.getByTestId('bar-segment-my-task-task'));
+
+      const dialog = screen.getByRole('dialog');
+      const allTaskButtons = within(dialog).getAllByRole('button', { name: /Task for 25m/ });
+      const breakButton = within(dialog).getByRole('button', { name: /Short break for 5m/ });
+
+      expect(allTaskButtons[0]).toHaveFocus();
+      expect(breakButton).not.toHaveFocus();
+      expect(allTaskButtons[1]).not.toHaveFocus();
+    });
+
+    it('should highlight the matching event when clicking a timeline segment', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              id: 'break-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      await userEvent.click(screen.getByTestId('timeline-segment-break-event-1'));
+
+      const dialog = screen.getByRole('dialog');
+      const taskButton = within(dialog).getByRole('button', { name: /Task for 25m/ });
+      const breakButton = within(dialog).getByRole('button', { name: /Short break for 5m/ });
+
+      expect(taskButton).not.toHaveFocus();
+      expect(breakButton).toHaveFocus();
+    });
+
+    it('should highlight the task event when clicking the second task segment after a pause', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generatePauseTrackingEvent({
+                  id: 'pause-event-1',
+                  startTime: '2026-01-28T10:10:00',
+                  meta: { duration: 300 },
+                }),
+              ],
+            }),
+            generateBreakTrackingEvent({
+              id: 'break-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      // The second task segment (after the pause) has segmentId 'task-event-1-1'
+      await userEvent.click(screen.getByTestId('timeline-segment-task-event-1-1'));
+
+      const dialog = screen.getByRole('dialog');
+      const taskButton = within(dialog).getByRole('button', { name: /Task for/ });
+      const pauseButton = within(dialog).getByRole('button', { name: /Pause for 5m/ });
+      const breakButton = within(dialog).getByRole('button', { name: /Short break for 5m/ });
+
+      expect(taskButton).toHaveFocus();
+      expect(pauseButton).not.toHaveFocus();
+      expect(breakButton).not.toHaveFocus();
+    });
+
+    it('should not highlight any event when clicking a date column', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+      const taskButton = within(dialog).getByRole('button', { name: /Task for 25m/ });
+      const breakButton = within(dialog).getByRole('button', { name: /Short break for 5m/ });
+      const closeButton = within(dialog).getByRole('button', { name: 'Close' });
+
+      expect(taskButton).not.toHaveFocus();
+      expect(breakButton).not.toHaveFocus();
+      expect(closeButton).toHaveAttribute('autofocus');
+    });
+
+    it('should scroll the highlighted event into view', async () => {
+      const scrollIntoViewMock = vi.spyOn(Element.prototype, 'scrollIntoView');
+
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+      setStoredView('timeline');
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              id: 'break-event-1',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            }),
+            generateTaskTrackingEvent({
+              id: 'task-event-2',
+              serviceId: 'my-task',
+              startTime: '2026-01-28T10:30:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      scrollIntoViewMock.mockClear();
+
+      await userEvent.click(screen.getByTestId('timeline-segment-task-event-2'));
+
+      expect(scrollIntoViewMock).toHaveBeenCalledWith({ block: 'center' });
+
+      scrollIntoViewMock.mockRestore();
+    });
+
     it('should render over_break child events with the correct break type label', async () => {
       vi.setSystemTime(new Date('2026-01-28T12:00:00'));
 
