@@ -233,6 +233,13 @@ const defaultTheme: ThemeConfig = {
         line: [colors.white, colors.darkAlt],
       },
     },
+    alert: {
+      danger: {
+        background: [opacity(colors.red, 15), opacity(colors.red, 15)],
+        border: [darken(colors.red, 20), lighten(colors.red, 10)],
+        text: [darken(colors.red, 30), lighten(colors.red, 30)],
+      },
+    },
     content: {
       background: [colors.lightAlt, colors.dark],
     },
