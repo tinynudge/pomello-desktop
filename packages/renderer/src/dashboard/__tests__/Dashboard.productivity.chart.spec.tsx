@@ -2694,6 +2694,7 @@ describe('Dashboard - Productivity Chart', () => {
 
       await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
       await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
       expect(pomelloApi.deleteEvent).toHaveBeenCalledWith('event-to-delete');
     });
@@ -2740,6 +2741,7 @@ describe('Dashboard - Productivity Chart', () => {
       expect(within(dialog).getByText('Short break for 5m')).toBeInTheDocument();
 
       await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
       await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
       expect(within(dialog).queryByText('Task for 25m')).not.toBeInTheDocument();
@@ -2791,6 +2793,7 @@ describe('Dashboard - Productivity Chart', () => {
 
       await userEvent.click(within(dialog).getByRole('button', { name: /Task \(Over\) for 2m/ }));
       await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
       expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
       expect(within(dialog).queryByText('Task (Over) for 2m')).not.toBeInTheDocument();
@@ -2835,9 +2838,178 @@ describe('Dashboard - Productivity Chart', () => {
       expect(within(dialog).queryByRole('button', { name: /Short break for 5m/ })).not.toBeInTheDocument();
 
       await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
       // After deletion, should return to view mode — remaining event is rendered as a button
       expect(within(dialog).getByRole('button', { name: /Short break for 5m/ })).toBeInTheDocument();
+    });
+
+    it('should show a delete confirmation warning when clicking delete', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      expect(within(dialog).queryByText('This is a permanent action. Are you sure?')).not.toBeInTheDocument();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      expect(within(dialog).getByText('This is a permanent action. Are you sure?')).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    it('should show associated child events in the delete confirmation warning', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 },
+                }),
+                generateOverTaskTrackingEvent({
+                  startTime: '2026-01-28T10:25:00',
+                  meta: { duration: 180 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      expect(within(dialog).getByText('The associated events will also be deleted:')).toBeInTheDocument();
+
+      const childEventsList = within(dialog).getByRole('list');
+
+      expect(within(childEventsList).getByText(/Pause/)).toBeInTheDocument();
+      expect(within(childEventsList).getByText(/Task \(Over\)/)).toBeInTheDocument();
+    });
+
+    it('should not show associated events warning when deleting an event without children', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generateOverTaskTrackingEvent({
+                  startTime: '2026-01-28T10:25:00',
+                  meta: { duration: 120 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      // Click the child event (over_task), which has no children property
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task \(Over\) for 2m/ }));
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      expect(within(dialog).getByText('This is a permanent action. Are you sure?')).toBeInTheDocument();
+      expect(within(dialog).queryByText('The associated events will also be deleted:')).not.toBeInTheDocument();
+    });
+
+    it('should cancel delete confirmation and return to initial edit mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      // Enter confirmation state
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+
+      expect(within(dialog).getByText('This is a permanent action. Are you sure?')).toBeInTheDocument();
+
+      // Cancel the confirmation
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+
+      // Warning should be gone
+      expect(within(dialog).queryByText('This is a permanent action. Are you sure?')).not.toBeInTheDocument();
+
+      // Should still be in edit mode (not view mode) — Delete and Cancel buttons still present
+      expect(within(dialog).getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+
+      // Other events should still not be clickable (still in edit mode, not view mode)
+      expect(within(dialog).queryByRole('button', { name: /Short break for 5m/ })).not.toBeInTheDocument();
     });
   });
 });

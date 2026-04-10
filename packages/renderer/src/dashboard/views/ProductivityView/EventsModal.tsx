@@ -7,10 +7,11 @@ import {
   OverBreakTrackingEvent,
   TrackingEvent,
 } from '@tinynudge/pomello-service';
-import { addSeconds, format, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Component, createMemo, createSignal, For, Show } from 'solid-js';
 import { EditEvent } from './EditEvent';
 import { EventContainer } from './EventContainer';
+import { getTimeRange } from './eventHelpers';
 import styles from './EventsModal.module.scss';
 import { DailyProductivity } from './WeeklyProductivityPanels';
 
@@ -108,30 +109,6 @@ export const EventsModal: Component<EventsModalProps> = props => {
     } else {
       return event.type;
     }
-  };
-
-  const getTimeRange = (event: TrackingEventWithBreakParent): string => {
-    const startDate = new Date(event.startTime);
-
-    if (!('duration' in event.meta)) {
-      return format(startDate, 'h:mm aaa');
-    }
-
-    const duration =
-      event.type === 'task'
-        ? event.children.reduce((duration, childEvent) => {
-            const childDuration = childEvent.type === 'pause' ? childEvent.meta.duration : 0;
-
-            return duration + childDuration;
-          }, event.meta.duration)
-        : event.meta.duration;
-
-    const endDate = addSeconds(startDate, duration);
-    const sameMeridiem = format(startDate, 'aaa') === format(endDate, 'aaa');
-    const startFormatted = format(startDate, sameMeridiem ? 'h:mm' : 'h:mm aaa');
-    const endTime = format(endDate, 'h:mm aaa');
-
-    return `${startFormatted}\u2013${endTime}`;
   };
 
   const getLabel = (event: TrackingEventWithBreakParent): string => {
