@@ -1,23 +1,20 @@
 {
   "compilerOptions": {
-    "module": "esnext",
+    "module": "preserve",
     "target": "esnext",
     "sourceMap": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "strict": true,
-    "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "types": ["node", "vitest/globals"],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "lib": ["ESNext", "dom", "dom.iterable"]
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "../../types/**/*.d.ts", "../preload/contracts.d.ts"],
-  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
+  "include": ["**/*.ts", "**/*.tsx", "../../types/**/*.d.ts", "../preload/contracts.d.ts"]
 }
