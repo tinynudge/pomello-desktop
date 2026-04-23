@@ -251,6 +251,7 @@ const defaultTheme: ThemeConfig = {
     illustration: {
       stroke: [opacity(colors.black, 24), darken(colors.dark, 36)],
     },
+    info: [colors.blue, colors.blueDark],
     input: {
       default: {
         border: [opacity(colors.dark, 24), colors.dark],
