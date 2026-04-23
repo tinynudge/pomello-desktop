@@ -85,6 +85,7 @@ export type { TranslationLocation } from './TranslationLocation';
 export type { Translations } from './Translations';
 export type { TranslationsDictionary } from './TranslationsDictionary';
 export type { Unsubscribe } from './Unsubscribe';
+export type { UpdateEventInput } from './UpdateEventInput';
 export type { ValidationMessage } from './ValidationMessage';
 export { WindowId } from './WindowId';
 export type { WindowManager } from './WindowManager';

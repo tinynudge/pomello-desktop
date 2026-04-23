@@ -79,6 +79,13 @@ export const createMockPomelloApi = (
         { data: undefined as unknown as void },
         pomelloApiResponses.deleteEvent
       )
+    ),
+    http.put(
+      `${import.meta.env.VITE_APP_URL}/api/events/:id`,
+      createHttpResponse<PomelloApiResponse<void>>(
+        { data: undefined as unknown as void },
+        pomelloApiResponses.updateEvent
+      )
     )
   );
 

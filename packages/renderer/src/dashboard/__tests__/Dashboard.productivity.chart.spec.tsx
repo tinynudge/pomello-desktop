@@ -11,7 +11,14 @@ import {
 } from '@/app/__fixtures__/generateTrackingEvents';
 import { DashboardRoute, ServiceId, TaskNamesById } from '@pomello-desktop/domain';
 import { HttpResponse } from 'msw';
-import { renderDashboard, screen, waitFor, waitForElementToBeRemoved, within } from '../__fixtures__/renderDashboard';
+import {
+  fireEvent,
+  renderDashboard,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
+} from '../__fixtures__/renderDashboard';
 import { setStoredView } from '../views/ProductivityView/storedView';
 
 describe('Dashboard - Productivity Chart', () => {
@@ -3010,6 +3017,1027 @@ describe('Dashboard - Productivity Chart', () => {
 
       // Other events should still not be clickable (still in edit mode, not view mode)
       expect(within(dialog).queryByRole('button', { name: /Short break for 5m/ })).not.toBeInTheDocument();
+    });
+
+    it('should show edit form with start time, end time, duration, and edit-by select', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      expect(within(dialog).getByLabelText('Edit by')).toBeInTheDocument();
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:00:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:25:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('25m');
+      expect(within(dialog).getByRole('button', { name: 'Update' })).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    it('should disable end time input by default when editing by start time', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      // Default edit by mode is "Start time"
+      expect(within(dialog).getByLabelText('Edit by')).toHaveValue('startTime');
+
+      expect(within(dialog).getByLabelText('Start time')).toBeEnabled();
+      expect(within(dialog).getByLabelText('Duration')).toBeEnabled();
+      expect(within(dialog).getByLabelText('End time')).toBeDisabled();
+    });
+
+    it('should disable start time input when editing by end time', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'End time');
+
+      expect(within(dialog).getByLabelText('Edit by')).toHaveValue('endTime');
+
+      expect(within(dialog).getByLabelText('Start time')).toBeDisabled();
+      expect(within(dialog).getByLabelText('Duration')).toBeEnabled();
+      expect(within(dialog).getByLabelText('End time')).toBeEnabled();
+    });
+
+    it('should disable duration input when editing by time range', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'Time range');
+
+      expect(within(dialog).getByLabelText('Edit by')).toHaveValue('timeRange');
+
+      expect(within(dialog).getByLabelText('Start time')).toBeEnabled();
+      expect(within(dialog).getByLabelText('End time')).toBeEnabled();
+      expect(within(dialog).getByLabelText('Duration')).toBeDisabled();
+    });
+
+    it('should call updateEvent with modified values when submitting the edit form', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { pomelloApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'event-to-update',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      // Change the duration from 25m to 30m
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, '30m');
+      await userEvent.tab();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Update' }));
+
+      expect(pomelloApi.updateEvent).toHaveBeenCalledWith(
+        'event-to-update',
+        expect.objectContaining({
+          id: 'event-to-update',
+          duration: 1800,
+          start_time: Math.round(new Date('2026-01-28T10:00:00').getTime() / 1000),
+          type: 'task',
+        })
+      );
+    });
+
+    it('should optimistically update the event in the events modal after submitting', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const updateEventPromise = Promise.withResolvers<void>();
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          updateEvent: async () => {
+            await updateEventPromise.promise;
+
+            return HttpResponse.json({ data: undefined });
+          },
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'event-to-update',
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 },
+            }),
+            generateBreakTrackingEvent({
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByText('Task for 25m')).toBeInTheDocument();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      // Change the duration to 30m (1800 seconds)
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, '30m');
+      await userEvent.tab();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Update' }));
+
+      // After update, should return to view mode with updated duration
+      expect(within(dialog).getByText('Task for 30m')).toBeInTheDocument();
+
+      // Break event should still be present
+      expect(within(dialog).getByText('Short break for 5m')).toBeInTheDocument();
+
+      updateEventPromise.resolve();
+    });
+
+    it('should return to view mode after updating an event', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            }),
+            generateBreakTrackingEvent({
+              serviceId: 'task-a',
+              startTime: '2026-01-28T10:25:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      // In edit mode, other events should not be clickable
+      expect(within(dialog).queryByRole('button', { name: /Short break for 5m/ })).not.toBeInTheDocument();
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Update' }));
+
+      // After update, events should be clickable buttons again (view mode)
+      expect(within(dialog).getByRole('button', { name: /Task for 25m/ })).toBeInTheDocument();
+      expect(within(dialog).getByRole('button', { name: /Short break for 5m/ })).toBeInTheDocument();
+    });
+
+    it('should show an error and disable Update when duration is invalid', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      const updateButton = within(dialog).getByRole('button', { name: 'Update' });
+
+      expect(updateButton).toBeEnabled();
+
+      // Type an unparseable duration
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, 'abc');
+      await userEvent.tab();
+
+      expect(
+        within(dialog).getByText('Invalid duration. Try formats like 1h 30m, 1:30, 90m, 1.5h')
+      ).toBeInTheDocument();
+      expect(updateButton).toBeDisabled();
+    });
+
+    it('should show an error and disable Update when duration is zero', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      const updateButton = within(dialog).getByRole('button', { name: 'Update' });
+
+      expect(updateButton).toBeEnabled();
+
+      // Type a zero duration
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, '0m');
+      await userEvent.tab();
+
+      expect(within(dialog).getByText('Duration must be greater than 0')).toBeInTheDocument();
+      expect(updateButton).toBeDisabled();
+    });
+
+    it('should show an error and disable Update when start time is after end time', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      const updateButton = within(dialog).getByRole('button', { name: 'Update' });
+
+      expect(updateButton).toBeEnabled();
+
+      // Switch to "Time range" so both start and end time are editable
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'Time range');
+
+      // Set start time after end time (end time is 10:25:00)
+      fireEvent.input(within(dialog).getByLabelText('Start time'), { target: { value: '11:00:00' } });
+
+      expect(within(dialog).getByText('Start time must be before end time')).toBeInTheDocument();
+      expect(updateButton).toBeDisabled();
+    });
+
+    it('should show an error and disable Update when time range does not allow for pause duration', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 300 }, // 5 min pause
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      const updateButton = within(dialog).getByRole('button', { name: 'Update' });
+
+      expect(updateButton).toBeEnabled();
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'Time range');
+
+      // Move start time to 10:27, leaving only 3 min range (less than 5 min pause)
+      // duration = (10:30 - 10:27) - 5min pause = 3min - 5min = -2min (negative)
+      fireEvent.input(within(dialog).getByLabelText('Start time'), { target: { value: '10:27:00' } });
+
+      expect(within(dialog).getByText('Time range must allow for total pause duration')).toBeInTheDocument();
+      expect(updateButton).toBeDisabled();
+    });
+
+    it('should show pause info tooltip when event has pause children', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:10:00',
+                  meta: { duration: 120 },
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      const infoButton = within(dialog).getByRole('button', {
+        name: 'The end time includes the duration of associated pause events.',
+      });
+
+      expect(infoButton).toBeInTheDocument();
+    });
+
+    it('should not show pause info tooltip when event has no pause children', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      expect(
+        within(dialog).queryByRole('button', {
+          name: 'The end time includes the duration of associated pause events.',
+        })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should auto-calculate end time when changing start time in start time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      fireEvent.input(within(dialog).getByLabelText('Start time'), { target: { value: '09:50:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('09:50:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:15:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('25m');
+    });
+
+    it('should auto-calculate end time when changing duration in start time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, '30m');
+      await userEvent.tab();
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:00:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:30:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('30m');
+    });
+
+    it('should auto-calculate start time when changing end time in end time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'End time');
+
+      fireEvent.input(within(dialog).getByLabelText('End time'), { target: { value: '10:40:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:15:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:40:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('25m');
+    });
+
+    it('should auto-calculate start time when changing duration in end time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'End time');
+
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, '20m');
+      await userEvent.tab();
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:05:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:25:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('20m');
+    });
+
+    it('should auto-calculate duration when changing start time in time range mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'Time range');
+
+      fireEvent.input(within(dialog).getByLabelText('Start time'), { target: { value: '09:50:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('09:50:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:25:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('35m');
+    });
+
+    it('should auto-calculate duration when changing end time in time range mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'Time range');
+
+      fireEvent.input(within(dialog).getByLabelText('End time'), { target: { value: '10:40:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:00:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:40:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('40m');
+    });
+
+    it('should auto-calculate end time when changing start time in start time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 }, // 2 min pause
+                }),
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:15:00',
+                  meta: { duration: 180 }, // 3 min pause
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      // Initial: start=10:00, end=10:30 (25m + 5m pause), duration=25m
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:00:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:30:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('25m');
+
+      fireEvent.input(within(dialog).getByLabelText('Start time'), { target: { value: '09:50:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('09:50:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:20:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('25m');
+    });
+
+    it('should auto-calculate end time when changing duration in start time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 }, // 2 min pause
+                }),
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:15:00',
+                  meta: { duration: 180 }, // 3 min pause
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, '30m');
+      await userEvent.tab();
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:00:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:35:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('30m');
+    });
+
+    it('should auto-calculate start time when changing end time in end time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 }, // 2 min pause
+                }),
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:15:00',
+                  meta: { duration: 180 }, // 3 min pause
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'End time');
+
+      fireEvent.input(within(dialog).getByLabelText('End time'), { target: { value: '10:40:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:10:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:40:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('25m');
+    });
+
+    it('should auto-calculate start time when changing duration in end time mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 }, // 2 min pause
+                }),
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:15:00',
+                  meta: { duration: 180 }, // 3 min pause
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'End time');
+
+      const durationInput = within(dialog).getByLabelText('Duration');
+
+      await userEvent.clear(durationInput);
+      await userEvent.type(durationInput, '20m');
+      await userEvent.tab();
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:05:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:30:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('20m');
+    });
+
+    it('should auto-calculate duration when changing start time in time range mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 }, // 2 min pause
+                }),
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:15:00',
+                  meta: { duration: 180 }, // 3 min pause
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'Time range');
+
+      fireEvent.input(within(dialog).getByLabelText('Start time'), { target: { value: '09:50:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('09:50:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:30:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('35m');
+    });
+
+    it('should auto-calculate duration when changing end time in time range mode', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 }, // 25 min task
+              children: [
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:05:00',
+                  meta: { duration: 120 }, // 2 min pause
+                }),
+                generatePauseTrackingEvent({
+                  startTime: '2026-01-28T10:15:00',
+                  meta: { duration: 180 }, // 3 min pause
+                }),
+              ],
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      await userEvent.selectOptions(within(dialog).getByLabelText('Edit by'), 'Time range');
+
+      fireEvent.input(within(dialog).getByLabelText('End time'), { target: { value: '10:40:00' } });
+
+      expect(within(dialog).getByLabelText('Start time')).toHaveValue('10:00:00');
+      expect(within(dialog).getByLabelText('End time')).toHaveValue('10:40:00');
+      expect(within(dialog).getByLabelText('Duration')).toHaveValue('35m');
     });
   });
 });

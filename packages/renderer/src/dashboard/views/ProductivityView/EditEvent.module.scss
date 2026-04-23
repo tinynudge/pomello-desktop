@@ -8,20 +8,44 @@
   row-gap: 8px;
 }
 
-.content {
-  grid-column: 2;
+.label {
+  grid-column: 1;
+}
+
+.input {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.durationInput {
+  width: 120px;
+}
+
+.infoButton {
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--dashboard-info);
 }
 
 .actions {
   display: inline-flex;
   gap: 8px;
+  grid-column: 2;
+}
+
+.warnings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  grid-column: 2;
 }
 
 .warning {
   padding: 4px 8px;
   border: 1px solid var(--dashboard-alert-danger-border);
   border-radius: 4px;
-  margin-bottom: 8px;
   background-color: var(--dashboard-alert-danger-background);
   color: var(--dashboard-alert-danger-text);
   font-size: 14px;
