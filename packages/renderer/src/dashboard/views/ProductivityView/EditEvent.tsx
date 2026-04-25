@@ -23,13 +23,11 @@ import { createStore } from 'solid-js/store';
 import InfoIcon from './assets/info.svg';
 import { formatDuration, parseDuration } from './durationHelpers';
 import styles from './EditEvent.module.scss';
-import { getTimeRange, removeEvent, replaceEvent } from './eventHelpers';
+import { getTimeRange, removeEvent, replaceEvent, resolvePauseDuration } from './eventHelpers';
 
 type EditEventProps = {
   event: TrackingEvent;
-  initialDuration: number;
-  initialPauseDuration: number;
-  initialStartTime: Date;
+  initialEvent: TrackingEvent;
   onCancel(): void;
 };
 
@@ -54,20 +52,21 @@ export const EditEvent: Component<EditEventProps> = props => {
 
   const [getEditBy, setEditBy] = createSignal<EditByOption>('startTime');
 
+  const initialDuration =
+    'duration' in props.initialEvent.meta ? props.initialEvent.meta.duration : 0;
   const [duration, setDuration] = createStore<DurationInput>({
-    label: formatDuration(props.initialDuration),
-    value: props.initialDuration,
+    label: formatDuration(initialDuration),
+    value: initialDuration,
   });
 
+  const initialStartTime = parseISO(props.initialEvent.startTime);
   const [startTime, setStartTime] = createStore<TimeInput>({
-    lastValidValue: props.initialStartTime,
-    value: props.initialStartTime,
+    lastValidValue: initialStartTime,
+    value: initialStartTime,
   });
 
-  const initialEndTime = addSeconds(
-    props.initialStartTime,
-    props.initialDuration + props.initialPauseDuration
-  );
+  const initialPauseDuration = resolvePauseDuration(props.initialEvent);
+  const initialEndTime = addSeconds(initialStartTime, initialDuration + initialPauseDuration);
   const [endTime, setEndTime] = createStore<TimeInput>({
     lastValidValue: initialEndTime,
     value: initialEndTime,
@@ -121,6 +120,8 @@ export const EditEvent: Component<EditEventProps> = props => {
     }
   });
 
+  const getPauseDuration = createMemo(() => resolvePauseDuration(props.event));
+
   const handleStartTimeInput: JSX.InputEventHandler<HTMLInputElement, InputEvent> = event => {
     const time = event.currentTarget.value;
 
@@ -129,7 +130,7 @@ export const EditEvent: Component<EditEventProps> = props => {
     }
 
     const [hours, minutes, seconds = 0] = time.split(':').map(Number);
-    const newStartTime = set(props.initialStartTime, { hours, minutes, seconds });
+    const newStartTime = set(initialStartTime, { hours, minutes, seconds });
 
     setStartTime({
       lastValidValue: newStartTime,
@@ -137,7 +138,7 @@ export const EditEvent: Component<EditEventProps> = props => {
     });
 
     if (getEditBy() === 'startTime' && duration.value) {
-      const newEndTime = addSeconds(newStartTime, duration.value + props.initialPauseDuration);
+      const newEndTime = addSeconds(newStartTime, duration.value + getPauseDuration());
 
       setEndTime({
         lastValidValue: newEndTime,
@@ -156,7 +157,7 @@ export const EditEvent: Component<EditEventProps> = props => {
     }
 
     const [hours, minutes, seconds = 0] = time.split(':').map(Number);
-    const newEndTime = set(props.initialStartTime, { hours, minutes, seconds });
+    const newEndTime = set(initialStartTime, { hours, minutes, seconds });
 
     setEndTime({
       lastValidValue: newEndTime,
@@ -164,7 +165,7 @@ export const EditEvent: Component<EditEventProps> = props => {
     });
 
     if (getEditBy() === 'endTime' && duration.value) {
-      const newStartTime = subSeconds(newEndTime, duration.value + props.initialPauseDuration);
+      const newStartTime = subSeconds(newEndTime, duration.value + getPauseDuration());
 
       setStartTime({
         lastValidValue: newStartTime,
@@ -187,14 +188,14 @@ export const EditEvent: Component<EditEventProps> = props => {
     }
 
     if (getEditBy() === 'startTime' && startTime.value) {
-      const newEndTime = addSeconds(startTime.value, parsedDuration + props.initialPauseDuration);
+      const newEndTime = addSeconds(startTime.value, parsedDuration + getPauseDuration());
 
       setEndTime({
         lastValidValue: newEndTime,
         value: newEndTime,
       });
     } else if (getEditBy() === 'endTime' && endTime.value) {
-      const newStartTime = subSeconds(endTime.value, parsedDuration + props.initialPauseDuration);
+      const newStartTime = subSeconds(endTime.value, parsedDuration + getPauseDuration());
 
       setStartTime({
         lastValidValue: newStartTime,
@@ -319,8 +320,7 @@ export const EditEvent: Component<EditEventProps> = props => {
       return;
     }
 
-    const seconds =
-      differenceInSeconds(endTime.value, startTime.value) - props.initialPauseDuration;
+    const seconds = differenceInSeconds(endTime.value, startTime.value) - getPauseDuration();
 
     setDuration({
       label: formatDuration(seconds),
@@ -410,7 +410,7 @@ export const EditEvent: Component<EditEventProps> = props => {
               type="time"
               value={format(endTime.lastValidValue, 'HH:mm:ss')}
             />
-            <Show when={props.initialPauseDuration > 0}>
+            <Show when={getPauseDuration() > 0}>
               <Tooltip text={t('event.endTimeTooltip')}>
                 {tooltipRef => (
                   <Button
