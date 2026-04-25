@@ -11,7 +11,7 @@ import { format, parseISO } from 'date-fns';
 import { Component, createMemo, createSignal, For, Show } from 'solid-js';
 import { EditEvent } from './EditEvent';
 import { EventContainer } from './EventContainer';
-import { getTimeRange, resolvePauseDuration } from './eventHelpers';
+import { getTimeRange } from './eventHelpers';
 import styles from './EventsModal.module.scss';
 import { DailyProductivity } from './WeeklyProductivityPanels';
 
@@ -183,9 +183,7 @@ export const EventsModal: Component<EventsModalProps> = props => {
                       <Show when={event.id === getActiveEventId()}>
                         <EditEvent
                           event={event}
-                          initialDuration={'duration' in event.meta ? event.meta.duration : 0}
-                          initialPauseDuration={resolvePauseDuration(event)}
-                          initialStartTime={parseISO(event.startTime)}
+                          initialEvent={structuredClone(event)}
                           onCancel={handleEditCancel}
                         />
                       </Show>
