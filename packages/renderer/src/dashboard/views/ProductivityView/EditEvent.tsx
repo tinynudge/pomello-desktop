@@ -52,6 +52,8 @@ export const EditEvent: Component<EditEventProps> = props => {
 
   const [getEditBy, setEditBy] = createSignal<EditByOption>('startTime');
 
+  const [getEventType, setEventType] = createSignal<TrackingEvent['type']>(props.initialEvent.type);
+
   const initialDuration =
     'duration' in props.initialEvent.meta ? props.initialEvent.meta.duration : 0;
   const [duration, setDuration] = createStore<DurationInput>({
@@ -121,6 +123,14 @@ export const EditEvent: Component<EditEventProps> = props => {
   });
 
   const getPauseDuration = createMemo(() => resolvePauseDuration(props.event));
+
+  const handleEditByChange = (value: EditByOption): void => {
+    setEditBy(value);
+  };
+
+  const handleTypeChange = (value: string): void => {
+    setEventType(value as TrackingEvent['type']);
+  };
 
   const handleStartTimeInput: JSX.InputEventHandler<HTMLInputElement, InputEvent> = event => {
     const time = event.currentTarget.value;
@@ -218,6 +228,7 @@ export const EditEvent: Component<EditEventProps> = props => {
 
     const updatedEvent = structuredClone(props.event);
     updatedEvent.startTime = format(startTime.value, 'yyyy-MM-dd HH:mm:ss');
+    updatedEvent.type = getEventType();
 
     if ('duration' in updatedEvent.meta) {
       updatedEvent.meta.duration = duration.value;
@@ -295,11 +306,7 @@ export const EditEvent: Component<EditEventProps> = props => {
     props.onCancel();
   };
 
-  const handleEditChange = (value: EditByOption): void => {
-    setEditBy(value);
-  };
-
-  const getEventType = (event: TrackingEvent, parentEvent: TrackingEvent): string => {
+  const getEventLabel = (event: TrackingEvent, parentEvent: TrackingEvent): string => {
     if (event.type === 'break') {
       return `${event.meta.type}Break`;
     } else if (event.type === 'over_break' && parentEvent.type === 'break') {
@@ -352,7 +359,7 @@ export const EditEvent: Component<EditEventProps> = props => {
                         <li>
                           {getTimeRange(childEvent)}
                           {' \u2022 '}
-                          {t(`event.entry.${getEventType(childEvent, props.event)}.noDuration`)}
+                          {t(`event.entry.${getEventLabel(childEvent, props.event)}.noDuration`)}
                         </li>
                       )}
                     </For>
@@ -376,7 +383,7 @@ export const EditEvent: Component<EditEventProps> = props => {
           </label>
           <Select
             id={`edit-by-${id}`}
-            onChange={handleEditChange}
+            onChange={handleEditByChange}
             options={[
               { id: 'startTime', label: t('event.editBy.startTime') },
               { id: 'endTime', label: t('event.editBy.endTime') },
@@ -384,6 +391,20 @@ export const EditEvent: Component<EditEventProps> = props => {
             ]}
             value={getEditBy()}
           />
+          <Show when={getEventType() === 'task' || getEventType() === 'void'}>
+            <label class={styles.label} for={`event-type-${id}`}>
+              {t('event.eventType')}
+            </label>
+            <Select
+              id={`event-type-${id}`}
+              onChange={handleTypeChange}
+              options={[
+                { id: 'task', label: t('event.type.task') },
+                { id: 'void', label: t('event.type.void') },
+              ]}
+              value={getEventType()}
+            />
+          </Show>
           <label class={styles.label} for={`start-time-${id}`}>
             {t('event.startTime')}
           </label>
