@@ -64,6 +64,7 @@
   "event.editBy.startTime": "Start time",
   "event.editBy.timeRange": "Time range",
   "event.editEvent": "Edit event",
+  "event.eventType": "Event type",
   "event.endTime": "End time",
   "event.endTimeRequired": "A valid end time is required",
   "event.endTimeTooltip": "The end time includes the duration of associated pause events.",

@@ -4039,5 +4039,180 @@ describe('Dashboard - Productivity Chart', () => {
       expect(within(dialog).getByLabelText('End time')).toHaveValue('10:40:00');
       expect(within(dialog).getByLabelText('Duration')).toHaveValue('35m');
     });
+
+    it('should show "Event type" select for task events', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+
+      expect(within(dialog).getByLabelText('Event type')).toBeInTheDocument();
+      expect(within(dialog).getByLabelText('Event type')).toHaveValue('task');
+    });
+
+    it('should show "Event type" select for void events', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateVoidTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 300, voidedPomodoros: 1 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Voided task for 5m/ }));
+
+      expect(within(dialog).getByLabelText('Event type')).toBeInTheDocument();
+      expect(within(dialog).getByLabelText('Event type')).toHaveValue('void');
+    });
+
+    it('should not show "Event type" select for break events', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateBreakTrackingEvent({
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 300, type: 'short' },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Short break for 5m/ }));
+
+      expect(within(dialog).queryByLabelText('Event type')).not.toBeInTheDocument();
+    });
+
+    it('should call updateEvent with type "void" when switching from task to void', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { pomelloApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateTaskTrackingEvent({
+              id: 'task-to-void',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 1500, pomodoros: 1, allotedTime: 1500 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Task for 25m/ }));
+      await userEvent.selectOptions(within(dialog).getByLabelText('Event type'), 'Void');
+
+      expect(within(dialog).getByLabelText('Event type')).toHaveValue('void');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Update' }));
+
+      expect(pomelloApi.updateEvent).toHaveBeenCalledWith(
+        'task-to-void',
+        expect.objectContaining({
+          id: 'task-to-void',
+          duration: 1500,
+          start_time: Math.round(new Date('2026-01-28T10:00:00').getTime() / 1000),
+          type: 'void',
+        })
+      );
+    });
+
+    it('should call updateEvent with type "task" when switching from void to task', async () => {
+      vi.setSystemTime(new Date('2026-01-28T12:00:00'));
+
+      const { pomelloApi, userEvent } = renderDashboard({
+        pomelloApi: {
+          fetchEvents: generateTrackingEvents(
+            generateVoidTrackingEvent({
+              id: 'void-to-task',
+              startTime: '2026-01-28T10:00:00',
+              meta: { duration: 300, voidedPomodoros: 1, allotedTime: 1500 },
+            })
+          ),
+        },
+        route: DashboardRoute.Productivity,
+      });
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('status', { name: 'Loading productivity data' }));
+
+      const dateBackgrounds = screen.getByTestId('productivity-chart-date-backgrounds');
+      const dateColumns = dateBackgrounds.querySelectorAll('rect');
+
+      await userEvent.click(dateColumns[3]);
+
+      const dialog = screen.getByRole('dialog');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: /Voided task for 5m/ }));
+      await userEvent.selectOptions(within(dialog).getByLabelText('Event type'), 'Task');
+
+      expect(within(dialog).getByLabelText('Event type')).toHaveValue('task');
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Update' }));
+
+      expect(pomelloApi.updateEvent).toHaveBeenCalledWith(
+        'void-to-task',
+        expect.objectContaining({
+          id: 'void-to-task',
+          duration: 300,
+          start_time: Math.round(new Date('2026-01-28T10:00:00').getTime() / 1000),
+          type: 'task',
+        })
+      );
+    });
   });
 });
