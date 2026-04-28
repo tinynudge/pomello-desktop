@@ -8,7 +8,7 @@ import {
   TrackingEvent,
 } from '@tinynudge/pomello-service';
 import { format, parseISO } from 'date-fns';
-import { Component, createMemo, createSignal, For, Show } from 'solid-js';
+import { Component, createEffect, createMemo, createSignal, For, Show } from 'solid-js';
 import { EditEvent } from './EditEvent';
 import { EventContainer } from './EventContainer';
 import { getTimeRange } from './eventHelpers';
@@ -70,6 +70,24 @@ export const EventsModal: Component<EventsModalProps> = props => {
     queryKey: ['taskNamesByDate', props.date],
     queryFn: () => props.fetchTaskNamesByDate(props.date),
   }));
+
+  createEffect(() => {
+    if (!highlightedRef || !taskNamesById.isSuccess || taskNamesById.isFetching) {
+      return;
+    }
+
+    highlightedRef.scrollIntoView({ block: 'center' });
+    highlightedRef.focus({ preventScroll: true });
+
+    highlightedRef.dataset.highlighted = '';
+    highlightedRef.addEventListener(
+      'animationend',
+      () => {
+        delete highlightedRef?.dataset.highlighted;
+      },
+      { once: true }
+    );
+  });
 
   const [getActiveEventId, setActiveEventId] = createSignal<string | null>(null);
 
@@ -137,7 +155,15 @@ export const EventsModal: Component<EventsModalProps> = props => {
     return t(`event.entry.${type}`, { duration });
   };
 
-  const getMode = () => (getActiveEventId() !== null ? 'edit' : 'view');
+  const getMode = (): 'edit' | 'view' => (getActiveEventId() !== null ? 'edit' : 'view');
+
+  const setHighlightedRef = (eventId: string, element: HTMLElement): void => {
+    if (eventId === props.highlightedEventId) {
+      highlightedRef = element;
+    }
+  };
+
+  let highlightedRef: HTMLElement | undefined;
 
   return (
     <Modal
@@ -172,6 +198,7 @@ export const EventsModal: Component<EventsModalProps> = props => {
                       isHighlighted={event.id === props.highlightedEventId}
                       mode={getMode()}
                       onEventEdit={() => handleEventEdit(event.id)}
+                      ref={ref => setHighlightedRef(event.id, ref)}
                     >
                       <span class={styles.time}>{timeRange}</span>
                       <div class={styles.label}>
