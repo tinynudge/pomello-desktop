@@ -377,7 +377,11 @@ export const EditEvent: Component<EditEventProps> = props => {
         </div>
       </Match>
       <Match when={!getIsConfirmingDelete()}>
-        <form class={styles.editEvent} onSubmit={handleEventUpdate}>
+        <form
+          class={styles.editEvent}
+          onSubmit={handleEventUpdate}
+          ref={element => queueMicrotask(() => element.scrollIntoView())}
+        >
           <label class={styles.label} for={`edit-by-${id}`}>
             {t('event.editBy')}
           </label>
