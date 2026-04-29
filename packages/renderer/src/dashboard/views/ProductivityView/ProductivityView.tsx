@@ -1,9 +1,9 @@
 import { MainHeader } from '@/dashboard/components/MainHeader';
+import { LoginView } from '@/dashboard/views/LoginView';
 import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { Component, Show } from 'solid-js';
 import { ExportModal } from './ExportModal';
-import { LoginView } from './LoginView';
 import { TaskNameHelpersProvider } from './TaskNameHelpersContext';
 import { TodayPanel } from './TodayPanel';
 import { WeeklyProductivityPanels } from './WeeklyProductivityPanels';
