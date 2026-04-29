@@ -1,0 +1,31 @@
+.accountType {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 42px;
+  padding-block: 18px;
+}
+
+.freeText {
+  display: inline-block;
+  margin-block: 8px;
+}
+
+.premiumBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: var(--dashboard-badge-premium-background);
+  color: var(--dashboard-badge-premium-text);
+  margin-block: 4px;
+}
+
+.cancelLink {
+  margin-left: 12px;
+  color: var(--dashboard-button-link-default);
+  font-size: 13px;
+
+  &:hover {
+    color: var(--dashboard-button-link-active);
+  }
+}

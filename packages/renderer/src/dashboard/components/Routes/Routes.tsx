@@ -1,18 +1,15 @@
 import { KeyboardShortcutsView } from '@/dashboard/views/KeyboardShortcutsView';
 import { ProductivityView } from '@/dashboard/views/ProductivityView';
+import { ProfileView } from '@/dashboard/views/ProfileView';
 import { ServicesView, ServiceView } from '@/dashboard/views/ServicesView';
 import { SettingsView } from '@/dashboard/views/SettingsView';
 import { SoundsView } from '@/dashboard/views/SoundsView';
-import { useTranslate } from '@/shared/context/RuntimeContext';
 import { ServiceProvider } from '@/shared/context/ServiceContext';
 import { DashboardRoute } from '@pomello-desktop/domain';
 import { Route } from '@solidjs/router';
 import { Component } from 'solid-js';
-import { MainHeader } from '../MainHeader';
 
 export const Routes: Component = () => {
-  const t = useTranslate();
-
   return (
     <>
       <Route path={DashboardRoute.Productivity} component={ProductivityView} />
@@ -30,10 +27,7 @@ export const Routes: Component = () => {
           )}
         />
       </Route>
-      <Route
-        path={DashboardRoute.Profile}
-        component={() => <MainHeader heading={t('routeProfile')} />}
-      />
+      <Route path={DashboardRoute.Profile} component={ProfileView} />
     </>
   );
 };
