@@ -1,10 +1,12 @@
 import { MainHeader } from '@/dashboard/components/MainHeader';
 import { SaveChangesBanner } from '@/dashboard/components/SaveChangesBanner';
-import { useTranslate } from '@/shared/context/RuntimeContext';
+import { usePomelloApi } from '@/shared/context/PomelloApiContext';
+import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext';
 import { Input } from '@/ui/dashboard/Input';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Select } from '@/ui/dashboard/Select';
-import { PomelloUser } from '@pomello-desktop/domain';
+import { PomelloUser, UpdateUserInput } from '@pomello-desktop/domain';
+import { useMutation } from '@tanstack/solid-query';
 import { nanoid } from 'nanoid';
 import { Component, JSX, Show } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
@@ -18,9 +20,34 @@ type ProfileFormProps = {
 type StagedProfile = Partial<Pick<PomelloUser, 'name' | 'timezone'>>;
 
 export const ProfileForm: Component<ProfileFormProps> = props => {
+  const pomelloApi = usePomelloApi();
+  const pomelloConfig = usePomelloConfig();
   const t = useTranslate();
 
   const [stagedProfile, setStagedProfile] = createStore<StagedProfile>({});
+
+  const updateUserMutation = useMutation<
+    PomelloUser,
+    Error,
+    UpdateUserInput,
+    { previousUser: PomelloUser }
+  >(() => ({
+    mutationFn: (input: UpdateUserInput) => pomelloApi.updateUser(input),
+    onMutate: (variables: UpdateUserInput) => {
+      const previousUser = { ...props.user };
+      const updatedUser = { ...props.user, ...variables };
+
+      pomelloConfig.actions.userFetched(updatedUser);
+      setStagedProfile(reconcile({}));
+
+      return { previousUser };
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previousUser) {
+        pomelloConfig.actions.userFetched(context.previousUser);
+      }
+    },
+  }));
 
   const handleCancelSubscriptionClick: JSX.EventHandler<HTMLAnchorElement, MouseEvent> = event => {
     event.preventDefault();
@@ -41,7 +68,10 @@ export const ProfileForm: Component<ProfileFormProps> = props => {
   };
 
   const handleSaveClick = () => {
-    // Will be wired up to API later
+    updateUserMutation.mutate({
+      name: stagedProfile.name ?? props.user.name,
+      timezone: stagedProfile.timezone ?? props.user.timezone,
+    });
   };
 
   const getHasStagedChanges = () => !!Object.keys(stagedProfile).length;

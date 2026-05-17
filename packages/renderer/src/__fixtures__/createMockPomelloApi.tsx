@@ -59,6 +59,13 @@ export const createMockPomelloApi = (
         pomelloApiResponses.fetchUser
       )
     ),
+    http.post(
+      `${import.meta.env.VITE_APP_URL}/api/users`,
+      createHttpResponse<PomelloApiResponse<PomelloUser>>(
+        generatePomelloUser(),
+        pomelloApiResponses.updateUser
+      )
+    ),
     http.get(
       `${import.meta.env.VITE_APP_URL}/api/events`,
       createHttpResponse<PomelloApiResponse<TrackingEvent[]>>(

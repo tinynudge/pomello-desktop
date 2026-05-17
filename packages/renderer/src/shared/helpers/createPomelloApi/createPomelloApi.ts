@@ -7,6 +7,7 @@ import { fetchEvents } from './fetchEvents';
 import { fetchUser } from './fetchUser';
 import { logEvent } from './logEvent';
 import { updateEvent } from './updateEvent';
+import { updateUser } from './updateUser';
 
 export type PomelloApiContext = {
   client: typeof ky;
@@ -61,6 +62,7 @@ export const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): P
       hasToken,
       logEvent,
       updateEvent,
+      updateUser,
     },
     { client }
   );
