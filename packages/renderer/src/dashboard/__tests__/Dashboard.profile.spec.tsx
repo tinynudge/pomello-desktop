@@ -1,5 +1,6 @@
 import { DashboardRoute } from '@pomello-desktop/domain';
-import { renderDashboard, screen } from '../__fixtures__/renderDashboard';
+import { HttpResponse } from 'msw';
+import { renderDashboard, screen, waitFor } from '../__fixtures__/renderDashboard';
 
 describe('Dashboard - Profile', () => {
   it('should render the profile view', () => {
@@ -122,5 +123,84 @@ describe('Dashboard - Profile', () => {
 
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(nameInput).toHaveValue('Thomas Tester');
+  });
+
+  it('should call updateUser with the full user profile when save is clicked', async () => {
+    const { pomelloApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Profile,
+      pomelloConfig: {
+        user: {
+          email: 'test@test.com',
+          name: 'Thomas Tester',
+          timezone: 'America/Chicago',
+          type: 'premium',
+        },
+      },
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Display name' });
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'New Name');
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    expect(pomelloApi.updateUser).toHaveBeenCalledWith({
+      name: 'New Name',
+      timezone: 'America/Chicago',
+    });
+  });
+
+  it('should hide the save banner after saving', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Profile,
+      pomelloConfig: {
+        user: {
+          email: 'test@test.com',
+          name: 'Thomas Tester',
+          timezone: 'America/Chicago',
+          type: 'premium',
+        },
+      },
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Display name' });
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'New Name');
+
+    expect(screen.getByRole('status')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+  });
+
+  it('should rollback the profile update when the API call fails', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Profile,
+      pomelloConfig: {
+        user: {
+          email: 'test@test.com',
+          name: 'Thomas Tester',
+          timezone: 'America/Chicago',
+          type: 'premium',
+        },
+      },
+      pomelloApi: {
+        updateUser: () => HttpResponse.json(null, { status: 500 }),
+      },
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Display name' });
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'New Name');
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+
+    await waitFor(() => {
+      expect(nameInput).toHaveValue('Thomas Tester');
+    });
   });
 });

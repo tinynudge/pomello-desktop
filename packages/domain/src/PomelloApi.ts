@@ -6,6 +6,7 @@ import {
 import { FetchEventsOptions } from './FetchEventsOptions';
 import { PomelloUser } from './PomelloUser';
 import { UpdateEventInput } from './UpdateEventInput';
+import { UpdateUserInput } from './UpdateUserInput';
 
 export type PomelloApi = {
   deleteEvent(eventId: string): Promise<void>;
@@ -14,4 +15,5 @@ export type PomelloApi = {
   hasToken(): boolean;
   logEvent(event: TrackingEventInput): Promise<TrackingEvent>;
   updateEvent(eventId: string, input: UpdateEventInput): Promise<void>;
+  updateUser(input: UpdateUserInput): Promise<PomelloUser>;
 };
