@@ -11,6 +11,7 @@ import { render } from 'solid-js/web';
 import { Layout } from './components/Layout';
 import { Routes } from './components/Routes';
 import { DashboardProvider } from './context/DashboardContext';
+import { ToastProvider } from './context/ToastContext';
 
 const renderDashboard = async () => {
   const queryClient = new QueryClient();
@@ -55,9 +56,11 @@ const renderDashboard = async () => {
         >
           <PomelloApiProvider initialPomelloApi={pomelloApi}>
             <DashboardProvider initialDefaultHotkeys={defaultHotkeys} initialHotkeys={hotkeys}>
-              <HashRouter root={Layout}>
-                <Routes />
-              </HashRouter>
+              <ToastProvider>
+                <HashRouter root={Layout}>
+                  <Routes />
+                </HashRouter>
+              </ToastProvider>
             </DashboardProvider>
           </PomelloApiProvider>
         </RuntimeProvider>

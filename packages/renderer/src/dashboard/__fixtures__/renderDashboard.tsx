@@ -25,6 +25,7 @@ import sharedTranslations from '../../../../../translations/shared/en-US.json';
 import { Layout } from '../components/Layout';
 import { Routes } from '../components/Routes';
 import { DashboardProvider } from '../context/DashboardContext';
+import { ToastProvider } from '../context/ToastContext';
 
 export * from '@solidjs/testing-library';
 
@@ -107,9 +108,11 @@ export const renderDashboard = (options: RenderDashboardOptions = {}) => {
       >
         <PomelloApiProvider initialPomelloApi={pomelloApi}>
           <DashboardProvider initialDefaultHotkeys={mockHotkeys} initialHotkeys={hotkeys}>
-            <MemoryRouter history={history} root={Layout}>
-              <Routes />
-            </MemoryRouter>
+            <ToastProvider>
+              <MemoryRouter history={history} root={Layout}>
+                <Routes />
+              </MemoryRouter>
+            </ToastProvider>
           </DashboardProvider>
         </PomelloApiProvider>
       </RuntimeProvider>

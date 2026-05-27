@@ -8,6 +8,8 @@ const colors = {
   dark: 'rgb(35 35 35)',
   darkAlt: 'rgb(56 56 56)',
   gold: 'rgb(255 225 0)',
+  green: 'rgb(46 160 67)',
+  greenDark: 'rgb(63 185 80)',
   lightAlt: 'rgb(240 240 240)',
   longBreak: 'rgb(75 174 79)',
   longBreakDark: 'rgb(67 157 71)',
@@ -310,6 +312,22 @@ const defaultTheme: ThemeConfig = {
       'long-break': [colors.longBreak, colors.longBreakDark],
       'short-break': [colors.shortBreak, colors.shortBreakDark],
       task: [colors.task, colors.taskDark],
+    },
+    toast: {
+      background: {
+        info: [colors.white, colors.darkAlt],
+        success: [colors.green, colors.greenDark],
+        error: [colors.red, darken(colors.red, 20)],
+        warning: [colors.yellow, darken(colors.yellow, 20)],
+      },
+      text: {
+        info: [opacity(colors.black, 87), colors.white],
+        success: colors.white,
+        error: colors.white,
+        warning: darken(colors.yellow, 72),
+      },
+      border: [opacity(colors.black, 12), opacity(colors.white, 12)],
+      shadow: opacity(colors.black, 24),
     },
     'toggle-switch': {
       background: {
