@@ -75,12 +75,12 @@ describe('Trello service - Configure view', () => {
     await userEvent.click(screen.getByRole('textbox', { name: 'Filter' }));
     await userEvent.type(screen.getByRole('textbox', { name: 'Filter' }), 'bar');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
     expect(config.get().listFilter).toBe(undefined);
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(config.get().listFilter).toBe('bar');
   });
 
@@ -93,12 +93,12 @@ describe('Trello service - Configure view', () => {
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'Case sensitivity' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
     expect(config.get().listFilterCaseSensitive).toBe(false);
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(config.get().listFilterCaseSensitive).toBe(true);
   });
 
@@ -168,7 +168,7 @@ describe('Trello service - Configure view', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(config.get().listFilter).toBe('billionaire: to do');
     expect(config.get().listFilterCaseSensitive).toBe(true);
   });
@@ -190,7 +190,7 @@ describe('Trello service - Configure view', () => {
 
     expect(region.queryByRole('status')).not.toBeInTheDocument();
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should render the global preferences with default values', async () => {
@@ -274,11 +274,11 @@ describe('Trello service - Configure view', () => {
     await userEvent.click(archiveCardCheckbox);
 
     expect(config.get().preferences?.global?.archiveCards).toBe(true);
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(config.get().preferences?.global?.archiveCards).toBe(false);
   });
 
@@ -307,11 +307,11 @@ describe('Trello service - Configure view', () => {
     expect(logEventsCheckbox).toBeChecked();
     expect(config.get().preferences?.global?.keepLogs).toBe(false);
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(config.get().preferences?.global?.keepLogs).toBe(true);
   });
 
@@ -549,7 +549,7 @@ describe('Trello service - Configure view', () => {
 
     await userEvent.click(screen.getByRole('menuitem', { name: 'Reset board preferences' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -702,7 +702,7 @@ describe('Trello service - Configure view', () => {
 
     await userEvent.click(screen.getByRole('menuitem', { name: 'Reset list preferences' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 

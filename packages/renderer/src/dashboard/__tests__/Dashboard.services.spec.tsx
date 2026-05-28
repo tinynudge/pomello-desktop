@@ -143,7 +143,7 @@ describe('Dashboard - Services', () => {
     await userEvent.clear(screen.getByLabelText('Text Input'));
     await userEvent.type(screen.getByLabelText('Text Input'), 'New Value');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -153,11 +153,11 @@ describe('Dashboard - Services', () => {
     await userEvent.clear(screen.getByLabelText('Text Input'));
     await userEvent.type(screen.getByLabelText('Text Input'), 'New New Value');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(screen.getByLabelText('Text Input')).toHaveValue('New New Value');
     expect(screen.getByTestId('stored-value')).toHaveTextContent('New New Value');
   });

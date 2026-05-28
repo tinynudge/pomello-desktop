@@ -16,7 +16,9 @@ export const SaveChangesBanner: Component<SaveChangesBannerProps> = props => {
   return (
     <Portal mount={document.querySelector(`#${saveSettingsBannerId}`) ?? undefined}>
       <div class={styles.saveChangesBanner}>
-        <p role="status">{t('pendingChangesBanner')}</p>
+        <p data-testid="pending-changes" role="status">
+          {t('pendingChangesBanner')}
+        </p>
         <div class={styles.actions}>
           <Button aria-label={t('undoChangesLabel')} onClick={props.onUndoClick}>
             {t('undoChanges')}
