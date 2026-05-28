@@ -86,7 +86,7 @@ describe('Dashboard - Profile', () => {
     await userEvent.clear(nameInput);
     await userEvent.type(nameInput, 'New Name');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should show the save banner when the timezone is changed', async () => {
@@ -96,7 +96,7 @@ describe('Dashboard - Profile', () => {
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Timezone' }), 'America/New_York');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should hide the save banner and restore values when undo is clicked', async () => {
@@ -117,11 +117,11 @@ describe('Dashboard - Profile', () => {
     await userEvent.clear(nameInput);
     await userEvent.type(nameInput, 'New Name');
 
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(nameInput).toHaveValue('Thomas Tester');
   });
 
@@ -168,12 +168,12 @@ describe('Dashboard - Profile', () => {
     await userEvent.clear(nameInput);
     await userEvent.type(nameInput, 'New Name');
 
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
     await waitFor(() => {
-      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     });
   });
 

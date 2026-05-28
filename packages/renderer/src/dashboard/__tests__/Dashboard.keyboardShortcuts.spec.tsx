@@ -116,7 +116,7 @@ describe('Dashboard - Keyboard shortcuts', () => {
 
     expect(within(viewSettingsItem).getByRole('button', { name: /Edit/ })).toHaveTextContent('⌘⇧L');
     expect(appApi.updateHotkeys).not.toHaveBeenCalled();
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -143,7 +143,7 @@ describe('Dashboard - Keyboard shortcuts', () => {
 
     expect(within(viewSettingsItem).getByRole('button', { name: /Set/ })).toHaveTextContent('None');
     expect(appApi.updateHotkeys).not.toHaveBeenCalled();
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -185,7 +185,7 @@ describe('Dashboard - Keyboard shortcuts', () => {
       '"⌘ ⇧ M" is currently assigned to "Start timer." Click "Overwrite" to reassign it to "Skip break," or click "Cancel" to keep your existing keyboard shortcuts.'
     );
     expect(appApi.updateHotkeys).not.toHaveBeenCalled();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
@@ -220,7 +220,7 @@ describe('Dashboard - Keyboard shortcuts', () => {
     vi.runOnlyPendingTimers();
 
     expect(within(voidTaskItem).getByRole('button', { name: /Void task/ })).toHaveTextContent('L');
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should show the conflict modal when recording a keyboard shortcut', async () => {

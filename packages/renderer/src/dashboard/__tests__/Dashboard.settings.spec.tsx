@@ -110,7 +110,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(screen.getByRole('button', { name: '1. Edit task timer' }));
     await userEvent.click(screen.getByRole('menuitem', { name: 'Switch to short break timer' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
     expect(screen.getByRole('checkbox', { name: 'Always on top' })).not.toBeChecked();
     expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue('focus');
     expect(screen.getByRole('button', { name: '1. Edit short break timer' })).toBeInTheDocument();
@@ -118,7 +118,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
     expect(appApi.updateSettings).not.toHaveBeenCalled();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: 'Always on top' })).toBeChecked();
     expect(screen.getByRole('combobox', { name: 'Time expired notification' })).toHaveValue('flash');
     expect(screen.getByRole('button', { name: '1. Edit task timer' })).toBeInTheDocument();
@@ -196,7 +196,7 @@ describe('Dashboard - Settings', () => {
 
     await userEvent.click(screen.getByRole('checkbox', { name: label }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -263,7 +263,7 @@ describe('Dashboard - Settings', () => {
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: label }), newValue.label);
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -324,7 +324,7 @@ describe('Dashboard - Settings', () => {
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: label }), `${newValue / 60}`);
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -366,7 +366,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.clear(textbox);
     await userEvent.type(textbox, '80');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -525,7 +525,7 @@ describe('Dashboard - Settings', () => {
     expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
     expect(within(listItem).queryByRole('textbox', { name: 'Task time' })).not.toBeInTheDocument();
     expect(within(listItem).getByRole('combobox', { name: 'Task time' })).toHaveValue('1500');
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
   });
 
   it('should return to the original simple time input when undoing pending changes', async () => {
@@ -596,7 +596,7 @@ describe('Dashboard - Settings', () => {
 
     await userEvent.selectOptions(within(listItem).getByRole('combobox', { name: 'Pomodoro set' }), '6');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -641,7 +641,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(within(listItem).getByRole('button', { name: '1. Edit task timer' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to short break timer' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -716,7 +716,7 @@ describe('Dashboard - Settings', () => {
 
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to advanced view' }));
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -739,7 +739,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(within(listItem).getByRole('button', { name: 'Show more options' }));
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 
@@ -787,7 +787,7 @@ describe('Dashboard - Settings', () => {
     await userEvent.click(within(listItem).getByRole('menuitem', { name: 'Switch to simple view' }));
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 

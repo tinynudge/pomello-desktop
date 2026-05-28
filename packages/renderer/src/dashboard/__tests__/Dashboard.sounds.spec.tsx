@@ -107,7 +107,7 @@ describe('Dashboard - Sounds', () => {
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Task timer tick sound' }), 'Ding');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -136,7 +136,7 @@ describe('Dashboard - Sounds', () => {
 
     expect(screen.getByRole('slider', { name: 'Short break timer end volume' })).toHaveValue('0.2');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -314,7 +314,7 @@ describe('Dashboard - Sounds', () => {
 
     await userEvent.type(within(customSoundItem).getByLabelText('Name'), 'Bar');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -356,7 +356,7 @@ describe('Dashboard - Sounds', () => {
 
     await userEvent.upload(within(customSoundItem).getByLabelText('Path'), newSound);
 
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -395,7 +395,7 @@ describe('Dashboard - Sounds', () => {
     await userEvent.click(within(customSoundItem).getByRole('menuitem', { name: 'Delete sound' }));
 
     expect(screen.queryByRole('listitem', { name: 'Custom sound: Foo' })).not.toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
@@ -428,7 +428,7 @@ describe('Dashboard - Sounds', () => {
 
     expect(within(customSoundItem).getByLabelText('Name')).toHaveValue('moo.mp3');
     expect(within(customSoundItem).getByRole('textbox', { name: 'Path' })).toHaveValue('/moo.mp3');
-    expect(screen.getByRole('status')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
 
     await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
 
