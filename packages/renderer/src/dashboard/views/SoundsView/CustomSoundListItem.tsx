@@ -4,9 +4,18 @@ import { ActionsMenu } from '@/ui/dashboard/ActionsMenu';
 import { Button } from '@/ui/dashboard/Button';
 import { Input } from '@/ui/dashboard/Input';
 import { Panel } from '@/ui/dashboard/Panel';
-import { AppProtocol, CustomSound } from '@pomello-desktop/domain';
+import { AppProtocol, CustomSound, ValidationMessage } from '@pomello-desktop/domain';
 import { Howl } from 'howler';
-import { Component, JSX, createEffect, createMemo, createSignal, on } from 'solid-js';
+import {
+  Component,
+  JSX,
+  createEffect,
+  createMemo,
+  createSignal,
+  on,
+  onCleanup,
+  onMount,
+} from 'solid-js';
 import styles from './CustomSoundListItem.module.scss';
 
 type CustomSoundListItemProps = {
@@ -15,11 +24,25 @@ type CustomSoundListItemProps = {
 };
 
 export const CustomSoundListItem: Component<CustomSoundListItemProps> = props => {
-  const { getSetting, showPremiumFeatureModal, stageSetting } = useDashboard();
+  const { getSetting, showPremiumFeatureModal, stageSetting, onStagedSettingsClear } =
+    useDashboard();
   const pomelloConfig = usePomelloConfig();
   const t = useTranslate();
 
   const [getIsPlaying, setIsPlaying] = createSignal(false);
+  const [getHasValidationError, setHasValidationError] = createSignal(false);
+
+  onMount(() => {
+    const unsubscribeOnSettingsClear = onStagedSettingsClear(() => {
+      setHasValidationError(!nameInputRef.value.trim());
+    });
+
+    onCleanup(unsubscribeOnSettingsClear);
+  });
+
+  const getNameValidationMessage = createMemo<ValidationMessage | undefined>(() =>
+    getHasValidationError() ? { text: t('customSoundNameRequired'), type: 'error' } : undefined
+  );
 
   const getSoundPath = createMemo(() => props.sound.path);
 
@@ -42,7 +65,16 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
   };
 
   const handleNameInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
-    stageSound({ name: event.currentTarget.value });
+    const value = event.currentTarget.value;
+    const isValid = Boolean(value.trim());
+
+    setHasValidationError(!isValid);
+
+    if (!isValid) {
+      return;
+    }
+
+    stageSound({ name: value });
   };
 
   const handlePathInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
@@ -132,6 +164,7 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
     });
   };
 
+  let nameInputRef!: HTMLInputElement;
   let fileInputRef!: HTMLInputElement;
 
   return (
@@ -148,7 +181,10 @@ export const CustomSoundListItem: Component<CustomSoundListItemProps> = props =>
           <Input
             class={styles.input}
             id={`${props.soundId}-name`}
+            message={getNameValidationMessage()}
             onInput={handleNameInput}
+            ref={nameInputRef}
+            required
             value={props.sound.name}
           />
         </div>
