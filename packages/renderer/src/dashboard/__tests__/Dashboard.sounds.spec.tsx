@@ -334,6 +334,70 @@ describe('Dashboard - Sounds', () => {
     });
   });
 
+  it('should show a validation error if a custom sound name is empty or whitespace-only', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          foo: {
+            name: 'Foo',
+            path: '/fake/path/foo.mp3',
+          },
+        },
+      },
+    });
+
+    const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
+    const nameInput = within(customSoundItem).getByLabelText('Name');
+
+    await userEvent.clear(nameInput);
+
+    expect(screen.queryByText('Your pending changes have not been saved yet.')).not.toBeInTheDocument();
+    expect(within(customSoundItem).getByText('A name is required')).toBeInTheDocument();
+
+    await userEvent.type(nameInput, '   ');
+
+    expect(within(customSoundItem).getByText('A name is required')).toBeInTheDocument();
+    expect(screen.queryByText('Your pending changes have not been saved yet.')).not.toBeInTheDocument();
+
+    await userEvent.type(nameInput, 'Bar');
+
+    expect(within(customSoundItem).queryByText('A name is required')).not.toBeInTheDocument();
+    expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
+  });
+
+  it('should remove the custom sound name validation error when undoing changes', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Sounds,
+      settings: {
+        sounds: {
+          foo: {
+            name: 'Foo',
+            path: '/fake/path/foo.mp3',
+          },
+        },
+      },
+    });
+
+    const customSoundItem = screen.getByRole('listitem', { name: 'Custom sound: Foo' });
+    const nameInput = within(customSoundItem).getByLabelText('Name');
+
+    // Stage a valid change first so the Undo button appears
+    await userEvent.type(nameInput, 'Bar');
+
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
+
+    // Then clear the field to trigger a validation error
+    await userEvent.clear(nameInput);
+
+    expect(within(customSoundItem).getByText('A name is required')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(within(customSoundItem).queryByText('A name is required')).not.toBeInTheDocument();
+    expect(nameInput).toHaveValue('Foo');
+  });
+
   it('should update a custom sound path', async () => {
     const newSound = new File([], 'johnny-be-good.mp3', { type: 'audio/mp3' });
 
