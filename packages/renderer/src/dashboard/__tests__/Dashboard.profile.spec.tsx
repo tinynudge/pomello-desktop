@@ -203,4 +203,47 @@ describe('Dashboard - Profile', () => {
       expect(nameInput).toHaveValue('Thomas Tester');
     });
   });
+
+  it('should show a confirmation dialog when navigating away from the profile page with staged changes', async () => {
+    const { userEvent } = renderDashboard({ route: DashboardRoute.Profile });
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Display name' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Display name' }), 'New Name');
+
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('link', { name: 'Settings' }));
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Unsaved changes', level: 1 })).toBeInTheDocument();
+  });
+
+  it('should navigate away and discard profile changes when confirm is clicked', async () => {
+    const { userEvent } = renderDashboard({ route: DashboardRoute.Profile });
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Display name' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Display name' }), 'New Name');
+    await userEvent.click(screen.getByRole('link', { name: 'Settings' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Discard' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Settings', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
+  });
+
+  it('should stay on the profile page when cancel is clicked', async () => {
+    const { userEvent } = renderDashboard({ route: DashboardRoute.Profile });
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Display name' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Display name' }), 'New Name');
+    await userEvent.click(screen.getByRole('link', { name: 'Settings' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Profile', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Display name' })).toHaveValue('New Name');
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
+  });
 });

@@ -184,4 +184,130 @@ describe('Dashboard - Services', () => {
     expect(screen.getByTestId('container-view')).toBeInTheDocument();
     expect(screen.getByText('Bar Configure View')).toBeInTheDocument();
   });
+
+  it('should show a confirmation dialog when navigating away from a service config with staged changes', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Services,
+      services: [
+        createMockServiceFactory({
+          config: {
+            defaults: { text: 'original value' },
+            schema: { type: 'object', properties: { text: { type: 'string', nullable: true } } },
+          },
+          service: {
+            ConfigureView: () => {
+              const { getServiceConfigValue, stageServiceConfigValue } = useConfigureService<{
+                text: string;
+              }>();
+
+              const handleTextInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
+                stageServiceConfigValue('text', event.currentTarget.value);
+              };
+
+              return <input aria-label="Text input" onInput={handleTextInput} value={getServiceConfigValue('text')} />;
+            },
+            displayName: 'Test Service',
+            id: 'test-service',
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: /Test Service/i })).getByRole('button', { name: 'Configure' })
+    );
+    await userEvent.clear(screen.getByLabelText('Text input'));
+    await userEvent.type(screen.getByLabelText('Text input'), 'changed value');
+
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('link', { name: 'Settings' }));
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Unsaved changes', level: 1 })).toBeInTheDocument();
+  });
+
+  it('should navigate away and discard service config changes when confirm is clicked', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Services,
+      services: [
+        createMockServiceFactory({
+          config: {
+            defaults: { text: 'original value' },
+            schema: { type: 'object', properties: { text: { type: 'string', nullable: true } } },
+          },
+          service: {
+            ConfigureView: () => {
+              const { getServiceConfigValue, stageServiceConfigValue } = useConfigureService<{
+                text: string;
+              }>();
+
+              const handleTextInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
+                stageServiceConfigValue('text', event.currentTarget.value);
+              };
+
+              return <input aria-label="Text input" onInput={handleTextInput} value={getServiceConfigValue('text')} />;
+            },
+            displayName: 'Test Service',
+            id: 'test-service',
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: /Test Service/i })).getByRole('button', { name: 'Configure' })
+    );
+    await userEvent.clear(screen.getByLabelText('Text input'));
+    await userEvent.type(screen.getByLabelText('Text input'), 'changed value');
+    await userEvent.click(screen.getByRole('link', { name: 'Settings' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Discard' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Settings', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
+  });
+
+  it('should stay on the service config page when cancel is clicked', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Services,
+      services: [
+        createMockServiceFactory({
+          config: {
+            defaults: { text: 'original value' },
+            schema: { type: 'object', properties: { text: { type: 'string', nullable: true } } },
+          },
+          service: {
+            ConfigureView: () => {
+              const { getServiceConfigValue, stageServiceConfigValue } = useConfigureService<{
+                text: string;
+              }>();
+
+              const handleTextInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
+                stageServiceConfigValue('text', event.currentTarget.value);
+              };
+
+              return <input aria-label="Text input" onInput={handleTextInput} value={getServiceConfigValue('text')} />;
+            },
+            displayName: 'Test Service',
+            id: 'test-service',
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(
+      within(screen.getByRole('listitem', { name: /Test Service/i })).getByRole('button', { name: 'Configure' })
+    );
+    await userEvent.clear(screen.getByLabelText('Text input'));
+    await userEvent.type(screen.getByLabelText('Text input'), 'changed value');
+    await userEvent.click(screen.getByRole('link', { name: 'Settings' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Text input')).toHaveValue('changed value');
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
+  });
 });

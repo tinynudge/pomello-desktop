@@ -794,4 +794,74 @@ describe('Dashboard - Settings', () => {
     expect(screen.queryByRole('dialog', { name: 'Incompatible setting' })).not.toBeInTheDocument();
     expect(appApi.updateSettings).toHaveBeenCalledWith({ pomodoroSet: 4 });
   });
+
+  it('should navigate normally when there are no staged changes', async () => {
+    const { userEvent } = renderDashboard({ route: DashboardRoute.Settings });
+
+    await userEvent.click(screen.getByRole('link', { name: 'Sounds' }));
+
+    expect(screen.getByRole('heading', { name: 'Sounds', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('should show a confirmation dialog when navigating away with staged changes', async () => {
+    const { userEvent } = renderDashboard({ route: DashboardRoute.Settings });
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Always on top' }));
+
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('link', { name: 'Sounds' }));
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Unsaved changes', level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('You have unsaved changes. Navigating away will discard them.')).toBeInTheDocument();
+  });
+
+  it('should stay on the current page when cancel is clicked', async () => {
+    const { userEvent } = renderDashboard({ route: DashboardRoute.Settings });
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Always on top' }));
+    await userEvent.click(screen.getByRole('link', { name: 'Sounds' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Settings', level: 1 })).toBeInTheDocument();
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
+  });
+
+  it('should navigate away and discard changes when confirm is clicked', async () => {
+    const { appApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: { alwaysOnTop: true },
+    });
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Always on top' }));
+    await userEvent.click(screen.getByRole('link', { name: 'Sounds' }));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Discard' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Sounds', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByTestId('pending-changes')).not.toBeInTheDocument();
+    expect(appApi.updateSettings).not.toHaveBeenCalled();
+  });
+
+  it('should restore the original value after discarding changes', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Settings,
+      settings: { alwaysOnTop: true },
+    });
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Always on top' }));
+
+    expect(screen.getByRole('checkbox', { name: 'Always on top' })).not.toBeChecked();
+
+    await userEvent.click(screen.getByRole('link', { name: 'Sounds' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Discard' }));
+    await userEvent.click(screen.getByRole('link', { name: 'Settings' }));
+
+    expect(screen.getByRole('checkbox', { name: 'Always on top' })).toBeChecked();
+  });
 });
