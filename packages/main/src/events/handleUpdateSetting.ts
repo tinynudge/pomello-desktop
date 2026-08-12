@@ -9,5 +9,12 @@ export const handleUpdateSetting = async <TSetting extends keyof Settings>(
 ): Promise<void> => {
   const settings = getSettings();
 
-  settings.set(setting, value);
+  if (setting === 'timestamp') {
+    settings.set(setting, value);
+  } else {
+    settings.set({
+      [setting]: value,
+      timestamp: Date.now(),
+    });
+  }
 };

@@ -18,6 +18,7 @@ import { useLogPomelloEvents } from './useLogPomelloEvents';
 import { useLogTrackingEvents } from './useLogTrackingEvents';
 import { useMonitorPowerChange } from './useMonitorPowerChange';
 import { useOpenTask } from './useOpenTask';
+import { useSyncSettings } from './useSyncSettings';
 import { useTimerSounds } from './useTimerSounds';
 
 export const App: Component = () => {
@@ -32,6 +33,7 @@ export const App: Component = () => {
   useLogTrackingEvents();
   useMonitorPowerChange();
   useOpenTask();
+  useSyncSettings();
   useTimerSounds();
 
   const handleTaskCreate = () => {

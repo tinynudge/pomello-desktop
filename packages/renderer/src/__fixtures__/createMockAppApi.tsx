@@ -119,12 +119,24 @@ export const createMockAppApi = ({
     updateHotkeys: vi.fn(async updatedHotkeys =>
       emit('onHotkeysChange', { ...hotkeys, ...updatedHotkeys })
     ),
-    updateSetting: vi.fn(async (setting, value) =>
-      emit('onSettingsChange', { ...settings, [setting]: value })
-    ),
-    updateSettings: vi.fn(async updatedSettings =>
-      emit('onSettingsChange', { ...settings, ...updatedSettings })
-    ),
+    updateSetting: vi.fn(async (setting, value) => {
+      const updatedSettingsWithTimestamp = {
+        ...settings,
+        timestamp: Date.now(),
+        [setting]: value,
+      };
+
+      emit('onSettingsChange', updatedSettingsWithTimestamp);
+    }),
+    updateSettings: vi.fn(async updatedSettings => {
+      const updatedSettingsWithTimestamp = {
+        ...settings,
+        ...updatedSettings,
+        timestamp: updatedSettings.timestamp ?? Date.now(),
+      };
+
+      emit('onSettingsChange', updatedSettingsWithTimestamp);
+    }),
     writeClipboardText: vi.fn(),
     writeFile: vi.fn(appApi.writeFile ?? (() => Promise.resolve())),
   };
