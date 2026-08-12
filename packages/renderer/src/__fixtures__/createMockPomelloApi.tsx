@@ -1,4 +1,5 @@
 import { generatePomelloUser } from '@/app/__fixtures__/generatePomelloUser';
+import { generateSettings } from '@/app/__fixtures__/generateSettings';
 import { createPomelloApi } from '@/shared/helpers/createPomelloApi';
 import {
   PomelloApi,
@@ -6,6 +7,7 @@ import {
   PomelloServiceConfig,
   PomelloUser,
   ServiceConfig,
+  Settings,
 } from '@pomello-desktop/domain';
 import { TrackingEvent } from '@tinynudge/pomello-service';
 import { DefaultBodyType, HttpResponse, HttpResponseResolver, PathParams, http } from 'msw';
@@ -92,6 +94,20 @@ export const createMockPomelloApi = (
       createHttpResponse<PomelloApiResponse<void>>(
         { data: undefined as unknown as void },
         pomelloApiResponses.updateEvent
+      )
+    ),
+    http.get(
+      `${import.meta.env.VITE_APP_URL}/api/settings`,
+      createHttpResponse<PomelloApiResponse<Settings | null>>(
+        generateSettings() as PomelloApiResponse<Settings | null>,
+        pomelloApiResponses.fetchSettings
+      )
+    ),
+    http.post(
+      `${import.meta.env.VITE_APP_URL}/api/settings`,
+      createHttpResponse<PomelloApiResponse<void>>(
+        { data: undefined as unknown as void },
+        pomelloApiResponses.saveSettings
       )
     )
   );

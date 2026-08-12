@@ -4,8 +4,10 @@ import { SerializableHttpError } from '../SerializableHttpError';
 import { bindContext } from '../bindContext';
 import { deleteEvent } from './deleteEvent';
 import { fetchEvents } from './fetchEvents';
+import { fetchSettings } from './fetchSettings';
 import { fetchUser } from './fetchUser';
 import { logEvent } from './logEvent';
+import { saveSettings } from './saveSettings';
 import { updateEvent } from './updateEvent';
 import { updateUser } from './updateUser';
 
@@ -58,9 +60,11 @@ export const createPomelloApi = (config: ServiceConfig<PomelloServiceConfig>): P
     {
       deleteEvent,
       fetchEvents,
+      fetchSettings,
       fetchUser,
       hasToken,
       logEvent,
+      saveSettings,
       updateEvent,
       updateUser,
     },

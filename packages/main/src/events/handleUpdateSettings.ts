@@ -8,5 +8,10 @@ export const handleUpdateSettings = async (
 ): Promise<void> => {
   const settings = getSettings();
 
-  settings.set(updatedSettings);
+  const updatedSettingsWithTimestamp: Partial<Settings> = {
+    ...updatedSettings,
+    timestamp: updatedSettings.timestamp ?? Date.now(),
+  };
+
+  settings.set(updatedSettingsWithTimestamp);
 };
