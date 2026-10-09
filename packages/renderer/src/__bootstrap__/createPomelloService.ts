@@ -16,10 +16,39 @@ const createTicker = (): Ticker => {
   let tickId: number | null = null;
   let waitId: number | null = null;
 
+  // Each start() mints a fresh empty object as a unique identity token for
+  // that loop. Uniqueness is guaranteed by object reference.
+  let activeToken: object | null = null;
+
+  const stop: TickerStop = () => {
+    activeToken = null;
+
+    if (tickId) {
+      window.clearTimeout(tickId);
+
+      tickId = null;
+    }
+  };
+
   const start: TickerStart = tick => {
+    // Cancel any existing loop
+    stop();
+
+    // Mint a fresh token for this loop. The step closure captures it by
+    // reference; activeToken is updated to point at the same object.
+    const token = {};
+    activeToken = token;
+
     let expected = Date.now() + interval;
 
     const step = () => {
+      // If activeToken no longer points at our token, either stop() was called
+      // or a newer start() has run. Either way this loop is stale — exit
+      // without ticking or rescheduling so it cannot double-count.
+      if (activeToken !== token) {
+        return;
+      }
+
       const drift = Date.now() - expected;
       const newTimeout = Math.max(0, interval - drift);
 
@@ -27,20 +56,14 @@ const createTicker = (): Ticker => {
 
       tick();
 
-      if (tickId) {
+      // tick() may have called stop() (e.g. the countdown reached zero), which
+      // would have nulled activeToken. Only reschedule if we are still active.
+      if (activeToken === token) {
         tickId = window.setTimeout(step, newTimeout);
       }
     };
 
     tickId = window.setTimeout(step, interval);
-  };
-
-  const stop: TickerStop = () => {
-    if (tickId) {
-      window.clearTimeout(tickId);
-
-      tickId = null;
-    }
   };
 
   const wait: TickerWait = (callback, delay) => {
