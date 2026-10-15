@@ -101,7 +101,7 @@ jobs:
           channel: ${{ inputs.SNAPCRAFT_CHANNEL }}
 
       - name: Compile
-        uses: brrian/action-electron-builder@v2.2
+        uses: brrian/action-electron-builder@v2.3
         env:
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
