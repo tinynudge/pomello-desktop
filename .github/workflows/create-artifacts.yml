@@ -95,7 +95,7 @@ jobs:
 
       # Only install Snapcraft on Ubuntu
       - name: Install Snapcraft
-        uses: brrian/action-snapcraft@v2.1.2
+        uses: brrian/action-snapcraft@v3.0.0
         if: startsWith(matrix.os, 'ubuntu')
         with:
           channel: ${{ inputs.SNAPCRAFT_CHANNEL }}
