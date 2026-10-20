@@ -162,6 +162,33 @@ describe('Dashboard - Services', () => {
     expect(screen.getByTestId('stored-value')).toHaveTextContent('New New Value');
   });
 
+  it('should navigate back to the services list when the back button is clicked', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Services,
+      services: [
+        createMockServiceFactory({
+          service: {
+            ConfigureView: () => <div>Configure view</div>,
+            displayName: 'Configurable Service',
+            id: 'config-service',
+          },
+        }),
+      ],
+    });
+
+    const list = screen.getByRole('list', { name: 'All services' });
+    const serviceItem = within(list).getByRole('listitem');
+
+    await userEvent.click(within(serviceItem).getByRole('button', { name: 'Configure' }));
+
+    expect(screen.getByText('Configure view')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Back to services' }));
+
+    expect(screen.getByRole('heading', { name: 'All services', level: 2 })).toBeInTheDocument();
+    expect(screen.queryByText('Configure view')).not.toBeInTheDocument();
+  });
+
   it('should wrap the service configure view in a service container if provided', async () => {
     const barFactory = createMockServiceFactory({
       service: {
