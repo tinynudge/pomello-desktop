@@ -125,6 +125,52 @@ describe('Dashboard - Profile', () => {
     expect(nameInput).toHaveValue('Thomas Tester');
   });
 
+  it('should show a validation error when the name is empty', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Profile,
+      pomelloConfig: {
+        user: {
+          email: 'test@test.com',
+          name: 'Thomas Tester',
+          timezone: 'America/Chicago',
+          type: 'premium',
+        },
+      },
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Display name' });
+
+    await userEvent.clear(nameInput);
+
+    expect(screen.getByRole('status', { name: 'A display name is required' })).toBeInTheDocument();
+  });
+
+  it('should clear the validation error when undo is clicked', async () => {
+    const { userEvent } = renderDashboard({
+      route: DashboardRoute.Profile,
+      pomelloConfig: {
+        user: {
+          email: 'test@test.com',
+          name: 'Thomas Tester',
+          timezone: 'America/Chicago',
+          type: 'premium',
+        },
+      },
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Display name' });
+
+    // Change timezone to show the save banner, then empty the name
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Timezone' }), 'America/New_York');
+    await userEvent.clear(nameInput);
+
+    expect(screen.getByText('A display name is required')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Undo changes' }));
+
+    expect(screen.queryByText('A display name is required')).not.toBeInTheDocument();
+  });
+
   it('should call updateUser with the full user profile when save is clicked', async () => {
     const { pomelloApi, userEvent } = renderDashboard({
       route: DashboardRoute.Profile,

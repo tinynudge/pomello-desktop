@@ -5,10 +5,10 @@ import { usePomelloConfig, useTranslate } from '@/shared/context/RuntimeContext'
 import { Input } from '@/ui/dashboard/Input';
 import { Panel } from '@/ui/dashboard/Panel';
 import { Select } from '@/ui/dashboard/Select';
-import { PomelloUser, UpdateUserInput } from '@pomello-desktop/domain';
+import { PomelloUser, UpdateUserInput, ValidationMessage } from '@pomello-desktop/domain';
 import { useMutation } from '@tanstack/solid-query';
 import { nanoid } from 'nanoid';
-import { Component, JSX, Show } from 'solid-js';
+import { Component, createSignal, JSX, Show } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
 import styles from './ProfileForm.module.scss';
 import { timezones } from './timezones';
@@ -25,6 +25,7 @@ export const ProfileForm: Component<ProfileFormProps> = props => {
   const t = useTranslate();
 
   const [stagedProfile, setStagedProfile] = createStore<StagedProfile>({});
+  const [getNameValidation, setNameValidation] = createSignal<ValidationMessage | undefined>();
 
   const updateUserMutation = useMutation<
     PomelloUser,
@@ -56,7 +57,18 @@ export const ProfileForm: Component<ProfileFormProps> = props => {
   };
 
   const handleNameInput: JSX.EventHandler<HTMLInputElement, InputEvent> = event => {
-    setStagedProfile('name', event.currentTarget.value);
+    const value = event.currentTarget.value.trim();
+
+    setNameValidation(
+      !value
+        ? {
+            text: t('profile.displayNameRequired'),
+            type: 'error',
+          }
+        : undefined
+    );
+
+    setStagedProfile('name', value);
   };
 
   const handleTimezoneChange = (value: string) => {
@@ -65,9 +77,14 @@ export const ProfileForm: Component<ProfileFormProps> = props => {
 
   const handleUndoClick = () => {
     setStagedProfile(reconcile({}));
+    setNameValidation(undefined);
   };
 
   const handleSaveClick = () => {
+    if (getNameValidation()) {
+      return;
+    }
+
     updateUserMutation.mutate({
       name: stagedProfile.name ?? props.user.name,
       timezone: stagedProfile.timezone ?? props.user.timezone,
@@ -110,6 +127,7 @@ export const ProfileForm: Component<ProfileFormProps> = props => {
           <Panel.List.FormField for={`${id}-display-name`} label={t('profile.displayName')}>
             <Input
               id={`${id}-display-name`}
+              message={getNameValidation()}
               onInput={handleNameInput}
               type="text"
               value={stagedProfile.name ?? props.user.name}
