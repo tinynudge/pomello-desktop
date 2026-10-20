@@ -205,6 +205,7 @@
   "profile.cancelSubscription": "Cancel",
   "profile.detailsHeading": "Account details",
   "profile.displayName": "Display name",
+  "profile.displayNameRequired": "A display name is required",
   "profile.email": "Email",
   "profile.timezone": "Timezone",
   "previewSound": "Preview sound",

@@ -17,6 +17,7 @@ export const Input: Component<InputProps> = allProps => {
       <Show when={props.message}>
         {getMessage => (
           <small
+            aria-label={getMessage().text}
             class={styles.message}
             data-message-type={getMessage().type}
             role="status"
