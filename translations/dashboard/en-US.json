@@ -223,6 +223,7 @@
   "routeSounds": "Sounds",
   "saveChanges": "Save",
   "saveChangesLabel": "Save changes",
+  "saveChangesUnresolvedErrors": "You have unresolved errors",
   "setKeyboardShortcutLabel": "No keyboard shortcut set for: {{command}}. Set keyboard shortcut.",
   "setKeyboardShortcutText": "Set keyboard shortcut",
   "settings.alwaysOnTop.description": "Force the window to always remain on top of other windows.",

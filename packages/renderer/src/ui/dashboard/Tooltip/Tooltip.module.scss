@@ -1,12 +1,12 @@
 @use '@/shared/styles/global' as *;
 
 @position-try --tooltip-top-left {
-  margin: 0 0 8px;
+  margin: 0 8px 8px;
   position-area: top span-right;
 }
 
 @position-try --tooltip-top-right {
-  margin: 0 0 8px;
+  margin: 0 8px 8px;
   position-area: top span-left;
 }
 
@@ -21,12 +21,12 @@
 }
 
 @position-try --tooltip-bottom-left {
-  margin: 8px 0 0;
+  margin: 8px 8px 0;
   position-area: bottom span-right;
 }
 
 @position-try --tooltip-bottom-right {
-  margin: 8px 0 0;
+  margin: 8px 8px 0;
   position-area: bottom span-left;
 }
 
@@ -40,7 +40,7 @@
   white-space: nowrap;
 
   &[data-alignment='top'] {
-    margin: 0 0 8px;
+    margin: 0 8px 8px;
     position-area: top;
     position-try-fallbacks:
       --tooltip-top-left, --tooltip-top-right, --tooltip-bottom-center, --tooltip-bottom-left,
@@ -48,7 +48,7 @@
   }
 
   &[data-alignment='bottom'] {
-    margin: 8px 0 0;
+    margin: 8px 8px 0;
     position-area: bottom;
     position-try-fallbacks:
       --tooltip-bottom-left, --tooltip-bottom-right, --tooltip-top-center, --tooltip-top-left,

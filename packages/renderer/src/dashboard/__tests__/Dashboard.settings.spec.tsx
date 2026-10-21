@@ -386,13 +386,15 @@ describe('Dashboard - Settings', () => {
 
     await userEvent.type(textbox, 'abc');
 
-    expect(screen.queryByText('Your pending changes have not been saved yet.')).not.toBeInTheDocument();
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
     expect(within(listItem).getByText('A valid number is required')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save changes' })).toHaveAttribute('aria-disabled', 'true');
 
     await userEvent.clear(textbox);
     await userEvent.type(textbox, '80');
 
     expect(within(listItem).queryByText('A valid number is required')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save changes' })).not.toHaveAttribute('aria-disabled');
   });
 
   it('should remove the validation error if undoing the pending changes', async () => {
