@@ -4,7 +4,7 @@ import styles from './Tooltip.module.scss';
 
 type TooltipProps = {
   alignment?: 'top' | 'bottom';
-  children(tooltipTargetRef: TooltipTargetRef): JSX.Element;
+  children(tooltipTargetRef: TooltipTargetRef, tooltipId: string): JSX.Element;
   text: string;
 };
 
@@ -28,7 +28,7 @@ export const Tooltip: Component<TooltipProps> = props => {
   const tooltipTargetRef: TooltipTargetRef = (element: HTMLElement) => {
     const prefix = element.style.anchorName ? ', ' : '';
 
-    element.style.anchorName += `${prefix}${tooltipId}`;
+    element.style.anchorName += `${prefix}${anchorId}`;
 
     element.addEventListener('mouseover', handleTargetMouseOver);
     element.addEventListener('focus', handleTargetMouseOver);
@@ -45,22 +45,25 @@ export const Tooltip: Component<TooltipProps> = props => {
     });
   };
 
-  const tooltipId = `--${nanoid()}`;
+  const id = nanoid();
+  const tooltipId = `tooltip-${id}`;
+  const anchorId = `--${id}`;
 
   let tooltipRef!: HTMLDivElement;
 
   return (
     <>
-      {props.children(tooltipTargetRef)}
+      {props.children(tooltipTargetRef, tooltipId)}
       <span
         aria-hidden={!getIsVisible()}
         class={styles.tooltip}
         data-alignment={props.alignment ?? 'top'}
+        id={tooltipId}
         popover="manual"
         ref={tooltipRef}
         role="tooltip"
         // eslint-disable-next-line solid/style-prop
-        style={{ 'position-anchor': tooltipId }}
+        style={{ 'position-anchor': anchorId }}
       >
         {props.text}
       </span>

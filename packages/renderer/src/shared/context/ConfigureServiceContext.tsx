@@ -1,4 +1,8 @@
 import { SaveChangesBanner } from '@/dashboard/components/SaveChangesBanner';
+import {
+  ValidationField,
+  createValidationRegistry,
+} from '@/shared/helpers/createValidationRegistry';
 import { ServiceConfig, StoreContents } from '@pomello-desktop/domain';
 import { ParentComponent, Show, createContext, onCleanup, onMount, useContext } from 'solid-js';
 import { createStore, reconcile, unwrap } from 'solid-js/store';
@@ -9,7 +13,9 @@ type SetServiceConfigFunction<TServiceConfig, TKey extends keyof TServiceConfig>
 ) => TServiceConfig[TKey];
 
 type ConfigureServiceContextValue<TServiceConfig = StoreContents> = {
+  getHasValidationErrors(): boolean;
   getServiceConfigValue<TKey extends keyof TServiceConfig>(key: TKey): TServiceConfig[TKey];
+  registerValidationField(): ValidationField;
   serviceConfig: TServiceConfig;
   setServiceConfigValue<TKey extends keyof TServiceConfig>(
     key: TKey,
@@ -43,6 +49,9 @@ export const ConfigureServiceProvider: ParentComponent<ConfigureServiceProviderP
   );
   const [stagedServiceConfig, setStagedServiceConfig] = createStore<StoreContents>({});
 
+  const { clearValidationErrors, getHasValidationErrors, registerValidationField } =
+    createValidationRegistry();
+
   onMount(() => {
     if (props.initialServiceConfig) {
       const unsubscribe = props.initialServiceConfig.onChange(updatedConfig => {
@@ -55,6 +64,7 @@ export const ConfigureServiceProvider: ParentComponent<ConfigureServiceProviderP
 
   const clearStagedServiceConfig = () => {
     setStagedServiceConfig(reconcile({}));
+    clearValidationErrors();
   };
 
   const commitStagedServiceConfig = async () => {
@@ -89,15 +99,18 @@ export const ConfigureServiceProvider: ParentComponent<ConfigureServiceProviderP
   return (
     <ConfigureServiceContext.Provider
       value={{
+        getHasValidationErrors,
         getServiceConfigValue,
+        registerValidationField,
         serviceConfig,
         setServiceConfigValue,
         stageServiceConfigValue,
       }}
     >
       {props.children}
-      <Show when={getHasStagedChanges()}>
+      <Show when={getHasStagedChanges() || getHasValidationErrors()}>
         <SaveChangesBanner
+          isSaveDisabled={getHasValidationErrors()}
           onSaveClick={commitStagedServiceConfig}
           onUndoClick={clearStagedServiceConfig}
         />

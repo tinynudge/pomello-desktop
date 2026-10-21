@@ -1,6 +1,10 @@
 import { useSettings } from '@/shared/context/RuntimeContext';
 import { assertNonNullish } from '@/shared/helpers/assertNonNullish';
 import {
+  ValidationField,
+  createValidationRegistry,
+} from '@/shared/helpers/createValidationRegistry';
+import {
   CompleteFormattedHotkeys,
   FormattedHotkey,
   FormattedHotkeys,
@@ -34,11 +38,13 @@ type DashboardContextValue = {
   commitStagedSettings(): Promise<void>;
   getDefaultHotkey(command: HotkeyCommand): FormattedHotkey;
   getHasStagedChanges(): boolean;
+  getHasValidationErrors(): boolean;
   getHotkey(command: HotkeyCommand): FormattedHotkey | false;
   getPremiumFeatureModal(): boolean | string;
   getSetting<TSetting extends keyof Settings>(key: TSetting): Settings[TSetting];
   onPremiumFeatureModalClose(): void;
   onStagedSettingsClear(subscriber: () => void): Unsubscribe;
+  registerValidationField(): ValidationField;
   setSetting<TSetting extends keyof Settings>(
     key: TSetting,
     value: Settings[TSetting]
@@ -83,6 +89,9 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
     onCleanup(unsubscribe);
   });
 
+  const { clearValidationErrors, getHasValidationErrors, registerValidationField } =
+    createValidationRegistry();
+
   const checkForHotkeyConflict = (command: HotkeyCommand, hotkey: FormattedHotkey) => {
     const normalizeBinding = (hotkey?: FormattedHotkey | false) =>
       hotkey ? hotkey.binding.replaceAll('command', 'meta') : null;
@@ -119,6 +128,7 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
   const clearStagedSettings = () => {
     setStagedHotkeys(reconcile({}));
     setStagedSettings(reconcile({}));
+    clearValidationErrors();
 
     for (const subscriber of subscribers) {
       subscriber();
@@ -221,11 +231,13 @@ export const DashboardProvider: ParentComponent<DashboardProviderProps> = props 
         commitStagedSettings,
         getDefaultHotkey,
         getHasStagedChanges,
+        getHasValidationErrors,
         getHotkey,
         getPremiumFeatureModal,
         getSetting,
         onPremiumFeatureModalClose,
         onStagedSettingsClear,
+        registerValidationField,
         setSetting,
         showPremiumFeatureModal,
         stageHotkey,

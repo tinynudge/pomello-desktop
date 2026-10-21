@@ -93,6 +93,8 @@ export const ProfileForm: Component<ProfileFormProps> = props => {
 
   const getHasStagedChanges = () => !!Object.keys(stagedProfile).length;
 
+  const getHasValidationErrors = () => !!getNameValidation();
+
   const id = nanoid();
 
   return (
@@ -147,7 +149,11 @@ export const ProfileForm: Component<ProfileFormProps> = props => {
         </Panel.List>
       </Panel>
       <Show when={getHasStagedChanges()}>
-        <SaveChangesBanner onSaveClick={handleSaveClick} onUndoClick={handleUndoClick} />
+        <SaveChangesBanner
+          isSaveDisabled={getHasValidationErrors()}
+          onSaveClick={handleSaveClick}
+          onUndoClick={handleUndoClick}
+        />
       </Show>
     </>
   );

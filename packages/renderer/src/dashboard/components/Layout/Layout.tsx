@@ -15,7 +15,8 @@ export const saveSettingsBannerId = `save-settings-banner-${nanoid()}`;
 
 export const Layout: ParentComponent = props => {
   const { store } = usePomelloConfig();
-  const { clearStagedSettings, commitStagedSettings, getHasStagedChanges } = useDashboard();
+  const { clearStagedSettings, commitStagedSettings, getHasStagedChanges, getHasValidationErrors } =
+    useDashboard();
   const t = useTranslate();
 
   const routes: [DashboardRoute, label: string][] = [
@@ -58,8 +59,9 @@ export const Layout: ParentComponent = props => {
         >
           <div class={styles.content}>{props.children}</div>
           <div class={styles.saveChangesBanner} id={saveSettingsBannerId} />
-          <Show when={getHasStagedChanges()}>
+          <Show when={getHasStagedChanges() || getHasValidationErrors()}>
             <SaveChangesBanner
+              isSaveDisabled={getHasValidationErrors()}
               onSaveClick={commitStagedSettings}
               onUndoClick={clearStagedSettings}
             />

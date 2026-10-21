@@ -171,6 +171,32 @@ describe('Dashboard - Profile', () => {
     expect(screen.queryByText('A display name is required')).not.toBeInTheDocument();
   });
 
+  it('should disable saving when there is a validation error', async () => {
+    const { pomelloApi, userEvent } = renderDashboard({
+      route: DashboardRoute.Profile,
+      pomelloConfig: {
+        user: {
+          email: 'test@test.com',
+          name: 'Thomas Tester',
+          timezone: 'America/Chicago',
+          type: 'premium',
+        },
+      },
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Display name' });
+
+    await userEvent.clear(nameInput);
+
+    const saveButton = screen.getByRole('button', { name: 'Save changes' });
+
+    expect(saveButton).toHaveAttribute('aria-disabled', 'true');
+
+    await userEvent.click(saveButton);
+
+    expect(pomelloApi.updateUser).not.toHaveBeenCalled();
+  });
+
   it('should call updateUser with the full user profile when save is clicked', async () => {
     const { pomelloApi, userEvent } = renderDashboard({
       route: DashboardRoute.Profile,

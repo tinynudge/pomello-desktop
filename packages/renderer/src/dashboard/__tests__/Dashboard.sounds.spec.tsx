@@ -352,18 +352,20 @@ describe('Dashboard - Sounds', () => {
 
     await userEvent.clear(nameInput);
 
-    expect(screen.queryByText('Your pending changes have not been saved yet.')).not.toBeInTheDocument();
+    expect(screen.getByTestId('pending-changes')).toBeInTheDocument();
     expect(within(customSoundItem).getByText('A name is required')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save changes' })).toHaveAttribute('aria-disabled', 'true');
 
     await userEvent.type(nameInput, '   ');
 
     expect(within(customSoundItem).getByText('A name is required')).toBeInTheDocument();
-    expect(screen.queryByText('Your pending changes have not been saved yet.')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save changes' })).toHaveAttribute('aria-disabled', 'true');
 
     await userEvent.type(nameInput, 'Bar');
 
     expect(within(customSoundItem).queryByText('A name is required')).not.toBeInTheDocument();
     expect(screen.getByTestId('pending-changes')).toHaveTextContent('Your pending changes have not been saved yet.');
+    expect(screen.getByRole('button', { name: 'Save changes' })).not.toHaveAttribute('aria-disabled');
   });
 
   it('should remove the custom sound name validation error when undoing changes', async () => {

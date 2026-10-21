@@ -1,13 +1,16 @@
 import { useTranslate } from '@/shared/context/RuntimeContext';
 import { Button } from '@/ui/dashboard/Button';
 import { Modal } from '@/ui/dashboard/Modal';
+import { Tooltip } from '@/ui/dashboard/Tooltip';
 import { useBeforeLeave } from '@solidjs/router';
 import { Component, Show, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { saveSettingsBannerId } from '../Layout';
+import { SaveButton } from './SaveButton';
 import styles from './SaveChangesBanner.module.scss';
 
 type SaveChangesBannerProps = {
+  isSaveDisabled?: boolean;
   onSaveClick(): void;
   onUndoClick(): void;
 };
@@ -48,13 +51,18 @@ export const SaveChangesBanner: Component<SaveChangesBannerProps> = props => {
             <Button aria-label={t('undoChangesLabel')} onClick={props.onUndoClick}>
               {t('undoChanges')}
             </Button>
-            <Button
-              aria-label={t('saveChangesLabel')}
-              onClick={props.onSaveClick}
-              variant="primary"
-            >
-              {t('saveChanges')}
-            </Button>
+            <Show when={props.isSaveDisabled} fallback={<SaveButton onClick={props.onSaveClick} />}>
+              <Tooltip text={t('saveChangesUnresolvedErrors')}>
+                {(tooltipTargetRef, tooltipId) => (
+                  <SaveButton
+                    disabled={props.isSaveDisabled}
+                    onClick={props.onSaveClick}
+                    ref={tooltipTargetRef}
+                    tooltipId={tooltipId}
+                  />
+                )}
+              </Tooltip>
+            </Show>
           </div>
         </div>
       </Portal>

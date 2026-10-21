@@ -14,24 +14,29 @@
     padding: 0;
   }
 
+  &:disabled,
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
   &:focus-visible {
     outline: 3px solid var(--dashboard-focus);
     outline-offset: 0;
   }
 
-  &:hover {
+  &:hover:not([aria-disabled='true']) {
     background-color: var(--dashboard-input-default-background-hover);
     cursor: pointer;
   }
 
-  &:active {
+  &:active:not([aria-disabled='true']) {
     background-color: var(--dashboard-input-default-background-active);
   }
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-    pointer-events: none;
+  &[aria-disabled='true'] {
+    pointer-events: auto;
   }
 
   &[data-size='small'] {
@@ -50,12 +55,12 @@
     background-color: var(--dashboard-button-primary-background-default);
     color: var(--dashboard-button-primary-text);
 
-    &:hover {
+    &:hover:not([aria-disabled='true']) {
       border-color: var(--dashboard-button-primary-background-hover);
       background-color: var(--dashboard-button-primary-background-hover);
     }
 
-    &:active {
+    &:active:not([aria-disabled='true']) {
       border-color: var(--dashboard-button-primary-background-active);
       background-color: var(--dashboard-button-primary-background-active);
     }
@@ -70,12 +75,12 @@
       outline-color: var(--dashboard-button-danger-outline);
     }
 
-    &:hover {
+    &:hover:not([aria-disabled='true']) {
       border-color: var(--dashboard-button-danger-background-hover);
       background-color: var(--dashboard-button-danger-background-hover);
     }
 
-    &:active {
+    &:active:not([aria-disabled='true']) {
       border-color: var(--dashboard-button-danger-background-active);
       background-color: var(--dashboard-button-danger-background-active);
     }
@@ -90,12 +95,12 @@
       outline-color: var(--dashboard-button-warning-outline);
     }
 
-    &:hover {
+    &:hover:not([aria-disabled='true']) {
       border-color: var(--dashboard-button-warning-background-hover);
       background-color: var(--dashboard-button-warning-background-hover);
     }
 
-    &:active {
+    &:active:not([aria-disabled='true']) {
       border-color: var(--dashboard-button-warning-background-active);
       background-color: var(--dashboard-button-warning-background-active);
     }

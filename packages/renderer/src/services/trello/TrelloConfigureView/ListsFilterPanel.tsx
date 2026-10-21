@@ -5,19 +5,17 @@ import { Input } from '@/ui/dashboard/Input';
 import { Panel } from '@/ui/dashboard/Panel';
 import { ToggleSwitch } from '@/ui/dashboard/ToggleSwitch';
 import { Translate } from '@/ui/shared/Translate';
-import { ValidationMessage } from '@pomello-desktop/domain';
-import { Component, createSignal, JSX } from 'solid-js';
+import { Component, JSX } from 'solid-js';
 import { TrelloConfigStore } from '../domain';
 import styles from './ListsFilterPanel.module.scss';
 
 export const ListsFilterPanel: Component = () => {
-  const { getServiceConfigValue, stageServiceConfigValue } =
+  const { getServiceConfigValue, registerValidationField, stageServiceConfigValue } =
     useConfigureService<TrelloConfigStore>();
   const t = useTranslate();
 
-  const [getValidationMessage, setValidationMessage] = createSignal<ValidationMessage | undefined>(
-    undefined
-  );
+  const { clearValidationError, getValidationError, setValidationError } =
+    registerValidationField();
 
   const handleHelpClick = () => {
     window.app.openUrl(`${import.meta.env.VITE_APP_URL}/help#boards-and-lists`);
@@ -27,14 +25,12 @@ export const ListsFilterPanel: Component = () => {
     const { value } = event.currentTarget;
 
     if (value && !isValidFilter(value)) {
-      setValidationMessage({
-        text: t('service:invalidFilter'),
-        type: 'error',
-      });
+      setValidationError(t('service:invalidFilter'));
     } else {
-      stageServiceConfigValue('listFilter', event.currentTarget.value);
-      setValidationMessage(undefined);
+      clearValidationError();
     }
+
+    stageServiceConfigValue('listFilter', value);
   };
 
   const handleListFilterCaseSensitivityChange = (checked: boolean) => {
@@ -73,7 +69,7 @@ export const ListsFilterPanel: Component = () => {
           <Input
             class={styles.listFilterInput}
             id="listFilter"
-            message={getValidationMessage()}
+            message={getValidationError()}
             onInput={handleListFilterInput}
             value={getServiceConfigValue('listFilter') ?? ''}
           />
